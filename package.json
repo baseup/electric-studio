@@ -5,7 +5,9 @@
   "main": "server.py",
   "dependencies": {
     "grunt": "^0.4.5",
-    "grunt-html2js": "^0.3.0"
+    "grunt-html2js": "^0.3.0",
+    "grunt-contrib-sass": "*",
+    "grunt-contrib-watch": "*" 
   },
   "devDependencies": {},
   "scripts": {

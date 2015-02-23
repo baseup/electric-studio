@@ -31,7 +31,7 @@ COMPRESS_RESPONSE = True
 # UI_METHODS = ''
 
 # Used by RequestHandler.get_secure_cookie and set_secure_cookie to sign cookies.
-COOKIE_SECRET = '!@#$%123'
+COOKIE_SECRET = 'elstudio!@#$%123'
 
 # The authenticated decorator will redirect to this url if the user is not logged in.
 # Can be further customized by overriding RequestHandler.get_login_url
@@ -95,10 +95,10 @@ COOKIE_SECRET = '!@#$%123'
 # MotorEngine Configuration
 DATABASE = {
     'default': {
-        'db': 'feeghe',
+        'db': 'elstudio_db',
         'port': 27017,
-        'host': 'localhost',
-        'username': 'feeghe_user',
-        'password': 'feeghe_notsecure'
+        'host': 'localhost'
+        # 'username': 'feeghe_user',
+        # 'password': 'feeghe_notsecure'
     }
 }
