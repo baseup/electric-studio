@@ -29,19 +29,24 @@ class RouteProvider:
                 self.when(action_filter[0], action_filter[1])
             return
 
-        if isinstance(filter, str):
+        if isinstance(filter, str) or isinstance(filter, list):
             filter = { 'before': filter }
 
         if isinstance(filter, dict):
             for key in filter.keys():
                 if isinstance(filter[key], str):
-                    parts = filter[key].rsplit('.', 1)
+                    filter[key] = [filter[key]]
+                if not len(filter[key]):
+                    continue
+                self._filters[action] = []
+                for fn in filter[key]:
+                    parts = fn.rsplit('.', 1)
                     module = importlib.import_module('app.filters.' + parts[0])
                     if hasattr(module, parts[1]):
-                        filter[key] = getattr(module, parts[1])
-                        if not callable(filter[key]):
+                        tmp_fn = getattr(module, parts[1])
+                        if not callable(tmp_fn):
                             raise ActionNotCallable('Filter is not callable')
-            self._filters[action] = filter
+                        self._filters[action].append(tmp_fn)
 
     def _save_route(self, created_route):
         if created_route.path not in self._routes:
@@ -455,6 +460,9 @@ class RequestHandler(tornado.web.RequestHandler):
 
     def finish(self, chunk=None):
         super().finish(chunk)
+
+    def is_finished(self):
+        return self._finished
 
 class ErrorHandler(RequestHandler):
 

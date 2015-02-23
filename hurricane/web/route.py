@@ -55,7 +55,8 @@ class Route:
             return
 
         for key in filters.keys():
-            filters[key] = make_non_blocking(filters[key])
+            for fn_key, fn_val in enumerate(filters[key]):
+                filters[key][fn_key] = make_non_blocking(fn_val)
         self._filters = filters
 
     def create_handler(self):
@@ -70,27 +71,40 @@ class Route:
             if hasattr(self, '_filters'):
                 filters = self._filters
 
+            def before_func(request_handler):
+                if not filters or 'before' not in filters:
+                    return
+                for before_fn_val in filters['before']:
+                    if (yield before_fn_val(request_handler)):
+                        if request_handler.is_finished():
+                            return
+                        continue
+                    return
+
+            def after_func(request_handler):
+                if not filters or 'after' not in filters:
+                    return
+                for after_fn_val in filters['after']:
+                    if (yield after_fn_val(request_handler)):
+                        if request_handler.is_finished():
+                            return
+                        continue
+                    return
+
+            before_func = make_non_blocking(before_func)
             action = make_non_blocking(action)
+            after_func = make_non_blocking(after_func)
+
             def route_handler(self, **kwargs):
-                this_route_handler = self
                 if not filters:
-                    action(this_route_handler, **kwargs)
+                    yield action(self, **kwargs)
+                    return
 
-                elif 'before' in filters:
+                yield before_func(self)
+                yield action(self, **kwargs)
+                yield after_func(self)
 
-                    before_future_obj = filters['before'](this_route_handler)
-                    def before_cb(self):
-                        if self.result():
-                            action(this_route_handler, **kwargs)
-                            if 'after' in filters:
-                                filters['after'](this_route_handler)
-
-                    before_future_obj.add_done_callback(before_cb)
-                    
-                elif 'after' in filters:
-                    filters['after'](this_route_handler)
-
-            self.handler = route_handler
+            self.handler = make_non_blocking(route_handler)
         else:
             def route_handler(self, **kwargs):
                 pass
