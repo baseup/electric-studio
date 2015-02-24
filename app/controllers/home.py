@@ -17,6 +17,9 @@ def account(self):
 
 def slider(self):
     self.render('ng-templates/admin/slider')
+    
+def instructor(self):
+    self.render('ng-templates/admin/instructor')    
 
 def login(self):
     if(self.request.method == 'GET'):

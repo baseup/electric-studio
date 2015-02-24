@@ -28,6 +28,7 @@
             <ul class="nav nav--stacked sub-nav" data-dropdown="dashboard-menu">
               <li><a href="/analytics">Analytics</a></li>
               <li><a href="/packages">Packages</a></li>
+              <li><a href="/instructors">Instructors</a></li>
               <li><a href="/sliders">Sliders</a></li>
             </ul>
           </li>
@@ -60,6 +61,15 @@
           <button class="sidebar-toggle btn btn--small btn--primary">
             <i class="fa fa-bars"></i>
           </button>
+          
+          <div class="user">
+            <div class="user__pic">
+              <img src="/assets/images/pic-placeholder.png" alt="">
+            </div>
+            
+            <span class="user__name">Mark S.</span>
+            <a href="" class="user__logout"><i class="fa fa-sign-out"></i> Log Out</a>
+          </div>
 
         </div>
 
@@ -109,7 +119,7 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package">Add Package</a>
+            <a href="" class="float--left" data-modal-toggle="add-package">Add Class</a>
             <ul class="nav float--right">
               <li>
                 <a href="" data-modal-toggle="account-summary"><i class="fa fa-bars"></i></a>
@@ -156,7 +166,7 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package">Add Package</a>
+            <a href="" class="float--left" data-modal-toggle="add-package">Add Class</a>
             <ul class="nav float--right">
               <li>
                 <a href="" data-modal-toggle="account-summary"><i class="fa fa-bars"></i></a>
@@ -202,7 +212,7 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package">Add Package</a>
+            <a href="" class="float--left" data-modal-toggle="add-package">Add Class</a>
             <ul class="nav float--right">
               <li>
                 <a href="" data-modal-toggle="account-summary"><i class="fa fa-bars"></i></a>
@@ -248,7 +258,7 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package">Add Package</a>
+            <a href="" class="float--left" data-modal-toggle="add-package">Add Class</a>
             <ul class="nav float--right">
               <li>
                 <a href="" data-modal-toggle="account-summary"><i class="fa fa-bars"></i></a>
@@ -294,7 +304,7 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package">Add Package</a>
+            <a href="" class="float--left" data-modal-toggle="add-package">Add Class</a>
             <ul class="nav float--right">
               <li>
                 <a href="" data-modal-toggle="account-summary"><i class="fa fa-bars"></i></a>
@@ -357,39 +367,39 @@
     </div>
   </div>
 
-  <!-- modal Add Package -->
+  <!-- modal Add Class -->
   <div class="modal" data-modal="add-package">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
-      <h3 class="h--medium brand-color space--bottom">Add Package</h3>
-
-      <div class="space--bottom pad--bottom">
-        <span class="label">Rider</span>
-        <h4 class="h-small">Jeph Fernandez</h4>
-      </div>
-
-      <div class="space--bottom one-whole">
-        <div class="space--ends two-thirds">
+      <h3 class="h--medium brand-color space--bottom">Add Class</h3>
+      
+      <ul class="form-fields">
+        <li>
+          <span class="label">Rider</span>
+          <h4 class="h-small">Jeph Fernandez</h4>
+        </li>
+        <li>
           <span class="label">Select Class Package</span>
           <select class="select">
             <option value="1">1 Class</option>
-            <option value="5">5 Classes</option>
-            <option value="10">10 Classes</option>
+            <option value="5">5 Pax</option>
+            <option value="10">10 Pax</option>
           </select>
-        </div>
-
-        <div class="space--ends">
-          <span class="label">Notes</span>
-          <textarea class="text-input" cols="3"></textarea>
-        </div>
-
-        <div class="space--ends">
-          <span class="label">Input Password</span>
+        </li>
+        <li>
+          <span class="label">Or Input Number of Class</span>
           <input class="text-input">
-        </div>
-
-      </div>
-
+        </li>
+        <li>
+          <span class="label">Set Expiration</span>
+          <input class="text-input datepicker" placeholder="Defaults to 30 days">
+        </li>
+        <li>
+          <span class="label">Notes</span>
+          <textarea class="text-input" cols="3" placeholder="Indicate reason for free class"></textarea>
+        </li>
+      </ul>
+     
       <button class="btn btn--primary btn--medium space--top modal-close">Add</button>
 
     </div>
@@ -410,6 +420,6 @@
     <script src="/assets/vendor/pickadate/lib/picker.js"></script>
     <script src="/assets/vendor/pickadate/lib/picker.date.js"></script>
 
-    <script src="/assets/js/script.min.js"></script>
+    <script src="/assets/js/script.js"></script>
   </body>
 </html>

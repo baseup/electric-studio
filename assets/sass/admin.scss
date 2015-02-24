@@ -15,10 +15,10 @@
  * Add page specific components
  */
 @import "components/base";
-@import "components/page-head";
-@import "components/page-sidebar";
-@import "components/page-foot";  
-@import "components/content";
+@import "components/admin-header";
+@import "components/admin-sidebar";
+@import "components/admin-footer";  
+@import "components/admin-content";
 @import "components/overrides";
 
   
