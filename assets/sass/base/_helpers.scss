@@ -1,0 +1,143 @@
+/*------------------------------------*\
+    #HELPER
+\*------------------------------------*/
+
+/**
+ * Add/remove floats
+ */
+.float--right   { float:right!important; }
+.float--left    { float:left !important; }
+.float--none    { float:none !important; }
+
+
+/**
+ * Text alignment
+ */
+.text--left     { text-align:left  !important; }
+.text--center   { text-align:center!important; }
+.text--right    { text-align:right !important; }
+
+
+/**
+ * Text uppercase
+ */
+.text-uppercase { text-transform: uppercase; }
+
+
+/**
+ * Font weights
+ */
+.weight--light      { font-weight:300!important; }
+.weight--normal     { font-weight:400!important; }
+.weight--semibold   { font-weight:600!important; }
+
+
+/**
+ * Add/remove margins
+ */
+.space           { margin:       $base-spacing-unit!important; }
+.space--top      { margin-top:   $base-spacing-unit!important; }
+.space--right    { margin-right: $base-spacing-unit!important; }
+.space--bottom   { margin-bottom:$base-spacing-unit!important; }
+.space--left     { margin-left:  $base-spacing-unit!important; }
+.space--ends     { margin-top:   $base-spacing-unit!important; margin-bottom:$base-spacing-unit!important; }
+.space--sides    { margin-right: $base-spacing-unit!important; margin-left:  $base-spacing-unit!important; }
+
+.space--off          { margin:       0!important; }
+.space--off-top     { margin-top:   0!important; }
+.space--off-right   { margin-right: 0!important; }
+.space--off-bottom  { margin-bottom:0!important; }
+.space--off-left    { margin-left:  0!important; }
+.space--off-ends    { margin-top:   0!important; margin-bottom:0!important; }
+.space--off-sides   { margin-right: 0!important; margin-left:  0!important; }
+
+.space--half          { margin:       $half-spacing-unit!important; }
+.space--half-top     { margin-top:   $half-spacing-unit!important; }
+.space--half-right   { margin-right: $half-spacing-unit!important; }
+.space--half-bottom  { margin-bottom:$half-spacing-unit!important; }
+.space--half-left    { margin-left:  $half-spacing-unit!important; }
+.space--half-ends    { margin-top:   $half-spacing-unit!important; margin-bottom:$half-spacing-unit!important; }
+.space--half-sides   { margin-right: $half-spacing-unit!important; margin-left:  $half-spacing-unit!important; }
+
+
+/**
+ * Add/remove paddings
+ */
+.pad           { padding:       $base-spacing-unit!important; }
+.pad--top      { padding-top:   $base-spacing-unit!important; }
+.pad--right    { padding-right: $base-spacing-unit!important; }
+.pad--bottom   { padding-bottom:$base-spacing-unit!important; }
+.pad--left     { padding-left:  $base-spacing-unit!important; }
+.pad--ends     { padding-top:   $base-spacing-unit!important; padding-bottom:$base-spacing-unit!important; }
+.pad--sides    { padding-right: $base-spacing-unit!important; padding-left:  $base-spacing-unit!important; }
+
+.pad--half           { padding:       $half-spacing-unit!important; }
+.pad--half-top      { padding-top:   $half-spacing-unit!important; }
+.pad--half-right    { padding-right: $half-spacing-unit!important; }
+.pad--half-bottom   { padding-bottom:$half-spacing-unit!important; }
+.pad--half-left     { padding-left:  $half-spacing-unit!important; }
+.pad--half-ends     { padding-top:   $half-spacing-unit!important; padding-bottom:$half-spacing-unit!important; }
+.pad--half-sides    { padding-right: $half-spacing-unit!important; padding-left:  $half-spacing-unit!important; }
+
+
+.pad--off          { padding:       0!important; }
+.pad--off-top      { padding-top:   0!important; }
+.pad--off-right    { padding-right: 0!important; }
+.pad--off-bottom   { padding-bottom:0!important; }
+.pad--off-left     { padding-left:  0!important; }
+.pad--off-ends     { padding-top:   0!important; padding-bottom:0!important; }
+.pad--off-sides    { padding-right: 0!important; padding-left:  0!important; }
+
+
+
+/**
+ * Clearfix
+ * Extend if needed to avoid over appearing in markup
+ */
+.cf{
+  &:after{
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+/**
+ * Apply capital case to an element (usually a `strong`).
+ */
+.caps{
+    text-transform:uppercase!important;
+}
+
+/**
+ * Apply displays
+ */
+.block {
+  display: block;
+}
+
+.inline {
+  display: inline-block;
+}
+
+/**
+ * Borders 
+ */
+.border {
+  border-color: $border-color;
+  border-style: solid;
+  border-width: 0;
+}
+
+  .border--top { 
+    @extend .border;
+    border-top-width: 1px!important; 
+  }
+  .border--bottom { 
+    @extend .border; 
+    border-bottom-width: 1px!important; 
+  }
+  .border--all {
+    @extend .border;
+    border-width: 1px!important;  
+  }

@@ -1,0 +1,101 @@
+/*------------------------------------*\
+    #NAV
+\*------------------------------------*/
+/**
+ * Nav wrapper
+ */
+.nav{
+  list-style: none;
+  margin-left: 0;
+  @extend .cf;
+
+  > li{
+
+    &,
+    > a{
+      display: inline-block;
+      *display: inline;
+      zoom: 1;
+    }
+  }
+}
+
+
+/**
+ * `.nav--stacked` extends `.nav` and throws the list into vertical mode
+ */
+.nav--stacked{
+
+  > li{
+    display: list-item;
+
+    > a{
+      display: block;
+    }
+  }
+}
+
+
+/**
+ * `.nav--banner` extends `.nav` and centres the list
+ */
+.nav--banner{
+  text-align:center;
+}
+
+
+/**
+ * Give nav links a big, blocky hit area
+ */
+.nav--block{
+  line-height:1;
+  /**
+   * Remove whitespace caused by `inline-block`.
+   */
+  letter-spacing:-0.31em;
+  word-spacing:-0.43em;
+
+  > li{
+    letter-spacing:normal;
+    word-spacing:normal;
+
+    > a{
+      padding:$half-spacing-unit;
+    }
+  }
+}
+
+
+/**
+ * Force a nav to occupy available width of its parent
+ */
+.nav--fit{
+  display:table;
+  width:100%;
+
+  > li{
+    display:table-cell;
+
+    > a{
+      display:block;
+    }
+  }
+}
+
+
+/**
+ * Make a list of keywords
+ */
+.nav--keywords{
+
+  > li{
+
+    &:after{
+      content:"\002C" "\00A0";
+    }
+
+    &:last-child:after{
+      display:none;
+    }
+  }
+}

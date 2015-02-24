@@ -12,6 +12,7 @@ routes.get('/accounts', 'home.account')
 routes.get('/packages', 'home.package')
 routes.get('/schedules', 'home.schedule')
 routes.get('/sliders', 'home.slider')
+routes.get('/instructors', 'home.instructor')
 
 routes.get('/login', 'home.login')
 routes.post('/login', 'home.login')

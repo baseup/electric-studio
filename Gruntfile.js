@@ -15,13 +15,18 @@ module.exports = function(grunt) {
 
     sass: {
       dist: {
-      files: [{
-        expand: true,
-        cwd: 'styles',
-        src: ['assets/sass/**/*.scss', 'assets/sass/**/*.sass'],
-        dest: 'assets/css',
-        ext: '.css'
-      }]
+        options: {
+          sourcemap: 'none',
+          cacheLocation: 'assets/sass/.sass-cache/',
+          style: 'compressed'
+        },
+        files: [{
+          expand: true,
+          cwd: 'assets/sass/',
+          src: ['**/*.scss', '**/*.sass', '**/!_*.scss', '**/!_*.sass'],
+          dest: 'assets/css',
+          ext: '.css'
+        }]
       }
     },
 

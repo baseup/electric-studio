@@ -1,0 +1,196 @@
+.main-content {
+}
+
+.page-content {
+  overflow: hidden;
+  width: auto;
+}
+
+.result-header {
+  height: 28px;
+  line-height: 28px;
+
+  .result-filter {
+    @include breakpoint(sm) {
+      float: left;
+    }
+  }
+
+  .btn-group {
+    text-align: center;
+
+    @include breakpoint(sm) {
+      float: right;
+    }
+  }
+}
+
+/* Booking */
+
+.booking__item {
+  height: 54px;
+  
+  .user--name {
+    font-size: 16px!important;
+    line-height: 52px;
+    padding: 0 $base-spacing-unit;
+    overflow: auto;
+  }
+  
+  .booking__actions {
+    float: right;
+    
+    a {
+      line-height: 52px;
+      height: 52px;
+      padding: 0 $base-spacing-unit;
+      color: $color-text-light;
+      
+      &:hover {
+        color: inherit;
+      }
+      
+      &.btn--round {
+        height: 36px;
+        width: 36px;
+        border-radius: 50%;
+        line-height: 36px;
+        margin: 8px 0;
+        background: $brand-color-tertiary;
+        padding: 0;
+        text-align: center;
+        color: #fff;
+      }
+      
+      &.bike-number-switch {
+        i {
+          display: none;
+        }
+        
+        &:hover {
+          background: $brand-color-primary;
+          
+          .bike-number {
+            display: none;
+          }
+          
+          i {
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+.account__actions {
+  position: absolute;
+}
+
+/* Waitlist */
+.account__options {
+  border-top: 1px solid $border-color;
+  
+  .nav {
+    a {
+      @extend .text-color-light;
+      padding: 0 $base-spacing-unit/2;
+      
+      &:hover {
+        color: inherit;
+      }
+    }
+  }
+}
+
+.data-list {
+  //@extend .text-color-light;
+  
+  dt {
+    @extend .label;
+  }
+  
+  dd {
+    display: block;
+    //font-weight: 600;
+  }
+  
+  .data--inline {
+    dt {
+      @extend .label--inline;
+    }
+    
+    dd {
+      display: inline;
+    }
+  }
+  
+}
+
+.content-filter {
+  //background: #fff;
+  //border-bottom: 1px solid $border-color;
+  //border-top: 1px solid $border-color;
+}
+
+.data-table {
+  
+  thead {
+    display: none;
+    
+    @include breakpoint(sm) {
+      display: table-header-group;
+    }
+  }
+  
+  tr {
+    display: block;
+    border-bottom: 1px solid $border-color;
+    padding: $base-spacing-unit/2 0;
+    
+    @include breakpoint(sm) {
+      padding: 0;
+      display: table-row;
+    }
+  }
+  
+  tbody {
+    tr:last-child {
+      border-bottom: 0;
+    }
+  }
+  
+  th {
+    @extend .label;
+    display: none;
+    font-weight: normal;
+    
+    @include breakpoint(sm) {
+      display: table-cell;
+    }
+  }
+  
+  td {
+    display: block;
+    
+    @include breakpoint(sm) {
+      display: table-cell;
+    }
+  }
+  
+  
+}
+
+/* Slider */
+.slider-list {
+  .slider-image {
+    max-width: 300px;
+    max-height: 100px;
+  }
+  
+  .options-cell {
+    min-width: 220px;
+  }
+  
+}

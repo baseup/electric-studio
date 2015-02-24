@@ -1,5 +1,42 @@
-Log In here
-<form action="/login" method="post">
-Name: <input type="text" name="name">
-<input type="submit" value="Sign in">
-</form>
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Login | Electric Studio Admin</title>
+
+    <link rel="stylesheet" href="/assets/css/admin-login.css">
+  </head>
+  
+  <body>
+  
+    <div class="content">
+
+      <img src="/assets/images/electricstudio-nameplate.png" class="nameplate">
+
+      <div class="login-container pad space--ends">
+        <h1 class="h--medium brand-color caps space--bottom">Log In</h1>
+
+        <form action="/login" method="post">
+          <ul class="form-fields space--ends">
+            <li>
+              <label class="label">Username</label>
+              <input type="text" name="name" class="text-input border--all">
+
+            </li>
+            <li>
+              <label class="label">Password</label>
+              <input type="text" name="password" class="text-input border--all">
+            </li>
+          </ul>
+          <input type="submit" value="Sign in" class="btn btn--medium btn--primary">
+        </form>
+      </div>
+
+    </div>
+      
+    
+  </body>
+</html>

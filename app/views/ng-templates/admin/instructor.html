@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Admin | Electric Studio</title>
+
+    <link rel="stylesheet" href="/assets/css/admin.css">
+  </head>
+
+  <body>
+    <div class="page-wrapper">
+      <div class="page-sidebar">
+        <div class="brand pad">
+          <img src="/assets/images/electricstudio-nameplate.png" class="nameplate">
+          <img src="/assets/images/electricstudio-logo.png" class="logo">
+        </div>
+
+        <ul class="main-nav nav nav--stacked">
+          <li class="active">
+            <a data-dropdown-toggle="dashboard-menu">
+              <i class="fa fa-th-large"></i>
+              <span class="nav-label">Dashboard</span>
+            </a>
+
+            <ul class="nav nav--stacked sub-nav" data-dropdown="dashboard-menu">
+              <li><a href="/analytics">Analytics</a></li>
+              <li><a href="/packages">Packages</a></li>
+              <li><a href="/instructors">Instructors</a></li>
+              <li><a href="/sliders">Sliders</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="/classes">
+              <i class="fa fa-th-list"></i>
+              <span class="nav-label">Classes</span>
+            </a>
+          </li>
+          <li>
+            <a href="/accounts">
+              <i class="fa fa-users"></i>
+              <span class="nav-label">Accounts</span>
+            </a>
+          </li>
+          <li>
+            <a href="/schedules">
+              <i class="fa fa-calendar"></i>
+              <span class="nav-label">Schedules</span>
+            </a>
+          </li>
+        </ul>
+
+      </div>
+
+      <div class="page-content">
+
+        <div class="page-header pad">
+
+          <button class="sidebar-toggle btn btn--small btn--primary">
+            <i class="fa fa-bars"></i>
+          </button>
+          
+          <div class="user">
+            <div class="user__pic">
+              <img src="/assets/images/pic-placeholder.png" alt="">
+            </div>
+            
+            <span class="user__name">Mark S.</span>
+            <a href="" class="user__logout"><i class="fa fa-sign-out"></i> Log Out</a>
+          </div>
+
+        </div>
+
+        <div class="main-content">
+
+    <div class="content-result pad">
+      <div class="cf space--bottom">
+        <span class="label inline">Instructors</span>
+        <button class="btn btn--small btn--secondary float--right" data-modal-toggle="add-instructor">Add Instructor</button>
+      </div>
+
+    <div class="account-list grid">
+
+      <div class="grid__item bp-md-one-half bp-lg-one-third">
+        <div class="account__item box--bordered box--white space--bottom cf">
+
+          <div class="pad">
+            <b class="h--small">Risa</b>
+          </div>
+
+          <div class="pad--sides">
+            <div class="data-list">
+
+              <dl class="data--inline">
+                <dt><i class="fa fa-phone"></i></dt>
+                <dd>0916238313</dd>
+              </dl>
+
+              <dl class="data--inline space--bottom">
+                <dt><i class="fa fa-envelope"></i></dt>
+                <dd class="inline space--bottom">jeph@greenlemon.co</dd>
+              </dl>
+
+            </div>
+
+          </div>
+
+          <div class="account__options pad--sides pad--half-ends space--top cf">
+            <a href="" class="float--left"  >Update</a>
+            <a href="" class="float--right link--secondary">Remove</a>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="grid__item bp-md-one-half bp-lg-one-third">
+        <div class="account__item box--bordered box--white space--bottom cf">
+
+          <div class="pad">
+            <b class="h--small">Migs</b>
+          </div>
+
+          <div class="pad--sides">
+            <div class="data-list">
+
+              <dl class="data--inline">
+                <dt><i class="fa fa-phone"></i></dt>
+                <dd>0916238313</dd>
+              </dl>
+
+              <dl class="data--inline space--bottom">
+                <dt><i class="fa fa-envelope"></i></dt>
+                <dd class="inline space--bottom">jeph@greenlemon.co</dd>
+              </dl>
+
+            </div>
+
+          </div>
+
+          <div class="account__options pad--sides pad--half-ends space--top cf">
+            <a href="" class="float--left"  >Update</a>
+            <a href="" class="float--right link--secondary">Remove</a>
+          </div>
+
+        </div>
+      </div>
+      
+      <div class="grid__item bp-md-one-half bp-lg-one-third">
+        <div class="account__item box--bordered box--white space--bottom cf">
+
+          <div class="pad">
+            <b class="h--small">Trish</b>
+          </div>
+
+          <div class="pad--sides">
+            <div class="data-list">
+
+              <dl class="data--inline">
+                <dt><i class="fa fa-phone"></i></dt>
+                <dd>0916238313</dd>
+              </dl>
+
+              <dl class="data--inline space--bottom">
+                <dt><i class="fa fa-envelope"></i></dt>
+                <dd class="inline space--bottom">jeph@greenlemon.co</dd>
+              </dl>
+
+            </div>
+
+          </div>
+
+          <div class="account__options pad--sides pad--half-ends space--top cf">
+            <a href="" class="float--left"  >Update</a>
+            <a href="" class="float--right link--secondary">Remove</a>
+          </div>
+
+        </div>
+      </div>
+      
+      <div class="grid__item bp-md-one-half bp-lg-one-third">
+        <div class="account__item box--bordered box--white space--bottom cf">
+
+          <div class="pad">
+            <b class="h--small">Kris</b>
+          </div>
+
+          <div class="pad--sides">
+            <div class="data-list">
+
+              <dl class="data--inline">
+                <dt><i class="fa fa-phone"></i></dt>
+                <dd>0916238313</dd>
+              </dl>
+
+              <dl class="data--inline space--bottom">
+                <dt><i class="fa fa-envelope"></i></dt>
+                <dd class="inline space--bottom">jeph@greenlemon.co</dd>
+              </dl>
+
+            </div>
+
+          </div>
+
+          <div class="account__options pad--sides pad--half-ends space--top cf">
+            <a href="" class="float--left"  >Update</a>
+            <a href="" class="float--right link--secondary">Remove</a>
+          </div>
+
+        </div>
+      </div>
+      
+      <div class="grid__item bp-md-one-half bp-lg-one-third">
+        <div class="account__item box--bordered box--white space--bottom cf">
+
+          <div class="pad">
+            <b class="h--small">Yessa</b>
+          </div>
+
+          <div class="pad--sides">
+            <div class="data-list">
+
+              <dl class="data--inline">
+                <dt><i class="fa fa-phone"></i></dt>
+                <dd>0916238313</dd>
+              </dl>
+
+              <dl class="data--inline space--bottom">
+                <dt><i class="fa fa-envelope"></i></dt>
+                <dd class="inline space--bottom">jeph@greenlemon.co</dd>
+              </dl>
+
+            </div>
+
+          </div>
+
+          <div class="account__options pad--sides pad--half-ends space--top cf">
+            <a href="" class="float--left"  >Update</a>
+            <a href="" class="float--right link--secondary">Remove</a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>  
+
+          <!-- modal Add Slider -->
+          <div class="modal" data-modal="add-instructor">
+            <div class="modal__box pad">
+              <span class="close-btn modal-close">X</span>
+              <h3 class="h--medium brand-color space--bottom">Add Instructor</h3>
+              
+              <ul class="form-fields">
+                <li>
+                  <span class="label">First Name</span>
+                  <input class="text-input">
+                </li>
+                <li>
+                  <span class="label">Last Name</span>
+                  <input class="text-input">
+                </li>
+                <li>
+                  <span class="label">Contact Number</span>
+                  <input class="text-input">
+                </li>
+                <li>
+                  <span class="label">Email Address</span>
+                  <input class="text-input">
+                </li>
+              </ul>
+              
+              <button class="btn btn--medium btn--primary space--top modal-close">Add</button>
+            </div>
+          </div>
+
+
+        </div><!-- .main-content -->
+      </div>
+    </div>
+
+
+    <link rel="stylesheet" href="/assets/vendor/selectize/dist/css/selectize.default.css">
+    <link rel="stylesheet" href="/assets/vendor/pickadate/lib/themes/classic.css">
+    <link rel="stylesheet" href="/assets/vendor/pickadate/lib/themes/classic.date.css">
+
+    <script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/vendor/selectize/dist/js/standalone/selectize.min.js"></script>
+    <script src="/assets/vendor/pickadate/lib/picker.js"></script>
+    <script src="/assets/vendor/pickadate/lib/picker.date.js"></script>
+
+    <script src="/assets/js/script.js"></script>
+  </body>
+</html>

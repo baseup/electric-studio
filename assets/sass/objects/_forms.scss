@@ -1,0 +1,85 @@
+/*------------------------------------*\
+    $FORMS
+\*------------------------------------*/
+
+fieldset {
+  padding: $base-spacing-unit;
+}
+
+
+/**
+ * Form fields group sets
+ */
+.form-fields {
+  list-style: none;
+  margin: 0;
+}
+
+  .form-fields > li {
+    margin-bottom: $base-spacing-unit;
+    margin-bottom: ($base-spacing-unit / $base-font-size) * 1rem;
+  }
+
+  .form-fields > li:last-child {
+    margin-bottom: 0;
+  }
+
+
+/**
+ * Set `.label` class and `label` element styles. 
+ * Apply a label-like styling to meta-labels for groups of options 
+ * where a `label` element is not suitable
+ */
+
+label,
+.label {
+  display: block;
+}
+  /**
+   * Extra label term
+   */
+  .additional{
+    display: block;
+    font-weight: normal;
+  }
+
+
+/*
+ * checkboxes and radios grouping
+ */
+.check-list{
+  list-style: none;
+  margin: 0;
+}
+  /*
+   * Labels in check-lists
+   */
+  .check-label,
+  .check-list label,
+  .check-list .label {
+    display: inline-block;
+  }
+
+
+/**
+ * a inline lable modifier
+ */
+.label--inline {
+  display: inline-block;
+  font: inherit;
+}
+
+
+/**
+ * Helper
+ * similar to <small>
+ */
+.extra-help {
+  display: inline-block;
+  visibility: hidden;
+}
+
+.text-input:active + .extra-help,
+.text-input:focus + .extra-help {
+  visibility: visible;
+}

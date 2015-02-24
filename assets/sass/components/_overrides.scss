@@ -1,0 +1,165 @@
+/**
+ * A stylesheet component reserved for 
+ * 1) plugin style redesign overrides
+ * 2) and CSS hacks and quick-fixes
+ *
+ * Sticking out like a sore thumb!
+ */
+
+/*------------------------------------*\
+    #SELECTIZE
+\*------------------------------------*/
+
+.selectize-control {
+  height: 34px !important;
+  
+  &.single {
+    .selectize-input:after {
+      content: '\f107'!important;
+      font-family: FontAwesome;
+      top: 0 !important;
+      right: 0 !important;
+      margin: 0 !important;
+      color: #fff;
+      height: 100%!important;
+      width: 25px!important;
+      border: 0 !important;
+      text-align: center;
+      background: $brand-color-tertiary;
+    }
+  }
+}
+
+.selectize-input {
+  display: block !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-image: none;
+  background: #fff !important;
+  font-size: 16px !important;
+  box-shadow: none !important;
+  padding: 0 35px 0 15px !important;
+  
+  input {
+    font-size: inherit !important;
+    letter-spacing: $base-letter-spacing;
+  }
+  
+  &.dropdown-active {
+    &:before {
+      height: 0 !important;
+    }
+  }
+}
+
+.selectize-dropdown {
+  margin: 0;
+  border: 0 !important;
+  border-radius: 0 !important;
+  
+  .active {
+    background: none !important;
+    color: $brand-color-primary !important;
+  }
+  
+  [data-selectable],
+  .option {
+    padding: 10px !important;
+  }
+}
+
+/*------------------------------------*\
+    #DATEPICKER
+\*------------------------------------*/
+
+.picker__holder {
+  border: 0 !important;
+  border-radius: 0 !important;
+  text-transform: uppercase;
+}
+
+.picker__button--clear,
+.picker__button--close,
+.picker__button--today {
+  text-transform: uppercase;
+}
+
+.picker__day {
+  border-color: transparent !important;
+}
+
+.picker__day--highlighted,
+.picker__day--highlighted:hover, 
+.picker__day--infocus:hover, 
+.picker__day--outfocus:hover, 
+.picker--focused,
+.picker__nav--prev:hover, 
+.picker__nav--next:hover,
+.picker__button--today:hover, 
+.picker__button--clear:hover, 
+.picker__button--close:hover,
+.picker__button--today:focus, 
+.picker__button--clear:focus, 
+.picker__button--close:focus {
+  background: rgba($brand-color-primary, .6) !important;
+  border-color: transparent !important;
+}
+
+.picker__day--today:before {
+  border-top-color: $brand-color-primary !important;
+}
+
+.picker__day--selected, 
+.picker__day--selected:hover, 
+.picker--focused .picker__day--selected {
+  background: $brand-color-primary !important;
+}
+
+.picker__table {
+  td, th {
+    text-align: center;
+  }
+}
+
+/* fullcalendar */
+.fc {
+
+  .fc-button {
+    border-radius: 0!important;
+    box-shadow: none;
+    border: 0;
+    background: $brand-color-secondary;
+    color: #fff;
+    text-shadow: none;
+    outline: 0;
+  }
+  
+  .fc-icon {
+    text-shadow: none;
+  }
+  
+  th {
+    line-height: 2em;
+    color: $color-text-light;
+    text-transform: uppercase;
+    font-weight: normal;
+  }
+  
+  .fc-event {
+    background: $brand-color-secondary;
+    border: 0;
+    border-radius: 0;
+    padding: $base-spacing-unit / 4;
+    
+    &:hover {
+      background: $brand-color-primary;
+    }
+  }
+  
+  .fc-today {
+    background: $brand-color-quaternary!important;
+  }
+}
+
