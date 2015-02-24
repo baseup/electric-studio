@@ -77,9 +77,10 @@ class Route:
                 for before_fn_val in filters['before']:
                     if (yield before_fn_val(request_handler)):
                         if request_handler.is_finished():
-                            return
+                            return False
                         continue
-                    return
+                    return False
+                return True
 
             def after_func(request_handler):
                 if not filters or 'after' not in filters:
@@ -98,11 +99,11 @@ class Route:
             def route_handler(self, **kwargs):
                 if not filters:
                     yield action(self, **kwargs)
-                    return
+                    return 
 
-                yield before_func(self)
-                yield action(self, **kwargs)
-                yield after_func(self)
+                if (yield before_func(self)):
+                    yield action(self, **kwargs)
+                    yield after_func(self)
 
             self.handler = make_non_blocking(route_handler)
         else:

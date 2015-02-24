@@ -1,7 +1,8 @@
 uploads/*/*
 node_modules
 bower_components
-assets/lib
+assets/vendor
+assets/js/template.js
 .tmp
 *.seed
 *.log
