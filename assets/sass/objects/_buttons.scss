@@ -1,0 +1,116 @@
+/*------------------------------------*\
+    #BUTTONS
+\*------------------------------------*/
+/**
+ * Base button styles
+ */
+.btn{
+  display: inline-block; 
+  vertical-align: middle;      
+  white-space: nowrap;         
+  font-family: inherit;        
+  font-size: 100%;             
+  cursor: pointer;
+  border: none;
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: 2.5;
+  padding-right: 2em;
+  padding-left: 2em;
+  border-radius: $brand-round;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-weight: 600;
+
+  &,
+  &:hover,
+  &:active,
+  &:focus {
+    text-decoration:none;  
+    outline:none;
+  }
+  
+}
+
+
+/*------------------------------------*\
+    $SIZES
+\*------------------------------------*/
+/**
+ * Buttons size modifiers
+ */
+.btn--small{
+  padding-right: 0.8em;
+  padding-left: 0.8em;
+  line-height: 2;
+  font-size: 0.9em;
+}
+
+.btn--medium{
+  padding-right: 1em;
+  padding-left: 1em;
+  line-height: 2.5;
+}
+
+.btn--large{
+  padding-right: 1.5em;
+  padding-left: 1.5em;
+  line-height: 4;
+}
+
+.btn--huge{
+  padding-right: 2em;
+  padding-left: 2em;
+  line-height: 5;
+}
+
+/**
+ * These buttons will fill the entire container width.
+ */
+.btn--full{
+  width: 100%;
+  padding-right: 0;
+  padding-left: 0;
+  text-align: center;
+}
+
+
+/*------------------------------------*\
+    $FUNCTIONS
+\*------------------------------------*/
+/**
+ * Button function modifiers
+ */
+.btn--primary {
+  background-color: $brand-color-primary;
+  color: #fff;
+  
+  &:hover,
+  &:active,
+  &:focus {
+    background-color: darken($brand-color-primary, 10%);
+  }
+}
+
+.btn--secondary {
+  background-color: $brand-color-secondary;
+  color: #fff;
+  
+  &:hover,
+  &:active,
+  &:focus {
+    background-color: darken($brand-color-secondary, 10%);
+  }
+}
+
+.btn--tertiary {
+  background-color: $brand-color-tertiary;
+  color:  #fff;
+  
+  &:hover,
+  &:active,
+  &:focus {
+    background-color: darken($brand-color-tertiary, 10%);
+  }
+}

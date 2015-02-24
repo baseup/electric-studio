@@ -1,4 +1,4 @@
-angular.module('templates-main', ['../app/views/ng-templates/admin/account.html', '../app/views/ng-templates/admin/class.html', '../app/views/ng-templates/admin/package.html', '../app/views/ng-templates/admin/schedule.html', '../app/views/ng-templates/admin/slider.html']);
+angular.module('templates-main', ['../app/views/ng-templates/admin/account.html', '../app/views/ng-templates/admin/class.html', '../app/views/ng-templates/admin/instructor.html', '../app/views/ng-templates/admin/package.html', '../app/views/ng-templates/admin/schedule.html', '../app/views/ng-templates/admin/slider.html']);
 
 angular.module("../app/views/ng-templates/admin/account.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("../app/views/ng-templates/admin/account.html",
@@ -11,7 +11,7 @@ angular.module("../app/views/ng-templates/admin/account.html", []).run(["$templa
     "\n" +
     "    <title>Admin | Electric Studio</title>\n" +
     "\n" +
-    "    <link rel=\"stylesheet\" href=\"/assets/css/styles.min.css\">\n" +
+    "    <link rel=\"stylesheet\" href=\"/assets/css/admin.css\">\n" +
     "  </head>\n" +
     "\n" +
     "  <body>\n" +
@@ -32,6 +32,7 @@ angular.module("../app/views/ng-templates/admin/account.html", []).run(["$templa
     "            <ul class=\"nav nav--stacked sub-nav\" data-dropdown=\"dashboard-menu\">\n" +
     "              <li><a href=\"/analytics\">Analytics</a></li>\n" +
     "              <li><a href=\"/packages\">Packages</a></li>\n" +
+    "              <li><a href=\"/instructors\">Instructors</a></li>\n" +
     "              <li><a href=\"/sliders\">Sliders</a></li>\n" +
     "            </ul>\n" +
     "          </li>\n" +
@@ -64,6 +65,15 @@ angular.module("../app/views/ng-templates/admin/account.html", []).run(["$templa
     "          <button class=\"sidebar-toggle btn btn--small btn--primary\">\n" +
     "            <i class=\"fa fa-bars\"></i>\n" +
     "          </button>\n" +
+    "          \n" +
+    "          <div class=\"user\">\n" +
+    "            <div class=\"user__pic\">\n" +
+    "              <img src=\"/assets/images/pic-placeholder.png\" alt=\"\">\n" +
+    "            </div>\n" +
+    "            \n" +
+    "            <span class=\"user__name\">Mark S.</span>\n" +
+    "            <a href=\"\" class=\"user__logout\"><i class=\"fa fa-sign-out\"></i> Log Out</a>\n" +
+    "          </div>\n" +
     "\n" +
     "        </div>\n" +
     "\n" +
@@ -113,7 +123,7 @@ angular.module("../app/views/ng-templates/admin/account.html", []).run(["$templa
     "          </div>\n" +
     "\n" +
     "          <div class=\"account__options pad--sides pad--half-ends space--top cf\">\n" +
-    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Add Package</a>\n" +
+    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Add Class</a>\n" +
     "            <ul class=\"nav float--right\">\n" +
     "              <li>\n" +
     "                <a href=\"\" data-modal-toggle=\"account-summary\"><i class=\"fa fa-bars\"></i></a>\n" +
@@ -160,7 +170,7 @@ angular.module("../app/views/ng-templates/admin/account.html", []).run(["$templa
     "          </div>\n" +
     "\n" +
     "          <div class=\"account__options pad--sides pad--half-ends space--top cf\">\n" +
-    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Add Package</a>\n" +
+    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Add Class</a>\n" +
     "            <ul class=\"nav float--right\">\n" +
     "              <li>\n" +
     "                <a href=\"\" data-modal-toggle=\"account-summary\"><i class=\"fa fa-bars\"></i></a>\n" +
@@ -206,7 +216,7 @@ angular.module("../app/views/ng-templates/admin/account.html", []).run(["$templa
     "          </div>\n" +
     "\n" +
     "          <div class=\"account__options pad--sides pad--half-ends space--top cf\">\n" +
-    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Add Package</a>\n" +
+    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Add Class</a>\n" +
     "            <ul class=\"nav float--right\">\n" +
     "              <li>\n" +
     "                <a href=\"\" data-modal-toggle=\"account-summary\"><i class=\"fa fa-bars\"></i></a>\n" +
@@ -252,7 +262,7 @@ angular.module("../app/views/ng-templates/admin/account.html", []).run(["$templa
     "          </div>\n" +
     "\n" +
     "          <div class=\"account__options pad--sides pad--half-ends space--top cf\">\n" +
-    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Add Package</a>\n" +
+    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Add Class</a>\n" +
     "            <ul class=\"nav float--right\">\n" +
     "              <li>\n" +
     "                <a href=\"\" data-modal-toggle=\"account-summary\"><i class=\"fa fa-bars\"></i></a>\n" +
@@ -298,7 +308,7 @@ angular.module("../app/views/ng-templates/admin/account.html", []).run(["$templa
     "          </div>\n" +
     "\n" +
     "          <div class=\"account__options pad--sides pad--half-ends space--top cf\">\n" +
-    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Add Package</a>\n" +
+    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Add Class</a>\n" +
     "            <ul class=\"nav float--right\">\n" +
     "              <li>\n" +
     "                <a href=\"\" data-modal-toggle=\"account-summary\"><i class=\"fa fa-bars\"></i></a>\n" +
@@ -361,39 +371,35 @@ angular.module("../app/views/ng-templates/admin/account.html", []).run(["$templa
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
-    "  <!-- modal Add Package -->\n" +
+    "  <!-- modal Add Class -->\n" +
     "  <div class=\"modal\" data-modal=\"add-package\">\n" +
     "    <div class=\"modal__box pad\">\n" +
     "      <span class=\"close-btn modal-close\">X</span>\n" +
-    "      <h3 class=\"h--medium brand-color space--bottom\">Add Package</h3>\n" +
-    "\n" +
-    "      <div class=\"space--bottom pad--bottom\">\n" +
-    "        <span class=\"label\">Rider</span>\n" +
-    "        <h4 class=\"h-small\">Jeph Fernandez</h4>\n" +
-    "      </div>\n" +
-    "\n" +
-    "      <div class=\"space--bottom one-whole\">\n" +
-    "        <div class=\"space--ends two-thirds\">\n" +
+    "      <h3 class=\"h--medium brand-color space--bottom\">Add Class</h3>\n" +
+    "      \n" +
+    "      <ul class=\"form-fields\">\n" +
+    "        <li>\n" +
+    "          <span class=\"label\">Rider</span>\n" +
+    "          <h4 class=\"h-small\">Jeph Fernandez</h4>\n" +
+    "        </li>\n" +
+    "        <li>\n" +
     "          <span class=\"label\">Select Class Package</span>\n" +
     "          <select class=\"select\">\n" +
     "            <option value=\"1\">1 Class</option>\n" +
-    "            <option value=\"5\">5 Classes</option>\n" +
-    "            <option value=\"10\">10 Classes</option>\n" +
+    "            <option value=\"5\">5 Pax</option>\n" +
+    "            <option value=\"10\">10 Pax</option>\n" +
     "          </select>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div class=\"space--ends\">\n" +
+    "        </li>\n" +
+    "        <li>\n" +
+    "          <span class=\"label\">Or Input Number of Class</span>\n" +
+    "          <input class=\"text-input\">\n" +
+    "        </li>\n" +
+    "        <li>\n" +
     "          <span class=\"label\">Notes</span>\n" +
     "          <textarea class=\"text-input\" cols=\"3\"></textarea>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div class=\"space--ends\">\n" +
-    "          <span class=\"label\">Input Password</span>\n" +
-    "          <input class=\"text-input\">\n" +
-    "        </div>\n" +
-    "\n" +
-    "      </div>\n" +
-    "\n" +
+    "        </li>\n" +
+    "      </ul>\n" +
+    "     \n" +
     "      <button class=\"btn btn--primary btn--medium space--top modal-close\">Add</button>\n" +
     "\n" +
     "    </div>\n" +
@@ -431,7 +437,7 @@ angular.module("../app/views/ng-templates/admin/class.html", []).run(["$template
     "\n" +
     "    <title>Admin | Electric Studio</title>\n" +
     "\n" +
-    "    <link rel=\"stylesheet\" href=\"/assets/css/styles.min.css\">\n" +
+    "    <link rel=\"stylesheet\" href=\"/assets/css/admin.css\">\n" +
     "  </head>\n" +
     "\n" +
     "  <body>\n" +
@@ -452,6 +458,7 @@ angular.module("../app/views/ng-templates/admin/class.html", []).run(["$template
     "            <ul class=\"nav nav--stacked sub-nav\" data-dropdown=\"dashboard-menu\">\n" +
     "              <li><a href=\"/analytics\">Analytics</a></li>\n" +
     "              <li><a href=\"/packages\">Packages</a></li>\n" +
+    "              <li><a href=\"/instructors\">Instructors</a></li>\n" +
     "              <li><a href=\"/sliders\">Sliders</a></li>\n" +
     "            </ul>\n" +
     "          </li>\n" +
@@ -475,7 +482,6 @@ angular.module("../app/views/ng-templates/admin/class.html", []).run(["$template
     "          </li>\n" +
     "        </ul>\n" +
     "\n" +
-    "\n" +
     "      </div>\n" +
     "\n" +
     "      <div class=\"page-content\">\n" +
@@ -485,7 +491,15 @@ angular.module("../app/views/ng-templates/admin/class.html", []).run(["$template
     "          <button class=\"sidebar-toggle btn btn--small btn--primary\">\n" +
     "            <i class=\"fa fa-bars\"></i>\n" +
     "          </button>\n" +
-    "\n" +
+    "          \n" +
+    "          <div class=\"user\">\n" +
+    "            <div class=\"user__pic\">\n" +
+    "              <img src=\"/assets/images/pic-placeholder.png\" alt=\"\">\n" +
+    "            </div>\n" +
+    "            \n" +
+    "            <span class=\"user__name\">Mark S.</span>\n" +
+    "            <a href=\"\" class=\"user__logout\"><i class=\"fa fa-sign-out\"></i> Log Out</a>\n" +
+    "          </div>\n" +
     "\n" +
     "        </div>\n" +
     "\n" +
@@ -922,8 +936,8 @@ angular.module("../app/views/ng-templates/admin/class.html", []).run(["$template
     "");
 }]);
 
-angular.module("../app/views/ng-templates/admin/package.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../app/views/ng-templates/admin/package.html",
+angular.module("../app/views/ng-templates/admin/instructor.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("../app/views/ng-templates/admin/instructor.html",
     "<!DOCTYPE html>\n" +
     "<html>\n" +
     "\n" +
@@ -933,7 +947,7 @@ angular.module("../app/views/ng-templates/admin/package.html", []).run(["$templa
     "\n" +
     "    <title>Admin | Electric Studio</title>\n" +
     "\n" +
-    "    <link rel=\"stylesheet\" href=\"/assets/css/styles.min.css\">\n" +
+    "    <link rel=\"stylesheet\" href=\"/electric-studio/assets/css/admin.css\">\n" +
     "  </head>\n" +
     "\n" +
     "  <body>\n" +
@@ -954,6 +968,7 @@ angular.module("../app/views/ng-templates/admin/package.html", []).run(["$templa
     "            <ul class=\"nav nav--stacked sub-nav\" data-dropdown=\"dashboard-menu\">\n" +
     "              <li><a href=\"/analytics\">Analytics</a></li>\n" +
     "              <li><a href=\"/packages\">Packages</a></li>\n" +
+    "              <li><a href=\"/instructors\">Instructors</a></li>\n" +
     "              <li><a href=\"/sliders\">Sliders</a></li>\n" +
     "            </ul>\n" +
     "          </li>\n" +
@@ -986,6 +1001,312 @@ angular.module("../app/views/ng-templates/admin/package.html", []).run(["$templa
     "          <button class=\"sidebar-toggle btn btn--small btn--primary\">\n" +
     "            <i class=\"fa fa-bars\"></i>\n" +
     "          </button>\n" +
+    "          \n" +
+    "          <div class=\"user\">\n" +
+    "            <div class=\"user__pic\">\n" +
+    "              <img src=\"/assets/images/pic-placeholder.png\" alt=\"\">\n" +
+    "            </div>\n" +
+    "            \n" +
+    "            <span class=\"user__name\">Mark S.</span>\n" +
+    "            <a href=\"\" class=\"user__logout\"><i class=\"fa fa-sign-out\"></i> Log Out</a>\n" +
+    "          </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"main-content\">\n" +
+    "\n" +
+    "    <div class=\"content-result pad\">\n" +
+    "      <div class=\"cf space--bottom\">\n" +
+    "        <span class=\"label inline\">Instructors</span>\n" +
+    "        <button class=\"btn btn--small btn--secondary float--right\">Add Instructor</button>\n" +
+    "      </div>\n" +
+    "\n" +
+    "    <div class=\"account-list grid\">\n" +
+    "\n" +
+    "      <div class=\"grid__item bp-md-one-half bp-lg-one-third\">\n" +
+    "        <div class=\"account__item box--bordered box--white space--bottom cf\">\n" +
+    "\n" +
+    "          <div class=\"pad\">\n" +
+    "            <b class=\"h--small\">Risa</b>\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"pad--sides\">\n" +
+    "            <div class=\"data-list\">\n" +
+    "\n" +
+    "              <dl class=\"data--inline\">\n" +
+    "                <dt><i class=\"fa fa-phone\"></i></dt>\n" +
+    "                <dd>0916238313</dd>\n" +
+    "              </dl>\n" +
+    "\n" +
+    "              <dl class=\"data--inline space--bottom\">\n" +
+    "                <dt><i class=\"fa fa-envelope\"></i></dt>\n" +
+    "                <dd class=\"inline space--bottom\">jeph@greenlemon.co</dd>\n" +
+    "              </dl>\n" +
+    "\n" +
+    "            </div>\n" +
+    "\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"account__options pad--sides pad--half-ends space--top cf\">\n" +
+    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Update</a>\n" +
+    "            <a href=\"\" class=\"float--right link--secondary\">Remove</a>\n" +
+    "          </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"grid__item bp-md-one-half bp-lg-one-third\">\n" +
+    "        <div class=\"account__item box--bordered box--white space--bottom cf\">\n" +
+    "\n" +
+    "          <div class=\"pad\">\n" +
+    "            <b class=\"h--small\">Migs</b>\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"pad--sides\">\n" +
+    "            <div class=\"data-list\">\n" +
+    "\n" +
+    "              <dl class=\"data--inline\">\n" +
+    "                <dt><i class=\"fa fa-phone\"></i></dt>\n" +
+    "                <dd>0916238313</dd>\n" +
+    "              </dl>\n" +
+    "\n" +
+    "              <dl class=\"data--inline space--bottom\">\n" +
+    "                <dt><i class=\"fa fa-envelope\"></i></dt>\n" +
+    "                <dd class=\"inline space--bottom\">jeph@greenlemon.co</dd>\n" +
+    "              </dl>\n" +
+    "\n" +
+    "            </div>\n" +
+    "\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"account__options pad--sides pad--half-ends space--top cf\">\n" +
+    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Update</a>\n" +
+    "            <a href=\"\" class=\"float--right link--secondary\">Remove</a>\n" +
+    "          </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "      \n" +
+    "      <div class=\"grid__item bp-md-one-half bp-lg-one-third\">\n" +
+    "        <div class=\"account__item box--bordered box--white space--bottom cf\">\n" +
+    "\n" +
+    "          <div class=\"pad\">\n" +
+    "            <b class=\"h--small\">Trish</b>\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"pad--sides\">\n" +
+    "            <div class=\"data-list\">\n" +
+    "\n" +
+    "              <dl class=\"data--inline\">\n" +
+    "                <dt><i class=\"fa fa-phone\"></i></dt>\n" +
+    "                <dd>0916238313</dd>\n" +
+    "              </dl>\n" +
+    "\n" +
+    "              <dl class=\"data--inline space--bottom\">\n" +
+    "                <dt><i class=\"fa fa-envelope\"></i></dt>\n" +
+    "                <dd class=\"inline space--bottom\">jeph@greenlemon.co</dd>\n" +
+    "              </dl>\n" +
+    "\n" +
+    "            </div>\n" +
+    "\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"account__options pad--sides pad--half-ends space--top cf\">\n" +
+    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Update</a>\n" +
+    "            <a href=\"\" class=\"float--right link--secondary\">Remove</a>\n" +
+    "          </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "      \n" +
+    "      <div class=\"grid__item bp-md-one-half bp-lg-one-third\">\n" +
+    "        <div class=\"account__item box--bordered box--white space--bottom cf\">\n" +
+    "\n" +
+    "          <div class=\"pad\">\n" +
+    "            <b class=\"h--small\">Kris</b>\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"pad--sides\">\n" +
+    "            <div class=\"data-list\">\n" +
+    "\n" +
+    "              <dl class=\"data--inline\">\n" +
+    "                <dt><i class=\"fa fa-phone\"></i></dt>\n" +
+    "                <dd>0916238313</dd>\n" +
+    "              </dl>\n" +
+    "\n" +
+    "              <dl class=\"data--inline space--bottom\">\n" +
+    "                <dt><i class=\"fa fa-envelope\"></i></dt>\n" +
+    "                <dd class=\"inline space--bottom\">jeph@greenlemon.co</dd>\n" +
+    "              </dl>\n" +
+    "\n" +
+    "            </div>\n" +
+    "\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"account__options pad--sides pad--half-ends space--top cf\">\n" +
+    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Update</a>\n" +
+    "            <a href=\"\" class=\"float--right link--secondary\">Remove</a>\n" +
+    "          </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "      \n" +
+    "      <div class=\"grid__item bp-md-one-half bp-lg-one-third\">\n" +
+    "        <div class=\"account__item box--bordered box--white space--bottom cf\">\n" +
+    "\n" +
+    "          <div class=\"pad\">\n" +
+    "            <b class=\"h--small\">Yessa</b>\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"pad--sides\">\n" +
+    "            <div class=\"data-list\">\n" +
+    "\n" +
+    "              <dl class=\"data--inline\">\n" +
+    "                <dt><i class=\"fa fa-phone\"></i></dt>\n" +
+    "                <dd>0916238313</dd>\n" +
+    "              </dl>\n" +
+    "\n" +
+    "              <dl class=\"data--inline space--bottom\">\n" +
+    "                <dt><i class=\"fa fa-envelope\"></i></dt>\n" +
+    "                <dd class=\"inline space--bottom\">jeph@greenlemon.co</dd>\n" +
+    "              </dl>\n" +
+    "\n" +
+    "            </div>\n" +
+    "\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"account__options pad--sides pad--half-ends space--top cf\">\n" +
+    "            <a href=\"\" class=\"float--left\" data-modal-toggle=\"add-package\">Update</a>\n" +
+    "            <a href=\"\" class=\"float--right link--secondary\">Remove</a>\n" +
+    "          </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "  </div>  \n" +
+    "\n" +
+    "          <!-- modal Add Slider -->\n" +
+    "          <div class=\"modal\" data-modal=\"add-package\">\n" +
+    "            <div class=\"modal__box pad\">\n" +
+    "              <span class=\"close-btn modal-close\">X</span>\n" +
+    "              <h3 class=\"h--medium brand-color space--bottom\">Add Package</h3>\n" +
+    "\n" +
+    "              <div class=\"cf\">\n" +
+    "                <div class=\"space--bottom float--left space--right\">\n" +
+    "                  <span class=\"label\">Name</span>\n" +
+    "                  <input class=\"text-input\">\n" +
+    "                </div>\n" +
+    "\n" +
+    "                <div class=\"space--bottom float--left space--right\">\n" +
+    "                  <span class=\"label\">Number of Classes</span>\n" +
+    "                  <input class=\"text-input\">\n" +
+    "                </div>\n" +
+    "\n" +
+    "                <div class=\"space--bottom float--left\">\n" +
+    "                  <span class=\"label\">Price</span>\n" +
+    "                  <input class=\"text-input\">\n" +
+    "                </div>\n" +
+    "              </div>\n" +
+    "\n" +
+    "              <button class=\"btn btn--medium btn--primary space--top modal-close\">Add</button>\n" +
+    "            </div>\n" +
+    "          </div>\n" +
+    "\n" +
+    "\n" +
+    "        </div><!-- .main-content -->\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "\n" +
+    "    <link rel=\"stylesheet\" href=\"/electric-studio/assets/vendor/selectize/dist/css/selectize.default.css\">\n" +
+    "    <link rel=\"stylesheet\" href=\"/electric-studio/assets/vendor/pickadate/lib/themes/classic.css\">\n" +
+    "    <link rel=\"stylesheet\" href=\"/electric-studio/assets/vendor/pickadate/lib/themes/classic.date.css\">\n" +
+    "\n" +
+    "    <script src=\"/electric-studio/assets/vendor/jquery/dist/jquery.min.js\"></script>\n" +
+    "    <script src=\"/electric-studio/assets/vendor/selectize/dist/js/standalone/selectize.min.js\"></script>\n" +
+    "    <script src=\"/electric-studio/assets/vendor/pickadate/lib/picker.js\"></script>\n" +
+    "    <script src=\"/electric-studio/assets/vendor/pickadate/lib/picker.date.js\"></script>\n" +
+    "\n" +
+    "    <script src=\"/electric-studio/assets/js/script.min.js\"></script>\n" +
+    "  </body>\n" +
+    "</html>");
+}]);
+
+angular.module("../app/views/ng-templates/admin/package.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("../app/views/ng-templates/admin/package.html",
+    "<!DOCTYPE html>\n" +
+    "<html>\n" +
+    "\n" +
+    "  <head>\n" +
+    "    <meta charset=\"utf-8\">\n" +
+    "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" +
+    "\n" +
+    "    <title>Admin | Electric Studio</title>\n" +
+    "\n" +
+    "    <link rel=\"stylesheet\" href=\"/assets/css/admin.css\">\n" +
+    "  </head>\n" +
+    "\n" +
+    "  <body>\n" +
+    "    <div class=\"page-wrapper\">\n" +
+    "      <div class=\"page-sidebar\">\n" +
+    "        <div class=\"brand pad\">\n" +
+    "          <img src=\"/assets/images/electricstudio-nameplate.png\" class=\"nameplate\">\n" +
+    "          <img src=\"/assets/images/electricstudio-logo.png\" class=\"logo\">\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <ul class=\"main-nav nav nav--stacked\">\n" +
+    "          <li class=\"active\">\n" +
+    "            <a data-dropdown-toggle=\"dashboard-menu\">\n" +
+    "              <i class=\"fa fa-th-large\"></i>\n" +
+    "              <span class=\"nav-label\">Dashboard</span>\n" +
+    "            </a>\n" +
+    "\n" +
+    "            <ul class=\"nav nav--stacked sub-nav\" data-dropdown=\"dashboard-menu\">\n" +
+    "              <li><a href=\"/analytics\">Analytics</a></li>\n" +
+    "              <li><a href=\"/packages\">Packages</a></li>\n" +
+    "              <li><a href=\"/instructors\">Instructors</a></li>\n" +
+    "              <li><a href=\"/sliders\">Sliders</a></li>\n" +
+    "            </ul>\n" +
+    "          </li>\n" +
+    "          <li>\n" +
+    "            <a href=\"/classes\">\n" +
+    "              <i class=\"fa fa-th-list\"></i>\n" +
+    "              <span class=\"nav-label\">Classes</span>\n" +
+    "            </a>\n" +
+    "          </li>\n" +
+    "          <li>\n" +
+    "            <a href=\"/accounts\">\n" +
+    "              <i class=\"fa fa-users\"></i>\n" +
+    "              <span class=\"nav-label\">Accounts</span>\n" +
+    "            </a>\n" +
+    "          </li>\n" +
+    "          <li>\n" +
+    "            <a href=\"/schedules\">\n" +
+    "              <i class=\"fa fa-calendar\"></i>\n" +
+    "              <span class=\"nav-label\">Schedules</span>\n" +
+    "            </a>\n" +
+    "          </li>\n" +
+    "        </ul>\n" +
+    "\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"page-content\">\n" +
+    "\n" +
+    "        <div class=\"page-header pad\">\n" +
+    "\n" +
+    "          <button class=\"sidebar-toggle btn btn--small btn--primary\">\n" +
+    "            <i class=\"fa fa-bars\"></i>\n" +
+    "          </button>\n" +
+    "          \n" +
+    "          <div class=\"user\">\n" +
+    "            <div class=\"user__pic\">\n" +
+    "              <img src=\"/assets/images/pic-placeholder.png\" alt=\"\">\n" +
+    "            </div>\n" +
+    "            \n" +
+    "            <span class=\"user__name\">Mark S.</span>\n" +
+    "            <a href=\"\" class=\"user__logout\"><i class=\"fa fa-sign-out\"></i> Log Out</a>\n" +
+    "          </div>\n" +
     "\n" +
     "        </div>\n" +
     "\n" +
@@ -1121,7 +1442,7 @@ angular.module("../app/views/ng-templates/admin/schedule.html", []).run(["$templ
     "\n" +
     "    <title>Admin | Electric Studio</title>\n" +
     "\n" +
-    "    <link rel=\"stylesheet\" href=\"/assets/css/styles.min.css\">\n" +
+    "    <link rel=\"stylesheet\" href=\"/assets/css/admin.css\">\n" +
     "  </head>\n" +
     "\n" +
     "  <body>\n" +
@@ -1142,6 +1463,7 @@ angular.module("../app/views/ng-templates/admin/schedule.html", []).run(["$templ
     "            <ul class=\"nav nav--stacked sub-nav\" data-dropdown=\"dashboard-menu\">\n" +
     "              <li><a href=\"/analytics\">Analytics</a></li>\n" +
     "              <li><a href=\"/packages\">Packages</a></li>\n" +
+    "              <li><a href=\"/instructors\">Instructors</a></li>\n" +
     "              <li><a href=\"/sliders\">Sliders</a></li>\n" +
     "            </ul>\n" +
     "          </li>\n" +
@@ -1174,7 +1496,15 @@ angular.module("../app/views/ng-templates/admin/schedule.html", []).run(["$templ
     "          <button class=\"sidebar-toggle btn btn--small btn--primary\">\n" +
     "            <i class=\"fa fa-bars\"></i>\n" +
     "          </button>\n" +
-    "\n" +
+    "          \n" +
+    "          <div class=\"user\">\n" +
+    "            <div class=\"user__pic\">\n" +
+    "              <img src=\"/assets/images/pic-placeholder.png\" alt=\"\">\n" +
+    "            </div>\n" +
+    "            \n" +
+    "            <span class=\"user__name\">Mark S.</span>\n" +
+    "            <a href=\"\" class=\"user__logout\"><i class=\"fa fa-sign-out\"></i> Log Out</a>\n" +
+    "          </div>\n" +
     "\n" +
     "        </div>\n" +
     "\n" +
@@ -1313,7 +1643,7 @@ angular.module("../app/views/ng-templates/admin/slider.html", []).run(["$templat
     "\n" +
     "    <title>Admin | Electric Studio</title>\n" +
     "\n" +
-    "    <link rel=\"stylesheet\" href=\"/assets/css/styles.min.css\">\n" +
+    "    <link rel=\"stylesheet\" href=\"/assets/css/admin.css\">\n" +
     "  </head>\n" +
     "\n" +
     "  <body>\n" +
@@ -1334,6 +1664,7 @@ angular.module("../app/views/ng-templates/admin/slider.html", []).run(["$templat
     "            <ul class=\"nav nav--stacked sub-nav\" data-dropdown=\"dashboard-menu\">\n" +
     "              <li><a href=\"/analytics\">Analytics</a></li>\n" +
     "              <li><a href=\"/packages\">Packages</a></li>\n" +
+    "              <li><a href=\"/instructors\">Instructors</a></li>\n" +
     "              <li><a href=\"/sliders\">Sliders</a></li>\n" +
     "            </ul>\n" +
     "          </li>\n" +
@@ -1366,7 +1697,15 @@ angular.module("../app/views/ng-templates/admin/slider.html", []).run(["$templat
     "          <button class=\"sidebar-toggle btn btn--small btn--primary\">\n" +
     "            <i class=\"fa fa-bars\"></i>\n" +
     "          </button>\n" +
-    "\n" +
+    "          \n" +
+    "          <div class=\"user\">\n" +
+    "            <div class=\"user__pic\">\n" +
+    "              <img src=\"/assets/images/pic-placeholder.png\" alt=\"\">\n" +
+    "            </div>\n" +
+    "            \n" +
+    "            <span class=\"user__name\">Mark S.</span>\n" +
+    "            <a href=\"\" class=\"user__logout\"><i class=\"fa fa-sign-out\"></i> Log Out</a>\n" +
+    "          </div>\n" +
     "\n" +
     "        </div>\n" +
     "\n" +

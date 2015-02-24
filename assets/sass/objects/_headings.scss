@@ -1,0 +1,22 @@
+/*------------------------------------*\
+    #HEADINGS
+\*------------------------------------*/
+
+h1, .h--small{
+  font-size: $h4-size;
+}
+h2, .h--medium{
+  font-size: $h3-size;
+}
+h3, .h--large{
+  font-size: $h1-size;
+}
+
+
+/**
+ * Heading groups and generic any-heading class
+ */
+
+hgroup .hN {
+  margin-bottom:0;
+}

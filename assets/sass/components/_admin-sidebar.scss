@@ -1,0 +1,200 @@
+.page-sidebar {
+  width: 0;
+  background-color: $brand-color-secondary;
+  float: left;
+  color: #fff;
+  overflow: hidden;
+  
+  @include vendor(transition, width 0.3s ease);
+  
+  &:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    background-color: $brand-color-secondary;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    @include vendor(transition, width 0.3s ease);
+  }
+  
+  &.toggle {
+    width: 60px;
+    overflow: visible;
+    
+    &:before {
+      width: 60px;
+    }
+  }
+  
+  
+  
+  @include breakpoint(md) {
+    width: 240px; 
+    
+    &:before {
+      width: 240px;
+    }
+    
+    &.toggle {
+      width: 60px;  
+      
+      &:before {
+        width: 60px;
+      }
+      
+    }
+    
+  }
+}
+
+.brand {
+  .nameplate {
+    display: none
+  }
+  
+  @include breakpoint(md) {
+    .nameplate {
+      display: block;
+    }
+    
+    .logo {
+      display: none;
+    }
+    
+    .page-sidebar.toggle & {  
+      .nameplate {
+        display: none;
+      }
+      
+      .logo {
+        display: block;
+      }
+    }
+  }
+}
+
+
+.main-nav {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  
+  a {
+    display: block;
+    color: rgba(#fff, 0.65);
+    position: relative;
+    
+    &:hover {
+      color: #fff;
+    }
+    
+    .nav-label, &:after {
+      display: none;
+      
+      @include breakpoint(md) {
+        display: inline;
+      }
+    }
+    
+    i {
+      text-indent: 0;
+      @include breakpoint(md) {
+        margin-right: 10px;
+      }
+    }
+    
+  }
+  
+  >li { 
+    position: relative;
+    text-align: center;
+    
+    &.active {
+      //border-left: 3px solid $brand-color-primary;
+      color: #fff;
+    }
+    
+    &:hover {
+      background-color: darken($brand-color-secondary, 15%);
+      
+      .sub-nav {
+        background-color: darken($brand-color-secondary, 15%)!important;
+      }
+    }
+    
+    @include breakpoint(md) {
+      text-align: left;
+    }
+    
+    >a {
+      padding: $base-spacing-unit;
+    }
+    
+  }
+  
+  .sub-nav {
+    position: absolute;
+    left: 60px;
+    top: 0;
+    background-color: $brand-color-secondary;
+    text-align: left;
+    padding: $base-spacing-unit / 2;
+
+    @include breakpoint(md) {
+      padding: 0;    
+      position: static;
+      background: none;
+      padding-left: $base-spacing-unit * 2;  
+    }
+    
+    li:last-child {
+      @include breakpoint(md) {
+        margin-bottom: $base-spacing-unit;
+      }
+    }
+    
+    a {
+      padding: $base-spacing-unit / 2;      
+    }  
+
+  }
+  
+  
+  .page-sidebar.toggle & {
+    
+    @include breakpoint(md) {
+      
+      >li {
+        text-align: center;
+      }
+      
+      a {
+        .nav-label, &:after {
+          display: none;
+        }
+        
+        i {
+          margin-right: 0;
+        }
+      }
+      
+      .sub-nav {
+        position: absolute;
+        background-color: $brand-color-secondary;
+        padding: $base-spacing-unit / 2;
+        
+        li:last-child {
+          margin-bottom: 0;
+        }
+      }
+      
+    }
+  }
+  
+}
+
