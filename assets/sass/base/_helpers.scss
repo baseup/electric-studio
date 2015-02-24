@@ -129,6 +129,15 @@
   border-width: 0;
 }
 
-  .border--top { border-top-width: 1px; @extend .border; }
-  .border--bottom { border-bottom-width: 1px; @extend .border; }
-  .border--all {border-width: 1px; @extend .border; }
+  .border--top { 
+    @extend .border;
+    border-top-width: 1px!important; 
+  }
+  .border--bottom { 
+    @extend .border; 
+    border-bottom-width: 1px!important; 
+  }
+  .border--all {
+    @extend .border;
+    border-width: 1px!important;  
+  }

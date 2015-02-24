@@ -75,11 +75,9 @@ select {
 .text-input {
   line-height: 34px;
   padding: 0 $base-spacing-unit / 2;
-  border: 0;
+  border-width: 0;
   width: 100%;
   max-width: 400px;
-  //background: $brand-color-quaternary;
-  //border: 1px solid $border-color;
   
   &:focus {
     box-shadow: 0 0 0 1px rgba($brand-color-primary, .6);
