@@ -2,6 +2,17 @@
  * These are all design base components
  */
  
+::selection {
+  background: lighten($brand-color-primary, 10%); 
+  color: #fff;
+}
+
+::-moz-selection {
+  background: lighten($brand-color-primary, 10%); 
+  color: #fff; 
+}
+
+
 html {
   height: 100%;
 }
@@ -66,8 +77,13 @@ select, .select {
 }
 
 .wrapper {
-  max-width: 1200px;
+  max-width: 1080px;
   margin: 0 auto; 
+  padding: $base-spacing-unit;
+  
+  @include breakpoint(lg) {
+    max-width: 1200px;
+  }
   
   @extend .cf;
 }

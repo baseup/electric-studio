@@ -19,6 +19,8 @@
     "fontawesome": "~4.2.0",
     "selectize": "~0.11.2",
     "pickadate": "3.5.3",
-    "fullcalendar": "~2.3.0"
+    "fullcalendar": "~2.3.0",
+    "unslider": "*",
+    "FitText.js": "~1.2.0"
   }
 }
