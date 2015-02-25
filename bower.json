@@ -21,6 +21,7 @@
     "pickadate": "3.5.3",
     "fullcalendar": "~2.3.0",
     "unslider": "*",
-    "FitText.js": "~1.2.0"
+    "FitText.js": "~1.2.0",
+    "Chart.js": "1.0.1"
   }
 }
