@@ -1,0 +1,83 @@
+
+   <div class="grid content pad">
+    <div class="grid__item">
+    <div class="sliders box--white box--bordered">
+      <div class="box__header align--middle cf pad">
+        <span class="label label--inline">Homepage Slider</span>
+        <button class="btn btn--small btn--primary float--right" data-modal-toggle="add-slide">Add Slide</button>
+      </div>
+      <div class="pad pad--off-top">
+        <table class="slider-list data-table">
+          <thead>
+            <tr>
+              <th>Background Image</th>
+              <th>Text</th>
+              <th class="options-cell">&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <img class="slider-image" src="/assets/images/slider-image-1.jpg">
+              </td>
+              <td>Let's go for a ride</td>
+              <td>
+                <button class="btn btn--small btn--secondary">
+                  <i class="fa fa-trash"></i> Edit
+                </button>
+                <button class="btn btn--small btn--secondary">
+                  <i class="fa fa-pencil"></i> Remove
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img class="slider-image" src="/assets/images/slider-image-2.jpg">
+              </td>
+              <td>Plug In</td>
+              <td>
+                <button class="btn btn--small btn--secondary">
+                  <i class="fa fa-trash"></i> Edit
+                </button>
+                <button class="btn btn--small btn--secondary">
+                  <i class="fa fa-pencil"></i> Remove
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img class="slider-image" src="/assets/images/slider-image-3.jpg">
+              </td>
+              <td>RIDE - CLIMB - PUSH - STRETCH - SPRINT - CRUNCH - LIFT - DANCE</td>
+              <td>
+                <button class="btn btn--small btn--secondary">
+                  <i class="fa fa-trash"></i> Edit
+                </button>
+                <button class="btn btn--small btn--secondary">
+                  <i class="fa fa-pencil"></i> Remove
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- modal Add Slider -->
+  <div class="modal" data-modal="add-slide">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Add Slide</h3>
+      <div class="space--bottom">
+        <span class="label">Background Image</span>
+        <input type="file">
+      </div>
+      <div class="space--bottom">
+        <span class="label">Text</span>
+        <input placeholder="Add Text" class="text-input">
+      </div>
+      <button class="btn btn--medium btn--primary space--top modal-close">Add</button>
+    </div>
+  </div>
