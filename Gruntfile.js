@@ -2,7 +2,7 @@
 
 /* global module */
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
@@ -53,4 +53,4 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('default', ['html2js', 'sass', 'watch']);
-};
+}
