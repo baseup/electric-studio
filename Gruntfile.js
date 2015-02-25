@@ -7,6 +7,18 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     html2js: {
+      options: {
+        module: 'elstudio.templates',
+        singleModule: true,
+        base: '.',
+        rename: function (name) {
+          return name.replace('app/views/ng-templates', '')
+            .replace('.html', '');
+        },
+        htmlmin: {
+          collapseWhitespace: true
+        } 
+      },
       main: {
         src: ['app/views/ng-templates/**/*.html'],
         dest: 'assets/js/templates.js'
@@ -32,7 +44,7 @@ module.exports = function (grunt) {
 
     watch: {
       scripts: {
-        files: ['app/partials/**/*.html'],
+        files: ['app/views/ng-templates/**/*.html'],
         tasks: ['html2js'],
         options: {
           spawn: false
