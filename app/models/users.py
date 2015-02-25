@@ -2,7 +2,6 @@ from motorengine import *
 
 class User(Document):
     __collection__ = 'users'
-    id = IntField(required=True)
     first_name = StringField(required=True)
     middle_name = StringField()
     last_name = StringField(required=True)

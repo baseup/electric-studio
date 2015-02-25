@@ -1,0 +1,91 @@
+
+  <div class="grid content pad">
+    <div class="grid__item">
+    <div class="packages box--white box--bordered">
+      <div class="box__header align--middle cf pad">
+        <span class="label label--inline">Packages</span>
+        <button class="btn btn--small btn--primary float--right" data-modal-toggle="add-package">Add Package</button>
+      </div>
+      <div class="pad">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Number of Classes</th>
+              <th>Price</th>
+              <th>Expiration</th>
+              <th>&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>5 Pax</td>
+              <td>5 Classes</td>
+              <td><small>PHP</small> 3,200</td>
+              <td>30 days</td>
+              <td>
+                <button class="btn btn--small btn--secondary">
+                  <i class="fa fa-trash"></i> Remove
+                </button>
+                <button class="btn btn--small btn--secondary">
+                  <i class="fa fa-pencil"></i> Edit
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>10 Pax</td>
+              <td>10 Classes</td>
+              <td><small>PHP</small> 3,200</td>
+              <td>30 days</td>
+              <td>
+                <button class="btn btn--small btn--secondary">
+                  <i class="fa fa-trash"></i> Remove
+                </button>
+                <button class="btn btn--small btn--secondary">
+                  <i class="fa fa-pencil"></i> Edit
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>20 Pax</td>
+              <td>20 Classes</td>
+              <td><small>PHP</small> 3,200</td>
+              <td>60 days</td>
+              <td>
+                <button class="btn btn--small btn--secondary">
+                  <i class="fa fa-trash"></i> Remove
+                </button>
+                <button class="btn btn--small btn--secondary">
+                  <i class="fa fa-pencil"></i> Edit
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- modal Add Slider -->
+  <div class="modal" data-modal="add-package">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Add Package</h3>
+      <div class="cf">
+        <div class="space--bottom float--left space--right">
+          <span class="label">Name</span>
+          <input class="text-input">
+        </div>
+        <div class="space--bottom float--left space--right">
+          <span class="label">Number of Classes</span>
+          <input class="text-input">
+        </div>
+        <div class="space--bottom float--left">
+          <span class="label">Price</span>
+          <input class="text-input">
+        </div>
+      </div>
+      <button class="btn btn--medium btn--primary space--top modal-close">Add</button>
+    </div>
+  </div>

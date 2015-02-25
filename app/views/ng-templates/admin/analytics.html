@@ -1,0 +1,78 @@
+
+  <div class="grid content pad">
+    <div class="grid__item">
+    <div class="analytics box--white box--bordered">
+      <div class="box__header align--middle cf pad">
+        <span class="label label--inline">Sales Report</span>
+        <span class="label label--inline float--right"><i class="fa fa-clock-o"></i> Updated on 02.24.2015</span>
+      </div>
+      <div class="pad grid sales-report">
+        <div class="sales-chart grid__item bp-md-two-thirds">
+          <canvas id="sales"></canvas>  
+        </div>
+        <div class="sales-data grid__item bp-md-one-third">
+         <div class="pad--left data-list">
+          <dl>
+            <dt>Monthly Sales Report</dt>
+            <dd class="h--medium"><small>PHP</small> 242,340.00 <small class="space--left label--positive">5.6%<i class="fa fa-level-up"></i></small></dd>
+          </dl>
+          <dl>
+            <dt>Annual Sales Revenue</dt>
+            <dd class="h--medium"><small>PHP</small> 3,140,700.00</dd>
+          </dl>
+          <dl>
+            <dt>Half Year Revenue Margin</dt>
+            <dd class="h--medium"><small>PHP</small> 1,685,090.00</dd>
+          </dl>
+          
+           <p class="text-color-light"><b>Analysis of sales:</b> The value has been changed over time, and last month reached a level over <span><small>PHP</small> 250,000</span>.</p>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+    
+    </div>
+    
+    <div class="grid__item bp-md-two-fifths">
+      <div class="box--white box--bordered space--ends">
+        <div class="box__header align--middle cf pad">
+          <span class="label label--inline">Point of Sales</span>
+        </div>
+        
+        <div class="grid pad--sides">
+          <div class="pos-data data-list grid__item bp-md-one-third">
+            <dl>
+              <dt>In-Store</dt>
+              <dd class="h--small">266</dd>
+            </dl>
+            <dl>
+              <dt>Website</dt>
+              <dd class="h--small">144</dd>
+            </dl>
+            <dl>
+              <dt>Mail-Order</dt>
+              <dd class="h--small">42</dd>
+            </dl>
+          </div>
+          <div class="pos-chart grid__item bp-md-two-thirds">
+            <canvas id="pos"></canvas>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="grid__item bp-md-three-fifths">
+      <div class="signup box--white box--bordered space--ends">
+        <div class="box__header align--middle cf pad">
+          <span class="label label--inline">Sales per Package</span>
+        </div>  
+
+        <div class="signup-chart space--bottom">
+          <canvas id="signup" class="pad--sides"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
