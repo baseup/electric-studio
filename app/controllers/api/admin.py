@@ -2,12 +2,12 @@ from app.models.admins import Admin
 import json
     
 def find(self):
-    admins = yield Admin.objects.find_all().to_json()
+    admins = yield Admin.objects.find_all().to_son()
     self.write(admins)
     self.finish()
 
 def find_one(self, id):
-    admin = yield Admin.objects.get(id).to_json()
+    admin = yield Admin.objects.get(id).to_son()
     self.write(admin)
     self.finish()
 

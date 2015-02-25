@@ -2,8 +2,10 @@ uploads/*/*
 node_modules
 bower_components
 assets/vendor
+assets/css
 assets/sass/.sass-cache
 assets/js/template.js
+*.pyc
 .tmp
 *.seed
 *.log
