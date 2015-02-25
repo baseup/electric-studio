@@ -1,115 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
-  <title>Home - Electric Studio</title>
-  
-  <link rel="stylesheet" href="assets/css/site.css">
 
-</head>
-<body>
-  <header class="main-header">
-    <div class="wrapper">
-      <h1 class="brand">
-        <a href="/">
-        <img src="/assets/images/electricstudio-nameplate.png" alt="Electric Studio Logo" class="nameplate">
-        </a>
-        <img src="/assets/images/electricstudio-logo.png" class="logo">
-      </h1>
-      
-      <ul class="main-menu">
-        <li>
-          <a href="/about">About Us</a>
-        </li>  
-        <li>
-          <a href="/instructors">Instructors</a>
-        </li>  
-        <li>
-          <a href="/whats-new">What's New</a>
-        </li>
-      </ul>
-      
-      <div class="account-header-menu">
-        <div class="options">
-          <a class="login-toggle">Login /</a> 
-          <a class="signup-toggle">Sign up</a>
-          <a class="account" href="/account"></a>
-        </div>
-        <div class="menu-list">
-          <div class="holder">
-            <a href="/reserved">My Classes</a>
-            <a href="/rates-and-packages">My Packages</a>
-            <a href="/account">My Account</a>
-            <a href="/logout">Sign Out</a>
-          </div>  
-        </div>
-      </div>  
-        
-      <div class="book-menu">
-        <a class="book-toggle">Book A Ride</a>
-        
-        <div class="menu-list">
-          <div class="holder">
-            <a href="/workouts">The Workouts</a>
-            <a href="/rates-and-packages">Rates &amp; Packages</a>
-            <a href="/schedule">Schedule</a>
-          </div>  
-        </div>  
-      </div>
-        
-      
-      <a class="menu-toggle"><i class="fa fa-bars"></i></a>
-      
-    </div>  
-  </header>
-  
-  <div class="header-form-container login">
-    <div class="wrapper">
-      <h2 class="h large light">Log In</h2>
-      <p class="notify">Your Username / Email Address do not match. Please re-enter your informatin to Log In.</p>
-      <form class="login-form" method="post">
-        <input class="input-box" placeholder="Username / Email Address" name="email" required>
-        <input type="password" class="input-box" placeholder="Password" name="password" required>
-
-        <input type="submit" value="Log In" class="button" name="login">
-      </form>
-    </div>  
-  </div>
-  
-  <div class="header-form-container signup">
-    <div class="wrapper">
-      <h2 class="h large light">Sign Up</h2>
-      <p class="notify">Your Username / Email Address do not match. Please re-enter your informatin to Log In.</p>
-      <form class="signup-form" method="post">
-        <input class="input-box" placeholder="First Name" name="firstname">
-        <input class="input-box" placeholder="Last Name" name="lastname">
-        <input class="input-box" placeholder="Email Address" name="email">
-        <input class="input-box" placeholder="Mobile Number" name="number">
-        <input type="password" class="input-box" placeholder="Password" name="password">
-        <input type="password" class="input-box" placeholder="Re-type Password" name="password2">
-
-        <input type="submit" value="Sign Up" class="button" name="signup">
-      </form>
-    </div>
-  </div>
-  
   <div class="slider-container workouts">
     <ul class="slider">
       <li class="slide slide-1"><span>Feel the beat</span></li>
       <li class="slide slide-2"><span>Let's Go <br>For A Ride</span></li>
       <li class="slide slide-3"><span>Plug In</span></li>
     </ul>
-  
   </div>
 
   <div class="content">
     <div class="wrapper">
       <h2 class="h large primary">The Workout</h2>
       <p class="intro">Each experience is a high-intensity full-body workout guided by a great team, supportive and positive instructors, and to a great soundtrack. It's extreme cardio, rocking your core, upper, and lower muscles.</p>
-      <a href="/first-ride" class="link">What to expect on your first ride</a>
+      <a href="#/first-ride" class="link">What to expect on your first ride</a>
     </div>
   </div>
   
@@ -141,43 +43,7 @@
       </section>
       
       <div class="book-cta">
-        <a class="button large center" href="/schedule">Book A Ride</a>
+        <a class="button large center" href="#/schedule">Book A Ride</a>
       </div>
     </div>
-    
   </div>
-
-  <footer class="main-footer">
-    <div class="wrapper">
-      <ul class="footer-links">
-        <li>© ELECTRIC STUDIO 2015</li>
-        <li><a href="/faq">FAQ</a></li>
-        <li><a href="/career">Carreer</a></li>
-        <li><a href="/contact">Contact Us</a></li>
-      </ul>
-      
-      <ul class="social-links">
-        <li>
-          <a href="mailto:info@electricstudio.ph"><i class="fa fa-envelope"></i></a>
-        </li>
-        <li>
-          <a href="https://www.facebook.com/teamelectricph"><i class="fa fa-facebook"></i></a>
-        </li>
-        <li>
-          <a href="http://instagram.com/teamelectricph/"><i class="fa fa-instagram"></i></a>
-        </li>
-        <li>
-          <a href="https://twitter.com/"><i class="fa fa-twitter"></i></a>
-        </li>
-      </ul>
-    </div>  
-  </footer>
-  
-  <script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
-  
-  <script src="/assets/vendor/unslider/src/unslider.min.js"></script>
-  <script src="/assets/vendor/FitText.js/jquery.fittext.js"></script>
-  
-  <script src="/assets/js/site.js"></script>
-</body>  
-</html>
