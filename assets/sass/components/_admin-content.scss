@@ -107,6 +107,10 @@
 .data-list {
   //@extend .text-color-light;
   
+  dl {
+    margin-bottom: $base-spacing-unit;
+  }
+  
   dt {
     @extend .label;
   }
@@ -192,5 +196,22 @@
   .options-cell {
     min-width: 220px;
   }
+  
+}
+
+/* Analytics */
+.sales-report {
+  .sales-chart {
+    @include breakpoint(md) {
+      padding-right: $base-spacing-unit;
+    }
+  }
+}
+
+.label--positive {
+  color: #1ab394;
+}
+
+.label--negative {
   
 }

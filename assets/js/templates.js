@@ -1,4 +1,4 @@
-angular.module('templates-main', ['../app/views/ng-templates/admin/account.html', '../app/views/ng-templates/admin/class.html', '../app/views/ng-templates/admin/instructor.html', '../app/views/ng-templates/admin/package.html', '../app/views/ng-templates/admin/schedule.html', '../app/views/ng-templates/admin/slider.html', '../app/views/ng-templates/site/about.html', '../app/views/ng-templates/site/account.html', '../app/views/ng-templates/site/career.html', '../app/views/ng-templates/site/class.html', '../app/views/ng-templates/site/contact.html', '../app/views/ng-templates/site/faq.html', '../app/views/ng-templates/site/first-ride.html', '../app/views/ng-templates/site/index.html', '../app/views/ng-templates/site/instructors.html', '../app/views/ng-templates/site/rates.html', '../app/views/ng-templates/site/rewards.html', '../app/views/ng-templates/site/schedule.html', '../app/views/ng-templates/site/whats-new.html', '../app/views/ng-templates/site/workouts.html']);
+angular.module('templates-main', ['../app/views/ng-templates/admin/account.html', '../app/views/ng-templates/admin/analytics.html', '../app/views/ng-templates/admin/class.html', '../app/views/ng-templates/admin/instructor.html', '../app/views/ng-templates/admin/package.html', '../app/views/ng-templates/admin/schedule.html', '../app/views/ng-templates/admin/slider.html', '../app/views/ng-templates/site/about.html', '../app/views/ng-templates/site/account.html', '../app/views/ng-templates/site/career.html', '../app/views/ng-templates/site/class.html', '../app/views/ng-templates/site/contact.html', '../app/views/ng-templates/site/faq.html', '../app/views/ng-templates/site/first-ride.html', '../app/views/ng-templates/site/index.html', '../app/views/ng-templates/site/instructors.html', '../app/views/ng-templates/site/rates.html', '../app/views/ng-templates/site/rewards.html', '../app/views/ng-templates/site/schedule.html', '../app/views/ng-templates/site/whats-new.html', '../app/views/ng-templates/site/workouts.html']);
 
 angular.module("../app/views/ng-templates/admin/account.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("../app/views/ng-templates/admin/account.html",
@@ -428,6 +428,188 @@ angular.module("../app/views/ng-templates/admin/account.html", []).run(["$templa
     "  </body>\n" +
     "</html>\n" +
     "");
+}]);
+
+angular.module("../app/views/ng-templates/admin/analytics.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("../app/views/ng-templates/admin/analytics.html",
+    "<!DOCTYPE html>\n" +
+    "<html>\n" +
+    "\n" +
+    "  <head>\n" +
+    "    <meta charset=\"utf-8\">\n" +
+    "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" +
+    "\n" +
+    "    <title>Admin | Electric Studio</title>\n" +
+    "\n" +
+    "    <link rel=\"stylesheet\" href=\"/assets/css/admin.css\">\n" +
+    "  </head>\n" +
+    "\n" +
+    "  <body>\n" +
+    "    <div class=\"page-wrapper\">\n" +
+    "      <div class=\"page-sidebar\">\n" +
+    "        <div class=\"brand pad\">\n" +
+    "          <img src=\"/assets/images/electricstudio-nameplate.png\" class=\"nameplate\">\n" +
+    "          <img src=\"/assets/images/electricstudio-logo.png\" class=\"logo\">\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <ul class=\"main-nav nav nav--stacked\">\n" +
+    "          <li class=\"active\">\n" +
+    "            <a data-dropdown-toggle=\"dashboard-menu\">\n" +
+    "              <i class=\"fa fa-th-large\"></i>\n" +
+    "              <span class=\"nav-label\">Dashboard</span>\n" +
+    "            </a>\n" +
+    "\n" +
+    "            <ul class=\"nav nav--stacked sub-nav\" data-dropdown=\"dashboard-menu\">\n" +
+    "              <li><a href=\"/analytics\">Analytics</a></li>\n" +
+    "              <li><a href=\"/packages\">Packages</a></li>\n" +
+    "              <li><a href=\"/instructors\">Instructors</a></li>\n" +
+    "              <li><a href=\"/sliders\">Sliders</a></li>\n" +
+    "            </ul>\n" +
+    "          </li>\n" +
+    "          <li>\n" +
+    "            <a href=\"/classes\">\n" +
+    "              <i class=\"fa fa-th-list\"></i>\n" +
+    "              <span class=\"nav-label\">Classes</span>\n" +
+    "            </a>\n" +
+    "          </li>\n" +
+    "          <li>\n" +
+    "            <a href=\"/accounts\">\n" +
+    "              <i class=\"fa fa-users\"></i>\n" +
+    "              <span class=\"nav-label\">Accounts</span>\n" +
+    "            </a>\n" +
+    "          </li>\n" +
+    "          <li>\n" +
+    "            <a href=\"/schedules\">\n" +
+    "              <i class=\"fa fa-calendar\"></i>\n" +
+    "              <span class=\"nav-label\">Schedules</span>\n" +
+    "            </a>\n" +
+    "          </li>\n" +
+    "        </ul>\n" +
+    "\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"page-content\">\n" +
+    "\n" +
+    "        <div class=\"page-header pad\">\n" +
+    "\n" +
+    "          <button class=\"sidebar-toggle btn btn--small btn--primary\">\n" +
+    "            <i class=\"fa fa-bars\"></i>\n" +
+    "          </button>\n" +
+    "          \n" +
+    "          <div class=\"user\">\n" +
+    "            <div class=\"user__pic\">\n" +
+    "              <img src=\"/assets/images/pic-placeholder.png\" alt=\"\">\n" +
+    "            </div>\n" +
+    "            \n" +
+    "            <span class=\"user__name\">Mark S.</span>\n" +
+    "            <a href=\"\" class=\"user__logout\"><i class=\"fa fa-sign-out\"></i> Log Out</a>\n" +
+    "          </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"main-content\">\n" +
+    "\n" +
+    "  <div class=\"grid content pad\">\n" +
+    "\n" +
+    "    <div class=\"grid__item\">\n" +
+    "    <div class=\"analytics box--white box--bordered\">\n" +
+    "      <div class=\"box__header align--middle cf pad\">\n" +
+    "        <span class=\"label label--inline\">Sales Report</span>\n" +
+    "        <span class=\"label label--inline float--right\"><i class=\"fa fa-clock-o\"></i> Updated on 02.24.2015</span>\n" +
+    "      </div>\n" +
+    "      <div class=\"pad grid sales-report\">\n" +
+    "        <div class=\"sales-chart grid__item bp-md-two-thirds\">\n" +
+    "          <canvas id=\"sales\"></canvas>  \n" +
+    "        </div>\n" +
+    "        <div class=\"sales-data grid__item bp-md-one-third\">\n" +
+    "         <div class=\"pad--left data-list\">\n" +
+    "          <dl>\n" +
+    "            <dt>Monthly Sales Report</dt>\n" +
+    "            <dd class=\"h--medium\"><small>PHP</small> 242,340.00 <small class=\"space--left label--positive\">5.6%<i class=\"fa fa-level-up\"></i></small></dd>\n" +
+    "          </dl>\n" +
+    "          <dl>\n" +
+    "            <dt>Annual Sales Revenue</dt>\n" +
+    "            <dd class=\"h--medium\"><small>PHP</small> 3,140,700.00</dd>\n" +
+    "          </dl>\n" +
+    "          <dl>\n" +
+    "            <dt>Half Year Revenue Margin</dt>\n" +
+    "            <dd class=\"h--medium\"><small>PHP</small> 1,685,090.00</dd>\n" +
+    "          </dl>\n" +
+    "          \n" +
+    "           <p class=\"text-color-light\"><b>Analysis of sales:</b> The value has been changed over time, and last month reached a level over <span><small>PHP</small> 250,000</span>.</p>\n" +
+    "          </div>\n" +
+    "        </div>\n" +
+    "        \n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    \n" +
+    "    \n" +
+    "    </div>\n" +
+    "    \n" +
+    "    <div class=\"grid__item bp-md-two-fifths\">\n" +
+    "      <div class=\"box--white box--bordered space--ends\">\n" +
+    "        <div class=\"box__header align--middle cf pad\">\n" +
+    "          <span class=\"label label--inline\">Point of Sales</span>\n" +
+    "        </div>\n" +
+    "        \n" +
+    "        <div class=\"grid pad--sides\">\n" +
+    "          <div class=\"pos-data data-list grid__item bp-md-one-third\">\n" +
+    "            <dl>\n" +
+    "              <dt>In-Store</dt>\n" +
+    "              <dd class=\"h--small\">266</dd>\n" +
+    "            </dl>\n" +
+    "            <dl>\n" +
+    "              <dt>Website</dt>\n" +
+    "              <dd class=\"h--small\">144</dd>\n" +
+    "            </dl>\n" +
+    "            <dl>\n" +
+    "              <dt>Mail-Order</dt>\n" +
+    "              <dd class=\"h--small\">42</dd>\n" +
+    "            </dl>\n" +
+    "          </div>\n" +
+    "          <div class=\"pos-chart grid__item bp-md-two-thirds\">\n" +
+    "            <canvas id=\"pos\"></canvas>\n" +
+    "          </div>\n" +
+    "        </div>\n" +
+    "        \n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    \n" +
+    "    <div class=\"grid__item bp-md-three-fifths\">\n" +
+    "      <div class=\"signup box--white box--bordered space--ends\">\n" +
+    "        <div class=\"box__header align--middle cf pad\">\n" +
+    "          <span class=\"label label--inline\">Sales per Package</span>\n" +
+    "        </div>  \n" +
+    "\n" +
+    "        <div class=\"signup-chart space--bottom\">\n" +
+    "          <canvas id=\"signup\" class=\"pad--sides\"></canvas>\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "  </div>\n" +
+    "\n" +
+    "\n" +
+    "        </div><!-- .main-content -->\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "\n" +
+    "    <link rel=\"stylesheet\" href=\"/assets/vendor/selectize/dist/css/selectize.default.css\">\n" +
+    "    <link rel=\"stylesheet\" href=\"/assets/vendor/pickadate/lib/themes/classic.css\">\n" +
+    "    <link rel=\"stylesheet\" href=\"/assets/vendor/pickadate/lib/themes/classic.date.css\">\n" +
+    "\n" +
+    "    <script src=\"/assets/vendor/jquery/dist/jquery.min.js\"></script>\n" +
+    "    <script src=\"/assets/vendor/selectize/dist/js/standalone/selectize.min.js\"></script>\n" +
+    "    <script src=\"/assets/vendor/pickadate/lib/picker.js\"></script>\n" +
+    "    <script src=\"/assets/vendor/pickadate/lib/picker.date.js\"></script>\n" +
+    "    <script src=\"/assets/vendor/Chart.js/Chart.min.js\"></script>\n" +
+    "\n" +
+    "    <script src=\"/assets/js/script.js\"></script>\n" +
+    "    \n" +
+    "    <script src=\"/assets/js/analytics.js\"></script>\n" +
+    "  </body>\n" +
+    "</html>");
 }]);
 
 angular.module("../app/views/ng-templates/admin/class.html", []).run(["$templateCache", function($templateCache) {
