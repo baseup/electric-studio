@@ -186,8 +186,8 @@ body {
     text-decoration: none;
     font-weight: bold;
     
-    &:hover {
-      color: $grayText;
+    &:hover, &.active { 
+      color: $grayText!important;
     }
   }
   

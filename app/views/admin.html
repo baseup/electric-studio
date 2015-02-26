@@ -9,6 +9,8 @@
 
     <link rel="stylesheet" href="/assets/css/admin.css">
 
+    <script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
+   
     <script src="/assets/vendor/angular/angular.min.js"></script> 
     <script src="/assets/vendor/angular-route/angular-route.min.js"></script>
     <script src="/assets/vendor/angular-resource/angular-resource.min.js"></script>
@@ -16,6 +18,7 @@
 
     <script src="/assets/js/templates.js"></script>
     <script src="/assets/js/admin/services.js"></script>
+    <script src="/assets/js/admin/base-controllers.js"></script>
     <script src="/assets/js/admin/controllers.js"></script>
     <script src="/assets/js/admin/admin.js"></script>
 
@@ -31,12 +34,12 @@
 
         <ul class="main-nav nav nav--stacked">
           <li class="active">
-            <a data-dropdown-toggle="dashboard-menu">
+            <a class="dashboard-menu" data-dropdown-toggle="dashboard-sub-menu">
               <i class="fa fa-th-large"></i>
               <span class="nav-label">Dashboard</span>
             </a>
 
-            <ul class="nav nav--stacked sub-nav" data-dropdown="dashboard-menu">
+            <ul class="nav nav--stacked sub-nav" data-dropdown="dashboard-sub-menu">
               <li><a href="#/analytics">Analytics</a></li>
               <li><a href="#/packages">Packages</a></li>
               <li><a href="#/instructors">Instructors</a></li>
@@ -94,13 +97,14 @@
     <link rel="stylesheet" href="/assets/vendor/pickadate/lib/themes/classic.date.css">
     <link rel="stylesheet" href="/assets/vendor/fullcalendar/dist/fullcalendar.min.css">
 
-    <script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
+    
     <script src="/assets/vendor/selectize/dist/js/standalone/selectize.min.js"></script>
     <script src="/assets/vendor/pickadate/lib/picker.js"></script>
     <script src="/assets/vendor/pickadate/lib/picker.date.js"></script>
     <script src="/assets/vendor/moment/moment.js"></script>
     <script src="/assets/vendor/fullcalendar/dist/fullcalendar.min.js"></script>
+    <script src="/assets/vendor/Chart.js/Chart.min.js"></script>
 
-    <script src="/assets/js/script.js"></script>
+    <script src="/assets/js/script.js"></script> 
   </body>
 </html>

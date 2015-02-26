@@ -1,59 +1,74 @@
-
+<div ng-controller="InstructorCtrl">
     <div class="content-result pad">
       <div class="cf space--bottom">
         <span class="label inline">Instructors</span>
-        <button class="btn btn--small btn--secondary float--right" data-modal-toggle="add-instructor">Add Instructor</button>
+        <button ng-click="addInstructor()" class="btn btn--small btn--secondary float--right" data-modal-toggle="add-instructor">Add Instructor</button>
       </div>
-    <div class="account-list grid">
 
-      <div class="grid__item bp-md-one-half bp-lg-one-third">
-        <div class="account__item box--bordered box--white space--bottom cf">
-          <div class="pad">
-            <b class="h--small">Risa</b>
+    <div ng-show="isUpdateInstructor">
+      <div class="modal__box pad">
+        <h3 class="h--medium brand-color space--bottom">Add Instructor</h3>
+        <div class="cf">
+          <div class="space--bottom float--left space--right">
+            <span class="label">Username</span>
+            <input class="text-input" ng-model="updateInstructor.username">
           </div>
-          <div class="pad--sides">
-            <div class="data-list">
-
-              <dl class="data--inline">
-                <dt><i class="fa fa-phone"></i></dt>
-                <dd>0916238313</dd>
-              </dl>
-
-              <dl class="data--inline space--bottom">
-                <dt><i class="fa fa-envelope"></i></dt>
-                <dd class="inline space--bottom">jeph@greenlemon.co</dd>
-              </dl>
-
-            </div>
-
+          <div class="space--bottom float--left space--right">
+            <span class="label">Password</span>
+            <input class="text-input" ng-model="updateInstructor.password">
           </div>
-
-          <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left"  >Update</a>
-            <a href="" class="float--right link--secondary">Remove</a>
+          <div class="space--bottom float--left space--right">
+            <span class="label">First Name</span>
+            <input class="text-input" ng-model="updateInstructor.first_name">
           </div>
-
+          <div class="space--bottom float--left">
+            <span class="label">Last Name</span>
+            <input class="text-input" ng-model="updateInstructor.last_name">
+          </div>
+          <div class="space--bottom float--left space--right">
+            <span class="label">BirthDate (YYYY-mm-dd)</span>
+            <input class="text-input" ng-model="updateInstructor.birthdate">
+          </div>
+          <div class="space--bottom float--left" >
+            <span class="label">Gender</span>
+            <select class="text-input" ng-model="updateInstructor.gender">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+          <div class="space--bottom float--left space--right">
+            <span class="label">Email Address</span>
+            <input class="text-input" ng-model="updateInstructor.email">
+          </div>
+          <div class="space--bottom float--left space--right">
+            <span class="label">Contact Number</span>
+            <input class="text-input" ng-model="updateInstructor.contact_number">
+          </div>
         </div>
+        <button class="btn btn--medium btn--primary space--top" ng-click="setInstructor()">Update</button>
+        <button class="btn btn--medium btn--primary space--top" ng-click="cancelUpdateInstructor()">Cancel</button>
       </div>
+    </div>
 
-      <div class="grid__item bp-md-one-half bp-lg-one-third">
+    <div class="account-list grid" ng-show="!isUpdateInstructor">
+
+      <div class="grid__item bp-md-one-half bp-lg-one-third"
+           ng-repeat="instructor in instructors">
         <div class="account__item box--bordered box--white space--bottom cf">
-
           <div class="pad">
-            <b class="h--small">Migs</b>
+            <b class="h--small">{{ instructor.admin.first_name }}</b>
           </div>
-
           <div class="pad--sides">
             <div class="data-list">
 
               <dl class="data--inline">
                 <dt><i class="fa fa-phone"></i></dt>
-                <dd>0916238313</dd>
+                <dd>{{ instructor.admin.contact_number }}</dd>
               </dl>
 
               <dl class="data--inline space--bottom">
                 <dt><i class="fa fa-envelope"></i></dt>
-                <dd class="inline space--bottom">jeph@greenlemon.co</dd>
+                <dd class="inline space--bottom">{{ instructor.admin.email }}</dd>
               </dl>
 
             </div>
@@ -61,104 +76,8 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left"  >Update</a>
-            <a href="" class="float--right link--secondary">Remove</a>
-          </div>
-
-        </div>
-      </div>
-      
-      <div class="grid__item bp-md-one-half bp-lg-one-third">
-        <div class="account__item box--bordered box--white space--bottom cf">
-
-          <div class="pad">
-            <b class="h--small">Trish</b>
-          </div>
-
-          <div class="pad--sides">
-            <div class="data-list">
-
-              <dl class="data--inline">
-                <dt><i class="fa fa-phone"></i></dt>
-                <dd>0916238313</dd>
-              </dl>
-
-              <dl class="data--inline space--bottom">
-                <dt><i class="fa fa-envelope"></i></dt>
-                <dd class="inline space--bottom">jeph@greenlemon.co</dd>
-              </dl>
-
-            </div>
-
-          </div>
-
-          <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left"  >Update</a>
-            <a href="" class="float--right link--secondary">Remove</a>
-          </div>
-
-        </div>
-      </div>
-      
-      <div class="grid__item bp-md-one-half bp-lg-one-third">
-        <div class="account__item box--bordered box--white space--bottom cf">
-
-          <div class="pad">
-            <b class="h--small">Kris</b>
-          </div>
-
-          <div class="pad--sides">
-            <div class="data-list">
-
-              <dl class="data--inline">
-                <dt><i class="fa fa-phone"></i></dt>
-                <dd>0916238313</dd>
-              </dl>
-
-              <dl class="data--inline space--bottom">
-                <dt><i class="fa fa-envelope"></i></dt>
-                <dd class="inline space--bottom">jeph@greenlemon.co</dd>
-              </dl>
-
-            </div>
-
-          </div>
-
-          <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left"  >Update</a>
-            <a href="" class="float--right link--secondary">Remove</a>
-          </div>
-
-        </div>
-      </div>
-      
-      <div class="grid__item bp-md-one-half bp-lg-one-third">
-        <div class="account__item box--bordered box--white space--bottom cf">
-
-          <div class="pad">
-            <b class="h--small">Yessa</b>
-          </div>
-
-          <div class="pad--sides">
-            <div class="data-list">
-
-              <dl class="data--inline">
-                <dt><i class="fa fa-phone"></i></dt>
-                <dd>0916238313</dd>
-              </dl>
-
-              <dl class="data--inline space--bottom">
-                <dt><i class="fa fa-envelope"></i></dt>
-                <dd class="inline space--bottom">jeph@greenlemon.co</dd>
-              </dl>
-
-            </div>
-
-          </div>
-
-          <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left"  >Update</a>
-            <a href="" class="float--right link--secondary">Remove</a>
+            <a href="" class="float--left" ng-click="setToUpdate(instructor)" >Update</a>
+            <a href="" class="float--right link--secondary" ng-click="removeInstructor(instructor)">Remove</a>
           </div>
 
         </div>
@@ -167,29 +86,49 @@
     </div>
   </div>  
 
-  <!-- modal Add Slider -->
-  <div class="modal" data-modal="add-instructor">
+  <!-- modal Add Instructor -->
+  <div id="add-instructor-modal" class="modal" data-modal="add-instructor">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Add Instructor</h3>
-      <ul class="form-fields">
-        <li>
+      <div class="cf">
+        <div class="space--bottom float--left space--right">
+          <span class="label">Username</span>
+          <input class="text-input" ng-model="newInstructor.username">
+        </div>
+        <div class="space--bottom float--left space--right">
+          <span class="label">Password</span>
+          <input class="text-input" ng-model="newInstructor.password">
+        </div>
+        <div class="space--bottom float--left space--right">
           <span class="label">First Name</span>
-          <input class="text-input">
-        </li>
-        <li>
+          <input class="text-input" ng-model="newInstructor.first_name">
+        </div>
+        <div class="space--bottom float--left">
           <span class="label">Last Name</span>
-          <input class="text-input">
-        </li>
-        <li>
-          <span class="label">Contact Number</span>
-          <input class="text-input">
-        </li>
-        <li>
+          <input class="text-input" ng-model="newInstructor.last_name">
+        </div>
+        <div class="space--bottom float--left space--right">
+          <span class="label">BirthDate (YYYY-mm-dd)</span>
+          <input class="text-input" ng-model="newInstructor.birthdate">
+        </div>
+        <div class="space--bottom float--left" >
+          <span class="label">Gender</span>
+          <select class="text-input" ng-model="newInstructor.gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+        <div class="space--bottom float--left space--right">
           <span class="label">Email Address</span>
-          <input class="text-input">
-        </li>
-      </ul>
-      <button class="btn btn--medium btn--primary space--top modal-close">Add</button>
+          <input class="text-input" ng-model="newInstructor.email">
+        </div>
+        <div class="space--bottom float--left space--right">
+          <span class="label">Contact Number</span>
+          <input class="text-input" ng-model="newInstructor.contact_number">
+        </div>
+      </div>
+      <button class="btn btn--medium btn--primary space--top" ng-click="addInstructor()">Add</button>
     </div>
   </div>
+</div>
