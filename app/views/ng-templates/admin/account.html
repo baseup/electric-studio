@@ -1,4 +1,4 @@
-
+<div ng-controller="AccountCtrl">
   <div class="content-filter pad cf border--bottom">
     <div class="content-filter__item space--right">
       <span class="label">Search Account</span>
@@ -43,10 +43,10 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package">Add Class</a>
+            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass()">Add Class</a>
             <ul class="nav float--right">
               <li>
-                <a href="" data-modal-toggle="account-summary"><i class="fa fa-bars"></i></a>
+                <a href="" ng-click="accountSummary()"><i class="fa fa-bars"></i></a>
               </li>
               <li>
                 <a href=""><i class="fa fa-ban"></i></a>
@@ -90,10 +90,10 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package">Add Class</a>
+            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass()">Add Class</a>
             <ul class="nav float--right">
               <li>
-                <a href="" data-modal-toggle="account-summary"><i class="fa fa-bars"></i></a>
+                <a href="" ng-click="accountSummary()"><i class="fa fa-bars"></i></a>
               </li>
               <li>
                 <a href=""><i class="fa fa-ban"></i></a>
@@ -136,10 +136,10 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package">Add Class</a>
+            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass()">Add Class</a>
             <ul class="nav float--right">
               <li>
-                <a href="" data-modal-toggle="account-summary"><i class="fa fa-bars"></i></a>
+                <a href="" ng-click="accountSummary()"><i class="fa fa-bars"></i></a>
               </li>
               <li>
                 <a href=""><i class="fa fa-ban"></i></a>
@@ -182,10 +182,10 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package">Add Class</a>
+            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass()">Add Class</a>
             <ul class="nav float--right">
               <li>
-                <a href="" data-modal-toggle="account-summary"><i class="fa fa-bars"></i></a>
+                <a href="" ng-click="accountSummary()"><i class="fa fa-bars"></i></a>
               </li>
               <li>
                 <a href=""><i class="fa fa-ban"></i></a>
@@ -228,10 +228,10 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package">Add Class</a>
+            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass()">Add Class</a>
             <ul class="nav float--right">
               <li>
-                <a href="" data-modal-toggle="account-summary"><i class="fa fa-bars"></i></a>
+                <a href="" ng-click="accountSummary()"><i class="fa fa-bars"></i></a>
               </li>
               <li>
                 <a href=""><i class="fa fa-ban"></i></a>
@@ -249,7 +249,7 @@
   </div>
 
   <!-- modal account summary -->
-  <div class="modal" data-modal="account-summary">
+  <div class="modal" data-modal="account-summary" id="account-summary-modal">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Summary of Classes and Packages</h3>
@@ -292,7 +292,7 @@
   </div>
 
   <!-- modal Add Class -->
-  <div class="modal" data-modal="add-package">
+  <div class="modal" data-modal="add-class" id="add-class-modal">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Add Class</h3>
@@ -328,3 +328,4 @@
 
     </div>
   </div>
+</div>

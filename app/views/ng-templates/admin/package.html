@@ -1,10 +1,10 @@
-
+<div ng-controller="PackageCtrl">
   <div class="grid content pad">
     <div class="grid__item">
     <div class="packages box--white box--bordered">
       <div class="box__header align--middle cf pad">
         <span class="label label--inline">Packages</span>
-        <button class="btn btn--small btn--primary float--right" data-modal-toggle="add-package">Add Package</button>
+        <button ng-click="addPackage()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-package">Add Package</button>
       </div>
       <div class="pad">
         <table class="data-table">
@@ -68,7 +68,7 @@
   </div>
 
   <!-- modal Add Slider -->
-  <div class="modal" data-modal="add-package">
+  <div id="add-package-modal" class="modal" data-modal="add-package">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Add Package</h3>
@@ -89,3 +89,4 @@
       <button class="btn btn--medium btn--primary space--top modal-close">Add</button>
     </div>
   </div>
+</div>

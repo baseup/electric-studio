@@ -31,6 +31,10 @@ a {
     color: darken($brand-color-primary, 10%);
   }
   
+  &:focus {
+    outline: 0;
+  }
+  
   &.link--full {
     display: block;
   }
