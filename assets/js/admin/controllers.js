@@ -178,15 +178,6 @@ ctrls.controller('ScheduleCtrl', function($scope) {
 });
 
 
-ctrls.controller('PackageCtrl', function($scope) {
-  
-  $scope.addPackage = function() {
-    angular.element('#add-package-modal').Modal();
-  }
-  
-});
-
-
 ctrls.controller('SliderCtrl', function($scope) {
   
   $scope.addSlide = function() {
@@ -306,12 +297,12 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
       }
 
       if(!$scope.newInstructor.last_name){
-        alert("Package must have first name")
+        alert("Package must have last name")
         return;
       }      
       
       if(!$scope.newInstructor.email){
-        alert("Package must have emai")
+        alert("Package must have email")
         return;
       }
       

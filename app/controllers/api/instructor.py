@@ -1,7 +1,6 @@
 
 import sys
 from motorengine.errors import InvalidDocumentError
-from tornado.web import HTTPError
 from app.models.admins import Instructor, Admin
 import tornado
 import json
