@@ -22,13 +22,13 @@
       
       <ul class="main-menu">
         <li>
-          <a href="#/about">About Us</a>
+          <a ng-class="{ active : activeMainNav('/about') }" href="#/about">About Us</a>
         </li>  
         <li>
-          <a href="#/instructors">Instructors</a>
+          <a ng-class="{ active : activeMainNav('/instructors') }" href="#/instructors">Instructors</a>
         </li>  
         <li>
-          <a href="#/whats-new">What's New</a>
+          <a ng-class="{ active : activeMainNav('/whats-new') }" href="#/whats-new">What's New</a>
         </li>
       </ul>
       
@@ -133,8 +133,6 @@
   
   <script src="/assets/vendor/unslider/src/unslider.min.js"></script>
   <script src="/assets/vendor/FitText.js/jquery.fittext.js"></script>
-  
-  <script src="/assets/js/site.js"></script>
 
   <script src="/assets/js/templates.js"></script>
   <script src="/assets/js/admin/services.js"></script>

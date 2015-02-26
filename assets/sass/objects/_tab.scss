@@ -55,7 +55,7 @@
   }
 }
 
-.tab-pane {
+.tab-pane, [data-tab-pane] {
   display: none;
   
   &.tab-pane--active {

@@ -1,8 +1,8 @@
-
+<div ng-controller="InstructorCtrl">
     <div class="content-result pad">
       <div class="cf space--bottom">
         <span class="label inline">Instructors</span>
-        <button class="btn btn--small btn--secondary float--right" data-modal-toggle="add-instructor">Add Instructor</button>
+        <button ng-click="addInstructor()" class="btn btn--small btn--secondary float--right" data-modal-toggle="add-instructor">Add Instructor</button>
       </div>
     <div class="account-list grid">
 
@@ -167,8 +167,8 @@
     </div>
   </div>  
 
-  <!-- modal Add Slider -->
-  <div class="modal" data-modal="add-instructor">
+  <!-- modal Add Instructor -->
+  <div id="add-instructor-modal" class="modal" data-modal="add-instructor">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Add Instructor</h3>
@@ -193,3 +193,4 @@
       <button class="btn btn--medium btn--primary space--top modal-close">Add</button>
     </div>
   </div>
+</div>

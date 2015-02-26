@@ -1,4 +1,5 @@
-
+<div ng-controller="ClassCtrl">
+ 
   <div class="class-search pad cf">
     <span class="label">Select Class Schedule</span>
     <div class="bp-md-one-fourth float--left">
@@ -30,7 +31,7 @@
 
   <div class="result-container pad">
 
-    <ul class="nav-tabs">
+    <ul class="nav-tabs" id="class-tabs">
       <li>
         <a class="active" data-tab-toggle="booking">Booking</a>
       </li>
@@ -47,7 +48,7 @@
         </div>
 
         <div class="btn-group">
-          <button class="btn btn--small btn--primary" data-modal-toggle="book-ride">
+          <button class="btn btn--small btn--primary" data-modal-toggle="book-ride" ng-click="bookRide()">
             Book A Ride
           </button>
           <button class="btn btn--small btn--tertiary">Print Booking List</button>
@@ -62,13 +63,13 @@
             <div class=" box__header">
               <ul class="booking__actions nav">
                 <li>
-                  <a href="#" class="btn--round bike-number-switch" data-modal-toggle="switch">
+                  <a class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
                     <i class="fa fa-exchange"></i>
                     <span class="bike-number">14</span>
                   </a>
                 </li>
                 <li>
-                  <a href="#" class="cancel-booking"><i class="fa fa-times"></i></a>
+                  <a  class="cancel-booking"><i class="fa fa-times"></i></a>
                 </li>
               </ul>
 
@@ -84,13 +85,13 @@
             <div class=" box__header">
               <ul class="booking__actions nav">
                 <li>
-                  <a href="#" class="btn--round bike-number-switch" data-modal-toggle="switch">
+                  <a class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
                     <i class="fa fa-exchange"></i>
                     <span class="bike-number">14</span>
                   </a>
                 </li>
                 <li>
-                  <a href="#" class="cancel-booking"><i class="fa fa-times"></i></a>
+                  <a  class="cancel-booking"><i class="fa fa-times"></i></a>
                 </li>
               </ul>
 
@@ -105,13 +106,13 @@
             <div class=" box__header">
               <ul class="booking__actions nav">
                 <li>
-                  <a href="#" class="btn--round bike-number-switch" data-modal-toggle="switch">
+                  <a  class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
                     <i class="fa fa-exchange"></i>
                     <span class="bike-number">14</span>
                   </a>
                 </li>
                 <li>
-                  <a href="#" class="cancel-booking"><i class="fa fa-times"></i></a>
+                  <a  class="cancel-booking"><i class="fa fa-times"></i></a>
                 </li>
               </ul>
 
@@ -126,13 +127,13 @@
             <div class=" box__header">
               <ul class="booking__actions nav">
                 <li>
-                  <a href="#" class="btn--round bike-number-switch" data-modal-toggle="switch">
+                  <a  class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
                     <i class="fa fa-exchange"></i>
                     <span class="bike-number">14</span>
                   </a>
                 </li>
                 <li>
-                  <a href="#" class="cancel-booking"><i class="fa fa-times"></i></a>
+                  <a  class="cancel-booking"><i class="fa fa-times"></i></a>
                 </li>
               </ul>
 
@@ -147,13 +148,13 @@
             <div class=" box__header">
               <ul class="booking__actions nav">
                 <li>
-                  <a href="#" class="btn--round bike-number-switch" data-modal-toggle="switch">
+                  <a  class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
                     <i class="fa fa-exchange"></i>
                     <span class="bike-number">14</span>
                   </a>
                 </li>
                 <li>
-                  <a href="#" class="cancel-booking"><i class="fa fa-times"></i></a>
+                  <a  class="cancel-booking"><i class="fa fa-times"></i></a>
                 </li>
               </ul>
 
@@ -203,8 +204,8 @@
 
             </div>
             <div class="account__options pad--sides pad--half-ends space--top cf">
-              <a class="user-move-class">Move to Class</a>
-              <a class="user-remove-waitlist space--left link--secondary float--right">Remove</a>
+              <a class="user-move-class"ng-click="moveToClass()">Move to Class</a>
+              <a ng-click="removeFromWaitlist()" class="user-remove-waitlist space--left link--secondary float--right">Remove</a>
             </div>
           </div>
         </div>
@@ -230,8 +231,8 @@
             </div>
 
             <div class="account__options pad--sides pad--half-ends space--top cf">
-              <a class="user-move-class">Move to Class</a>
-              <a class="user-remove-waitlist space--left link--secondary float--right">Remove</a>
+              <a class="user-move-class"ng-click="moveToClass()">Move to Class</a>
+              <a ng-click="removeFromWaitlist()" class="user-remove-waitlist space--left link--secondary float--right">Remove</a>
             </div>
           </div>
         </div>
@@ -256,8 +257,8 @@
               </div>
             </div>
             <div class="account__options pad--sides pad--half-ends space--top cf">
-              <a class="user-move-class">Move to Class</a>
-              <a class="user-remove-waitlist space--left link--secondary float--right">Remove</a>
+              <a class="user-move-class"ng-click="moveToClass()">Move to Class</a>
+              <a ng-click="removeFromWaitlist()" class="user-remove-waitlist space--left link--secondary float--right">Remove</a>
             </div>
           </div>
         </div>
@@ -279,8 +280,8 @@
               </div>
             </div>
             <div class="account__options pad--sides pad--half-ends space--top cf">
-              <a class="user-move-class">Move to Class</a>
-              <a class="user-remove-waitlist space--left link--secondary float--right">Remove</a>
+              <a class="user-move-class"ng-click="moveToClass()">Move to Class</a>
+              <a ng-click="removeFromWaitlist()" class="user-remove-waitlist space--left link--secondary float--right">Remove</a>
             </div>
           </div>
         </div>
@@ -309,8 +310,8 @@
             </div>
 
             <div class="account__options pad--sides pad--half-ends space--top cf">
-              <a class="user-move-class">Move to Class</a>
-              <a class="user-remove-waitlist space--left link--secondary float--right">Remove</a>
+              <a class="user-move-class" ng-click="moveToClass()">Move to Class</a>
+              <a ng-click="removeFromWaitlist()" class="user-remove-waitlist space--left link--secondary float--right">Remove</a>
             </div>
           </div>
         </div>
@@ -318,8 +319,8 @@
     </div><!-- /.waitlist -->
   </div>
 
-  <!-- modal Bookin-->
-  <div class="modal" data-modal="book-ride">
+  <!-- modal Booking-->
+  <div id="book-ride-modal" class="modal" data-modal="book-ride">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Book A Ride</h3>
@@ -351,7 +352,7 @@
   </div>
 
   <!-- modal Switch Bike -->
-  <div class="modal" data-modal="switch">
+  <div id="switch-bike-modal" class="modal" data-modal="switch" >
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Switch Bike</h3>
@@ -382,3 +383,5 @@
       <button class="btn btn--primary btn--medium space--top modal-close">Switch</button>
     </div>
   </div>
+
+</div>

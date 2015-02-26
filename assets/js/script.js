@@ -1,185 +1,135 @@
+(function($) {
 
+  /**
+   * MODAL
+   *
+   * call using $(modal).Modal();
+   */
+  $.fn.Modal = function() {
+    return this.each(function(){
 
-  $(document).ready(function(){
-    
-    // sidebar toggle
-    $('.sidebar-toggle').click(function(){
-      $('.page-sidebar').toggleClass('toggle');
-      $('page-content').toggleClass('sidebar-toggled');
-    });
-    
-    // Selectize
-    $('.select').selectize({
-      create: true,
-      sortField: 'text'
-    });
-    
-    //Datepicker
-    $('.datepicker').pickadate({
-      format: 'dd mmm yyyy',
-      formatSubmit: 'yyyy/mm/dd',
-      today: false
-    });
-    
-    // Dropdown toggle
-    $(document).click(function() {
-      if($('[data-dropdown]').hasClass('expand')) {
-        $('[data-dropdown]').removeClass('expand');
-      }
-    });
-    
-    $('[data-dropdown-toggle]').click(function(e) {
-      e.stopPropagation();
-      
-      var id = $(this).data('dropdown-toggle'),
-          target = $('[data-dropdown="'+id+'"]');
-      
-      target.toggleClass('expand');    
-    }); 
-    
-    //tabs
-    $('[data-tab-toggle]').click(function(e) {
-      e.preventDefault();
+      var el = $(this);
 
-      var id = $(this).data('tab-toggle'),
-          pane = $('.tab-pane').filter('[data-tab-pane="'+id+'"]');
+      modalOpen(el);
 
-      $('[data-tab-toggle]').removeClass('active');
-      $(this).addClass('active');
-
-      $('.tab-pane').removeClass('tab-pane--active');
-      pane.addClass('tab-pane--active');
-    });
-    
-    //Modal popup 
-    $('[data-modal-toggle]').click(function(e) {
-      e.preventDefault();
-
-      var id = $(this).data('modal-toggle'),
-          modal = $('[data-modal="'+id+'"]');
-
-      modalOpen(modal);
-    });
-
-    $('.modal-close').click(function() {
-      modalClose($(this).closest('.modal'));
-    });
-
-    $('.modal').click(function(e) {
-      var target = $(e.target);
-
-      if(!target.closest('.modal__box').length) {
-        modalClose($(this));
-      }
-    });
-
-    function modalClose(modal) {
-      modal.removeClass('show');
-      modal.find('.modal__box').removeClass('show');
-    }
-
-    function modalOpen(modal) {
-      modal.addClass('show');
-      setTimeout(function(){
-        modal.find('.modal__box').addClass('show');
-      }, 100);
-    }
-    
-    //Notify popup 
-    function notification(opts) {
-    
-      opts = $.extend(true, {content:'', duration: 2200}, opts);
-
-      var container = $('<div/>', {'class': 'notify__container notify__container--bottom-right'}),
-          notify = $('<div/>', {'class': 'notify', 'html': opts.content});
-
-      if($('.notify__container').length <= 0) {
-        $('body').append(container);
-      }
-
-      $('.notify__container').append(notify);
-
-      setTimeout(function() {
-        notify.addClass('notify--show');
-      }, 100);
-
-      setTimeout(function() {
-        notifyHide(notify);
-      }, opts.duration);
-
-      notify.click(function() {
-        notifyHide($(this));
+      el.find('.modal-close').click(function() {
+        modalClose(el);
       });
 
-      function notifyHide(notify) {
-        notify.removeClass('notify--show');
+      el.click(function(e) {
+        var target = $(e.target);
 
-        notify.one('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd', function() {
-          notify.remove();
-        });
-      }
-
-    }
-    
-    //show notification on click
-    $('.user-move-class').click(function() {
-      notification({content: 'User moved to class'});
-    });
-    
-    $('.user-remove-waitlist').click(function() {
-      notification({content: 'User removed from waitlist'});
-    });
-    
-    $('.cancel-booking').click(function() {
-      notification({content: 'User booking has been cancelled'});
-    });
-    
-    //fullcalendar
-    $('.calendar').fullCalendar({
-      defaultView: 'agendaWeek',
-      allDaySlot: false,
-      allDay: false,
-      minTime: '07:00:00',
-      maxTime: '20:00:00',
-      events: [
-        {
-          title: 'Pure Electric',
-          start: '2015-02-22T08:30:00',
-        },
-        {
-          title: 'Power Hour',
-          start: '2015-02-22T10:30:00'
-        },
-        {
-          title: 'Pure Electric',
-          start: '2015-02-23T08:30:00',
-        },
-        {
-          title: 'Power Hour',
-          start: '2015-02-23T11:30:00'
-        },
-        {
-          title: 'Pure Electric',
-          start: '2015-02-24T10:30:00',
-        },
-        {
-          title: 'Power Hour',
-          start: '2015-02-24T16:30:00'
-        },
-        {
-          title: 'Pure Electric',
-          start: '2015-02-25T08:30:00',
-        },
-        {
-          title: 'Power Hour',
-          start: '2015-02-25T10:30:00'
+        if(!target.closest('.modal__box').length) {
+          modalClose(el);
         }
-      ],
-      eventClick: function() {
-        modalOpen($('.view-schedule'));
-        
+      });
+
+      function modalClose(modal) {
+        modal.removeClass('show');
+        modal.find('.modal__box').removeClass('show');
+      }
+
+      function modalOpen(modal) {
+        modal.addClass('show');
+        setTimeout(function(){
+          modal.find('.modal__box').addClass('show');
+        }, 100);
       }
     });
+  }
 
+
+  /**
+   * TAB
+   *
+   * call using $(tab-menu).Tab();
+   * wherein `tab-menu` is a parent of multiple tab toggles, pref. a `<ul>` list
+   * tab toggle requires => data-tab-toggle="target"
+   * tab pane requires => data-tab-pane="target"
+   */
+  $.fn.Tab = function() {
+    return this.each(function() {
+      var el = $(this),
+          tabs = el.find('[data-tab-toggle]');
+
+      tabs.click(function(e) {
+        e.preventDefault();
+
+        var id = $(this).data('tab-toggle'),
+            targetPane = $('[data-tab-pane="'+id+'"]');
+
+        tabs.removeClass('active');
+        $(this).addClass('active');
+
+        $('.tab-pane').removeClass('tab-pane--active');
+        targetPane.addClass('tab-pane--active');
+      });
+    });
+  }
+
+  
+  /**
+   * DROPDOWN
+   *
+   * call using $(selector).Dropdown();
+   * `selector` requires => data-dropdown-toggle="target"
+   */
+  $.fn.Dropdown = function() {
+    return this.each(function() {
+      var el = $(this),
+          id = el.data('dropdown-toggle'),
+          target = $('[data-dropdown="'+id+'"]');
+
+      el.off('click.dropdown');
+
+      el.on('click.dropdown', function() {
+        el.addClass('active');
+
+        target.toggleClass('expand');
+      });  
+
+    });
+  }
+
+  
+  /**
+   * NOTIFY
+   *
+   * call using $.Notify({content:'texts'});
+   * set `duration` only if required
+   */
+  $.Notify = function (opts) {
     
-  });
+    opts = $.extend(true, {content:'', duration: 2200}, opts);
+
+    var container = $('<div/>', {'class': 'notify__container notify__container--bottom-right'}),
+        notify = $('<div/>', {'class': 'notify', 'html': opts.content});
+
+    if($('.notify__container').length <= 0) {
+      $('body').append(container);
+    }
+
+    $('.notify__container').append(notify);
+
+    setTimeout(function() {
+      notify.addClass('notify--show');
+    }, 100);
+
+    setTimeout(function() {
+      notifyHide(notify);
+    }, opts.duration);
+
+    notify.click(function() {
+      notifyHide($(this));
+    });
+
+    function notifyHide(notify) {
+      notify.removeClass('notify--show');
+
+      notify.one('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd', function() {
+        notify.remove();
+      });
+    }
+  }
+
+})(jQuery);

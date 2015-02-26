@@ -1,18 +1,19 @@
-
+<div ng-controller="ScheduleCtrl">
   <div class="grid content pad">
     <div class="grid__item">
     <div class="sliders box--white box--bordered">
       <div class="box__header align--middle cf pad">
         <span class="label label--inline">Schedules</span>
-        <button class="btn btn--small btn--primary float--right" data-modal-toggle="add-schedule">Add Class Schedule</button>
+        <button ng-click="addSchedule()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-schedule">Add Class Schedule</button>
       </div>
       <div class="calendar pad">
       </div>
     </div>
     </div>
   </div>
+  
   <!-- modal View Schedule -->
-  <div class="modal view-schedule" data-modal="view-schedule">
+  <div id="view-schedule-modal" class="modal view-schedule" data-modal="view-schedule">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">8:30 AM &mdash; mon 2/23</h3>
@@ -38,8 +39,9 @@
       <button class="btn btn--medium btn--tertiary space--top modal-close">Cancel Class</button>
     </div>
   </div>
+  
   <!-- modal Add Schedule -->
-  <div class="modal" data-modal="add-schedule">
+  <div id="add-schedule-modal" class="modal" data-modal="add-schedule">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">8:30 AM &mdash; mon 2/23</h3>
@@ -85,3 +87,4 @@
       <button class="btn btn--medium btn--tertiary space--top modal-close">Cancel Class</button>
     </div>
   </div>
+</div>
