@@ -5,6 +5,7 @@ var app = angular.module('elstudio-admin', [
   'ngSanitize',
   'elstudio.services', 
   'elstudio.templates',
+  'elstudio.controllers.base',
   'elstudio.controllers.admin'
 ]);
 
@@ -16,6 +17,10 @@ app.config(function ($routeProvider, $httpProvider) {
     },
     '/accounts': {
       templateUrl: '/admin/account',
+      controller: 'AdminCtrl'
+    },
+    '/analytics': {
+      templateUrl: '/admin/analytics',
       controller: 'AdminCtrl'
     },
     '/classes': {
@@ -36,10 +41,6 @@ app.config(function ($routeProvider, $httpProvider) {
     },
     '/sliders': {
       templateUrl: '/admin/slider',
-      controller: 'AdminCtrl'
-    },
-    '/analytics': {
-      templateUrl: '/admin/analytics',
       controller: 'AdminCtrl'
     }
   };

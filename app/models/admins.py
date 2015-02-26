@@ -1,34 +1,32 @@
 from motorengine import *
-
-class Privelege(Document):
-    module = StringField(required=True)
-    actions = ListField(StringField())
-
-class AccessType(Document):
-    __collection__ = 'access_types'
-    admin_type = StringField(required=True)
-    priveleges = EmbeddedDocumentField(embedded_document_type=Privelege)
-    create_at = DateTimeField(auto_now_on_insert=True)
-    update_at = DateTimeField(auto_now_on_update=True)
+from .access import AccessType
+from app.helper import mongo_to_dict
 
 class Admin(Document):
     __collection__ = 'admins'
     username = StringField(required=True)
     password = StringField(required=True)
-    name = StringField(required=True)
+    first_name = StringField(required=True)
+    last_name = StringField(required=True)
     contact_number = StringField()
+    email = EmailField(required=True)
     access_type = ReferenceField(reference_document_type=AccessType)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 
-class Instructors(Document):
+    def to_dict(self):
+       return mongo_to_dict(self)
+
+class Instructor(Document):
     __collection__ = 'instructors'
     admin_id = ReferenceField(reference_document_type=Admin)
     gender = StringField()
     birthdate = DateTimeField()
-    address = StringField()
-    image = URLField()
+    image = StringField()
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
+
+    def to_dict(self):
+       return mongo_to_dict(self)
 
 

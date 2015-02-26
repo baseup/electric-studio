@@ -1,5 +1,6 @@
 from motorengine import *
 # from app.models.admins import Admin
+from app.helper import mongo_to_dict
 
 class Privelege(Document):
     module = StringField(required=True)
@@ -12,3 +13,6 @@ class AccessType(Document):
     # changeBy = ReferenceField(reference_document_type=Admin)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
+    
+    def to_dict(self):
+       return mongo_to_dict(self)
