@@ -70,3 +70,23 @@ ctrls.controller('SiteCtrl', function ($scope){
 ctrls.controller('AccountCtrl', function ($scope) {
 
 });
+
+ctrls.controller('InstructorCtrl', function ($scope, $timeout) {
+
+  angular.element('.imgmap a').click(function() {
+   var id = angular.element(this).data('target'),
+       target = angular.element('#'+id);
+    
+    angular.element('html, body').animate({
+      scrollTop : target.offset().top
+    });
+    
+    target.find('.image').addClass('focus');
+        
+    $timeout(function() {
+      target.find('.image').removeClass('focus');
+    }, 2000);
+    
+  });
+  
+});

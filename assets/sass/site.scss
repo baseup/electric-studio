@@ -1018,6 +1018,12 @@ body {
     @include border-radius();
     overflow: hidden;
     margin: 0 auto;
+    @include vendor(transition, all 0.4s ease);
+    box-shadow: none;
+    
+    &.focus { 
+      box-shadow: 0 0 0 6px $brand-color-primary;
+    }
     
     img {
       min-height: 100%;
@@ -1025,6 +1031,112 @@ body {
     }
   }
 }
+
+.group-pic {
+  position: relative;
+  
+  .group-pic-img {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .imgmap {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    a {
+      opacity: 0;
+      @include vendor(transition, opacity 0.4s ease-in-out);
+      
+      &:hover {
+        opacity: 0.7;
+        
+        background-image: -webkit-linear-gradient( 0% 50%, 0% 100%, from(transparent), to($brand-color-primary));
+        background-image: -moz-linear-gradient( 0% 50%, 0% 100%, from(transparent), to($brand-color-primary));
+        background-image: -webkit-gradient(linear, 0% 50%, 0% 100%, from(transparent), to($brand-color-primary));
+        
+      }
+    }
+    
+    [data-target="kris"] {
+      position: absolute;
+      width: 10%;
+      height: 100%;
+      left: 32%;
+    }
+    
+    [data-target="raisa"] {
+      position: absolute;
+      width: 13%;
+      height: 100%;
+      left: 5%;
+    }
+    
+    [data-target="migs"] {
+      position: absolute;
+      width: 9%;
+      height: 100%;
+      left: 17%;
+    }
+    
+    [data-target="trish"] {
+      position: absolute;
+      width: 10%;
+      height: 100%;
+      left: 23%;
+    }
+    
+    [data-target="yessa"] {
+      position: absolute;
+      width: 8%;
+      height: 100%;
+      left: 41%;
+    }
+    
+    [data-target="mel"] {
+      position: absolute;
+      width: 10%;
+      height: 100%;
+      left: 48.5%;
+    }
+    
+    [data-target="rachel"] {
+      position: absolute;
+      width: 8%;
+      height: 100%;
+      left: 57%;
+    }
+    
+    [data-target="abel"] {
+      position: absolute;
+      width: 10%;
+      height: 100%;
+      left: 62%;
+    }
+    
+    [data-target="mitch"] {
+      position: absolute;
+      width: 10%;
+      height: 100%;
+      left: 70%;
+    }
+    
+    [data-target="armand"] {
+      position: absolute;
+      width: 15%;
+      height: 100%;
+      left: 78%;
+    }
+    
+  }
+}
+
 
 /* Contacts */
 .contact {
