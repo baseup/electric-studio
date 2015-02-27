@@ -33,12 +33,12 @@ ctrls.controller('SiteCtrl', function ($scope){
     angular.element('.fit-text span').fitText(2);
     
     
-    loginToggle.on('click', function() {
+    loginToggle.off('click').on('click', function() {
       login.toggleClass('show');
       signup.add(book).removeClass('show');
     });
     
-    signupToggle.on('click', function() {
+    signupToggle.off('click').on('click', function() {
       signup.toggleClass('show');
       login.add(book).removeClass('show');
     });
