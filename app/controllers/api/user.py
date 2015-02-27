@@ -1,18 +1,79 @@
+import sys
+from passlib.hash import bcrypt
+from motorengine.errors import InvalidDocumentError
 from app.models.users import User
+import tornado
+import json
     
 def find(self):
-    self.write('user.find')
+    users = yield User.objects.find_all()
+    pacs = {}
+    for i, user in enumerate(users):
+        pacs[i] = user.to_dict()
+    self.write(json.dumps(pacs))
     self.finish()
 
 def find_one(self, id):
-    self.write('user.find_one')
+    user = yield User.objects.get(id)
+    self.write(user.to_dict())
     self.finish()
 
 def create(self):
-    self.write('user.create')
+
+    data = tornado.escape.json_decode(self.request.body)
+
+    passWord = None
+    if 'password' in data:
+        passWord = bcrypt.encrypt(data['password'])
+
+    try :
+        user = User(first_name=data['first_name'], 
+                    # middle_name=data['middle_name'],
+                    last_name=data['last_name'],
+                    email=data['email'],
+                    password=passWord,
+                    # birthdate=datetime.strptime(data['birthdate'],'%Y-%m-%d'),
+                    phone_number=data['phone_number'],
+                    # emergency_contact=data['emergency_contact'],
+                    # address=data['address'],
+                    status='Active',
+                    # profile_pic=data['profile_pic'],
+                    credits=0)
+        user = yield user.save()
+        self.write(user.to_dict())
+    except :
+        value = sys.exc_info()[1]
+        self.set_status(403)
+        str_value = str(value)
+        if 'The index "caused" was violated ' in str_value:
+            str_value = 'Email already in used'
+        self.write(str_value)
+    self.finish()
 
 def update(self, id):
-    self.write('user.udpate')
+    data = tornado.escape.json_decode(self.request.body)
+    try :
+        user = yield User.objects.get(id)
+        user.first_name = data['first_name']
+        user.middle_name = data['middle_name']
+        user.last_name = data['last_name']
+        user.email = data['email']
+        user.password = data['password']
+        user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+        user.phone_number = data['phone_number']
+        user.emergency_contact = data['emergency_contact']
+        user.address = data['address']
+        user.status = data['status']
+        user.profile_pic = data['profile_pic']
+        user.credits = data['credits']
+        user = yield user.save()
+    except :
+        value = sys.exc_info()[1]
+        self.set_status(403)
+        self.write(str(value))
+    self.finish()
 
 def destroy(self, id):
-    self.write('user.destroy')
+    user = yield User.objects.get(id)
+    user.delete()
+    self.finish()

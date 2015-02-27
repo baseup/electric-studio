@@ -72,19 +72,37 @@ app.config(function ($routeProvider, $httpProvider) {
     }
   };
 
-  angular.forEach(routes, function (route, path) {
+  angular.forEach(routes, function (route, path, AuthService) {
     if (typeof route.resolve != 'object') {
       route.resolve = {};
     }
-    // angular.extend(route.resolve, {
-    //   user: function (AuthService) {
-    //     return AuthService.setCurrentUser();
-    //   }
-    // });
+    angular.extend(route.resolve, {
+      user: function (AuthService) {
+        return AuthService.setCurrentUser();
+      }
+    });
     $routeProvider.when(path, route);
   });
   
   $routeProvider.otherwise({
     redirectTo: '/notfound'
   });
+});
+var compareTo = 
+ 
+app.directive("compareTo", function() {
+  return {
+    require: "ngModel",
+    scope: {
+      otherModelValue: "=compareTo"
+    },
+    link: function(scope, element, attributes, ngModel) {
+      ngModel.$validators.compareTo = function(modelValue) {
+        return modelValue == scope.otherModelValue;
+      };
+      scope.$watch("otherModelValue", function() {
+        ngModel.$validate();
+      });
+    }
+  };
 });

@@ -1,9 +1,17 @@
 'use strict';
 
+var loginUser = window.localStorage.getItem('login-user');
 var services = angular.module('elstudio.services', ['ngResource']);
 
 services.factory('UserService', function($resource) {
-  return $resource('/api/user', {}, {
+  return $resource('/api/user/:userId/:action', {}, {
+    get: {
+        method: 'GET',
+        isArray: false,
+        params: {
+          currentUserId: loginUser
+        }
+    },
     create: {
       method: 'POST',
       isArray: false
@@ -13,6 +21,30 @@ services.factory('UserService', function($resource) {
       isArray: false
     }
   });
+});
+
+services.factory('AuthService', function (UserService) {
+  return {
+    _user: null,
+    setCurrentUser: function (cb) {
+      var self = this;
+      if (!self._user) {
+        var checkUser = UserService.get(function (user) {
+          self._user = user;
+          if (typeof cb == 'function') {
+            cb(user);
+          }
+        });
+        return checkUser.$promise;
+      }
+    },
+    getCurrentUser: function () {
+      return this._user;
+    },
+    updateCurrentUser: function (user) {
+      this._user = user;
+    }
+  };
 });
 
 services.factory('PackageService', function($resource) {

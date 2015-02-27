@@ -23,6 +23,7 @@ class UserPackage(Document):
     credit_count = IntField()
     expiration = IntField()
     remaining_credits = IntField()
+    notes = StringField()
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 

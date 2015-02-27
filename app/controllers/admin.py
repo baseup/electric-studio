@@ -8,7 +8,6 @@ def login(self):
     if(self.request.method == 'GET'):
         self.render('login')
     else:
-
         user = self.get_argument('username')
         passWord = self.get_argument('password')
 
@@ -22,10 +21,4 @@ def login(self):
 def logout(self):
     self.clear_cookie('user')
     self.redirect('/admin')
-
-def addSampleAdmin(self):
-    admin = Admin(username="admin", password="admin", name="Sample")
-    admin = yield admin.save()
-    if (admin):
-        self.write(admin)
 

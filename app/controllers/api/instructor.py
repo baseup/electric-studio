@@ -60,13 +60,13 @@ def update(self, id):
             inst_dict = instructor.to_dict()
             admin = yield Admin.objects.get(inst_dict['admin_id'])
             if admin:
-                    admin.username = data['username']
-                    admin.password = data['username']
-                    admin.first_name = data['first_name']
-                    admin.last_name = data['last_name']
-                    admin.contact_number = data['contact_number']
-                    admin.email = data['email']
-                    admin = yield admin.save()
+                admin.username = data['username']
+                admin.password = data['username']
+                admin.first_name = data['first_name']
+                admin.last_name = data['last_name']
+                admin.contact_number = data['contact_number']
+                admin.email = data['email']
+                admin = yield admin.save()
             instructor.gender = data['gender']
             instructor.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
             instructor = yield instructor.save()
