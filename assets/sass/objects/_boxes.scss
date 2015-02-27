@@ -6,12 +6,14 @@
 .box__header { 
   
   &.align--middle {
-    display: table;  
-    width: 100%;
-    
-    > * {
-      display: table-cell!important;
-      vertical-align: middle;
+    @include breakpoint(md) {
+      display: table;  
+      width: 100%;
+
+      > * {
+        display: table-cell!important;
+        vertical-align: middle;
+      }
     }
   }
    
