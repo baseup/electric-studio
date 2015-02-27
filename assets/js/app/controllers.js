@@ -33,12 +33,12 @@ ctrls.controller('SiteCtrl', function ($scope){
     angular.element('.fit-text span').fitText(2);
     
     
-    loginToggle.on('click', function() {
+    loginToggle.off('click').on('click', function() {
       login.toggleClass('show');
       signup.add(book).removeClass('show');
     });
     
-    signupToggle.on('click', function() {
+    signupToggle.off('click').on('click', function() {
       signup.toggleClass('show');
       login.add(book).removeClass('show');
     });
@@ -69,4 +69,24 @@ ctrls.controller('SiteCtrl', function ($scope){
 
 ctrls.controller('AccountCtrl', function ($scope) {
 
+});
+
+ctrls.controller('InstructorCtrl', function ($scope, $timeout) {
+
+  angular.element('.imgmap a').click(function() {
+   var id = angular.element(this).data('target'),
+       target = angular.element('#'+id);
+    
+    angular.element('html, body').animate({
+      scrollTop : target.offset().top
+    });
+    
+    target.find('.image').addClass('focus');
+        
+    $timeout(function() {
+      target.find('.image').removeClass('focus');
+    }, 2000);
+    
+  });
+  
 });
