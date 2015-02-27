@@ -292,7 +292,9 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
   });
 
   $scope.addInstructor = function(){
-
+    
+    angular.element('#add-instructor-modal').Modal();
+    
     if($scope.newInstructor) {
       if(!$scope.newInstructor.first_name){
         alert("Package must have first name")
