@@ -28,6 +28,7 @@ ctrls.controller('SiteCtrl', function ($scope){
       dots: true,
       delay: 3000,
       speed: 700,
+      pause: false
     });
 
     angular.element('.fit-text span').fitText(2);
@@ -43,7 +44,7 @@ ctrls.controller('SiteCtrl', function ($scope){
       login.add(book).removeClass('show');
     });
     
-    menuToggle.click(function() {
+    menuToggle.off('click').click(function() {
       angular.element('.main-menu').toggleClass('show');
     });
     

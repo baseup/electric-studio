@@ -233,14 +233,14 @@ body {
     top: auto;
     left: -20px;
     right: -20px;
-    padding-top: 46px;
+    padding-top: 38px;
     display: none;
     
     @include breakpoint(md) {
       left: auto;
       right: -100px;
       width: 320px;
-      padding-top: 50px;
+      padding-top: 46px;
     }
   }
   
@@ -306,13 +306,13 @@ body {
     top: 0;
     left: -20px;
     right: -20px;
-    padding-top: 42px;
+    padding-top: 38px;
     
     @include breakpoint(md) {
       left: auto;
       right: -100px;
       width: 320px;
-      padding-top: 48px;
+      padding-top: 46px;
     }
   }
   
@@ -462,6 +462,7 @@ body {
   color: $orange;
   cursor: pointer;
   font-family: 'Brandon_Grotesque';
+  line-height: 3em;
   
   &:after {
     content: '\f105';
@@ -793,6 +794,7 @@ body {
     margin: 0 5px;
     background: $light;
     overflow: hidden;
+    cursor: pointer;
     
     &.active {
       background: $text;
@@ -1034,11 +1036,21 @@ body {
 
 .group-pic {
   position: relative;
+  padding: $base-spacing-unit;
+  
+  @include breakpoint(md) {
+    padding: 0;
+  }
   
   .group-pic-img {
     display: block;
     width: 100%;
     margin: 0 auto;
+    display: none;
+    
+    @include breakpoint(md) {
+      display: block;
+    }
   }
   
   .imgmap {
@@ -1061,6 +1073,17 @@ body {
         background-image: -moz-linear-gradient( 0% 50%, 0% 100%, from(transparent), to($brand-color-primary));
         background-image: -webkit-gradient(linear, 0% 50%, 0% 100%, from(transparent), to($brand-color-primary));
         
+      }
+      
+      &:before {
+        content: attr(data-title);
+        display: block;
+        position: absolute;
+        bottom: 82%;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-weight: 600;
       }
     }
     

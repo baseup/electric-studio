@@ -2,10 +2,10 @@
  
   <div class="class-search pad cf">
     <span class="label">Select Class Schedule</span>
-    <div class="bp-md-one-fourth float--left">
+    <div class="bp-md-one-fourth float--left space--bottom space--right">
       <input class="datepicker text-input" placeholder="Date">
     </div>
-    <div class="space--left float--left">
+    <div class="float--left">
       <select class="select">
         <option value="8:30">8:30 AM</option>
         <option value="10:30">10:30 AM</option>
@@ -18,11 +18,11 @@
       <dt>Instructor</dt>
       <dd class="caps">Marissa</dd>
     </dl>
-    <dl class="float--left space--sides">
+    <dl class="float--left space--right">
       <dt>Class Type</dt>
       <dd class="caps">Pure Electric</dd>
     </dl>
-    <dl class="float--left space--sides">
+    <dl class="float--left space--right">
       <dt>Status</dt>
       <dd class="caps">6 Bikes Available</dd>
     </dl>
@@ -42,12 +42,12 @@
 
     <div class="booking tab-pane tab-pane--active" data-tab-pane="booking">
 
-      <div class="result-header space--bottom cf">
-        <div class="result-filter">
+      <div class="booking-header space--bottom cf">
+        <div class="stats">
           <span class="caps">5 Riders</span>
         </div>
 
-        <div class="btn-group">
+        <div class="options">
           <button class="btn btn--small btn--primary" data-modal-toggle="book-ride" ng-click="bookRide()">
             Book A Ride
           </button>
@@ -169,12 +169,12 @@
 
     <div class="waitlist tab-pane" data-tab-pane="waitlist">
 
-      <div class="result-header space--bottom cf">
-        <div class="result-filter">
+      <div class="waitlist-header space--bottom cf">
+        <div class="stats">
           <span class="caps">5 Riders</span>
         </div>
 
-        <div class="btn-group">
+        <div class="options">
           <button class="btn btn--small btn--tertiary">Print Waitlist</button>
         </div>
       </div>
@@ -362,22 +362,24 @@
         <h4 class="h-small">Jeph Fernandez</h4>
       </div>
 
-      <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
-        <span class="label">Current Bike</span>
-        <h4 class="h-small">14</h4>
-      </div>
-      <div class="space--bottom bp-md-one-third float--left">
-        <span class="label">Switch to</span>
-        <select class="select">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7" selected>7</option>
-          <option value="8">8</option>
-        </select>
+       <div class="cf">   
+        <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
+          <span class="label">Current Bike</span>
+          <h4 class="h-small">14</h4>
+        </div>
+        <div class="space--bottom bp-md-one-third float--left">
+          <span class="label">Switch to</span>
+          <select class="select">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7" selected>7</option>
+            <option value="8">8</option>
+          </select>
+        </div>    
       </div>
 
       <button class="btn btn--primary btn--medium space--top modal-close">Switch</button>

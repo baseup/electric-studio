@@ -109,12 +109,12 @@
           <input class="text-input" ng-model="newInstructor.last_name">
         </div>
         <div class="space--bottom float--left space--right">
-          <span class="label">BirthDate (YYYY-mm-dd)</span>
-          <input class="text-input" ng-model="newInstructor.birthdate">
+          <span class="label">BirthDate</span>
+          <input class="datepicker text-input" ng-model="newInstructor.birthdate">
         </div>
         <div class="space--bottom float--left" >
           <span class="label">Gender</span>
-          <select class="text-input" ng-model="newInstructor.gender">
+          <select class="select text-input" ng-model="newInstructor.gender">
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>

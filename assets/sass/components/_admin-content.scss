@@ -6,21 +6,26 @@
   width: auto;
 }
 
-.result-header {
-  height: 28px;
-  line-height: 28px;
+.booking-header, .waitlist-header {
+  
+  @include breakpoint(sm) {
+    height: 28px;
+    line-height: 28px;
+  }
 
-  .result-filter {
+  .stats {
+    margin-bottom: $base-spacing-unit/2;
+    
     @include breakpoint(sm) {
       float: left;
+      margin-bottom: 0;
     }
   }
 
-  .btn-group {
-    text-align: center;
-
+  .options {
     @include breakpoint(sm) {
       float: right;
+      text-align: center;
     }
   }
 }

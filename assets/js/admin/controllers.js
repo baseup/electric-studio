@@ -168,6 +168,9 @@ ctrls.controller('ScheduleCtrl', function($scope) {
     ],
     eventClick: function() {
       angular.element('#view-schedule-modal').Modal();
+    },
+    windowResize: function(view) {
+      angular.element('.calendar').fullCalendar('changeView', 'agendaDay');
     }
   });
   
