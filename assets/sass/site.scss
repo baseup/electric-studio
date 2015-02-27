@@ -716,63 +716,63 @@ body {
   }
   
   .home &.slide-1 {
-     background-image: url('../../assets/images/slider-image-1.jpg');
+     background-image: url('/assets/images/slider-image-1.jpg');
   }
   
   .home &.slide-2 {
-     background-image: url('../../assets/images/slider-image-2.jpg');
+     background-image: url('/assets/images/slider-image-2.jpg');
   }
   
   .home &.slide-3 {
-     background-image: url('../../assets/images/slider-image-3.jpg');
+     background-image: url('/assets/images/slider-image-3.jpg');
   }
   
   .workouts &.slide-1 {
-    background-image: url('../../assets/images/slider-image-4.jpg');
+    background-image: url('/assets/images/slider-image-4.jpg');
   }
   
   .workouts &.slide-2 {
-    background-image: url('../../assets/images/slider-image-1.jpg');
+    background-image: url('/assets/images/slider-image-1.jpg');
   }
   
   .workouts &.slide-3 {
-    background-image: url('../../assets/images/slider-image-2.jpg');
+    background-image: url('/assets/images/slider-image-2.jpg');
   }
   
   .rates &.slide-1 {
-    background-image: url('../../assets/images/slider-image-5.jpg');
+    background-image: url('/assets/images/slider-image-5.jpg');
   }
   
   .rates &.slide-2 {
-    background-image: url('../../assets/images/slider-image-3.jpg');
+    background-image: url('/assets/images/slider-image-3.jpg');
   }
   
   .rates &.slide-3 {
-    background-image: url('../../assets/images/slider-image-6.jpg');
+    background-image: url('/assets/images/slider-image-6.jpg');
   }
   
   .about &.slide-1 {
-    background-image: url('../../assets/images/slider-image-6.jpg');
+    background-image: url('/assets/images/slider-image-6.jpg');
   }
   
   .about &.slide-2 {
-    background-image: url('../../assets/images/slider-image-1.jpg');
+    background-image: url('/assets/images/slider-image-1.jpg');
   }
   
   .about &.slide-3 {
-    background-image: url('../../assets/images/slider-image-2.jpg');
+    background-image: url('/assets/images/slider-image-2.jpg');
   }
   
   .first-ride &.slide-1 {
-    background-image: url('../../assets/images/slider-image-3.jpg');
+    background-image: url('/assets/images/slider-image-3.jpg');
   }
   
   .first-ride &.slide-2 {
-    background-image: url('../../assets/images/slider-image-1.jpg');
+    background-image: url('/assets/images/slider-image-1.jpg');
   }
   
   .first-ride &.slide-3 {
-    background-image: url('../../assets/images/slider-image-2.jpg');
+    background-image: url('/assets/images/slider-image-2.jpg');
   }
 }
 
@@ -928,15 +928,15 @@ body {
     }
     
     &.type-1 {
-      background-image: url('../../assets/images/stripe-orange.png');
+      background-image: url('/assets/images/stripe-orange.png');
     }
     
     &.type-2 {
-      background-image: url('../../assets/images/stripe-white.png');
+      background-image: url('/assets/images/stripe-white.png');
     }
     
     &.type-3 {
-      background-image: url('../../assets/images/stripe-white.png');
+      background-image: url('/assets/images/stripe-white.png');
       opacity: 0.4;
     }
     
@@ -981,7 +981,7 @@ body {
       width: 100%;
       top: 0;
       left: 0;
-      background-image: url('../../assets/images/stripe-gray.png');
+      background-image: url('/assets/images/stripe-gray.png');
       background-size: 6px;
       @include transform(rotate(45deg));
       @include border-radius();
