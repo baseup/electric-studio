@@ -16,54 +16,52 @@ ctrls.controller('SiteCtrl', function ($scope){
   }
 
   var login = angular.element('.header-form-container.login'),
-        signup = angular.element('.header-form-container.signup'),
-        book = angular.element('.book-menu'),
-        loginToggle = angular.element('.login-toggle'),
-        signupToggle = angular.element('.signup-toggle'),
-        bookToggle = angular.element('.book-toggle'),
-        menuToggle = angular.element('.menu-toggle');
+      signup = angular.element('.header-form-container.signup'),
+      book = angular.element('.book-menu'),
+      loginToggle = angular.element('.login-toggle'),
+      signupToggle = angular.element('.signup-toggle'),
+      bookToggle = angular.element('.book-toggle'),
+      menuToggle = angular.element('.menu-toggle');
     
-    angular.element('.slider-container').unslider({
-      fluid: true,
-      dots: true,
-      delay: 3000,
-      speed: 700,
-      pause: false
-    });
+  angular.element('.slider-container').glide({
+    autoplay: 3000,
+    hoverpause: false,
+    arrows: false
+  });
 
-    angular.element('.fit-text span').fitText(2);
-    
-    
-    loginToggle.off('click').on('click', function() {
-      login.toggleClass('show');
-      signup.add(book).removeClass('show');
-    });
-    
-    signupToggle.off('click').on('click', function() {
-      signup.toggleClass('show');
-      login.add(book).removeClass('show');
-    });
-    
-    menuToggle.off('click').click(function() {
-      angular.element('.main-menu').toggleClass('show');
-    });
-    
-    
-    angular.element('.seats td').not('.unavailable').find('span').click(function() {
-      angular.element('.seats td').removeClass('selected');
-      angular.element(this).parent('td').toggleClass('selected');
-    });
-  
+  angular.element('.fit-text span').fitText(2);
+
+
+  loginToggle.off('click').on('click', function() {
+    login.toggleClass('show');
+    signup.add(book).removeClass('show');
+  });
+
+  signupToggle.off('click').on('click', function() {
+    signup.toggleClass('show');
+    login.add(book).removeClass('show');
+  });
+
+  menuToggle.off('click').click(function() {
+    angular.element('.main-menu').toggleClass('show');
+  });
+
+
+  angular.element('.seats td').not('.unavailable').find('span').click(function() {
+    angular.element('.seats td').removeClass('selected');
+    angular.element(this).parent('td').toggleClass('selected');
+  });
+
   $(window).resize(function() {
     var winH = angular.element(this).height(), 
         headerH = angular.element('.main-header').outerHeight(),
         footerH = angular.element('.main-footer').height();
-    
+
     if(angular.element(this).width() >= 980){
       angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
     }
-    
-  });
+
+  }).trigger('resize');
   
 });
 
