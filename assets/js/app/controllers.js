@@ -63,7 +63,7 @@ ctrls.controller('SiteCtrl', function ($scope){
       angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
     }
     
-  }).trigger('resize');
+  });
   
 });
 

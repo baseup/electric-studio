@@ -451,7 +451,7 @@ body {
 }
 
 .intro {
-  font-size: 1.4em;
+  font-size: 1.2em;
   color: lighten($text, 30%);
 }
 
@@ -652,10 +652,6 @@ body {
   position: relative;
   overflow: auto;
   clear: both;
-}
-
-.slider-container.fitscreen {
-  width: auto !important;
 }
 
 .slider {
