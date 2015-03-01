@@ -23,7 +23,7 @@
     "selectize": "~0.11.2",
     "pickadate": "3.5.3",
     "fullcalendar": "~2.3.0",
-    "unslider": "*",
+    "glidejs": "~1.0.7",
     "FitText.js": "~1.2.0",
     "Chart.js": "1.0.1"
   }
