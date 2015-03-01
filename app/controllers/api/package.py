@@ -33,8 +33,6 @@ def create(self):
         self.write(str(value))
     self.finish()
 
-
-
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
     try :

@@ -34,9 +34,13 @@
       
       <div class="account-header-menu">
         <div class="options">
-          <a class="login-toggle">Login /</a> 
-          <a class="signup-toggle">Sign up</a>
-          <a class="account" href="#/account"></a>
+          <div ng-show="!loginUser">
+            <a class="login-toggle">Login /</a> 
+            <a class="signup-toggle">Sign up</a>
+          </div>
+          <div ng-if="loginUser">
+            <a class="account" href="#/account">Welcome {{! loginUser.first_name}}</a>
+          </div>
         </div>
         <div class="menu-list">
           <div class="holder">
@@ -79,19 +83,19 @@
     </div>  
   </div>
   
-  <div class="header-form-container signup">
+  <div class="header-form-container signup" ng-controller="SignUpCtrl">
     <div class="wrapper">
       <h2 class="h large light">Sign Up</h2>
       <p class="notify">Your Username / Email Address do not match. Please re-enter your informatin to Log In.</p>
       <form class="signup-form" method="post">
-        <input class="input-box" placeholder="First Name" name="firstname">
-        <input class="input-box" placeholder="Last Name" name="lastname">
-        <input class="input-box" placeholder="Email Address" name="email">
-        <input class="input-box" placeholder="Mobile Number" name="number">
-        <input type="password" class="input-box" placeholder="Password" name="password">
-        <input type="password" class="input-box" placeholder="Re-type Password" name="password2">
+        <input class="input-box" placeholder="First Name" ng-model="user.first_name">
+        <input class="input-box" placeholder="Last Name" ng-model="user.last_name">
+        <input class="input-box" placeholder="Email Address" ng-model="user.email">
+        <input class="input-box" placeholder="Mobile Number" ng-model="user.phone_number">
+        <input type="password" class="input-box" placeholder="Password" ng-model="user.password">
+        <input type="password" required compare-to="user.password" class="input-box" placeholder="Re-type Password" ng-model="user.confirm_password">
 
-        <input type="submit" value="Sign Up" class="button" name="signup">
+        <input type="button" value="Sign Up" class="button" ng-click="signUp()">
       </form>
     </div>
   </div>
@@ -136,7 +140,7 @@
   <script src="/assets/vendor/glidejs/dist/jquery.glide.min.js"></script>
 
   <script src="/assets/js/templates.js"></script>
-  <script src="/assets/js/admin/services.js"></script>
+  <script src="/assets/js/services.js"></script>
   <script src="/assets/js/app/controllers.js"></script>
   <script src="/assets/js/app/app.js"></script>
 </body>  

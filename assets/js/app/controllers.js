@@ -9,7 +9,9 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 });
 
 
-ctrls.controller('SiteCtrl', function ($scope){
+ctrls.controller('SiteCtrl', function ($scope, AuthService){
+
+  $scope.loginUser = AuthService.getCurrentUser();
   
   $scope.activeMainNav = function (path) {
     return window.location.hash.indexOf('#' + path) == 0;
@@ -60,9 +62,38 @@ ctrls.controller('SiteCtrl', function ($scope){
     if(angular.element(this).width() >= 980){
       angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
     }
-
   }).trigger('resize');
   
+});
+
+ctrls.controller('SignUpCtrl', function($scope, UserService){
+
+  $scope.signUp = function() {
+    if ($scope.user) {
+      if(!$scope.user.email || $scope.user.email.length == 0){
+        alert("Email Field is required");
+        return;
+      }
+      if($scope.user.password != $scope.user.confirm_password){
+        alert("Password didn't match");
+        return;
+      }
+
+      var registerSuccess = function(user){
+        window.localStorage.setItem('login-user', user);
+        window.location = '/';
+      }
+
+      var registerFail = function(error) {
+        alert(error.data)
+      }
+
+      UserService.create($scope.user).$promise.then(registerSuccess, registerFail);
+    } else {
+      alert("Please fill up the form");
+    }
+  } 
+
 });
 
 

@@ -13,6 +13,9 @@ def mongo_to_dict(obj):
 
         data = obj._values[field_name]
 
+        if not data:
+            continue
+
         if isinstance(obj._fields[field_name], DateTimeField):
             return_data.append((field_name, str(data.strftime('%Y-%m-%d %H:%M:%S'))))
         elif isinstance(obj._fields[field_name], StringField):
