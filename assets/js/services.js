@@ -5,12 +5,16 @@ var services = angular.module('elstudio.services', ['ngResource']);
 
 services.factory('UserService', function($resource) {
   return $resource('/api/user/:userId/:action', {}, {
+    logout: {
+      method: 'GET',
+      params: { userId: 'logout' }
+    },
     get: {
-        method: 'GET',
-        isArray: false,
-        params: {
-          currentUserId: loginUser
-        }
+      method: 'GET',
+      isArray: false,
+      params: {
+        userId: loginUser
+      }
     },
     create: {
       method: 'POST',
@@ -18,6 +22,15 @@ services.factory('UserService', function($resource) {
     },
     delete: {
       method: 'DELETE',
+      isArray: false
+    }
+  });
+});
+
+services.factory('EmailVerifyService', function($resource) {
+  return $resource('/verify/:user', {}, {
+    email_verify: {
+      method: 'POST',
       isArray: false
     }
   });

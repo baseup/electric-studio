@@ -25,7 +25,6 @@ def create(self):
     passWord = None
     if 'password' in data:
         passWord = bcrypt.encrypt(data['password'])
-
     try :
         user = User(first_name=data['first_name'], 
                     # middle_name=data['middle_name'],
@@ -36,11 +35,10 @@ def create(self):
                     phone_number=data['phone_number'],
                     # emergency_contact=data['emergency_contact'],
                     # address=data['address'],
-                    status='Active',
+                    status='Unverified',
                     # profile_pic=data['profile_pic'],
                     credits=0)
         user = yield user.save()
-        self.write(user.to_dict())
     except :
         value = sys.exc_info()[1]
         self.set_status(403)

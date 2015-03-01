@@ -6,6 +6,10 @@ var ctrls = angular.module('elstudio.controllers.admin', [
 
 ctrls.controller('PackageCtrl', function ($scope, PackageService) {
 
+  $scope.showAddPackage = function() {
+    angular.element('#add-package-modal').Modal();
+  }
+
   $scope.packages = PackageService.query();
   $scope.packages.$promise.then(function(data) {
     $scope.packages = data;
@@ -285,6 +289,10 @@ ctrls.controller('AnalyticsCtrl', function($scope) {
 });
 
 ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
+
+   $scope.showAddInstructor = function() {
+    angular.element('#add-instructor-modal').Modal();
+  }
 
   $scope.instructors = InstructorService.query();
   $scope.instructors.$promise.then(function(data) {
