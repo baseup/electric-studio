@@ -9,7 +9,7 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 });
 
 
-ctrls.controller('SiteCtrl', function ($scope, AuthService){
+ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService){
 
   $scope.loginUser = AuthService.getCurrentUser();
   
@@ -63,11 +63,26 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService){
       angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
     }
   }).trigger('resize');
+
+  $scope.logout = function(){
+
+    var logoutSuccess = function(){
+      window.localStorage.removeItem('login-user');
+      window.location = '/';
+    }
+
+    var logoutFail = function(error){
+      alert(error.data)
+    }
+
+    UserService.logout().$promise.then(logoutSuccess, logoutFail);
+  }
   
 });
 
-ctrls.controller('SignUpCtrl', function($scope, UserService){
+ctrls.controller('SignUpCtrl', function($scope, UserService, EmailVerifyService){
 
+  $scope.registered = false;
   $scope.signUp = function() {
     if ($scope.user) {
       if(!$scope.user.email || $scope.user.email.length == 0){
@@ -79,13 +94,14 @@ ctrls.controller('SignUpCtrl', function($scope, UserService){
         return;
       }
 
-      var registerSuccess = function(user){
-        window.localStorage.setItem('login-user', user);
-        window.location = '/';
+      var registerSuccess = function(){
+        $scope.registered = true;
+        $scope.sendEmailConfirmation($scope.user);
       }
 
       var registerFail = function(error) {
-        alert(error.data)
+        $scope.registered = false;
+        alert(error.data);
       }
 
       UserService.create($scope.user).$promise.then(registerSuccess, registerFail);
@@ -94,8 +110,60 @@ ctrls.controller('SignUpCtrl', function($scope, UserService){
     }
   } 
 
+  $scope.sendEmailConfirmation = function(user){
+    $scope.sendingEmail = true;
+    var sendEmailSuccess = function() {
+      $scope.sendingEmail = false;
+    }
+
+    var sendEmailFailed = function(error) {
+      $scope.sendingEmail = false;
+      alert("Sending Email Verification Failed: " + error.data)
+    }
+
+    EmailVerifyService.email_verify(user)
+                      .$promise.then(sendEmailSuccess, sendEmailFailed);
+  }
+
 });
 
+ctrls.controller('LoginCtrl', function ($scope) {
+
+  $scope.signIn = function(){
+
+    if($scope.login){
+
+      var email = $scope.login.email;
+      var password = $scope.login.password;
+
+      if(!email || email.length == 0 ||
+         !password || password.length == 0) {
+        alert("Invalid Login Credentials");
+        return;
+      }
+
+      $.ajax({
+        url: '/api/user/login',
+        method: 'POST',
+        data: {
+          password: password,
+          email: email
+        },
+        success: function (response) {
+          if (response.success && response.user) {
+            window.localStorage.setItem('login-user', response.user);
+            window.location = '/';
+          }
+        },
+        error: function (xhr, code, error) {
+          alert(xhr.responseText);
+        }
+      });
+    }
+
+  }
+
+});
 
 ctrls.controller('AccountCtrl', function ($scope) {
 

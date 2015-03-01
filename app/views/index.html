@@ -34,20 +34,19 @@
       
       <div class="account-header-menu">
         <div class="options">
-          <div ng-show="!loginUser">
+          {% if not loginUser %}
             <a class="login-toggle">Login /</a> 
             <a class="signup-toggle">Sign up</a>
-          </div>
-          <div ng-if="loginUser">
-            <a class="account" href="#/account">Welcome {{! loginUser.first_name}}</a>
-          </div>
+          {% else %}
+            <a href="#/account">Welcome {{ loginUser }}</a> | 
+            <a href='javascript:void' ng-click="logout()" >Sign Out</a>
+          {% end %}            
         </div>
         <div class="menu-list">
           <div class="holder">
             <a href="#/reserved">My Classes</a>
             <a href="#/rates-and-packages">My Packages</a>
             <a href="#/account">My Account</a>
-            <a href="#/logout">Sign Out</a>
           </div>  
         </div>
       </div>  
@@ -70,21 +69,21 @@
     </div>  
   </header>
   
-  <div class="header-form-container login">
+  <div class="header-form-container login" ng-controller="LoginCtrl">
     <div class="wrapper">
       <h2 class="h large light">Log In</h2>
       <p class="notify">Your Username / Email Address do not match. Please re-enter your informatin to Log In.</p>
       <form class="login-form" method="post">
-        <input class="input-box" placeholder="Username / Email Address" name="email" required>
-        <input type="password" class="input-box" placeholder="Password" name="password" required>
+        <input class="input-box" placeholder="Email Address" ng-model="login.email" required>
+        <input type="password" class="input-box" placeholder="Password" ng-model="login.password" required>
 
-        <input type="submit" value="Log In" class="button" name="login">
+        <input type="submit" value="Log In" class="button" ng-click="signIn()">
       </form>
     </div>  
   </div>
   
   <div class="header-form-container signup" ng-controller="SignUpCtrl">
-    <div class="wrapper">
+    <div class="wrapper" ng-show="!registered">
       <h2 class="h large light">Sign Up</h2>
       <p class="notify">Your Username / Email Address do not match. Please re-enter your informatin to Log In.</p>
       <form class="signup-form" method="post">
@@ -97,6 +96,11 @@
 
         <input type="button" value="Sign Up" class="button" ng-click="signUp()">
       </form>
+    </div>
+    <div class="wrapper" ng-show="registered">
+      <h2 class="h large light">Email Confirmation</h2>
+      <p class="notify"> Please check your email for confirmation</p>
+      <button class="button" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
     </div>
   </div>
 
