@@ -650,7 +650,7 @@ body {
 
 .slider-container {
   position: relative;
-  overflow: auto;
+  overflow: hidden;
   clear: both;
 }
 
@@ -773,15 +773,16 @@ body {
   }
 }
 
-.dots {
-  margin: 0;
+.slider__nav {
   padding: 0;
-  width: 100%;
   position: absolute;
   bottom: 20px;
   text-align: center;
+  left: 0!important;
+  right: 0!important;
+  margin: auto !important;
   
-  li {
+  .slider__nav-item {
     display: inline-block;
     text-indent: 40px;
     height: 12px;
@@ -792,7 +793,7 @@ body {
     overflow: hidden;
     cursor: pointer;
     
-    &.active {
+    &.slider__nav-item--current {
       background: $text;
     }
   }
