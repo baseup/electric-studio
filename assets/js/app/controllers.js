@@ -66,16 +66,18 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService){
 
   $scope.logout = function(){
 
-    var logoutSuccess = function(){
-      window.localStorage.removeItem('login-user');
-      window.location = '/';
-    }
+    $.ajax({
+      url: '/user/logout',
+      method: 'GET',
+      success: function (response) {
+        window.localStorage.removeItem('login-user');
+        window.location = '/';        
+      },
+      error: function (xhr, code, error) {
+        alert(xhr.responseText);
+      }
+    });
 
-    var logoutFail = function(error){
-      alert(error.data)
-    }
-
-    UserService.logout().$promise.then(logoutSuccess, logoutFail);
   }
   
 });
@@ -112,13 +114,14 @@ ctrls.controller('SignUpCtrl', function($scope, UserService, EmailVerifyService)
 
   $scope.sendEmailConfirmation = function(user){
     $scope.sendingEmail = true;
+    $scope.verificationLink = null;
     var sendEmailSuccess = function() {
       $scope.sendingEmail = false;
     }
 
     var sendEmailFailed = function(error) {
       $scope.sendingEmail = false;
-      alert("Sending Email Verification Failed: " + error.data)
+      $scope.verificationLink = error.data
     }
 
     EmailVerifyService.email_verify(user)
@@ -143,7 +146,7 @@ ctrls.controller('LoginCtrl', function ($scope) {
       }
 
       $.ajax({
-        url: '/api/user/login',
+        url: '/user/login',
         method: 'POST',
         data: {
           password: password,
@@ -168,6 +171,15 @@ ctrls.controller('LoginCtrl', function ($scope) {
 ctrls.controller('AccountCtrl', function ($scope) {
 
 });
+
+ctrls.controller('RatesCtrl', function ($scope, PackageService){
+
+  $scope.packages = PackageService.query();
+  $scope.packages.$promise.then(function(data) {
+    $scope.packages = data;
+  });
+  
+})
 
 ctrls.controller('InstructorCtrl', function ($scope, $timeout) {
 

@@ -56,7 +56,7 @@ def verify(self):
         if 'email' in data:
             users = yield User.objects.filter(email=data['email']).find_all()
             user = users[0].to_dict()
-            url = '/verify?%s' % user['id']
+            url = '/verify?ticket=%s' % user['id']
 
             # send email here 
 

@@ -23,7 +23,7 @@ ctrls.controller('AdminCtrl', function ($scope){
     angular.element('.dashboard-menu').Dropdown();
   
     angular.element('.datepicker').pickadate({
-      format: 'dd mmm yyyy',
+      format: 'yyyy-mm-dd',
       formatSubmit: 'yyyy-mm-dd',
       today: false
     });

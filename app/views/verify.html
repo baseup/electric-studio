@@ -1,5 +1,9 @@
 {% if success %}
   You've success fully verified your email [<a href="/">Go Home Page</a>]
+  <script type="text/javascript">
+    var ticket = location.search.split('ticket=')[1];
+    window.localStorage.setItem('login-user', ticket);
+  </script>
 {% else %}
   Email verification failed : {{ message }}
 {% end %}

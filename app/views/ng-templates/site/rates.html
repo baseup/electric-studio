@@ -14,30 +14,12 @@
     </div>
   </div>
   
-  <div class="content bg-gray parts-4 rates-info">
+  <div class="content bg-gray parts-4 rates-info" ng-controller="RatesCtrl">
     <div class="wrapper">
-      <section>
-        <h2>1 <span>Class</span></h2>
-        <p class="price">PHP <span>700</span></p>
-        <p>Expires in 30 days</p>
-        <a class="button small">Buy</a>
-      </section>
-      <section>
-        <h2>5 <span>Classes</span></h2>
-        <p class="price">PHP <span>3,200</span></p>
-        <p>Expires in 30 days</p>
-        <a class="button small">Buy</a>
-      </section>
-      <section>
-        <h2>10 <span>Classes</span></h2>
-        <p class="price">PHP <span>6,000</span></p>
-        <p>Expires in 30 days</p>
-        <a class="button small">Buy</a>
-      </section>
-      <section>
-        <h2>20 <span>Classes</span></h2>
-        <p class="price">PHP <span>18,000</span></p>
-        <p>Expires in 30 days</p>
+      <section ng-repeat="package in packages">
+        <h2>{{ package.credits }} <span>Class</span></h2>
+        <p class="price">PHP <span>{{ package.fee }}</span></p>
+        <p>Expires in {{ package.expiration }} days</p>
         <a class="button small">Buy</a>
       </section>
       <div class="faq">
