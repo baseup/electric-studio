@@ -38,15 +38,15 @@
             <a class="login-toggle">Login /</a> 
             <a class="signup-toggle">Sign up</a>
           {% else %}
-            <a href="#/account">Welcome {{ loginUser }}</a> | 
-            <a href='javascript:void' ng-click="logout()" >Sign Out</a>
+          <a href="javascript:void(0)" class="user-loggedin">Hi <strong>{{ loginUser }}</strong>! <i class="fa fa-caret-down"></i></a>
           {% end %}            
         </div>
         <div class="menu-list">
           <div class="holder">
+            <a href="#/account">My Account</a>
             <a href="#/reserved">My Classes</a>
             <a href="#/rates-and-packages">My Packages</a>
-            <a href="#/account">My Account</a>
+            <a href="javascript:void(0)" ng-click="logout()" >Sign Out</a>
           </div>  
         </div>
       </div>  

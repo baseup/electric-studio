@@ -205,6 +205,13 @@ body {
   position: relative;
   padding: 15px 0 10px 0;
   
+  
+  &:hover { 
+    .menu-list {
+      display: block;
+    }
+  }
+  
   .options {
     font-size: 0.8em;
     text-align: left;
@@ -213,6 +220,14 @@ body {
   a {
     color: inherit;
     cursor: pointer;
+    
+    &.user-loggedin {
+      text-transform: none;
+      
+      strong {
+        text-transform: uppercase;
+      }
+    }
     
     &:hover {
       color: $grayText;
@@ -233,14 +248,14 @@ body {
     top: auto;
     left: -20px;
     right: -20px;
-    padding-top: 38px;
+    padding-top: 50px;
     display: none;
     
     @include breakpoint(md) {
       left: auto;
       right: -100px;
       width: 320px;
-      padding-top: 46px;
+      padding-top: 60px;
     }
   }
   
@@ -399,7 +414,7 @@ body {
   }
   
   &.gray {
-    color: $gray;
+    color: $grayText;
   }
   
   &.center {
