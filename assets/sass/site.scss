@@ -5,6 +5,8 @@
 
 @import "components/base";
 
+@import "components/overrides";
+
 $orange: #ff8f1c;
 $text: #282828;
 $grayText: #757575;
@@ -406,19 +408,27 @@ body {
   }
   
   &.light {
-    color: $light;
+    color: $light!important;
+  }
+  
+  &.dark {
+    color: $text!important;
   }
   
   &.primary, &.color-primary {
-    color: $orange;
+    color: $orange!important;
   }
   
   &.gray {
-    color: $grayText;
+    color: $grayText!important;
   }
   
   &.center {
     text-align: center;
+    display: block;
+  }
+  
+  &.block {
     display: block;
   }
   
@@ -1259,8 +1269,11 @@ body {
   }
   
   .main {
-    overflow: auto;
     padding: 20px;
+  }
+  
+  .h {
+    color: $grayText;
   }
   
   @include breakpoint(md) {
