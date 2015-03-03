@@ -55,7 +55,7 @@ select, .select {
   max-width: 200px;
 }
 
-.label {
+.label, label {
   font-size: 0.86em;
   @extend .text-color-light;
   text-transform: uppercase;
