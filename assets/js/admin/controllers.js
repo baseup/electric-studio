@@ -37,6 +37,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
         PackageService.query().$promise.then(function(data) {
           $scope.packages = data;
         });
+        $scope.newPackage = null;
       }
 
       var addFail = function(error){
@@ -324,10 +325,14 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
         return;
       }
 
+      if(!$scope.newInstructor.gender)
+        $scope.newInstructor.gender = 'male';
+
       var addSuccess = function (data){
         InstructorService.query().$promise.then(function(data) {
           $scope.instructors = data;
         });
+        $scope.newInstructor = null;
       }
 
       var addFail = function(error){
