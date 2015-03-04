@@ -24,6 +24,7 @@ class UserPackage(Document):
     expiration = IntField()
     remaining_credits = IntField()
     notes = StringField()
+    trans_info = StringField(default=None)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 

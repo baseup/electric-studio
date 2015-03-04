@@ -179,9 +179,15 @@ ctrls.controller('LoginCtrl', function ($scope) {
 
 });
 
-ctrls.controller('AccountCtrl', function ($scope, UserService, AuthService) {
+ctrls.controller('AccountCtrl', function ($scope, UserService, AuthService, UserPackageService) {
 
   $scope.account = $scope.loginUser;
+
+  $scope.transactions = UserPackageService.query();
+  $scope.transactions.$promise.then(function(data) {
+    $scope.transactions = data;
+  });
+
 
   if($scope.account.birthdate){
     $scope.account.birthdate = $scope.account.birthdate.replace(' 00:00:00', '');;
@@ -233,7 +239,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, PackageService){
     $scope.packages = data;
   });
 
-  $scope.redirectUrl = window.location.protocol + '://' + window.location.hostname + ':' + window.location.port +'/buy';
+  $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port +'/buy';
 
   $scope.buy = function(pacId){
     $http.post('/buy', { packageId : pacId })

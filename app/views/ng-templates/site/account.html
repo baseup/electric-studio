@@ -34,8 +34,11 @@
         
         <section id="packages">
           <h3 class="h medium gray">Packages</h3>
-          <span class="h small block">10 Pax</span>
-          <span class="h small block">3 Classes Left, Expires in 12 days</span>
+          <div ng-repeat="trans in transactions">
+            <span class="h small block">{{ trans.package.name }}</span>
+            <span class="h small block">{{ trans.remaining_credits }} Classes Left, Expires in {{ trans.expiration }}days</span>
+            <hr>
+          </div>
           <a href="#/rates" class="button small pads primary">Buy Package</a>
         </section>
         
