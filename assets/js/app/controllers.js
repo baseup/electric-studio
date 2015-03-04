@@ -226,12 +226,25 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, AuthService) {
 
 });
 
-ctrls.controller('RatesCtrl', function ($scope, PackageService){
+ctrls.controller('RatesCtrl', function ($scope, $http, PackageService){
 
   $scope.packages = PackageService.query();
   $scope.packages.$promise.then(function(data) {
     $scope.packages = data;
   });
+
+  $scope.redirectUrl = window.location.protocol + '://' + window.location.hostname + ':' + window.location.port +'/buy';
+
+  $scope.buy = function(pacId){
+    $http.post('/buy', { packageId : pacId })
+         .success(function(data, status, headers, config) {
+      if (data.success && data.approve_url) {
+        window.location = response.approve_url;
+      }
+    }).error(function(data, status, headers, config) {
+      alert(data)
+    });
+  }
   
 })
 

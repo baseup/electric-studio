@@ -1,8 +1,10 @@
 from passlib.hash import bcrypt
 from app.models.users import User
+from app.models.packages import Package
 import tornado
 import urllib
 import json
+import paypalrestsdk
 
 def index(self):
     self.render('index', loginUser=self.get_secure_cookie('loginUser'))
@@ -31,7 +33,7 @@ def logout(self):
     self.finish()
 
 def verify(self):
-    if(self.request.method == 'GET'):
+    if self.request.method == 'GET':
         ticket = self.get_argument('ticket')
         if ticket:
             print(ticket)
@@ -63,4 +65,14 @@ def verify(self):
             self.set_status(403)
             self.write(url)
         self.finish()
+
+def buy(self):
+    if self.request.method == 'GET':
+        print(self)
+    else:
+        data = tornado.escape.json_decode(self.request.body)
+        print(data)
+    
+    self.finish()
+
 
