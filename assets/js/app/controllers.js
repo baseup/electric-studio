@@ -92,13 +92,14 @@ ctrls.controller('SignUpCtrl', function($scope, UserService, EmailVerifyService)
 
   $scope.registered = false;
   $scope.signUp = function() {
+    $scope.signupError = null;
     if ($scope.user) {
       if(!$scope.user.email || $scope.user.email.length == 0){
-        alert("Email Field is required");
+        $scope.signupError = 'Email Field is required';
         return;
       }
       if($scope.user.password != $scope.user.confirm_password){
-        alert("Password didn't match");
+        $scope.signupError = "Password didn't match";
         return;
       }
 
@@ -109,12 +110,16 @@ ctrls.controller('SignUpCtrl', function($scope, UserService, EmailVerifyService)
 
       var registerFail = function(error) {
         $scope.registered = false;
-        alert(error.data);
+
+        errorMsg = error.data
+        if(errorMsg.trim().indexOf(' ') > 0){
+          errorMsg = 'Field ' + errorMsg + ' is empty';
+        }
+
+        $scope.signupError = errorMsg;
       }
 
       UserService.create($scope.user).$promise.then(registerSuccess, registerFail);
-    } else {
-      alert("Please fill up the form");
     }
   } 
 
@@ -147,7 +152,7 @@ ctrls.controller('LoginCtrl', function ($scope) {
 
       if(!email || email.length == 0 ||
          !password || password.length == 0) {
-        alert("Invalid Login Credentials");
+        $scope.signInError = 'Invalid Login Credentials.';
         return;
       }
 
@@ -165,7 +170,7 @@ ctrls.controller('LoginCtrl', function ($scope) {
           }
         },
         error: function (xhr, code, error) {
-          alert(xhr.responseText);
+          $scope.signInError = xhr.responseText + '.';
         }
       });
     }
@@ -174,7 +179,50 @@ ctrls.controller('LoginCtrl', function ($scope) {
 
 });
 
-ctrls.controller('AccountCtrl', function ($scope) {
+ctrls.controller('AccountCtrl', function ($scope, UserService, AuthService) {
+
+  $scope.account = $scope.loginUser;
+
+  if($scope.account.birthdate){
+    $scope.account.birthdate = $scope.account.birthdate.replace(' 00:00:00', '');;
+  }
+
+  $scope.updateAccount = function(){
+
+    var addSuccess = function (){
+      $scope.loginUser = AuthService.getCurrentUser();
+    }
+
+    var addFail = function(error){
+      alert(error.data);
+    }
+
+    UserService.update({ userId: $scope.loginUser.id }, $scope.account).$promise.then(addSuccess, addFail);
+  }
+
+  $scope.changePassword = function(){
+
+    if($scope.pass && $scope.pass.current_password){
+
+      if($scope.pass.password != $scope.pass.confirm_password){
+        alert("Retype Password didn't match");
+        return;
+      }
+
+      var addSuccess = function (){
+        alert("Successfully updated your password")
+        $scope.pass = null;
+      }
+
+      var addFail = function(error){
+        alert(error.data);
+        $scope.pass = null;
+      }
+
+      UserService.update({ userId: $scope.loginUser.id }, $scope.pass).$promise.then(addSuccess, addFail);
+    }
+
+  }
 
 });
 

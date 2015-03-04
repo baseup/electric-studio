@@ -23,6 +23,10 @@ app.config(function ($routeProvider, $httpProvider) {
       templateUrl: '/site/account',
       controller: 'SiteCtrl'
     },
+    '/reserved': {
+      templateUrl: '/site/reservation',
+      controller: 'SiteCtrl'
+    },
     '/career': {
       templateUrl: '/site/career',
       controller: 'SiteCtrl'

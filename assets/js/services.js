@@ -20,6 +20,10 @@ services.factory('UserService', function($resource) {
       method: 'POST',
       isArray: false
     },
+    update: {
+      method: 'PUT',
+      isArray: false
+    },
     delete: {
       method: 'DELETE',
       isArray: false

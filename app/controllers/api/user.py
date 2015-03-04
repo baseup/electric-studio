@@ -2,6 +2,7 @@ import sys
 from passlib.hash import bcrypt
 from motorengine.errors import InvalidDocumentError
 from app.models.users import User
+from datetime import datetime
 import tornado
 import json
     
@@ -15,7 +16,9 @@ def find(self):
 
 def find_one(self, id):
     user = yield User.objects.get(id)
-    self.write(user.to_dict())
+    user_dict = user.to_dict(); 
+    user_dict['password'] = None
+    self.write(user_dict)
     self.finish()
 
 def create(self):
@@ -52,19 +55,29 @@ def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
     try :
         user = yield User.objects.get(id)
-        user.first_name = data['first_name']
-        user.middle_name = data['middle_name']
-        user.last_name = data['last_name']
-        user.email = data['email']
-        user.password = data['password']
-        user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
-        user.phone_number = data['phone_number']
-        user.emergency_contact = data['emergency_contact']
-        user.address = data['address']
-        user.status = data['status']
-        user.profile_pic = data['profile_pic']
-        user.credits = data['credits']
-        user = yield user.save()
+
+        if 'current_password' in data:
+            if(bcrypt.verify(data['current_password'], user.password)):
+                user.password = bcrypt.encrypt(data['password'])
+                user = yield user.save()
+            else:
+                self.set_status(403)
+                self.write('Current Password did not match')
+        else:
+            user.first_name = data['first_name']
+            # user.middle_name = data['middle_name']
+            user.last_name = data['last_name']
+            user.email = data['email']
+            user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+            user.phone_number = data['phone_number']
+            user.contact_person = data['contact_person']
+            user.emergency_contact = data['emergency_contact']
+            # user.address = data['address']
+            # user.status = data['status']
+            # user.profile_pic = data['profile_pic']
+            # user.credits = data['credits']
+            user = yield user.save()
+
     except :
         value = sys.exc_info()[1]
         self.set_status(403)
