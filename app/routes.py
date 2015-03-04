@@ -11,18 +11,19 @@ routes.post('/verify', 'home.verify')
 routes.post('/user/login', 'home.login')
 routes.get('/user/logout', 'home.logout')
 
-routes.get('/admin', 'admin.index')
-routes.get('/login', 'admin.login')
-routes.post('/login', 'admin.login')
-routes.get('/logout', 'admin.logout')
+routes.prefix('/admin', [
+    ('get', '/', 'admin.index'),
+    ('get', '/login', 'admin.login'),
+    ('post', '/login', 'admin.login'),
+    ('get', '/logout', 'admin.logout')
+])
 
-# Route Mappings
-# Your routes map URLs to views and controllers.
-
-routes.resource('api/admin', 'api.admin')
-routes.resource('api/user', 'api.user')
-routes.resource('api/package', 'api.package')
-routes.resource('api/instructor', 'api.instructor')
+routes.prefix('/api', [
+    ('resource', '/admin', 'api.admin'),
+    ('resource', '/user', 'api.user'),
+    ('resource', '/package', 'api.package'),
+    ('resource', '/instructor', 'api.instructor')
+])
 
 routes.subdomain('api.electric-studio.dev', [
     ('resource', 'user', 'api.user')
