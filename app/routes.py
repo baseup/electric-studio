@@ -12,10 +12,13 @@ routes.post('/user/login', 'home.login')
 routes.get('/user/logout', 'home.logout')
 
 routes.prefix('/admin', [
-    ('get', '/', 'admin.index'),
+
+    ('get', '/?', 'admin.index'),
     ('get', '/login', 'admin.login'),
     ('post', '/login', 'admin.login'),
-    ('get', '/logout', 'admin.logout')
+    ('get', '/logout', 'admin.logout'),
+
+    ('get', '/transactions', 'admin.transactions')
 ])
 
 routes.prefix('/api', [

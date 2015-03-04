@@ -7,20 +7,20 @@
 
     <title>Admin | Electric Studio</title>
 
-    <link rel="stylesheet" href="/assets/css/admin.css">
+    <link rel="stylesheet" href="{{ static_url('css/admin.css') }}">
 
-    <script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
+    <script src="{{ static_url('vendor/jquery/dist/jquery.min.js') }}"></script>
    
-    <script src="/assets/vendor/angular/angular.min.js"></script> 
-    <script src="/assets/vendor/angular-route/angular-route.min.js"></script>
-    <script src="/assets/vendor/angular-resource/angular-resource.min.js"></script>
-    <script src="/assets/vendor/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="{{ static_url('vendor/angular/angular.min.js') }}"></script> 
+    <script src="{{ static_url('vendor/angular-route/angular-route.min.js') }}"></script>
+    <script src="{{ static_url('vendor/angular-resource/angular-resource.min.js') }}"></script>
+    <script src="{{ static_url('vendor/angular-sanitize/angular-sanitize.min.js') }}"></script>
 
-    <script src="/assets/js/admin-templates.js"></script>
-    <script src="/assets/js/services.js"></script>
-    <script src="/assets/js/admin/base-controllers.js"></script>
-    <script src="/assets/js/admin/controllers.js"></script>
-    <script src="/assets/js/admin/admin.js"></script>
+    <script src="{{ static_url('js/admin/templates.js') }}"></script>
+    <script src="{{ static_url('js/admin/services.js') }}"></script>
+    <script src="{{ static_url('js/admin/base-controllers.js') }}"></script>
+    <script src="{{ static_url('js/admin/controllers.js') }}"></script>
+    <script src="{{ static_url('js/admin/admin.js') }}"></script>
 
   </head>
 
@@ -28,8 +28,8 @@
     <div class="page-wrapper">
       <div class="page-sidebar">
         <div class="brand pad">
-          <img src="/assets/images/electricstudio-nameplate.png" class="nameplate">
-          <img src="/assets/images/electricstudio-logo.png" class="logo">
+          <img src="{{ static_url('images/electricstudio-nameplate.png') }}" class="nameplate">
+          <img src="{{ static_url('images/electricstudio-logo.png') }}" class="logo">
         </div>
 
         <ul class="main-nav nav nav--stacked">
@@ -64,6 +64,12 @@
               <span class="nav-label">Schedules</span>
             </a>
           </li>
+          <li>
+            <a href="#/transactions">
+              <i class="fa fa-credit-card"></i>
+              <span class="nav-label">Transactions</span>
+            </a>
+          </li>
         </ul>
 
       </div>
@@ -78,7 +84,7 @@
           
           <div class="user">
             <div class="user__pic">
-              <img src="/assets/images/pic-placeholder.png" alt="">
+              <img src="{{ static_url('images/pic-placeholder.png') }}" alt="">
             </div>
             
             <span class="user__name">{{ user }}</span>
@@ -92,19 +98,19 @@
     </div>
 
 
-    <link rel="stylesheet" href="/assets/vendor/selectize/dist/css/selectize.default.css">
-    <link rel="stylesheet" href="/assets/vendor/pickadate/lib/themes/classic.css">
-    <link rel="stylesheet" href="/assets/vendor/pickadate/lib/themes/classic.date.css">
-    <link rel="stylesheet" href="/assets/vendor/fullcalendar/dist/fullcalendar.min.css">
+    <link rel="stylesheet" href="{{ static_url('vendor/selectize/dist/css/selectize.default.css') }}">
+    <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.css') }}">
+    <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.date.css') }}">
+    <link rel="stylesheet" href="{{ static_url('vendor/fullcalendar/dist/fullcalendar.min.css') }}">
 
     
-    <script src="/assets/vendor/selectize/dist/js/standalone/selectize.min.js"></script>
-    <script src="/assets/vendor/pickadate/lib/picker.js"></script>
-    <script src="/assets/vendor/pickadate/lib/picker.date.js"></script>
-    <script src="/assets/vendor/moment/moment.js"></script>
-    <script src="/assets/vendor/fullcalendar/dist/fullcalendar.min.js"></script>
-    <script src="/assets/vendor/Chart.js/Chart.min.js"></script>
+    <script src="{{ static_url('vendor/selectize/dist/js/standalone/selectize.min.js') }}"></script>
+    <script src="{{ static_url('vendor/pickadate/lib/picker.js') }}"></script>
+    <script src="{{ static_url('vendor/pickadate/lib/picker.date.js') }}"></script>
+    <script src="{{ static_url('vendor/moment/moment.js') }}"></script>
+    <script src="{{ static_url('vendor/fullcalendar/dist/fullcalendar.min.js') }}"></script>
+    <script src="{{ static_url('vendor/Chart.js/Chart.min.js') }}"></script>
 
-    <script src="/assets/js/script.js"></script> 
+    <script src="{{ static_url('js/script.js') }}"></script> 
   </body>
 </html>
