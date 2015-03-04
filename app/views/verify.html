@@ -1,9 +1,63 @@
-{% if success %}
-  You've success fully verified your email [<a href="/">Go Home Page</a>]
-  <script type="text/javascript">
-    var ticket = location.search.split('ticket=')[1];
-    window.localStorage.setItem('login-user', ticket);
-  </script>
-{% else %}
-  Email verification failed : {{ message }}
-{% end %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Verification | Electric Studio Admin</title>
+
+    <link rel="stylesheet" href="/assets/css/verify.css">
+  </head>
+  
+  <body>
+    <div class="page-header pad">
+      <img src="/assets/images/electricstudio-logo.png" class="logo">
+      <img src="/assets/images/electricstudio-nameplate.png" class="nameplate">
+      
+    </div>
+  
+    <div class="page-content">
+    {% if success %}
+      <h1 class="page-title h--medium">You've successfully verified your email</h1> 
+      <div class="links">
+        <a href="/account">View Account</a>
+        <a href="/">Go Home Page</a>
+      </div>
+      <script type="text/javascript">
+        var ticket = location.search.split('ticket=')[1];
+        window.localStorage.setItem('login-user', ticket);
+      </script>
+    {% else %}
+      <h1 class="page-title h--small">Email verification failed : {{ message }}</h1>
+      
+      <a href="/">Go To Home Page</a>
+    {% end %}
+    </div>
+      
+    <footer class="main-footer">
+    <div class="wrapper">
+      <ul class="footer-links">
+        <li>© ELECTRIC STUDIO 2015</li>
+        <li><a href="/#/faq">FAQ</a></li>
+        <li><a href="/#/career">Carreer</a></li>
+        <li><a href="/#/contact">Contact Us</a></li>
+      </ul>
+      
+      <ul class="social-links">
+        <li>
+          <a href="mailto:info@electricstudio.ph"><i class="fa fa-envelope"></i></a>
+        </li>
+        <li>
+          <a href="https://www.facebook.com/teamelectricph"><i class="fa fa-facebook"></i></a>
+        </li>
+        <li>
+          <a href="http://instagram.com/teamelectricph/"><i class="fa fa-instagram"></i></a>
+        </li>
+        <li>
+          <a href="https://twitter.com/"><i class="fa fa-twitter"></i></a>
+        </li>
+      </ul>
+    </div>  
+  </footer>
+  
+  </body>
+</html>
