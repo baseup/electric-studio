@@ -1,0 +1,222 @@
+/**
+ * Import typefaces, icons etc
+ */
+@import url(http://fonts.googleapis.com/css?family=Lato:400,700);
+@import "../vendor/fontawesome/css/font-awesome.min.css";
+
+
+/**
+ * Add the core framework
+ */
+@import 'framework';
+
+
+/**
+ * Add page specific styles
+ */
+@import 'components/base';
+
+body {
+  position: absolute;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  background: $brand-color-tertiary;
+
+  @include breakpoint(md) {
+    background: #fff;
+  }
+}
+
+.page-header {
+  background: $brand-color-primary;
+  text-align: center;
+
+  .nameplate {
+    height: 60px;
+    display: block;
+    margin: 0 auto;
+    margin-top: $base-spacing-unit;
+    
+    @include breakpoint(sm) {
+      display: inline-block;
+      margin: 0 0 0 $base-spacing-unit;
+    }
+  }
+
+  .logo {
+    height: 60px;
+    -webkit-animation-duration: 2s;
+    animation-duration: 2s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-name: rotate;
+    animation-name: rotate;
+  }
+}
+
+.page-content {
+  padding: 60px $base-spacing-unit;
+  background: #fff;
+  
+  h1 {
+    line-height: 1.4em;
+    margin: $base-spacing-unit 0;
+    
+    @include breakpoint(sm) {
+      margin-top: 100px;
+    }
+  }
+}
+
+.links {
+  a {
+    display: block;
+    margin: $base-spacing-unit;
+    
+    @include breakpoint(sm) {
+      display: inline-block;
+    }
+  }
+}
+
+
+.main-footer {
+  background: $brand-color-tertiary;
+  
+  @include breakpoint(sm) {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  color: #fff;
+  text-transform: uppercase;
+  
+  @include breakpoint(sm) {
+    margin-bottom: 20px;
+  }
+  
+  @include breakpoint(md) {
+    float: left;
+    margin: 0;
+  }
+  
+  li {
+    padding-bottom: 15px;
+    
+    @include breakpoint(sm) {
+      display: inline-block;
+      margin: 0 15px;
+    }
+    
+    @include breakpoint(md) {
+      padding: 0;
+      margin: 0 30px 0 0;
+    }
+  }
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+    
+    @include breakpoint(md) {
+      height: 40px;
+      line-height: 40px;
+    }
+    
+    &:hover {
+      color: $color-text;
+    }
+  }
+}
+
+.social-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  
+  @include breakpoint(md) {
+    float: right;
+  }
+  
+  li {
+    display: inline-block;
+    margin: 0 5px;
+  }
+  
+  a {
+    display: block;
+    height: 34px;
+    width: 34px;
+    line-height: 34px;
+    text-align: center;
+    border-radius: 6em;
+    background: #fff;
+    color: $brand-color-primary;
+    font-size: 22px;
+    text-decoration: none;
+    
+    @include breakpoint(md) {
+      height: 40px;
+      width: 40px;
+      line-height: 40px;
+    }
+    
+    i {
+      margin-left: 2px;
+    }
+  }
+}
+
+
+@-webkit-keyframes rotate{
+  from {
+    -webkit-transform:rotate(0deg);transform:rotate(0deg);
+  }
+  to {
+    -webkit-transform:rotate(360deg);transform:rotate(360deg);
+  }
+}
+
+@keyframes rotate{
+  from {
+    -webkit-transform:rotate(0deg);transform:rotate(0deg);
+  }
+  to {
+    -webkit-transform:rotate(360deg);transform:rotate(360deg);
+  }
+}
+
+/**
+ * Breakpoint trump! Ensure that media queries are compiled mobile-first
+ */
+.cssc {
+  
+  @include breakpoint(xs) {
+    display: none;
+  }
+  
+  @include breakpoint(sm) {
+    display: none;
+  }
+  
+  @include breakpoint(md) {
+    display: none;
+  }
+  
+  @include breakpoint(lg) {
+    display: none;
+  }
+  
+}
