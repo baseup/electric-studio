@@ -4,6 +4,8 @@ routes = RouteProvider()
 routes.when('admin.index', 'auth.admin')
 
 routes.get('/', 'home.index')
+routes.get('/buy', 'home.buy')
+routes.post('/buy', 'home.buy')
 routes.get('/verify', 'home.verify')
 routes.post('/verify', 'home.verify')
 routes.post('/user/login', 'home.login')
