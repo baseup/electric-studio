@@ -73,7 +73,7 @@
   <div class="header-form-container login" ng-controller="LoginCtrl">
     <div class="wrapper">
       <h2 class="h large light">Log In</h2>
-      <p class="notify">Your Username / Email Address do not match. Please re-enter your informatin to Log In.</p>
+      <p class="notify">{{! signInError }} Please re-enter your informatin to Log In.</p>
       <form class="login-form" method="post">
         <input class="input-box" placeholder="Email Address" ng-model="login.email" required>
         <input type="password" class="input-box" placeholder="Password" ng-model="login.password" required>
@@ -86,7 +86,7 @@
   <div class="header-form-container signup" ng-controller="SignUpCtrl">
     <div class="wrapper" ng-show="!registered">
       <h2 class="h large light">Sign Up</h2>
-      <p class="notify">Your Username / Email Address do not match. Please re-enter your informatin to Log In.</p>
+      <p class="notify">{{! signupError }} Please re-enter your informatin to Log In.</p>
       <form class="signup-form" method="post">
         <input class="input-box" placeholder="First Name" ng-model="user.first_name">
         <input class="input-box" placeholder="Last Name" ng-model="user.last_name">
