@@ -21,11 +21,11 @@ module.exports = function (grunt) {
       },
       site: {
         src: ['app/views/ng-templates/site/**/*.html'],
-        dest: 'assets/js/site-templates.js'
+        dest: 'assets/js/app/templates.js'
       },
       admin: {
         src: ['app/views/ng-templates/admin/**/*.html'],
-        dest: 'assets/js/admin-templates.js'
+        dest: 'assets/js/admin/templates.js'
       }
     },
 

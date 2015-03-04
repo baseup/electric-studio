@@ -389,4 +389,8 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
     InstructorService.delete({instructorId : ins.id}).$promise.then(addSuccess, addFail);
   }
 
-})
+});
+
+ctrls.controller('TransactionsCtrl', function ($scope) {
+
+});
