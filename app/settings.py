@@ -97,8 +97,8 @@ DATABASE = {
     'default': {
         'db': 'elstudio_db',
         'port': 27017,
-        'host': 'localhost'
-        # 'username': 'feeghe_user',
-        # 'password': 'feeghe_notsecure'
+        'host': 'localhost',
+        'username': 'elstudio_user',
+        'password': 'elstudio_notsecure'
     }
 }
