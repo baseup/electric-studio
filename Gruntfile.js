@@ -19,9 +19,13 @@ module.exports = function (grunt) {
           collapseWhitespace: true
         } 
       },
-      main: {
-        src: ['app/views/ng-templates/**/*.html'],
-        dest: 'assets/js/templates.js'
+      site: {
+        src: ['app/views/ng-templates/site/**/*.html'],
+        dest: 'assets/js/site-templates.js'
+      },
+      admin: {
+        src: ['app/views/ng-templates/admin/**/*.html'],
+        dest: 'assets/js/admin-templates.js'
       }
     },
 

@@ -4,7 +4,7 @@ from app.helper import mongo_to_dict
 
 class Admin(Document):
     __collection__ = 'admins'
-    username = StringField(required=True)
+    username = StringField(required=True, unique=True)
     password = StringField(required=True)
     first_name = StringField(required=True)
     last_name = StringField(required=True)
