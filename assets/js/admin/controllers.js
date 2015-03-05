@@ -143,9 +143,42 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
 });
 
 
-ctrls.controller('ClassCtrl', function ($scope) {
+ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
   
+  $scope.newBook = {};
   angular.element('#class-tabs').Tab();
+
+  ScheduleService.query({ date: $scope.newBook.date }, function (books) {
+    $scope.books = books;
+  });
+
+  UserService.query(function (users) {
+    $scope.users = users;
+    var select = angular.element('#select-user-id')[0].selectize;
+    angular.forEach(users, function (user) {
+      select.addOption({ value: user._id, text: user.first_name + ' ' + user.last_name });
+    });
+  });
+
+  $scope.selectRider = function () {
+    for (var i in $scope.users) {
+      if ($scope.users[i]._id == $scope.newBook.user_id) {
+        $scope.selectedRider = $scope.users[i];
+        break;
+      }
+    }
+  }
+
+  var select = angular.element('#select-bike-number')[0].selectize;
+  for (var i = 1; i <= 37; i++) {
+    select.addOption({ value: i, text: i });
+  }
+
+  $scope.sendNewBook = function () {
+    ScheduleService.save($scope.newBook, function (savedBook) {
+      console.log(savedBook);
+    });
+  }
   
   $scope.bookRide = function () {
     angular.element('#book-ride-modal').Modal();
