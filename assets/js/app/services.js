@@ -110,7 +110,7 @@ services.factory('UserPackageService', function($resource) {
   return $resource('/api/transaction/:transactionId', {}, {
     query: {
       method: 'GET',
-      isArray: false
+      isArray: true
     }
   });
 });

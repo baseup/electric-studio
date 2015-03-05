@@ -56,8 +56,7 @@ def send_verification(user, url):
                 }
             ]
         }
-        result = mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
-        print(result)
+        mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
         '''
         [{'_id': 'abc123abc123abc123abc123abc123',
           'email': 'recipient.email@example.com',
