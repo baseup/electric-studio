@@ -8,11 +8,7 @@ import json
 
 def find(self):
     users = yield User.objects.find_all()
-    pacs = {}
-    for i, user in enumerate(users):
-        pacs[i] = user.to_dict()
-    self.write(json.dumps(pacs))
-    self.finish()
+    self.render_json(users)
 
 def find_one(self, id):
     user = yield User.objects.get(id)
