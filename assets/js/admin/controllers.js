@@ -126,7 +126,6 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
   $scope.accountSummary = function (user) {
     $scope.selectedAccount = user;
     UserService.get({ userId: user._id }, function (summary) {
-      console.log(summary);
       $scope.selectedAccount = summary;
     });
     angular.element('#account-summary-modal').Modal();
@@ -137,6 +136,7 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
     TransactionService.save($scope.newCredits, function (credits) {
       $scope.saving = false;
       $scope.newCredits = {};
+      $scope.selectedAccount.credits += credits.credit_count
     });
   }
   
