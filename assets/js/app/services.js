@@ -114,3 +114,41 @@ services.factory('UserPackageService', function($resource) {
     }
   });
 });
+
+services.factory('ScheduleService', function($resource) {
+  return $resource('/api/schedule/:scheduleId', {}, {
+    query: {
+      method: 'GET',
+      isArray: false
+    }
+  });
+});
+
+services.factory('BookService', function($resource) {
+  return $resource('/api/book/:bookId', {}, {
+    query: {
+      method: 'GET',
+      isArray: true
+    },
+    update: {
+      method: 'PUT',
+      isArray: false
+    },
+    book: {
+      method: 'POST',
+      isArray: false
+    }
+  });
+});
+
+services.factory('SharedService', function(){
+  var records = {};
+  return {
+    set : function(key, value){
+      records[key] = value;
+    }, 
+    get : function(key) {
+      return records[key];
+    }
+  }
+});

@@ -1,13 +1,13 @@
 
-<div class="content schedule bg-lightGray">
+<div class="content schedule bg-lightGray" ng-controller="ClassCtrl">
   <div class="wrapper">
     <div class="header">
-      <h2 class="range">Oct 30, 2014</h2>
+      <h2 class="range">{{ dateSched }}</h2>
       <div class="nav left"><i class="fa fa-angle-left"></i></div>
       <div class="nav right"><i class="fa fa-angle-right"></i></div>
     </div>
     <div class="header">
-      <h2 class="range"><span>Thursday</span> 8:30 AM</h2>
+      <h2 class="range"><span>{{ daySched }}</span> {{ timeSched | formatTime }}</h2>
       <div class="nav left"><i class="fa fa-angle-left"></i></div>
       <div class="nav right"><i class="fa fa-angle-right"></i></div>
     </div>
@@ -15,54 +15,54 @@
     <div class="class">
       <table class="seats">
         <tr>
-          <td><span>1</span></td>
-          <td><span>2</span></td>
-          <td><span>3</span></td>
-          <td class="unavailable"><span>4</span></td>
-          <td><span>5</span></td>
-          <td><span>6</span></td>
-          <td class="unavailable"><span>7</span></td>
-          <td><span>8</span></td>
+          <td ng-click="setSeatNumber(1)"><span>1</span></td>
+          <td ng-click="setSeatNumber(2)"><span>2</span></td>
+          <td ng-click="setSeatNumber(3)"><span>3</span></td>
+          <td ng-click="setSeatNumber(4)" class="unavailable"><span>4</span></td>
+          <td ng-click="setSeatNumber(5)"><span>5</span></td>
+          <td ng-click="setSeatNumber(6)"><span>6</span></td>
+          <td ng-click="setSeatNumber(7)" class="unavailable"><span>7</span></td>
+          <td ng-click="setSeatNumber(8)"><span>8</span></td>
         </tr>
         <tr>
-          <td><span>9</span></td>
-          <td class="unavailable"><span>10</span></td>
-          <td><span>11</span></td>
-          <td><span>12</span></td>
-          <td class="unavailable"><span>13</span></td>
-          <td class="unavailable"><span>14</span></td>
-          <td><span>15</span></td>
-          <td><span>16</span></td>
+          <td ng-click="setSeatNumber(9)"><span>9</span></td>
+          <td ng-click="setSeatNumber(10)" class="unavailable"><span>10</span></td>
+          <td ng-click="setSeatNumber(11)"><span>11</span></td>
+          <td ng-click="setSeatNumber(12)"><span>12</span></td>
+          <td ng-click="setSeatNumber(13)" class="unavailable"><span>13</span></td>
+          <td ng-click="setSeatNumber(14)" class="unavailable"><span>14</span></td>
+          <td ng-click="setSeatNumber(15)"><span>15</span></td>
+          <td ng-click="setSeatNumber(16)"><span>16</span></td>
         </tr>
         <tr>
-          <td><span>17</span></td>
-          <td class="unavailable"><span>18</span></td>
-          <td><span>19</span></td>
-          <td><span>20</span></td>
-          <td><span>21</span></td>
-          <td><span>22</span></td>
-          <td class="unavailable"><span>23</span></td>
-          <td><span>24</span></td>
+          <td ng-click="setSeatNumber(17)"><span>17</span></td>
+          <td ng-click="setSeatNumber(18)" class="unavailable"><span>18</span></td>
+          <td ng-click="setSeatNumber(19)"><span>19</span></td>
+          <td ng-click="setSeatNumber(20)"><span>20</span></td>
+          <td ng-click="setSeatNumber(21)"><span>21</span></td>
+          <td ng-click="setSeatNumber(22)"><span>22</span></td>
+          <td ng-click="setSeatNumber(23)" class="unavailable"><span>23</span></td>
+          <td ng-click="setSeatNumber(24)"><span>24</span></td>
         </tr>
         <tr>
-          <td><span>25</span></td>
-          <td class="unavailable"><span>26</span></td>
-          <td><span>27</span></td>
+          <td ng-click="setSeatNumber(25)"><span>25</span></td>
+          <td ng-click="setSeatNumber(26)" class="unavailable"><span>26</span></td>
+          <td ng-click="setSeatNumber(27)"><span>27</span></td>
           <td class="hidden"><span></span></td>
-          <td><span>28</span></td>
-          <td class="unavailable"><span>29</span></td>
-          <td><span>30</span></td>
-          <td><span>31</span></td>
+          <td ng-click="setSeatNumber(28)"><span>28</span></td>
+          <td ng-click="setSeatNumber(29)" class="unavailable"><span>29</span></td>
+          <td ng-click="setSeatNumber(30)"><span>30</span></td>
+          <td ng-click="setSeatNumber(31)"><span>31</span></td>
         </tr>
         <tr>
-          <td class="unavailable"><span>32</span></td>
-          <td><span>33</span></td>
-          <td><span>34</span></td>
+          <td ng-click="setSeatNumber(32)" class="unavailable"><span>32</span></td>
+          <td ng-click="setSeatNumber(33)"><span>33</span></td>
+          <td ng-click="setSeatNumber(34)"><span>34</span></td>
           <td class="hidden"><span></span></td>
           <td class="hidden"><span></span></td>
-          <td><span>35</span></td>
-          <td><span>36</span></td>
-          <td><span>37</span></td>
+          <td ng-click="setSeatNumber(35)"><span>35</span></td>
+          <td ng-click="setSeatNumber(36)"><span>36</span></td>
+          <td ng-click="setSeatNumber(37)"><span>37</span></td>
         </tr>
       </table>
       
@@ -70,7 +70,7 @@
         <div class="image">
           <img src="/assets/images/instructor-kris.jpg">
         </div>
-        <h3 class="h small center primary">Kris</h3>
+        <h3 class="h small center primary">{{ instructor }}</h3>
       </div>
     </div>
     
@@ -79,7 +79,7 @@
       <li class="reserved">Reserved Bikes</li>
       <li class="selection">Your Selection</li>
     </ul>
-    <a class="button large center">Book A Ride</a>
+    <a class="button large center" ng-click="bookSchedule()">Book A Ride</a>
     <a class="h small primary center link" href="#/schedule">Back to Schedules</a>
   </div>
 </div>

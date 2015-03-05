@@ -1,10 +1,12 @@
 from passlib.hash import bcrypt
 from app.models.users import User
 from app.models.packages import Package, UserPackage
+from app.models.schedules import InstructorSchedule
+from app.models.admins import Instructor, Admin
 import tornado
 import urllib
 import json
-import paypalrestsdk
+from datetime import datetime
 
 def index(self):
     self.render('index', loginUser=self.get_secure_cookie('loginUser'))
@@ -17,8 +19,8 @@ def login(self):
         if bcrypt.verify(passWord, login_user[0].password):
             login_user[0].password = None
             user = login_user[0].to_dict()
-            self.set_secure_cookie('loginUser', user['first_name'])
-            self.set_secure_cookie('loginUserID', user['id'])
+            self.set_secure_cookie('loginUser', user['first_name'], expires_day=None)
+            self.set_secure_cookie('loginUserID', user['id'], expires_day=None)
             self.set_header("Content-Type", "application/json")
             self.write(json.dumps({ 'success' : True, 'user' : user['id'] }))
         else:
@@ -42,8 +44,8 @@ def verify(self):
                 if user.status == 'Unverified':
                     user.status = 'Active';
                     user = yield user.save()
-                    self.set_secure_cookie('loginUser', user.first_name)
-                    self.set_secure_cookie('loginUserID', str(user._id))
+                    self.set_secure_cookie('loginUser', user.first_name, expires_day=None)
+                    self.set_secure_cookie('loginUserID', str(user._id), expires_day=None)
                     self.render('verify', success=True)
                 else:
                     self.render('verify', success=True, message="Account Already Verified")
@@ -108,3 +110,52 @@ def buy(self):
         else:
             self.redirect('/#/rates')
 
+def addRegularSchedule(self):
+
+    scheds = yield InstructorSchedule.objects.find_all()
+    for i, sched in enumerate(scheds):
+        yield sched.delete()
+
+    instructors = yield Instructor.objects.find_all()
+    print(instructors)
+    for i, instructor in enumerate(instructors):
+        admin = yield Admin.objects.get(instructor._id)
+        yield instructor.delete()
+        if admin:
+            yield admin.delete()
+
+    adkris = Admin(username='kris', password='kris', first_name='kris', last_name='kris', email='kris@electric.com')
+    adkris = yield adkris.save()
+    adyessa = Admin(username='yessa', password='yessa', first_name='yessa', last_name='yessa', email='yessa@electric.com')
+    adyessa = yield adyessa.save()
+    admigs = Admin(username='migs', password='migs', first_name='migs', last_name='migs', email='migs@electric.com')
+    admigs = yield admigs.save()
+    adabel = Admin(username='abel', password='abel', first_name='abel', last_name='abel', email='abel@electric.com')
+    adabel = yield adabel.save()
+    admitch = Admin(username='mitch', password='mitch', first_name='mitch', last_name='mitch', email='mitch@electric.com')
+    admitch = yield admitch.save()
+
+    kris = Instructor(admin_id=adkris._id, gender='female')
+    kris = yield kris.save()
+    yessa = Instructor(admin_id=adyessa._id, gender='female')
+    yessa = yield yessa.save()
+    migs = Instructor(admin_id=admigs._id, gender='male') 
+    migs = yield migs.save()
+    abel = Instructor(admin_id=adabel._id, gender='male')
+    abel = yield abel.save()
+    mitch = Instructor(admin_id=admitch._id, gender='female')
+    mitch = yield mitch.save()
+
+    days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+    times = ['7:00 AM', '9:30 AM', '1:00 PM', '3:30 PM', '5:00 PM']
+    endtimes = ['9:30 AM', '1:00 PM', '3:30 PM', '5:00 PM', '7:00 PM']
+    instruts = [kris._id, yessa._id, migs._id, abel._id, mitch._id]
+
+    for d, day in enumerate(days):
+        for t, time in enumerate(times):
+            schedule = InstructorSchedule(instructor=instruts[t], type='regular', day=day,
+                                          start=datetime.strptime(time,'%I:%M %p'), 
+                                          end=datetime.strptime(endtimes[t],'%I:%M %p'))
+            schedule = yield schedule.save()
+
+    self.finish()
