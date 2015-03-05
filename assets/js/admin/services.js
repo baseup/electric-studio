@@ -65,10 +65,10 @@ services.factory('AuthService', function (UserService) {
 });
 
 services.factory('PackageService', function($resource) {
-  return $resource('/api/package/:packageId', {}, {
+  return $resource('/admin/package/:packageId', {}, {
     query: {
       method: 'GET',
-      isArray: false
+      isArray: true
     },
     update: {
       method: 'PUT',
@@ -89,7 +89,28 @@ services.factory('InstructorService', function($resource) {
   return $resource('/api/instructor/:instructorId', {}, {
     query: {
       method: 'GET',
+      isArray: true
+    },
+    update: {
+      method: 'PUT',
       isArray: false
+    },
+    create: {
+      method: 'POST',
+      isArray: false
+    },
+    delete: {
+      method: 'DELETE',
+      isArray: false
+    }
+  });
+});
+
+services.factory('TransactionService', function ($resource) {
+  return $resource('/admin/transaction/:transactionId', {}, {
+    query: {
+      method: 'GET',
+      isArray: true
     },
     update: {
       method: 'PUT',

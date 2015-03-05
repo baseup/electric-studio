@@ -6,41 +6,41 @@ var ctrls = angular.module('elstudio.controllers.admin', [
 
 ctrls.controller('PackageCtrl', function ($scope, PackageService) {
 
-  $scope.showAddPackage = function() {
+  $scope.showAddPackage = function () {
     angular.element('#add-package-modal').Modal();
   }
 
   $scope.packages = PackageService.query();
-  $scope.packages.$promise.then(function(data) {
+  $scope.packages.$promise.then(function (data) {
     $scope.packages = data;
   });
 
-  $scope.addPackage = function(){
+  $scope.addPackage = function () {
 
-    if($scope.newPackage) {
-      if(!$scope.newPackage.name){
-        alert("Package must have name")
+    if ($scope.newPackage) {
+      if (!$scope.newPackage.name) {
+        alert('Package must have name')
         return;
       }
       
-      if(!$scope.newPackage.fee){
-        alert("Package must have price")
+      if (!$scope.newPackage.fee) {
+        alert('Package must have price')
         return;
       }
       
-      if(!$scope.newPackage.credits){
-        alert("Package must have number of credits")
+      if (!$scope.newPackage.credits) {
+        alert('Package must have number of credits')
         return;
       }
 
-      var addSuccess = function (){
-        PackageService.query().$promise.then(function(data) {
+      var addSuccess = function () {
+        PackageService.query().$promise.then(function (data) {
           $scope.packages = data;
         });
         $scope.newPackage = null;
       }
 
-      var addFail = function(error){
+      var addFail = function (error) {
         alert(error.data);
       }
 
@@ -48,28 +48,28 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
     }
   }
 
-  $scope.setToUpdate = function(pac) {
+  $scope.setToUpdate = function (pac) {
     $scope.isUpdatePackage = true;
     $scope.updatePackage = pac;
   }
 
-  $scope.cancelUpdatePackage = function(){
+  $scope.cancelUpdatePackage = function () {
     $scope.isUpdatePackage = false;
     $scope.updatePackage = null;
   }
 
-  $scope.setPackage = function(){
+  $scope.setPackage = function () {
 
-    if($scope.updatePackage) {
-      var addSuccess = function (){
-        PackageService.query().$promise.then(function(data) {
+    if ($scope.updatePackage) {
+      var addSuccess = function () {
+        PackageService.query().$promise.then(function (data) {
           $scope.packages = data;
         });
         $scope.isUpdatePackage = false;
         $scope.updatePackage = null;
       }
 
-      var addFail = function(error){
+      var addFail = function (error) {
         alert(error.data);
       }
 
@@ -77,14 +77,14 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
     }
   }
 
-  $scope.removePackage = function(pac){
-    var addSuccess = function (){
-      PackageService.query().$promise.then(function(data) {
+  $scope.removePackage = function (pac) {
+    var addSuccess = function () {
+      PackageService.query().$promise.then(function (data) {
         $scope.packages = data;
       });
     }
 
-    var addFail = function(error){
+    var addFail = function (error) {
       alert(error.data);
     }
 
@@ -95,11 +95,11 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
 ctrls.controller('AccountCtrl', function ($scope) {
 
   
-  $scope.accountAddClass = function() {
+  $scope.accountAddClass = function () {
     angular.element('#add-class-modal').Modal();
   }
   
-  $scope.accountSummary = function() {
+  $scope.accountSummary = function () {
     angular.element('#account-summary-modal').Modal();
   }
   
@@ -110,26 +110,26 @@ ctrls.controller('ClassCtrl', function ($scope) {
   
   angular.element('#class-tabs').Tab();
   
-  $scope.bookRide = function() {
+  $scope.bookRide = function () {
     angular.element('#book-ride-modal').Modal();
   }
   
-  $scope.switchBike = function() {
+  $scope.switchBike = function () {
     angular.element('#switch-bike-modal').Modal();
   }
   
-  $scope.moveToClass = function() {
+  $scope.moveToClass = function () {
     $.Notify({ content: 'User moved to class' });
   }
   
-  $scope.removeFromWaitlist = function() {
+  $scope.removeFromWaitlist = function () {
     $.Notify({ content: 'User removed from Waitlist' });
   }
    
 });
 
 
-ctrls.controller('ScheduleCtrl', function($scope) {
+ctrls.controller('ScheduleCtrl', function ($scope) {
   
   angular.element('.calendar').fullCalendar({
     defaultView: 'agendaWeek',
@@ -171,30 +171,30 @@ ctrls.controller('ScheduleCtrl', function($scope) {
         start: '2015-02-25T10:30:00'
       }
     ],
-    eventClick: function() {
+    eventClick: function () {
       angular.element('#view-schedule-modal').Modal();
     },
-    windowResize: function(view) {
+    windowResize: function (view) {
       angular.element('.calendar').fullCalendar('changeView', 'agendaDay');
     }
   });
   
-  $scope.addSchedule = function() {
+  $scope.addSchedule = function () {
     angular.element('#add-schedule-modal').Modal();
   }
   
 });
 
 
-ctrls.controller('SliderCtrl', function($scope) {
+ctrls.controller('SliderCtrl', function ($scope) {
   
-  $scope.addSlide = function() {
+  $scope.addSlide = function () {
     angular.element('#add-slide-modal').Modal();
   }
   
 });
 
-ctrls.controller('AnalyticsCtrl', function($scope) {
+ctrls.controller('AnalyticsCtrl', function ($scope) {
   
   /* Analytics demo using Chart.js */
 
@@ -203,26 +203,26 @@ ctrls.controller('AnalyticsCtrl', function($scope) {
 
   // Line Chart
   var salesData = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
     datasets: [
       {
-        label: "First dataset",
-        fillColor: "rgba(203,200,199,0.2)",
-        strokeColor: "rgba(203,200,199,1)",
-        pointColor: "rgba(203,200,199,1)",
-        pointStrokeColor: "#fff",
-        pointHighlightFill: "#fff",
-        pointHighlightStroke: "rgba(220,220,220,1)",
+        label: 'First dataset',
+        fillColor: 'rgba(203,200,199,0.2)',
+        strokeColor: 'rgba(203,200,199,1)',
+        pointColor: 'rgba(203,200,199,1)',
+        pointStrokeColor: '#fff',
+        pointHighlightFill: '#fff',
+        pointHighlightStroke: 'rgba(220,220,220,1)',
         data: [65, 59, 80, 81, 56, 55, 40]
       },
       {
-        label: "Second dataset",
-        fillColor: "rgba(255,143,28,0.2)",
-        strokeColor: "rgba(255,143,28,1)",
-        pointColor: "rgba(255,143,28,1)",
-        pointStrokeColor: "#fff",
-        pointHighlightFill: "#fff",
-        pointHighlightStroke: "rgba(151,187,205,1)",
+        label: 'Second dataset',
+        fillColor: 'rgba(255,143,28,0.2)',
+        strokeColor: 'rgba(255,143,28,1)',
+        pointColor: 'rgba(255,143,28,1)',
+        pointStrokeColor: '#fff',
+        pointHighlightFill: '#fff',
+        pointHighlightStroke: 'rgba(151,187,205,1)',
         data: [28, 48, 40, 19, 86, 27, 90]
       }
     ]
@@ -237,21 +237,21 @@ ctrls.controller('AnalyticsCtrl', function($scope) {
   var posData = [
     {
       value: 266,
-      color:"#ff8f1c",
-      highlight: "rgba(255,143,28,0.7)",
-      label: "In-Store"
+      color:'#ff8f1c',
+      highlight: 'rgba(255,143,28,0.7)',
+      label: 'In-Store'
     },
     {
       value: 42,
-      color: "#cbc8c7",
-      highlight: "rgba(203,200,199,0.7)",
-      label: "Mail-Order"
+      color: '#cbc8c7',
+      highlight: 'rgba(203,200,199,0.7)',
+      label: 'Mail-Order'
     },
     {
       value: 144,
-      color: "#666",
-      highlight: "rgba(102,102,102,0.7)",
-      label: "Website"
+      color: '#666',
+      highlight: 'rgba(102,102,102,0.7)',
+      label: 'Website'
     }
   ];
 
@@ -262,22 +262,22 @@ ctrls.controller('AnalyticsCtrl', function($scope) {
 
   // Bar Chart
   var signupData = {
-    labels: ["1 Pax", "5 Pax", "10 Pax", "15 Pax", "20 Pax", "30 Pax"],
+    labels: ['1 Pax', '5 Pax', '10 Pax', '15 Pax', '20 Pax', '30 Pax'],
     datasets: [
       {
-        label: "Second dataset",
-        fillColor: "rgba(203,200,199,0.2)",
-        strokeColor: "rgba(203,200,199,0.7)",
-        highlightFill: "rgba(203,200,199,0.4)",
-        highlightStroke: "rgba(203,200,199,8)",
+        label: 'Second dataset',
+        fillColor: 'rgba(203,200,199,0.2)',
+        strokeColor: 'rgba(203,200,199,0.7)',
+        highlightFill: 'rgba(203,200,199,0.4)',
+        highlightStroke: 'rgba(203,200,199,8)',
         data: [60, 42, 76, 68, 40, 40]
       },
       {
-        label: "First dataset",
-        fillColor: "rgba(255,143,28,0.2)",
-        strokeColor: "rgba(255,143,28,0.7)",
-        highlightFill: "rgba(255,143,28,0.4)",
-        highlightStroke: "rgba(255,143,28,8)",
+        label: 'First dataset',
+        fillColor: 'rgba(255,143,28,0.2)',
+        strokeColor: 'rgba(255,143,28,0.7)',
+        highlightFill: 'rgba(255,143,28,0.4)',
+        highlightStroke: 'rgba(255,143,28,8)',
         data: [65, 59, 70, 67, 56, 10]
       }
     ]
@@ -291,51 +291,51 @@ ctrls.controller('AnalyticsCtrl', function($scope) {
 
 ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
 
-   $scope.showAddInstructor = function() {
+   $scope.showAddInstructor = function () {
     angular.element('#add-instructor-modal').Modal();
   }
 
   $scope.instructors = InstructorService.query();
-  $scope.instructors.$promise.then(function(data) {
+  $scope.instructors.$promise.then(function (data) {
     $scope.instructors = data;
   });
 
-  $scope.addInstructor = function(){
+  $scope.addInstructor = function () {
     
     angular.element('#add-instructor-modal').Modal();
     
-    if($scope.newInstructor) {
-      if(!$scope.newInstructor.first_name){
-        alert("Package must have first name")
+    if ($scope.newInstructor) {
+      if (!$scope.newInstructor.first_name) {
+        alert('Package must have first name')
         return;
       }
 
-      if(!$scope.newInstructor.last_name){
-        alert("Package must have last name")
+      if (!$scope.newInstructor.last_name) {
+        alert('Package must have last name')
         return;
       }      
       
-      if(!$scope.newInstructor.email){
-        alert("Package must have email")
+      if (!$scope.newInstructor.email) {
+        alert('Package must have email')
         return;
       }
       
-      if(!$scope.newInstructor.contact_number){
-        alert("Package must have number of contact_number")
+      if (!$scope.newInstructor.contact_number) {
+        alert('Package must have number of contact_number')
         return;
       }
 
-      if(!$scope.newInstructor.gender)
+      if (!$scope.newInstructor.gender)
         $scope.newInstructor.gender = 'male';
 
-      var addSuccess = function (data){
-        InstructorService.query().$promise.then(function(data) {
+      var addSuccess = function (data) {
+        InstructorService.query().$promise.then(function (data) {
           $scope.instructors = data;
         });
         $scope.newInstructor = null;
       }
 
-      var addFail = function(error){
+      var addFail = function (error) {
         alert(error.data);
       }
 
@@ -343,31 +343,31 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
     }
   }
 
-  $scope.setToUpdate = function(ins) {
+  $scope.setToUpdate = function (ins) {
     $scope.isUpdateInstructor = true;
     $scope.updateInstructor = ins.admin;
     $scope.updateInstructor.id = ins.id;
     $scope.updateInstructor.gender = ins.gender;
-    $scope.updateInstructor.birthdate = ins.birthdate.replace(" 00:00:00", "");
+    $scope.updateInstructor.birthdate = ins.birthdate.replace(' 00:00:00', '');
   }
 
-  $scope.cancelUpdateInstructor = function(){
+  $scope.cancelUpdateInstructor = function () {
     $scope.isUpdateInstructor = false;
     $scope.updateInstructor = null;
   }
 
-  $scope.setInstructor = function(){
+  $scope.setInstructor = function () {
     console.log($scope.updateInstructor)
-    if($scope.updateInstructor) {
-      var addSuccess = function (){
-        InstructorService.query().$promise.then(function(data) {
+    if ($scope.updateInstructor) {
+      var addSuccess = function () {
+        InstructorService.query().$promise.then(function (data) {
           $scope.instructors = data;
         });
         $scope.isUpdateInstructor = false;
         $scope.updateInstructor = null;
       }
 
-      var addFail = function(error){
+      var addFail = function (error) {
         alert(error.data);
       }
 
@@ -375,14 +375,14 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
     }
   }
 
-  $scope.removeInstructor = function(ins){
-    var addSuccess = function (data){
-      InstructorService.query().$promise.then(function(data) {
+  $scope.removeInstructor = function (ins) {
+    var addSuccess = function (data) {
+      InstructorService.query().$promise.then(function (data) {
         $scope.instructors = data;
       });
     }
 
-    var addFail = function(error){
+    var addFail = function (error) {
       alert(error.data);
     }
 
@@ -391,6 +391,17 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
 
 });
 
-ctrls.controller('TransactionsCtrl', function ($scope) {
+ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, PackageService) {
 
+  $scope.transactions = TransactionService.query();
+  $scope.transactions.$promise.then(function (data) {
+    $scope.transactions = data;
+  });
+
+  PackageService.query(function (packages) {
+    var select = angular.element('#search-trans-package')[0].selectize;
+    angular.forEach(packages, function (pack) {
+      select.addOption({ value: pack._id, text: pack.name });
+    });
+  });
 });
