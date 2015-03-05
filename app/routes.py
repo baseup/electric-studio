@@ -19,7 +19,8 @@ routes.prefix('/admin', [
     ('get', '/logout', 'admin.logout'),
 
     ('resource', '/transaction', 'admin.transaction'),
-    ('resource', '/package', 'admin.package')
+    ('resource', '/package', 'admin.package'),
+    ('resource', '/user', 'admin.user')
 ])
 
 routes.prefix('/api', [
