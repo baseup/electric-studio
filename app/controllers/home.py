@@ -1,10 +1,11 @@
 from passlib.hash import bcrypt
 from app.models.users import User
 from app.models.packages import Package, UserPackage
+from app.helper import send_verification
+
 import tornado
 import urllib
 import json
-import paypalrestsdk
 
 def index(self):
     self.render('index', loginUser=self.get_secure_cookie('loginUser'))
@@ -46,24 +47,17 @@ def verify(self):
                     self.set_secure_cookie('loginUserID', str(user._id))
                     self.render('verify', success=True)
                 else:
-                    self.render('verify', success=True, message="Account Already Verified")
+                    self.render('verify', success=True, message='Account Already Verified')
             else:
-                self.render('verify', success=False, message="Invalid ticket for verication")   
+                self.render('verify', success=False, message='Invalid ticket for verication')   
         else:
-            self.render('verify', success=False, message="Ticket not found")
+            self.render('verify', success=False, message='Ticket not found')
     else:
         data = tornado.escape.json_decode(self.request.body)
-        if not data:
-            self.set_status('403')
-            self.write('Invalid Request')
         if 'email' in data:
-            users = yield User.objects.filter(email=data['email']).find_all()
-            user = users[0].to_dict()
-            url = '/verify?ticket=%s' % user['id']
-
-            # send email here 
-
-            self.set_status(403)
+            user = (yield User.objects.get(email=data['email'])).serialize()
+            url = self.request.protocol + '://' + self.request.host + '/verify?ticket=%s' % user['_id']
+            yield self.io.async_task(send_verification, user=user, url=url)
             self.write(url)
         self.finish()
 

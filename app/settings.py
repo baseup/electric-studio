@@ -102,3 +102,5 @@ DATABASE = {
         'password': 'elstudio_notsecure'
     }
 }
+
+MANDRILL_API_KEY = 'LJCBoJpHFF7ZRrFqgu9Q2g'

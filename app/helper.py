@@ -1,4 +1,7 @@
 from motorengine import *
+from app.settings import MANDRILL_API_KEY
+
+import mandrill
 
 def mongo_to_dict(obj):
     return_data = []
@@ -32,3 +35,37 @@ def mongo_to_dict(obj):
             return_data.append((field_name, str(data)))
 
     return dict(return_data)
+
+def send_verification(user, url):
+    try:
+        mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
+        message = {
+            'from_email': 'ride@electricstudio.ph',
+            'from_name': 'Electic Studio',
+            'headers': {
+                'Reply-To': 'ride@electricstudio.ph'
+            },
+            'html': '<p>Example HTML content<br><a href="' + url + '">Click here</a></p>',
+            'important': True,
+            'subject': 'Email Verification',
+            'to': [
+                {
+                    'email': user['email'],
+                    'name': user['first_name'] + ' ' + user['last_name'],
+                    'type': 'to'
+                }
+            ]
+        }
+        result = mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
+        print(result)
+        '''
+        [{'_id': 'abc123abc123abc123abc123abc123',
+          'email': 'recipient.email@example.com',
+          'reject_reason': 'hard-bounce',
+          'status': 'sent'}]
+        '''
+    except mandrill.Error:
+        # Mandrill errors are thrown as exceptions
+        # print 'A mandrill error occurred: %s - %s' % (e.__class__, e)
+        # A mandrill error occurred: <class 'mandrill.UnknownSubaccountError'> - No subaccount exists with the id 'customer-123'    
+        raise
