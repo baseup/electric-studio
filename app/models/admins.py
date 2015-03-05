@@ -1,8 +1,9 @@
 from motorengine import *
 from .access import AccessType
 from app.helper import mongo_to_dict
+from hurricane.db import Model
 
-class Admin(Document):
+class Admin(Model):
     __collection__ = 'admins'
     username = StringField(required=True, unique=True)
     password = StringField(required=True)
@@ -17,8 +18,9 @@ class Admin(Document):
     def to_dict(self):
        return mongo_to_dict(self)
 
-class Instructor(Document):
+class Instructor(Model):
     __collection__ = 'instructors'
+    __lazy__ = False
     admin_id = ReferenceField(reference_document_type=Admin)
     gender = StringField()
     birthdate = DateTimeField()

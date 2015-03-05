@@ -12,6 +12,7 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService){
 
   $scope.loginUser = AuthService.getCurrentUser();
+  $scope.selectedSched = null;
   
   $scope.activeMainNav = function (path) {
     return window.location.hash.indexOf('#' + path) == 0;
@@ -196,6 +197,7 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, AuthService, User
 
     var addSuccess = function (){
       $scope.loginUser = AuthService.getCurrentUser();
+      alert('Successfully updated user info')
     }
     var addFail = function(error){
       alert(error.data);
@@ -269,5 +271,126 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout) {
     }, 2000);
     
   });
-  
+});
+
+
+ctrls.controller('ReservedCtrl', function ($scope, BookService) {
+  $scope.reservations = BookService.query();
+  $scope.reservations.$promise.then(function(data) {
+    $scope.reservations = data;
+    console.log($scope.reservations);
+  });
+});
+
+
+ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, SharedService) {
+  $scope.schedules = ScheduleService.query();
+  $scope.schedules.$promise.then(function(data) {
+    $scope.schedules = data;
+  });
+
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  $scope.setSchedule = function(schedule, date){
+    var sched = {};
+    sched.date = date;
+    sched.schedule = schedule;
+    SharedService.set('selectedSched', sched);
+    $location.path('/class');
+  }
+
+  $scope.getWeek = function(date){
+    var now = date? new Date(date) : new Date();
+    now.setHours(0,0,0,0);
+
+    var mon = new Date(now);
+    mon.setDate(mon.getDate() - mon.getDay() + 1);
+    $scope.monD = mon.getDate();
+    $scope.monM = months[mon.getMonth()];
+    $scope.MonDate = mon;
+
+    var tue = new Date(now);
+    tue.setDate(tue.getDate() - tue.getDay() + 2);
+    $scope.tueD = tue.getDate();
+    $scope.tueM = months[tue.getMonth()];
+    $scope.tueDate = tue;
+
+    var wed = new Date(now);
+    wed.setDate(wed.getDate() - wed.getDay() + 3);
+    $scope.wedD = wed.getDate();
+    $scope.wedM = months[wed.getMonth()];
+    $scope.wedDate = wed;
+
+    var thu = new Date(now);
+    thu.setDate(thu.getDate() - thu.getDay() + 4);
+    $scope.thuD = thu.getDate();
+    $scope.thuM = months[thu.getMonth()];
+    $scope.thuDate = thu;
+
+    var fri = new Date(now);
+    fri.setDate(fri.getDate() - fri.getDay() + 5);
+    $scope.friD = fri.getDate();
+    $scope.friM = months[fri.getMonth()];
+    $scope.friDate = fri;
+
+    var sat = new Date(now);
+    sat.setDate(sat.getDate() - sat.getDay() + 6);
+    $scope.satD = sat.getDate();
+    $scope.satM = months[sat.getMonth()];
+    $scope.satDate = sat;
+
+    var sund = new Date(now);
+    sund.setDate(sund.getDate() - sund.getDay() + 7);
+    $scope.sunD = sund.getDate();
+    $scope.sunM = months[sund.getMonth()];
+    $scope.sunDate = sund;
+
+    var n_mon = new Date(now);
+    n_mon.setDate(n_mon.getDate() - n_mon.getDay() + 8);
+    $scope.nmonD = n_mon.getDate();
+    $scope.nmonM = months[n_mon.getMonth()];
+    $scope.nmonDate = n_mon;
+  }
+
+  $scope.getWeek(new Date());
+});
+
+ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookService) {
+  var sched = SharedService.get('selectedSched');
+  if(!sched){
+    $location.path('/schedule')
+  }
+  var seat = 0;
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var days = ['Monday','Tuesday','Friday','Thursday','Friday','Saturday', 'Sunday'];
+
+  $scope.dateSched = months[sched.date.getMonth()] + ', ' + sched.date.getDate() + ' ' + sched.date.getFullYear();
+  $scope.daySched = days[sched.date.getDay()];
+  $scope.timeSched = sched.schedule.start;
+  $scope.instructor = sched.schedule.instructor.admin_id.first_name;
+
+  $scope.setSeatNumber = function(number){
+    seat = number;
+  }
+
+  $scope.bookSchedule = function(){
+
+    if(seat == 0){
+      alert('Please pick a seat');
+      return;
+    }
+
+    var book = {};
+    book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+    book.seat = seat;
+    book.sched_id = sched.schedule._id;
+
+    var bookSuccess = function(){
+      $location.path('/reserved')
+    }
+    var bookFail = function(error){
+      alert(error.data)
+    }
+    BookService.book(book).$promise.then(bookSuccess, bookFail);
+  }
 });

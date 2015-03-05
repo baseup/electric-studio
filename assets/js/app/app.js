@@ -110,3 +110,26 @@ app.directive("compareTo", function() {
     }
   };
 });
+
+app.filter('formatTime', function() {
+  return function(time) {
+
+    var date = new Date(time);
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; 
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+
+    return hours + ':' + minutes + ' ' + ampm;
+  };
+});
+
+app.filter('formatDate', function() {
+  return function(date) {
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var date = new Date(date);
+    return months[date.getMonth()] + ', ' + date.getDate() + ' ' + date.getFullYear();
+  };
+});
