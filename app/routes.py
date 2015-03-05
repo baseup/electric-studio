@@ -10,6 +10,7 @@ routes.get('/verify', 'home.verify')
 routes.post('/verify', 'home.verify')
 routes.post('/user/login', 'home.login')
 routes.get('/user/logout', 'home.logout')
+routes.get('/add_regular_schedules', 'home.addRegularSchedule')
 
 routes.prefix('/admin', [
 
@@ -28,7 +29,9 @@ routes.prefix('/api', [
     ('resource', '/user', 'api.user'),
     ('resource', '/package', 'api.package'),
     ('resource', '/instructor', 'api.instructor'),
-    ('resource', '/transaction', 'api.transaction')
+    ('resource', '/transaction', 'api.transaction'),
+    ('resource', '/schedule', 'api.schedules'),
+    ('resource', '/book', 'api.book')
 ])
 
 routes.subdomain('api.electric-studio.dev', [
