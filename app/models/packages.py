@@ -1,8 +1,9 @@
 from motorengine import *
 from .users import User
 from app.helper import mongo_to_dict
+from hurricane.db import Model
 
-class Package(Document):
+class Package(Model):
     __collection__ = 'packages'
     name = StringField(required=True)
     fee = IntField()
@@ -16,8 +17,9 @@ class Package(Document):
        return mongo_to_dict(self)
 
 
-class UserPackage(Document):
+class UserPackage(Model):
     __collection__ = 'user_packages'
+    __lazy__ = False
     user_id = ReferenceField(reference_document_type=User)
     package_id = ReferenceField(reference_document_type=Package, required=False)
     credit_count = IntField()

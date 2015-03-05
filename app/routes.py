@@ -18,7 +18,8 @@ routes.prefix('/admin', [
     ('post', '/login', 'admin.login'),
     ('get', '/logout', 'admin.logout'),
 
-    ('get', '/transactions', 'admin.transactions')
+    ('resource', '/transaction', 'admin.transaction'),
+    ('resource', '/package', 'admin.package')
 ])
 
 routes.prefix('/api', [

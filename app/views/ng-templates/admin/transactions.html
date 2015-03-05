@@ -1,101 +1,57 @@
 <div ng-controller="TransactionsCtrl">
+
   <div class="grid content pad">
     <div class="grid__item">
     <div class="packages box--white box--bordered">
       <div class="box__header align--middle cf pad">
-        <span class="label label--inline">Packages</span>
-        <button ng-click="showAddPackage()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-package">Add Package</button>
+        <span class="label label--inline">Transactions</span>
+        <!-- <button ng-click="showAddPackage()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-package">Add Package</button> -->
       </div>
 
-        <div class="modal__box pad" ng-show="isUpdatePackage">
-          <h3 class="h--medium brand-color space--bottom">Update Package</h3>
-          <div class="cf">
-            <div class="space--bottom float--left space--right">
-              <span class="label">Name</span>
-              <input class="text-input" ng-model="updatePackage.name">
-            </div>
-            <div class="space--bottom float--left space--right">
-              <span class="label">Desc</span>
-              <input class="text-input" ng-model="updatePackage.description">
-            </div>
-            <div class="space--bottom float--left space--right">
-              <span class="label">Number of Classes</span>
-              <input class="text-input" ng-model="updatePackage.credits">
-            </div>
-            <div class="space--bottom float--left">
-              <span class="label">Price</span>
-              <input class="text-input" ng-model="updatePackage.fee">
-            </div>
-            <div class="space--bottom float--left space--right">
-              <span class="label">Expiration</span>
-              <input class="text-input" value="30" ng-model="updatePackage.expiration"> Days
-            </div>
-          </div>
-          <button class="btn btn--medium btn--primary space--top modal-close" ng-click="setPackage()">Update</button>
-          <button class="btn btn--medium btn--primary space--top modal-close" ng-click="cancelUpdatePackage()">Cancel</button>
+      <div class="class-search pad cf">
+        <span class="label">Search</span>
+        <div class="bp-md-one-fourth float--left space--bottom space--right">
+          <input class="text-input" ng-model="search.user_id.first_name" placeholder="Name">
         </div>
+        <div class="float--left">
+          <select class="select" id="search-trans-package" ng-model="search.package_id._id">
+            <option value="">Select Package</option>
+          </select>
+        </div>
+      </div>
 
       <div class="pad" ng-show="!isUpdatePackage">
         <table class="data-table">
           <thead>
             <tr>
               <th>Name</th>
-              <th>Number of Classes</th>
+              <th>Package Name</th>
+              <th>Credits</th>
               <th>Price</th>
-              <th>Expiration</th>
-              <th>&nbsp;</th>
+              <th>Date</th>
+              <!-- <th>&nbsp;</th> -->
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="package in packages">
-              <td>{{ package.name }}</td>
-              <td>{{ package.credits }} Classes</td>
-              <td><small>PHP</small> {{ package.fee }}</td>
-              <td>{{ package.expiration }} days</td>
-              <td>
+            <tr ng-repeat="transaction in transactions | filter:search">
+              <td>{{ transaction.user_id.first_name }} {{ transaction.user_id.last_name }}</td>
+              <td>{{ transaction.package_id.name }}</td>
+              <td>{{ transaction.package_id.credits }} Classes</td>
+              <td><small>PHP</small> {{ transaction.package_id.fee }}</td>
+              <td>{{ transaction.create_at }}</td>
+              <!-- <td>
                 <button class="btn btn--small btn--secondary" ng-click="removePackage(package)">
                   <i class="fa fa-trash"></i> Remove
                 </button>
                 <button class="btn btn--small btn--secondary" ng-click="setToUpdate(package)" data-modal-toggle="update-package">
                   <i class="fa fa-pencil"></i> Edit
                 </button>
-              </td>
+              </td> -->
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-    </div>
-  </div>
-
-  <!-- modal Add Slider -->
-  <div id="add-package-modal" class="modal" data-modal="add-package">
-    <div class="modal__box pad">
-      <span class="close-btn modal-close">X</span>
-      <h3 class="h--medium brand-color space--bottom">Add Package</h3>
-      <div class="cf">
-        <div class="space--bottom float--left space--right">
-          <span class="label">Name</span>
-          <input class="text-input" ng-model="newPackage.name">
-        </div>
-        <div class="space--bottom float--left space--right">
-          <span class="label">Desc</span>
-          <input class="text-input" ng-model="newPackage.description">
-        </div>
-        <div class="space--bottom float--left space--right">
-          <span class="label">Number of Classes</span>
-          <input class="text-input" ng-model="newPackage.credits">
-        </div>
-        <div class="space--bottom float--left">
-          <span class="label">Price</span>
-          <input class="text-input" ng-model="newPackage.fee">
-        </div>
-        <div class="space--bottom float--left space--right">
-          <span class="label">Expiration</span>
-          <input class="text-input" value="30" ng-model="newPackage.expiration"> Days
-        </div>
-      </div>
-      <button class="btn btn--medium btn--primary space--top modal-close" ng-click="addPackage()">Add</button>
     </div>
   </div>
 </div>

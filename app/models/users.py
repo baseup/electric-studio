@@ -1,7 +1,8 @@
 from motorengine import *
 from app.helper import mongo_to_dict
+from hurricane.db import Model
 
-class User(Document):
+class User(Model):
     __collection__ = 'users'
     first_name = StringField(required=True)
     middle_name = StringField(required=False)
