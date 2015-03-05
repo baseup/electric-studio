@@ -73,7 +73,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
         alert(error.data);
       }
 
-      PackageService.update({ packageId: $scope.updatePackage.id }, $scope.updatePackage).$promise.then(addSuccess, addFail);
+      PackageService.update({ packageId: $scope.updatePackage._id }, $scope.updatePackage).$promise.then(addSuccess, addFail);
     }
   }
 
