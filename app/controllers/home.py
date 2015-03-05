@@ -37,14 +37,13 @@ def verify(self):
     if self.request.method == 'GET':
         ticket = self.get_argument('ticket')
         if ticket:
-            print(ticket)
             user = yield User.objects.get(ticket)
             if user:
                 if user.status == 'Unverified':
                     user.status = 'Active';
                     user = yield user.save()
                     self.set_secure_cookie('loginUser', user.first_name)
-                    self.set_secure_cookie('loginUserID', user._id)
+                    self.set_secure_cookie('loginUserID', str(user._id))
                     self.render('verify', success=True)
                 else:
                     self.render('verify', success=True, message="Account Already Verified")
@@ -70,19 +69,20 @@ def verify(self):
 
 def buy(self):
     if self.request.method == 'GET':
-        self.set_status(404)
+        self.redirect('/#/rates')
     else:
-        data = {
-            'payment_type' : self.get_argument('payment_type'),
-            'payer_status' : self.get_argument('payer_status'),
-            'payer_id' : self.get_argument('payer_id'),
-            'payment_date' : self.get_argument('payment_date'),
-            'receiver_id' : self.get_argument('receiver_id'),
-            'verify_sign' : self.get_argument('verify_sign')
-        }
-        
         success = self.get_argument('success')
         if success == 'True':
+
+            data = {
+                'payment_type' : self.get_argument('payment_type'),
+                'payer_status' : self.get_argument('payer_status'),
+                'payer_id' : self.get_argument('payer_id'),
+                'payment_date' : self.get_argument('payment_date'),
+                'receiver_id' : self.get_argument('receiver_id'),
+                'verify_sign' : self.get_argument('verify_sign')
+            }
+            
             pid = self.get_argument('pid');
             package = yield Package.objects.get(pid)
             if pid:
@@ -107,5 +107,4 @@ def buy(self):
                 self.finish()
         else:
             self.redirect('/#/rates')
-
 

@@ -188,7 +188,6 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, AuthService, User
     $scope.transactions = data;
   });
 
-
   if($scope.account.birthdate){
     $scope.account.birthdate = $scope.account.birthdate.replace(' 00:00:00', '');;
   }
@@ -198,7 +197,6 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, AuthService, User
     var addSuccess = function (){
       $scope.loginUser = AuthService.getCurrentUser();
     }
-
     var addFail = function(error){
       alert(error.data);
     }
@@ -214,17 +212,14 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, AuthService, User
         alert("Retype Password didn't match");
         return;
       }
-
       var addSuccess = function (){
         alert("Successfully updated your password")
         $scope.pass = null;
       }
-
       var addFail = function(error){
         alert(error.data);
         $scope.pass = null;
       }
-
       UserService.update({ userId: $scope.loginUser.id }, $scope.pass).$promise.then(addSuccess, addFail);
     }
 
@@ -239,8 +234,11 @@ ctrls.controller('RatesCtrl', function ($scope, $http, PackageService){
     $scope.packages = data;
   });
 
-  $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port +'/buy';
+  var port = ''
+  if(window.location.port)
+    port = ':' + window.location.port;
 
+  $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/buy';
   $scope.buy = function(pacId){
     $http.post('/buy', { packageId : pacId })
          .success(function(data, status, headers, config) {
