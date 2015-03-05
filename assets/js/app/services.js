@@ -45,7 +45,7 @@ services.factory('AuthService', function (UserService) {
     _user: null,
     setCurrentUser: function (cb) {
       var self = this;
-      if (!self._user) {
+      if (!self._user && loginUser) {
         var checkUser = UserService.get(function (user) {
           self._user = user;
           if (typeof cb == 'function') {
