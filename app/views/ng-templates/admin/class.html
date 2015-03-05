@@ -3,12 +3,15 @@
   <div class="class-search pad cf">
     <span class="label">Select Class Schedule</span>
     <div class="bp-md-one-fourth float--left space--bottom space--right">
-      <input class="datepicker text-input" placeholder="Date">
+      <input class="datepicker text-input" ng-model="newBook.date" placeholder="Date">
     </div>
     <div class="float--left">
-      <select class="select">
-        <option value="8:30">8:30 AM</option>
-        <option value="10:30">10:30 AM</option>
+      <select class="select" ng-model="newBook.time">
+        <option value="7:00 AM">7:00 AM</option>
+        <option value="9:30 AM">9:30 AM</option>
+        <option value="1:00 PM">1:00 PM</option>
+        <option value="3:30 PM">3:30 PM</option>
+        <option value="5:00 PM">5:00 PM</option>
       </select>
     </div>
   </div>
@@ -44,7 +47,7 @@
 
       <div class="booking-header space--bottom cf">
         <div class="stats">
-          <span class="caps">5 Riders</span>
+          <span class="caps">{{ books.length }} Riders</span>
         </div>
 
         <div class="options">
@@ -57,7 +60,7 @@
 
       <div class="booking-list grid">
 
-        <div class="grid__item bp-sm-one-half bp-lg-one-third">
+        <div ng-repeat="book in books" class="grid__item bp-sm-one-half bp-lg-one-third">
           <div class="booking__item box--bordered box--white space--bottom cf">
 
             <div class=" box__header">
@@ -65,7 +68,7 @@
                 <li>
                   <a class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
                     <i class="fa fa-exchange"></i>
-                    <span class="bike-number">14</span>
+                    <span class="bike-number">{{ book.seat_number }}</span>
                   </a>
                 </li>
                 <li>
@@ -73,92 +76,7 @@
                 </li>
               </ul>
 
-              <h3 class="user--name">Jeph Fernandez</h3>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="grid__item bp-sm-one-half bp-lg-one-third">
-          <div class="booking__item box--bordered box--white space--bottom cf">
-
-            <div class=" box__header">
-              <ul class="booking__actions nav">
-                <li>
-                  <a class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
-                    <i class="fa fa-exchange"></i>
-                    <span class="bike-number">14</span>
-                  </a>
-                </li>
-                <li>
-                  <a  class="cancel-booking"><i class="fa fa-times"></i></a>
-                </li>
-              </ul>
-
-              <h3 class="user--name">Anthony De Leon</h3>
-            </div>
-
-          </div>
-        </div>
-        <div class="grid__item bp-sm-one-half bp-lg-one-third">
-          <div class="booking__item box--bordered box--white space--bottom cf">
-
-            <div class=" box__header">
-              <ul class="booking__actions nav">
-                <li>
-                  <a  class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
-                    <i class="fa fa-exchange"></i>
-                    <span class="bike-number">14</span>
-                  </a>
-                </li>
-                <li>
-                  <a  class="cancel-booking"><i class="fa fa-times"></i></a>
-                </li>
-              </ul>
-
-              <h3 class="user--name">John Doe</h3>
-            </div>
-
-          </div>
-        </div>
-        <div class="grid__item bp-sm-one-half bp-lg-one-third">
-          <div class="booking__item box--bordered box--white space--bottom cf">
-
-            <div class=" box__header">
-              <ul class="booking__actions nav">
-                <li>
-                  <a  class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
-                    <i class="fa fa-exchange"></i>
-                    <span class="bike-number">14</span>
-                  </a>
-                </li>
-                <li>
-                  <a  class="cancel-booking"><i class="fa fa-times"></i></a>
-                </li>
-              </ul>
-
-              <h3 class="user--name">Mark Serbol</h3>
-            </div>
-
-          </div>
-        </div>
-        <div class="grid__item bp-sm-one-half bp-lg-one-third">
-          <div class="booking__item box--bordered box--white space--bottom cf">
-
-            <div class=" box__header">
-              <ul class="booking__actions nav">
-                <li>
-                  <a  class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
-                    <i class="fa fa-exchange"></i>
-                    <span class="bike-number">14</span>
-                  </a>
-                </li>
-                <li>
-                  <a  class="cancel-booking"><i class="fa fa-times"></i></a>
-                </li>
-              </ul>
-
-              <h3 class="user--name">Jeph Fernandez</h3>
+              <h3 class="user--name">{{ book.user_id.first_name }} {{ bookt.user.last_name }}</h3>
             </div>
 
           </div>
@@ -327,26 +245,19 @@
       <div class="user-select cf">
         <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
           <span class="label">Rider</span>
-          <input class="text-input" placeholder="Input Name" value="Jeph Fernandez">
+          <select class="select" id="select-user-id" ng-change="selectRider()" ng-model="newBook.user_id">
+            <option value="">Select Rider</option>
+          </select>
         </div>
         <div class="space--bottom bp-md-one-third float--left">
           <span class="label">Bike Number</span>
-          <select class="select">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7" selected>7</option>
-            <option value="8">8</option>
-          </select>
+          <select class="select" id="select-bike-number" ng-model="newBook.seat_number"></select>
         </div>
       </div>
-      <div class="user-class-details">
-        <span class="caps">3 Classes Left</span>
+      <div class="user-class-details" ng-show="selectedRider">
+        <span class="caps">{{ selectedRider.credits }} Classes Left</span>
       </div>
-      <button class="btn btn--medium btn--primary space--top modal-close">Book</button>
+      <button type="button" ng-click="sendNewBook()" class="btn btn--medium btn--primary space--top modal-close">Book</button>
 
     </div>
   </div>
