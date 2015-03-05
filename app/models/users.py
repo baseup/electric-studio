@@ -23,4 +23,3 @@ class User(Model):
 
     def to_dict(self):
        return mongo_to_dict(self)
-

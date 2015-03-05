@@ -92,15 +92,52 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 });
 
-ctrls.controller('AccountCtrl', function ($scope) {
+ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, TransactionService) {
 
-  
-  $scope.accountAddClass = function () {
+  $scope.newCredits = {};
+
+  UserService.query(function (users) {
+    $scope.users = users;
+  });
+
+  var select = angular.element('#select-add-package')[0].selectize;
+  PackageService.query(function (packages) {
+    $scope.packages = packages;
+    angular.forEach(packages, function (pack) {
+      select.addOption({ value: pack._id, text: pack.name });
+    });
+  });
+
+  $scope.selectPackage = function (packageId) {
+    for (var i in $scope.packages) {
+      if ($scope.packages[i]._id == packageId) {
+        $scope.newCredits.expiration = $scope.packages[i].expiration;
+        break;
+      }
+    }
+  }
+
+  $scope.accountAddClass = function (user) {
+    $scope.newCredits.user_id = user._id;
+    $scope.selectedAccount = user;
     angular.element('#add-class-modal').Modal();
   }
   
-  $scope.accountSummary = function () {
+  $scope.accountSummary = function (user) {
+    $scope.selectedAccount = user;
+    UserService.get({ userId: user._id }, function (summary) {
+      console.log(summary);
+      $scope.selectedAccount = summary;
+    });
     angular.element('#account-summary-modal').Modal();
+  }
+
+  $scope.saveNewCredits = function () {
+    $scope.saving = true;
+    TransactionService.save($scope.newCredits, function (credits) {
+      $scope.saving = false;
+      $scope.newCredits = {};
+    });
   }
   
 });

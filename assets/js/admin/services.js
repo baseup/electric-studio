@@ -4,7 +4,7 @@ var loginUser = window.localStorage.getItem('login-user');
 var services = angular.module('elstudio.services', ['ngResource']);
 
 services.factory('UserService', function($resource) {
-  return $resource('/api/user/:userId/:action', {}, {
+  return $resource('/admin/user/:userId/:action', {}, {
     logout: {
       method: 'GET',
       params: { userId: 'logout' }

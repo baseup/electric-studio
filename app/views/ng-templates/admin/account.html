@@ -2,7 +2,7 @@
   <div class="content-filter pad cf border--bottom">
     <div class="content-filter__item space--right">
       <span class="label">Search Account</span>
-      <input class="text-input" placeholder="Enter Name">
+      <input class="text-input" placeholder="Enter Name" ng-model="search.first_name">
     </div>
 
   </div>
@@ -13,11 +13,11 @@
 
     <div class="account-list grid">
 
-      <div class="grid__item bp-md-one-half bp-lg-one-third">
+      <div ng-repeat="user in users | filter:search" class="grid__item bp-md-one-half bp-lg-one-third">
         <div class="account__item box--bordered box--white space--bottom cf">
 
           <div class="pad">
-            <b class="h--small">Jeph Fernandez</b>
+            <b class="h--small">{{ user.first_name }} {{ user.last_name }}</b>
           </div>
 
           <div class="pad--sides">
@@ -25,28 +25,28 @@
 
               <dl class="data--inline">
                 <dt><i class="fa fa-phone"></i></dt>
-                <dd>0916238313</dd>
+                <dd>{{ user.phone_number }}</dd>
               </dl>
 
               <dl class="data--inline space--bottom">
                 <dt><i class="fa fa-envelope"></i></dt>
-                <dd class="inline space--bottom">jeph@greenlemon.co</dd>
+                <dd class="inline space--bottom">{{ user.email }}</dd>
               </dl>
 
               <dl>
               <dt>Class Package</dt>
-              <dd class="">3 Classes Left</dd>
-              <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd>
+              <dd class="">{{ user.credits }} Classes Left</dd>
+              <!-- <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd> -->
               </dl>
             </div>
 
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass()">Add Class</a>
+            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">Add Class</a>
             <ul class="nav float--right">
               <li>
-                <a href="" ng-click="accountSummary()"><i class="fa fa-bars"></i></a>
+                <a href="" ng-click="accountSummary(user)"><i class="fa fa-bars"></i></a>
               </li>
               <li>
                 <a href=""><i class="fa fa-ban"></i></a>
@@ -56,195 +56,8 @@
               </li>
             </ul>
           </div>
-
         </div>
       </div>
-
-      <div class="grid__item bp-md-one-half bp-lg-one-third">
-        <div class="account__item box--bordered box--white space--bottom cf">
-
-          <div class="pad">
-            <b class="h--small">Anthony De Leon</b>
-          </div>
-
-          <div class="pad--sides">
-            <div class="data-list">
-
-              <dl class="data--inline">
-                <dt><i class="fa fa-phone"></i></dt>
-                <dd>09170839283</dd>
-              </dl>
-
-              <dl class="data--inline space--bottom">
-                <dt><i class="fa fa-envelope"></i></dt>
-                <dd class="inline space--bottom">anthony@greenlemon.co</dd>
-              </dl>
-
-              <dl>
-              <dt>Class Package</dt>
-              <dd class="">6 Classes Left</dd>
-              <dd class=" space--bottom text-color-light">expires in 14 days <a href="" class="space--half-left">Extend</a></dd>
-              </dl>
-            </div>
-
-          </div>
-
-          <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass()">Add Class</a>
-            <ul class="nav float--right">
-              <li>
-                <a href="" ng-click="accountSummary()"><i class="fa fa-bars"></i></a>
-              </li>
-              <li>
-                <a href=""><i class="fa fa-ban"></i></a>
-              </li>
-              <li>
-                <a href="" class="pad--off-right"><i class="fa fa-share"></i></a>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-      </div>
-      <div class="grid__item bp-md-one-half bp-lg-one-third">
-        <div class="account__item box--bordered box--white space--bottom cf">
-
-          <div class="pad">
-            <b class="h--small">John Doe</b>
-          </div>
-
-          <div class="pad--sides">
-            <div class="data-list">
-
-              <dl class="data--inline">
-                <dt><i class="fa fa-phone"></i></dt>
-                <dd>09193212837</dd>
-              </dl>
-
-              <dl class="data--inline space--bottom">
-                <dt><i class="fa fa-envelope"></i></dt>
-                <dd class="inline space--bottom">john@gmail.com</dd>
-              </dl>
-
-              <dl>
-              <dt>Class Package</dt>
-              <dd class="">6 Classes Left</dd>
-              <dd class=" space--bottom text-color-light">expires in 22 days <a href="" class="space--half-left">Extend</a></dd>
-              </dl>
-            </div>
-
-          </div>
-
-          <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass()">Add Class</a>
-            <ul class="nav float--right">
-              <li>
-                <a href="" ng-click="accountSummary()"><i class="fa fa-bars"></i></a>
-              </li>
-              <li>
-                <a href=""><i class="fa fa-ban"></i></a>
-              </li>
-              <li>
-                <a href="" class="pad--off-right"><i class="fa fa-share"></i></a>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-      </div>
-      <div class="grid__item bp-md-one-half bp-lg-one-third">
-        <div class="account__item box--bordered box--white space--bottom cf">
-
-          <div class="pad">
-            <b class="h--small">Mark Serbol</b>
-          </div>
-
-          <div class="pad--sides">
-            <div class="data-list">
-
-              <dl class="data--inline">
-                <dt><i class="fa fa-phone"></i></dt>
-                <dd>09238493791</dd>
-              </dl>
-
-              <dl class="data--inline space--bottom">
-                <dt><i class="fa fa-envelope"></i></dt>
-                <dd class="inline space--bottom">mark@greenlemon.co</dd>
-              </dl>
-
-              <dl>
-              <dt>Class Package</dt>
-              <dd class="">4 Classes Left</dd>
-              <dd class=" space--bottom text-color-light">expires in 12 days <a href="" class="space--half-left">Extend</a></dd>
-              </dl>
-            </div>
-
-          </div>
-
-          <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass()">Add Class</a>
-            <ul class="nav float--right">
-              <li>
-                <a href="" ng-click="accountSummary()"><i class="fa fa-bars"></i></a>
-              </li>
-              <li>
-                <a href=""><i class="fa fa-ban"></i></a>
-              </li>
-              <li>
-                <a href="" class="pad--off-right"><i class="fa fa-share"></i></a>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-      </div>
-      <div class="grid__item bp-md-one-half bp-lg-one-third">
-        <div class="account__item box--bordered box--white space--bottom cf">
-
-          <div class="pad">
-            <b class="h--small">Jeph Fernandez</b>
-          </div>
-
-          <div class="pad--sides">
-            <div class="data-list">
-
-              <dl class="data--inline">
-                <dt><i class="fa fa-phone"></i></dt>
-                <dd>0916238313</dd>
-              </dl>
-
-              <dl class="data--inline space--bottom">
-                <dt><i class="fa fa-envelope"></i></dt>
-                <dd class="inline space--bottom">jeph@greenlemon.co</dd>
-              </dl>
-
-              <dl>
-              <dt>Class Package</dt>
-              <dd class="">3 Classes Left</dd>
-              <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd>
-              </dl>
-            </div>
-
-          </div>
-
-          <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass()">Add Class</a>
-            <ul class="nav float--right">
-              <li>
-                <a href="" ng-click="accountSummary()"><i class="fa fa-bars"></i></a>
-              </li>
-              <li>
-                <a href=""><i class="fa fa-ban"></i></a>
-              </li>
-              <li>
-                <a href="" class="pad--off-right"><i class="fa fa-share"></i></a>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -268,23 +81,11 @@
             <th>Classes Left</th>
             <th>Expiration Date</th>
           </tr>
-          <tr>
-            <td>5 Pax</td>
-            <td>5</td>
-            <td>0</td>
-            <td>05 Jan 2015</td>
-          </tr>
-          <tr>
-            <td>15 Pax</td>
-            <td>15</td>
-            <td>0</td>
-            <td>14 Feb 2015</td>
-          </tr>
-          <tr>
-            <td>5 Pax</td>
-            <td>2</td>
-            <td>3</td>
-            <td>05 Mar 2015</td>
+          <tr ng-repeat="pack in selectedAccount._packages">
+            <td>{{ pack.package_id.name }} </td>
+            <td>{{ pack.credit_count }}</td>
+            <td>{{ pack.remaining_credits }}</td>
+            <td>{{ pack.create_at }}</td>
           </tr>
         </table>
       </div>
@@ -300,31 +101,29 @@
       <ul class="form-fields">
         <li>
           <span class="label">Rider</span>
-          <h4 class="h-small">Jeph Fernandez</h4>
+          <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
         </li>
         <li>
           <span class="label">Select Class Package</span>
-          <select class="select">
-            <option value="1">1 Class</option>
-            <option value="5">5 Pax</option>
-            <option value="10">10 Pax</option>
+          <select class="select" id="select-add-package" ng-change="selectPackage(newCredits.package_id)" ng-model="newCredits.package_id">
+            <option value="">Select Package</option>
           </select>
         </li>
         <li>
           <span class="label">Or Input Number of Class</span>
-          <input class="text-input">
+          <input ng-disabled="newCredits.package_id" ng-model="newCredits.credit_count" class="text-input">
         </li>
         <li>
           <span class="label">Set Expiration</span>
-          <input class="text-input datepicker" placeholder="Defaults to 30 days">
+          <input ng-disabled="newCredits.package_id" ng-model="newCredits.expiration" class="text-input datepicker" placeholder="Defaults to 30 days">
         </li>
         <li>
           <span class="label">Notes</span>
-          <textarea class="text-input" cols="3" placeholder="Indicate reason for free class"></textarea>
+          <textarea class="text-input" cols="3" ng-model="newCredits.notes" placeholder="Indicate reason for free class"></textarea>
         </li>
       </ul>
      
-      <button class="btn btn--primary btn--medium space--top modal-close">Add</button>
+      <button type="button" ng-click="saveNewCredits()" class="btn btn--primary btn--medium space--top modal-close">Add</button>
 
     </div>
   </div>
