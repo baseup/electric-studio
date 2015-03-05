@@ -234,12 +234,12 @@ ctrls.controller('RatesCtrl', function ($scope, $http, PackageService){
     $scope.packages = data;
   });
 
-  var port = ''
-  if(window.location.port)
+  var port = '';
+  if (window.location.port)
     port = ':' + window.location.port;
 
   $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/buy';
-  $scope.buy = function(pacId){
+  $scope.buy = function (pacId) {
     $http.post('/buy', { packageId : pacId })
          .success(function(data, status, headers, config) {
       if (data.success && data.approve_url) {

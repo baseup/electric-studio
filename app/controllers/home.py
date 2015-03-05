@@ -93,6 +93,8 @@ def buy(self):
                 transaction.trans_info = str(data)
 
                 transaction = yield transaction.save()
+                user.credits += package.credits
+                yield user.save()
 
                 self.redirect('/#/account#packages')
             else:

@@ -2,22 +2,14 @@ import sys
 from motorengine.errors import InvalidDocumentError
 from app.models.packages import Package, UserPackage
 from app.models.users import User
+from bson.objectid import ObjectId
 import tornado
 import json
     
 def find(self):
     user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-    user = yield User.objects.get(user_id)
-    transactions = yield UserPackage.objects.filter(user_id=user._id).find_all()
-    pacs = {}
-    for i, transaction in enumerate(transactions):
-        pacs[i] = transaction.to_dict()
-        if pacs[i]['package_id']:
-            package = yield Package.objects.get(pacs[i]['package_id'])
-            pacs[i]['package'] = package.to_dict()
-
-    self.write(json.dumps(pacs))
-    self.finish()
+    transactions = yield UserPackage.objects.filter(user_id=ObjectId(user_id)).find_all()
+    self.render_json(transactions)
 
 def find_one(self, id):
     transaction = yield UserPackage.objects.get(id)
