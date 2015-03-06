@@ -21,8 +21,8 @@ def login(self):
         if bcrypt.verify(passWord, login_user[0].password):
             login_user[0].password = None
             user = login_user[0].to_dict()
-            self.set_secure_cookie('loginUser', user['first_name'], expires_day=None)
-            self.set_secure_cookie('loginUserID', user['id'], expires_day=None)
+            self.set_secure_cookie('loginUser', user['first_name'], expires_days=None)
+            self.set_secure_cookie('loginUserID', user['id'], expires_days=None)
             self.set_header("Content-Type", "application/json")
             self.write(json.dumps({ 'success' : True, 'user' : user['id'] }))
         else:
@@ -46,8 +46,8 @@ def verify(self):
                 if user.status == 'Unverified':
                     user.status = 'Active';
                     user = yield user.save()
-                    self.set_secure_cookie('loginUser', user.first_name, expires_day=None)
-                    self.set_secure_cookie('loginUserID', str(user._id), expires_day=None)
+                    self.set_secure_cookie('loginUser', user.first_name, expires_days=None)
+                    self.set_secure_cookie('loginUserID', str(user._id), expires_days=None)
                     self.render('verify', success=True)
                 else:
                     self.render('verify', success=True, message='Account Already Verified')
@@ -80,30 +80,34 @@ def buy(self):
                 'verify_sign' : self.get_argument('verify_sign')
             }
             
-            pid = self.get_argument('pid');
-            package = yield Package.objects.get(pid)
-            if pid:
-                user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+            try: 
+                pid = self.get_argument('pid');
+                package = yield Package.objects.get(pid)
+                if pid:
+                    user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+                    user = yield User.objects.get(user_id)
 
-                user = yield User.objects.get(user_id)
+                    transaction = UserPackage()
+                    transaction.user_id = user._id
+                    transaction.package_id = package._id
+                    transaction.credit_count = package.credits
+                    transaction.remaining_credits = package.credits
+                    transaction.expiration = package.expiration
+                    transaction.trans_info = str(data)
+                    user.credits += package.credits
 
-                transaction = UserPackage()
-                transaction.user_id = user._id
-                transaction.package_id = package._id
-                transaction.credit_count = package.credits
-                transaction.remaining_credits = package.credits
-                transaction.expiration = package.expiration
-                transaction.trans_info = str(data)
+                    transaction = yield transaction.save()
+                    user = yield user.save()
 
-                transaction = yield transaction.save()
-                user.credits += package.credits
-                yield user.save()
-
-                self.redirect('/#/account#packages')
-            else:
+                    self.redirect('/#/account#packages')
+                else:
+                    self.set_status(403)
+                    self.write('Package not found')
+                    self.finish()
+            except :
+                value = sys.exc_info()[1]
                 self.set_status(403)
-                self.write('Package not found')
-                self.finish()
+                self.write(str(value))  
         else:
             self.redirect('/#/rates')
 
