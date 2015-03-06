@@ -9,15 +9,7 @@ def find(self):
     user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
     user = yield User.objects.get(user_id)
     transactions = yield UserPackage.objects.filter(user_id=user._id).find_all()
-    pacs = {}
-    for i, transaction in enumerate(transactions):
-        pacs[i] = transaction.to_dict()
-        if pacs[i]['package_id']:
-            package = yield Package.objects.get(pacs[i]['package_id'])
-            pacs[i]['package'] = package.to_dict()
-
-    self.write(json.dumps(pacs))
-    self.finish()
+    self.render_json(transactions)
 
 def find_one(self, id):
     transaction = yield UserPackage.objects.get(id)
@@ -28,6 +20,7 @@ def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
     try :
+        user = yield User.objects.get(data['user_id']);
         transaction = UserPackage(user_id=data['user_id'])
         if 'package_id' in data:
             package = yield Package.objects.get(data['package_id'])
@@ -35,18 +28,22 @@ def create(self):
             transaction.credit_count = package.credits
             transaction.remaining_credits = package.credits
             transaction.expiration = package.expiration
+            user.credits = user.credits + package.credits
         else:
             transaction.expiration = data['expiration']
             transaction.credit_count = data['credits']
             transaction.remaining_credits = data['credits']
+            user.credits = user.credits + int(data['credits'])
             
         if 'notes' in data:
             transaction.notes = data['notes']
 
         if 'transaction_info' in data:
-            transaction.transaction_info = data['transaction_info']
+            transaction.trans_info = data['transaction_info']
 
         transaction = yield transaction.save()
+        if transaction:
+            user = yield user.save();
     except :
         value = sys.exc_info()[1]
         self.set_status(403)
