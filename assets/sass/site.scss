@@ -1,58 +1,3 @@
-/**
- * Add the core framework
- */
-@import "framework";
-
-@import "components/base";
-
-@import "components/overrides";
-
-$orange: #ff8f1c;
-$text: #282828;
-$grayText: #757575;
-$light: #fff;
-$gray: #cbc8c7;
-$lightGray: #f3f3f4;
-$darkGray: #666;
-$parts-3: 33.33333333333333%;
-
-@mixin wrapper {
-  max-width: 1080px;
-
-  margin: 0 auto;
-  @media only screen and (min-width: 1080px){
-    max-width: 1200px;
-  }
-}
-
-@mixin border-radius($radius: 50%) {
-  -webkit-border-radius: $radius;
-  -moz-border-radius: $radius;
-  -ms-border-radius: $radius;
-  border-radius: $radius;
-}
-
-@mixin box-shadow($shadow) {
-  -webkit-box-shadow: $shadow;
-  -moz-box-shadow: $shadow;
-  box-shadow: $shadow;
-}
-
-@mixin transition($trans) {
-  -webkit-transition: $trans;
-  -moz-transition: $trans;
-  -o-transition: $trans;
-  transition: $trans; 
-}
-
-@mixin transform($trans) {
-  -webkit-transform: $trans;
-  -moz-transform: $trans;
-  -o-transform: $trans;
-  -ms-transform: $trans;
-  transform: $trans; 
-}
-
 @import "../vendor/fontawesome/css/font-awesome.min.css";
 @import url(http://fonts.googleapis.com/css?family=Lato:400,700);
 
@@ -87,6 +32,54 @@ $parts-3: 33.33333333333333%;
 }
 
 
+/**
+ * Add the core framework
+ */
+@import "framework";
+
+@import "components/base";
+
+@import "components/overrides";
+
+
+
+@mixin wrapper {
+  max-width: 1080px;
+
+  margin: 0 auto;
+  @media only screen and (min-width: 1080px) {
+    max-width: 1200px;
+  }
+}
+
+@mixin border-radius($radius: 50%) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  border-radius: $radius;
+}
+
+@mixin box-shadow($shadow) {
+  -webkit-box-shadow: $shadow;
+  -moz-box-shadow: $shadow;
+  box-shadow: $shadow;
+}
+
+@mixin transition($trans) {
+  -webkit-transition: $trans;
+  -moz-transition: $trans;
+  -o-transition: $trans;
+  transition: $trans; 
+}
+
+@mixin transform($trans) {
+  -webkit-transform: $trans;
+  -moz-transform: $trans;
+  -o-transform: $trans;
+  -ms-transform: $trans;
+  transform: $trans; 
+}
+
 
 body {
   background: #fff;
@@ -100,11 +93,11 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  background: $orange;
+  background: $brand-color-primary;
   text-align: center;
   font-family: 'Brandon_Grotesque';
   position: relative;
-  z-index: 3;
+  z-index: 10;
   
   .wrapper {
     position: relative;
@@ -174,22 +167,40 @@ body {
   
   @include breakpoint(md) {
     padding: 0;
+    display: block;
+    position: absolute;
+    bottom: 15px;
+    left: 240px;
+    margin: 0;
   }
   
   li {
     display: block;
+    
+    @include breakpoint(sm) {
+      display: inline-block;
+      margin: 0 10px;
+    }
+    
+    @include breakpoint(lg) {
+      margin: 0 15px;
+    }
   }
   
   a {
     display: block;
     padding: 6px 0;
     text-transform: uppercase;
-    color: $light;
+    color: #fff;
     text-decoration: none;
     font-weight: bold;
     
+    @include breakpoint(md) {
+      padding: 10px 0 0 0;
+    }
+    
     &:hover, &.active { 
-      color: $grayText!important;
+      color: $color-text-light!important;
     }
   }
   
@@ -199,40 +210,49 @@ body {
   
 }
 
-.account-header-menu {
-  color: $light;
+.account-menu {
+  color: #fff;
   text-transform: uppercase;
   letter-spacing: 2px;
   cursor: default;
   position: relative;
   padding: 15px 0 10px 0;
   
+  @include breakpoint(md) {
+    position: absolute;
+    right: 100px;
+    bottom: 50px;
+    text-align: right;
+    display: block;
+  }
+  
   
   &:hover { 
-    .menu-list {
+    .account-menu__list {
       display: block;
     }
   }
   
-  .options {
+  .account-menu__options {
     font-size: 0.8em;
     text-align: left;
-  }
   
-  a {
-    color: inherit;
-    cursor: pointer;
-    
-    &.user-loggedin {
-      text-transform: none;
-      
-      strong {
-        text-transform: uppercase;
+  
+    a {
+      color: inherit;
+      cursor: pointer;
+
+      &.user-loggedin {
+        text-transform: none;
+
+        strong {
+          text-transform: uppercase;
+        }
       }
-    }
-    
-    &:hover {
-      color: $grayText;
+
+      &:hover {
+        color: $color-text-light;
+      }
     }
   }
   
@@ -244,7 +264,7 @@ body {
     display: none;
   }
   
-  .menu-list {
+  .account-menu__list {
     position: absolute;
     z-index: 9;
     top: auto;
@@ -256,7 +276,7 @@ body {
     @include breakpoint(md) {
       left: auto;
       right: -100px;
-      width: 320px;
+      width: 220px;
       padding-top: 60px;
     }
   }
@@ -277,16 +297,11 @@ body {
     }
   }
   
-  @include breakpoint(md) {
-    position: absolute;
-    right: 100px;
-    bottom: 50px;
-    text-align: right;
-    display: block;
-  }
+  .account-menu__holder { @extend .menu-holder; }
+  
 }
 
-.book-menu {
+.sub-menu {
   position: relative;
   text-align: left;
   
@@ -295,19 +310,24 @@ body {
     right: 100px;
     bottom: 15px;
   }
+  
+  &:hover {
+    .sub-menu__list {
+      display: block!important;
+    }
+  }
  
-  .book-toggle {
+  .sub-menu__toggle {
     display: inline-block;
     font-size: 18px;
     font-weight: bold;
     text-align: left;
-    color: $light;
+    color: #fff;
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-right: 40px;
     cursor: pointer;
     color: purple;
-
     
     @include breakpoint(md) {
       text-align: right;
@@ -316,7 +336,7 @@ body {
     }
   }
   
-  .menu-list {
+  .sub-menu__list {
     display: none;
     position: absolute;
     z-index: 9;
@@ -333,27 +353,23 @@ body {
     }
   }
   
-  &:hover {
-    .menu-list {
-      display: block;
-    }
-  }
+  .sub-menu__holder { @extend .menu-holder; }
   
 }
 
-.holder {
-  background: $lightGray;
-  box-shadow: 0 1px 2px rgba($darkGray, .6);
+.menu-holder {
+  background: $brand-color-quaternary;
+  box-shadow: 0 1px 2px rgba($brand-color-secondary, .6);
   padding: 15px;
   text-align: center;
   
   a {
     display: block;
-    border-bottom: 2px solid $light;
+    border-bottom: 2px solid #fff;
     color: inherit;
     text-transform: uppercase;
     padding: 10px;
-    color: $grayText;
+    color: $color-text-light;
     font-size: 16px;
 
     &:last-child {
@@ -361,14 +377,14 @@ body {
     }
 
     &:hover {
-      color: $orange;
+      color: $brand-color-primary;
     }
   }
 }
 
 .menu-toggle {
   display: block;
-  color: $light;
+  color: #fff;
   position: absolute;
   right: 20px;
   bottom: 20px;
@@ -376,7 +392,7 @@ body {
   cursor: pointer;
   
   &:hover {
-    color: $text;
+    color: $color-text;
   }
   
   @include breakpoint(md) {
@@ -385,7 +401,7 @@ body {
 }
 
 .color-secondary {
-  color: $grayText;
+  color: $color-text-light;
 }
 
 .h {
@@ -408,19 +424,19 @@ body {
   }
   
   &.light {
-    color: $light!important;
+    color: #fff!important;
   }
   
   &.dark {
-    color: $text!important;
+    color: $color-text!important;
   }
   
   &.primary, &.color-primary {
-    color: $orange!important;
+    color: $brand-color-primary!important;
   }
   
   &.gray {
-    color: $grayText!important;
+    color: $color-text-light!important;
   }
   
   &.center {
@@ -440,7 +456,7 @@ body {
     font-family: 'Tungsten', sans-serif;
     font-weight: 300;
     text-transform: uppercase;
-    color: $orange;
+    color: $brand-color-primary;
     letter-spacing: 0.2em;
     font-size: 50px;
     
@@ -477,14 +493,14 @@ body {
 
 .intro {
   font-size: 1.2em;
-  color: lighten($text, 30%);
+  color: lighten($color-text, 30%);
 }
 
 .link {
   text-transform: uppercase;
   font-size: 0.84em;
   font-weight: bold;
-  color: $orange;
+  color: $brand-color-primary;
   cursor: pointer;
   font-family: 'Brandon_Grotesque';
   line-height: 3em;
@@ -503,7 +519,7 @@ body {
   &.basic {
     
     &:hover {
-      color: $text;
+      color: $color-text;
     }
     
     &:after {
@@ -517,16 +533,16 @@ body {
   overflow: auto;
   
   &.bg-gray {
-    background-color: $darkGray;
-    color: $light;
+    background-color: $brand-color-secondary;
+    color: #fff;
     
     .intro {
-      color: $light;
+      color: #fff;
     }
   }
   
   &.bg-lightGray {
-    background-color: $lightGray;
+    background-color: $brand-color-quaternary;
   }
   
   &.min-height {
@@ -544,7 +560,7 @@ body {
   height: 34px;
   min-width: 240px;
   border: none;
-  background: $light;
+  background: #fff;
   padding: 0 10px;
   outline: none;
 }
@@ -556,9 +572,9 @@ body {
   min-width: 240px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: $light;
+  color: #fff;
   background: none;
-  border: 3px solid $light;
+  border: 3px solid #fff;
   font-size: 18px;
   cursor: pointer;
   font-weight: bold;
@@ -575,8 +591,8 @@ body {
     padding: 15px 80px;
     line-height: 40px;
     font-size: 1.2em;
-    color: $orange;
-    background-color: $light;
+    color: $brand-color-primary;
+    background-color: #fff;
     border: 0;
   }
   
@@ -601,14 +617,14 @@ body {
   }
   
   &.primary {
-    color: $orange;
-    background-color: $light;
+    color: $brand-color-primary;
+    background-color: #fff;
   }
   
 }
 
 .header-form-container {
-  background: $darkGray;
+  background: $brand-color-secondary;
   text-align: center;
   display: none;
   position: absolute;
@@ -644,7 +660,8 @@ body {
   }
   
   .notify {
-    color: $orange;
+    color: $brand-color-primary;
+    display: none;
     
     @include breakpoint(md) {
       margin-bottom: 20px;
@@ -697,7 +714,7 @@ body {
   font-family: 'Tungsten', sans-serif;
   font-weight: 300;
   text-transform: uppercase;
-  color: $orange;
+  color: $brand-color-primary;
   letter-spacing: 0.08em;
   font-size: 60px;
 
@@ -711,7 +728,7 @@ body {
   
   
   &.light {
-    color: $light;
+    color: #fff;
   }
   
   &.font-medium {
@@ -811,21 +828,21 @@ body {
     text-indent: 40px;
     height: 12px;
     width: 12px;
-    @include border-radius();
+    border-radius: 50%;
     margin: 0 5px;
-    background: $light;
+    background: #fff;
     overflow: hidden;
     cursor: pointer;
     
     &.slider__nav-item--current {
-      background: $text;
+      background: $color-text;
     }
   }
   
 }
 
 .main-footer {
-  background: $gray;
+  background: $brand-color-tertiary;
   font-family: 'Brandon_Grotesque';
 }
 
@@ -834,7 +851,7 @@ body {
   padding: 0;
   margin: 0;
   text-align: center;
-  color: $light;
+  color: #fff;
   text-transform: uppercase;
   
   li {
@@ -846,7 +863,7 @@ body {
     color: inherit;
     
     &:hover {
-      color: $text;
+      color: $color-text;
     }
   }
 }
@@ -868,9 +885,9 @@ body {
     width: 34px;
     line-height: 34px;
     text-align: center;
-    @include border-radius();
-    background: $light;
-    color: $orange;
+    border-radius: 50%;
+    background: #fff;
+    color: $brand-color-primary;
     font-size: 22px;
     text-decoration: none;
     
@@ -938,7 +955,7 @@ body {
   .item {
     height: 120px;
     width: 120px;
-    @include border-radius();
+    border-radius: 50%;
     background-position: center;
     background-size: 6px;
     
@@ -991,9 +1008,9 @@ body {
     width: 100px;
     padding-top: 14px;
     font-size: 40px;
-    background: $light;
-    color: $orange;
-    @include border-radius();
+    background: #fff;
+    color: $brand-color-primary;
+    border-radius: 50%;
     margin: 20px auto;
     position: relative;
     
@@ -1007,7 +1024,7 @@ body {
       background-image: url('/assets/images/stripe-gray.png');
       background-size: 6px;
       @include transform(rotate(45deg));
-      @include border-radius();
+      border-radius: 50%;
       @include transition(opacity 0.4s ease); 
       opacity: 0;
     }
@@ -1038,7 +1055,7 @@ body {
   .image {
     width: 200px;
     height: 200px;
-    @include border-radius();
+    border-radius: 50%;
     overflow: hidden;
     margin: 0 auto;
     @include vendor(transition, all 0.4s ease);
@@ -1181,10 +1198,6 @@ body {
   }
 }
 
-.instructors-info section {
-  min-height: 480px;
-}
-
 
 /* Contacts */
 .contact {
@@ -1204,15 +1217,15 @@ body {
       width: 40px;
       line-height: 40px;
       text-align: center;
-      @include border-radius();
-      background: $light;
-      color: $orange;
+      border-radius: 50%;
+      background: #fff;
+      color: $brand-color-primary;
     }
   }
   
   .map {
     min-height: 400px;
-    background: darken($darkGray, 20%);
+    background: darken($brand-color-secondary, 20%);
     padding: 0;
     height: 300px;
     
@@ -1236,9 +1249,9 @@ body {
   display: block;
   height: 36px;
   width: 36px;
-  @include border-radius();
-  background-color: $orange;
-  color: $lightGray;
+  border-radius: 50%;
+  background-color: $brand-color-primary;
+  color: $brand-color-quaternary;
   text-align: center;
   line-height: 36px;
   font-size: 20px;
@@ -1261,13 +1274,13 @@ body {
   }
   
   .sidebar {
-    background: $darkGray;
-    color: $light;
+    background: $brand-color-secondary;
+    color: #fff;
     padding: 20px;
     
     &.light {
-      background: $light;
-      color: $text;
+      background: #fff;
+      color: $color-text;
     }
   }
   
@@ -1276,7 +1289,7 @@ body {
   }
   
   .h {
-    color: $grayText;
+    color: $color-text-light;
   }
   
   @include breakpoint(md) {
@@ -1310,12 +1323,12 @@ body {
         left: 0;
         height: 100%;
         width: 3000px;
-        background: $darkGray;
+        background: $brand-color-secondary;
         z-index: 1;
       }
       
       &.light:before {
-        background: $light;
+        background: #fff;
       }
       
     }
@@ -1341,7 +1354,7 @@ body {
       display: block;
       width: 200px;
       height: 200px;
-      @include border-radius(50%);
+      border-radius: 50%;
       position: relative;
       overflow: hidden;
       @include transform(translate(0,0));
@@ -1382,7 +1395,7 @@ body {
   
   .day {
     font-size: 1.4em;
-    color: $gray;
+    color: $brand-color-tertiary;
     padding: 0 10px;
     margin: 20px 0;
     font-family: 'Brandon_Grotesque';
@@ -1391,27 +1404,27 @@ body {
   .date {
     margin: 0;
     padding: 10px;
-    border-top: 2px solid $light;
-    border-bottom: 2px solid $light;
-    color: $orange;
+    border-top: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    color: $brand-color-primary;
     font-size: 1.04em;
     font-family: 'Brandon_Grotesque';
     text-transform: uppercase;
     
     @include breakpoint(md) {
-      border-right: 1px solid $light;
+      border-right: 1px solid #fff;
     }
   }
   
   .row {
     display: block;
-    border-bottom: 2px solid $light;
+    border-bottom: 2px solid #fff;
     padding: 10px;
     line-height: 1.4em;
-    color: $grayText;
+    color: $color-text-light;
     
     &.unavailable {
-      color: $gray;
+      color: $brand-color-tertiary;
       
       .link {
         opacity: 0;
@@ -1420,8 +1433,8 @@ body {
     }
     
     &:not(.unavailable):hover {
-      background: $light;
-      color: $orange;
+      background: #fff;
+      color: $brand-color-primary;
     }
     
     span {
@@ -1434,7 +1447,7 @@ body {
     }
     
     @include breakpoint(md) {
-      border-right: 1px solid $light;
+      border-right: 1px solid #fff;
     }
   }
   
@@ -1473,7 +1486,7 @@ body {
   
     .range {
       font-size: 1.4em;
-      color: $orange;
+      color: $brand-color-primary;
       text-transform: uppercase;
       margin: 0;
       
@@ -1482,7 +1495,7 @@ body {
       }
       
       span {
-        color: $gray;
+        color: $brand-color-tertiary;
         text-transform: none;
       }
     }
@@ -1491,7 +1504,7 @@ body {
       position: absolute;
       top: 0;
       font-size: 1.4em;
-      color: $orange;
+      color: $brand-color-primary;
       padding: 0 15px;
       @include transition(all 0.4s ease);
       cursor: pointer;
@@ -1573,15 +1586,15 @@ body {
       width: 30px;
       text-align: center;
       line-height: 30px;
-      background: $light;
-      @include border-radius();
+      background: #fff;
+      border-radius: 50%;
       font-weight: bold;
       font-size: 16px;
-      color: $darkGray;
+      color: $brand-color-secondary;
       cursor: pointer;
 
       &:hover {
-        box-shadow: 0 0 0 5px $orange;
+        box-shadow: 0 0 0 5px $brand-color-primary;
       }
 
       @include breakpoint(md) {
@@ -1595,7 +1608,7 @@ body {
     &.unavailable {
 
       span {
-        background: $gray;
+        background: $brand-color-tertiary;
         cursor: default;
         box-shadow: none;
       }
@@ -1603,8 +1616,8 @@ body {
 
     &.selected {
       span {
-        background: $orange;
-        color: $light;
+        background: $brand-color-primary;
+        color: #fff;
       }
     }
 
@@ -1631,7 +1644,7 @@ body {
   .image {   
     height: 40px;
     width: 40px;
-    @include border-radius();
+    border-radius: 50%;
     overflow: hidden;
     margin: 0 auto;
     
@@ -1652,7 +1665,7 @@ body {
   padding: 0;
   margin: 30px 0 40px 0;
   text-align: center;
-  color: $grayText;
+  color: $color-text-light;
   font-size: 16px;
   font-family: 'Brandon_Grotesque';
   
@@ -1669,20 +1682,20 @@ body {
       float: left;
       height: 30px;
       width: 30px;
-      @include border-radius();
+      border-radius: 50%;
       margin-right: 10px;
     }
     
     &.free:before {
-      background: $light;
+      background: #fff;
     }
     
     &.reserved:before {
-      background: $gray;
+      background: $brand-color-tertiary;
     }
     
     &.selection:before {
-      background: $orange;
+      background: $brand-color-primary;
     }
     
     @include breakpoint(md) {
@@ -1716,7 +1729,7 @@ body {
     width: 32px;
     top: 0;
     right: 0;
-    background: $darkGray;
+    background: $brand-color-secondary;
   }
   */
   
@@ -1726,7 +1739,7 @@ body {
   }
   
   select {
-    background: $light;
+    background: #fff;
     border: none;
     outline: none;
     padding: 5px 30px 5px 10px;
@@ -1769,13 +1782,7 @@ body {
 
 @media only screen and (min-width: 740px){
   
-  .main-menu {
-    
-    li {
-      display: inline-block;
-      margin: 0 10px;
-    }  
-  }
+  
   
   .slide {
     font-size: 100px;
@@ -1805,17 +1812,6 @@ body {
     font-size: 18px;
   }
   
-  .main-menu {
-    display: block;
-    position: absolute;
-    bottom: 15px;
-    left: 240px;
-    margin: 0;
-    
-    a {
-      padding: 10px 0 0 0;
-    }
-  }
   
   .slide {
     height: 560px;
@@ -1838,7 +1834,7 @@ body {
     &.parts-3 {
 
       section {
-        width: $parts-3;
+        width: 33.333%;
         float: left;
       }
 
@@ -1941,11 +1937,7 @@ body {
 
 @media only screen and (min-width: 1080px){
   
-  .main-menu {
-    li {
-      margin: 0 15px;
-    }
-  }
+
   
   .content {
     padding: 20px 0;
