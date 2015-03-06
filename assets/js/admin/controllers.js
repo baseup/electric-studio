@@ -148,9 +148,12 @@ ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
   $scope.newBook = {};
   angular.element('#class-tabs').Tab();
 
-  ScheduleService.query({ date: $scope.newBook.date }, function (books) {
-    $scope.books = books;
-  });
+  $scope.reload = function () {
+    ScheduleService.query({ date: $scope.newBook.date }, function (books) {
+      $scope.books = books;
+    });
+  }
+  $scope.reload();
 
   UserService.query(function (users) {
     $scope.users = users;

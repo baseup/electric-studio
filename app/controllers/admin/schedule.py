@@ -8,6 +8,8 @@ def find(self):
     date = self.get_query_argument('date')
     if not date:
         date = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
+    else:
+        date = datetime.strptime(date, '%Y-%m-%d')
     scheds = yield BookedSchedule.objects.filter(date=date).find_all()
     self.render_json(scheds)
 
