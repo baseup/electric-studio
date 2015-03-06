@@ -114,7 +114,7 @@ app.directive("compareTo", function() {
 app.filter('formatTime', function() {
   return function(time) {
 
-    var date = new Date(time);
+    var date = new Date(time.replace(' ', 'T'));
     var hours = date.getHours();
     var minutes = date.getMinutes();
     var ampm = hours >= 12 ? 'PM' : 'AM';
