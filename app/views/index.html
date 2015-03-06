@@ -32,8 +32,8 @@
         </li>
       </ul>
       
-      <div class="account-header-menu">
-        <div class="options">
+      <div class="account-menu">
+        <div class="account-menu__options">
           {% if not loginUser %}
             <a class="login-toggle">Login</a> /  
             <a class="signup-toggle">Sign up</a>
@@ -42,8 +42,8 @@
           {% end %}            
         </div>
         {% if loginUser %}  
-        <div class="menu-list">
-          <div class="holder">
+        <div class="account-menu__list">
+          <div class="account-menu__holder">
             <a href="#/account">My Account</a>
             <a href="#/reserved">My Classes</a>
             <a href="javascript:void(0)" ng-click="logout()" >Sign Out</a>
@@ -52,11 +52,11 @@
         {% end %}  
       </div>  
         
-      <div class="book-menu">
-        <a class="book-toggle">Book A Ride</a>
+      <div class="sub-menu">
+        <a class="sub-menu__toggle">Book A Ride</a>
         
-        <div class="menu-list">
-          <div class="holder">
+        <div class="sub-menu__list">
+          <div class="sub-menu__holder">
             <a href="#/workouts">The Workouts</a>
             <a href="#/rates-and-packages">Rates &amp; Packages</a>
             <a href="#/schedule">Schedule</a>
