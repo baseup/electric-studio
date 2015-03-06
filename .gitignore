@@ -10,6 +10,7 @@ assets/js/admin/templates.js
 .tmp
 *.seed
 *.log
+*.csv
 npm-debug.log
 *~
 *#

@@ -22,7 +22,9 @@ routes.prefix('/admin', [
     ('resource', '/transaction', 'admin.transaction'),
     ('resource', '/package', 'admin.package'),
     ('resource', '/user', 'admin.user'),
-    ('resource', '/schedule', 'admin.schedule')
+    ('resource', '/schedule', 'admin.schedule'),
+
+    ('get', '/export/download-bookings', 'admin.export.download_bookings')
 ])
 
 routes.prefix('/api', [

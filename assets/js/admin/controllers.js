@@ -198,6 +198,10 @@ ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
   $scope.removeFromWaitlist = function () {
     $.Notify({ content: 'User removed from Waitlist' });
   }
+
+  $scope.downloadBookingList = function () {
+    window.location = '/admin/export/download-bookings';
+  }
    
 });
 
