@@ -20,6 +20,7 @@ def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
     try :
+        user = yield User.objects.get(data['user_id']);
         transaction = UserPackage(user_id=data['user_id'])
         if 'package_id' in data:
             package = yield Package.objects.get(data['package_id'])
@@ -27,18 +28,22 @@ def create(self):
             transaction.credit_count = package.credits
             transaction.remaining_credits = package.credits
             transaction.expiration = package.expiration
+            user.credits = user.credits + package.credits
         else:
             transaction.expiration = data['expiration']
             transaction.credit_count = data['credits']
             transaction.remaining_credits = data['credits']
+            user.credits = user.credits + int(data['credits'])
             
         if 'notes' in data:
             transaction.notes = data['notes']
 
         if 'transaction_info' in data:
-            transaction.transaction_info = data['transaction_info']
+            transaction.trans_info = data['transaction_info']
 
         transaction = yield transaction.save()
+        if transaction:
+            user = yield user.save();
     except :
         value = sys.exc_info()[1]
         self.set_status(403)

@@ -14,6 +14,7 @@
             <span>{{ res.schedule.start | formatTime }}</span><br>
             <!-- <span>Class: Type 2</span><br> -->
             <span>Instructor: {{ res.schedule.instructor.admin_id.first_name }}</span><br>
+            <span>Seat: {{ res.seat_number }}</span><br>
             <div class="pad--ends">
               <a class="btn btn--small btn--secondary" href="">Reschedule</a>
               <a class="btn btn--small btn--tertiary" href="">Cancel</a>
