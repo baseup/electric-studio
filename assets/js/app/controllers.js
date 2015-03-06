@@ -17,12 +17,6 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService){
   $scope.activeMainNav = function (path) {
     return window.location.hash.indexOf('#' + path) == 0;
   }
-  
-  angular.element('.datepicker').pickadate({
-    format: 'yyyy-mm-dd',
-    formatSubmit: 'yyyy-mm-dd',
-    today: false
-  });
 
   var login = angular.element('.header-form-container.login'),
       signup = angular.element('.header-form-container.signup'),
