@@ -43,15 +43,6 @@
 
 
 
-@mixin wrapper {
-  max-width: 1080px;
-
-  margin: 0 auto;
-  @media only screen and (min-width: 1080px) {
-    max-width: 1200px;
-  }
-}
-
 @mixin border-radius($radius: 50%) {
   -webkit-border-radius: $radius;
   -moz-border-radius: $radius;
@@ -1080,21 +1071,18 @@ body {
 
 .group-pic {
   position: relative;
-  padding: $base-spacing-unit;
+  padding: 0;
+  display: none;
   
   @include breakpoint(md) {
-    padding: 0;
+    margin-bottom: -$base-spacing-unit;
+    display: block;
   }
   
   .group-pic-img {
     display: block;
     width: 100%;
     margin: 0 auto;
-    display: none;
-    
-    @include breakpoint(md) {
-      display: block;
-    }
   }
   
   .imgmap {
