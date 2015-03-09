@@ -302,7 +302,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
 
   $scope.setSchedule = function(schedule, date){
 
-    if (!$scope.chkSched(date)) {
+    if (!$scope.chkSched(date, schedule)) {
       var sched = {};
       sched.date = date;
       sched.schedule = schedule;
@@ -329,6 +329,16 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   }
 
   $scope.getWeek = function(date){
+    $scope.schedules = ScheduleService.query();
+    $scope.schedules.$promise.then(function(data) {
+      $scope.schedules = data;
+    });
+
+    $scope.reserved = BookService.query();
+    $scope.reserved.$promise.then(function(data) {
+      $scope.reserved = data;
+    });
+
     var now = date? new Date(date) : new Date();
     now.setHours(0,0,0,0);
 
@@ -382,6 +392,14 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   }
 
   $scope.getWeek(new Date());
+  $scope.nextWeek = function(){
+    $scope.getWeek($scope.nmonDate);
+  }
+  $scope.prevWeek = function(){
+    var pWeak = new Date($scope.monDate);
+    pWeak.setDate(pWeak.getDate() - pWeak.getDay() - 1);
+    $scope.getWeek(pWeak);
+  }
 });
 
 ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookService) {

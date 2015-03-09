@@ -20,7 +20,7 @@ def find(self):
         if self.get_secure_cookie('loginUserID'):
             user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
             user = yield User.objects.get(user_id)
-            books = yield BookedSchedule.objects.filter(user_id=user._id).find_all()
+            books = yield BookedSchedule.objects.filter(status='booked', user_id=user._id).find_all()
             self.render_json(books)
         else:
             self.set_status(403)
