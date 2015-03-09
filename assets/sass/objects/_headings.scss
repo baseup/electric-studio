@@ -20,3 +20,23 @@ h3, .h--large{
 hgroup .hN {
   margin-bottom:0;
 }
+
+
+/**
+ * Heading color modifier base on branding
+ */
+.h--primary {
+  color: $brand-color-primary;
+}
+
+.h--secondary {
+  color: $brand-color-secondary;
+}
+
+.h--tertiary {
+  color: $brand-color-tertiary;
+}
+
+.h--quaternary {
+  color: $brand-color-quaternary;
+}
