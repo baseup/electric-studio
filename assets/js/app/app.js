@@ -113,29 +113,16 @@ app.directive("compareTo", function() {
 
 app.filter('formatTime', function() {
   return function(time) {
+    var parts = time.split(/[^0-9]/);
+    var date =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; 
+    minutes = minutes < 10 ? '0' + minutes : minutes;
 
-    time = time.split(' ')[1];
-    console.log(time);
-    if (time == '07:00:00') {
-      return '7:00 AM';
-    } else if (time == '09:30:00') {
-      return '9:30 AM';
-    } else if (time == '13:00:00') {
-      return '1:00 PM';
-    } else if (time == '15:30:00') {
-      return '3:30 PM';
-    } else if (time == '17:00:00') {
-      return '5:00 PM';
-    }
-    // var date = new Date(time.replace(' ', 'T'));  
-    // var hours = date.getHours();
-    // var minutes = date.getMinutes();
-    // var ampm = hours >= 12 ? 'PM' : 'AM';
-    // hours = hours % 12;
-    // hours = hours ? hours : 12; 
-    // minutes = minutes < 10 ? '0' + minutes : minutes;
-
-    // return hours + ':' + minutes + ' ' + ampm;
+    return hours + ':' + minutes + ' ' + ampm;
   };
 });
 

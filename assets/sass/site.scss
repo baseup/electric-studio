@@ -652,7 +652,6 @@ body {
   
   .notify {
     color: $brand-color-primary;
-    display: none;
     
     @include breakpoint(md) {
       margin-bottom: 20px;
