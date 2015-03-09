@@ -69,47 +69,52 @@ def buy(self):
         self.redirect('/#/rates')
     else:
         success = self.get_argument('success')
-        if success == 'True':
 
-            data = {
-                'payment_type' : self.get_argument('payment_type'),
-                'payer_status' : self.get_argument('payer_status'),
-                'payer_id' : self.get_argument('payer_id'),
-                'payment_date' : self.get_argument('payment_date'),
-                'receiver_id' : self.get_argument('receiver_id'),
-                'verify_sign' : self.get_argument('verify_sign')
-            }
-            
-            try: 
-                pid = self.get_argument('pid');
-                package = yield Package.objects.get(pid)
-                if pid:
-                    user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-                    user = yield User.objects.get(user_id)
-
-                    transaction = UserPackage()
-                    transaction.user_id = user._id
-                    transaction.package_id = package._id
-                    transaction.credit_count = package.credits
-                    transaction.remaining_credits = package.credits
-                    transaction.expiration = package.expiration
-                    transaction.trans_info = str(data)
-                    user.credits += package.credits
-
-                    transaction = yield transaction.save()
-                    user = yield user.save()
-
-                    self.redirect('/#/account#packages')
-                else:
-                    self.set_status(403)
-                    self.write('Package not found')
-                    self.finish()
-            except :
-                value = sys.exc_info()[1]
-                self.set_status(403)
-                self.write(str(value))  
+        if not self.get_secure_cookie('loginUserID'):
+            self.set_status(403)
+            self.write('User not logged in')
+            self.finish()
         else:
-            self.redirect('/#/rates')
+            if success == 'True':
+                data = {
+                    'payment_type' : self.get_argument('payment_type'),
+                    'payer_status' : self.get_argument('payer_status'),
+                    'payer_id' : self.get_argument('payer_id'),
+                    'payment_date' : self.get_argument('payment_date'),
+                    'receiver_id' : self.get_argument('receiver_id'),
+                    'verify_sign' : self.get_argument('verify_sign')
+                }
+                
+                try: 
+                    pid = self.get_argument('pid');
+                    package = yield Package.objects.get(pid)
+                    if pid:
+                        user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+                        user = yield User.objects.get(user_id)
+
+                        transaction = UserPackage()
+                        transaction.user_id = user._id
+                        transaction.package_id = package._id
+                        transaction.credit_count = package.credits
+                        transaction.remaining_credits = package.credits
+                        transaction.expiration = package.expiration
+                        transaction.trans_info = str(data)
+                        user.credits += package.credits
+
+                        transaction = yield transaction.save()
+                        user = yield user.save()
+
+                        self.redirect('/#/account#packages')
+                    else:
+                        self.set_status(403)
+                        self.write('Package not found')
+                        self.finish()
+                except :
+                    value = sys.exc_info()[1]
+                    self.set_status(403)
+                    self.write(str(value))  
+            else:
+                self.redirect('/#/rates')
 
 def addRegularSchedule(self):
 

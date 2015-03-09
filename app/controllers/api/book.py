@@ -17,10 +17,15 @@ def find(self):
                               date=datetime.strptime(self.get_argument('date'),'%Y-%m-%d')).find_all()
         self.render_json(books)
     else:
-        user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
-        user = yield User.objects.get(user_id)
-        books = yield BookedSchedule.objects.filter(user_id=user._id).find_all()
-        self.render_json(books)
+        if self.get_secure_cookie('loginUserID'):
+            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
+            user = yield User.objects.get(user_id)
+            books = yield BookedSchedule.objects.filter(user_id=user._id).find_all()
+            self.render_json(books)
+        else:
+            self.set_status(403)
+            self.write('User not logged In')
+            self.finish()
 
 def find_one(self, id):
     book = yield BookedSchedule.objects.get(id)
@@ -30,33 +35,37 @@ def find_one(self, id):
 def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
-    try :
-        user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
-        user = yield User.objects.get(user_id)
+    if self.get_secure_cookie('loginUserID'):
+        try :
+            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
+            user = yield User.objects.get(user_id)
 
-        if user.credits > 0:
-            sched = yield InstructorSchedule.objects.get(data['sched_id']);
-            book = BookedSchedule(user_id=user._id, 
-                                  date=datetime.strptime(data['date'],'%Y-%m-%d'),
-                                  schedule=sched._id,
-                                  seat_number=data['seat'],
-                                  status='booked');
+            if user.credits > 0:
+                sched = yield InstructorSchedule.objects.get(data['sched_id']);
+                book = BookedSchedule(user_id=user._id, 
+                                      date=datetime.strptime(data['date'],'%Y-%m-%d'),
+                                      schedule=sched._id,
+                                      seat_number=data['seat'],
+                                      status='booked');
 
-            book = yield book.save()
-            if book:
-                user.credits -= 1
-                user = yield user.save();
-                user_packages = yield UserPackage.objects.filter(user_id=user._id).find_all();
-                if user_packages:
-                    user_packages[0].remaining_credits -= 1
-                    yield user_packages[0].save()
-        else:
+                book = yield book.save()
+                if book:
+                    user.credits -= 1
+                    user = yield user.save();
+                    user_packages = yield UserPackage.objects.filter(user_id=user._id).find_all();
+                    if user_packages:
+                        user_packages[0].remaining_credits -= 1
+                        yield user_packages[0].save()
+            else:
+                self.set_status(403)
+                self.write('Unable to book a ride: Insuficient credits');
+        except :
+            value = sys.exc_info()[1]
             self.set_status(403)
-            self.write('Unable to book a ride: Insuficient credits');
-    except :
-        value = sys.exc_info()[1]
+            self.write(str(value))
+    else:
         self.set_status(403)
-        self.write(str(value))
+        self.write('User not logged In')
     self.finish()
 
 def update(self, id):
