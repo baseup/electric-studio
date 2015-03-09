@@ -21,7 +21,7 @@
         <p class="price">PHP <span>{{ package.fee }}</span></p>
         <p>Expires in {{ package.expiration }} days</p>
         <!-- <a class="button small" ng-click="buy(package.id)">Buy</a> -->
-        <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+        <form action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
           <input type="hidden" name="cmd" value="_xclick">
           <input type="hidden" name="no_note" value = "0">
           <input type="hidden" name="bn" value="PP-BuyNowBF">
@@ -33,7 +33,7 @@
           <input type="hidden" name="return" value="{{ redirectUrl }}?pid={{ package.id }}&success=True">
           <input type="hidden" name="cancel_return" value="{{ redirectUrl }}?success=False">
           <input type="hidden" name="cbt" value="Return to Electric Studio">
-          <input class="button small" value = "Buy" class = "button" type = "submit">
+          <input class="button small" ng-click="buyPackage($event)" value = "Buy" class = "button" type = "submit">
         </form>
       </section>
       <div class="faq">

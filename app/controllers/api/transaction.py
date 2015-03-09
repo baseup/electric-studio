@@ -7,9 +7,14 @@ import tornado
 import json
     
 def find(self):
-    user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-    transactions = yield UserPackage.objects.filter(user_id=ObjectId(user_id)).find_all()
-    self.render_json(transactions)
+    if not self.get_secure_cookie('loginUserID'):
+        self.set_status(403)
+        self.write('User not login')
+        self.finish()
+    else:
+        user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+        transactions = yield UserPackage.objects.filter(user_id=ObjectId(user_id)).find_all()
+        self.render_json(transactions)
 
 def find_one(self, id):
     transaction = yield UserPackage.objects.get(id)

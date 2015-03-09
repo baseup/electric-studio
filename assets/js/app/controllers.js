@@ -174,53 +174,59 @@ ctrls.controller('LoginCtrl', function ($scope) {
 
 });
 
-ctrls.controller('AccountCtrl', function ($scope, UserService, AuthService, UserPackageService) {
+ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthService, UserPackageService) {
 
-  $scope.account = $scope.loginUser;
 
-  $scope.transactions = UserPackageService.query();
-  $scope.transactions.$promise.then(function(data) {
-    $scope.transactions = data;
-  });
+ if (!$scope.loginUser || $scope.loginUser.length == 0) {
+    $location.path("/")
+    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+    angular.element('.login-toggle').click();
+  } else {
+    $scope.account = $scope.loginUser;
 
-  if($scope.account.birthdate){
-    $scope.account.birthdate = $scope.account.birthdate.replace(' 00:00:00', '');;
-  }
+    $scope.transactions = UserPackageService.query();
+    $scope.transactions.$promise.then(function(data) {
+      $scope.transactions = data;
+    });
 
-  $scope.updateAccount = function(){
-
-    var addSuccess = function (){
-      $scope.loginUser = AuthService.getCurrentUser();
-      alert('Successfully updated user info')
-    }
-    var addFail = function(error){
-      alert(error.data);
+    if($scope.account.birthdate){
+      $scope.account.birthdate = $scope.account.birthdate.replace(' 00:00:00', '');;
     }
 
-    UserService.update({ userId: $scope.loginUser.id }, $scope.account).$promise.then(addSuccess, addFail);
-  }
+    $scope.updateAccount = function(){
 
-  $scope.changePassword = function(){
-
-    if($scope.pass && $scope.pass.current_password){
-
-      if($scope.pass.password != $scope.pass.confirm_password){
-        alert("Retype Password didn't match");
-        return;
-      }
       var addSuccess = function (){
-        alert("Successfully updated your password")
-        $scope.pass = null;
+        $scope.loginUser = AuthService.getCurrentUser();
+        alert('Successfully updated user info')
       }
       var addFail = function(error){
         alert(error.data);
-        $scope.pass = null;
       }
-      UserService.update({ userId: $scope.loginUser.id }, $scope.pass).$promise.then(addSuccess, addFail);
+
+      UserService.update({ userId: $scope.loginUser.id }, $scope.account).$promise.then(addSuccess, addFail);
     }
 
-  }
+    $scope.changePassword = function(){
 
+      if($scope.pass && $scope.pass.current_password){
+
+        if($scope.pass.password != $scope.pass.confirm_password){
+          alert("Retype Password didn't match");
+          return;
+        }
+        var addSuccess = function (){
+          alert("Successfully updated your password")
+          $scope.pass = null;
+        }
+        var addFail = function(error){
+          alert(error.data);
+          $scope.pass = null;
+        }
+        UserService.update({ userId: $scope.loginUser.id }, $scope.pass).$promise.then(addSuccess, addFail);
+      }
+
+    }
+  }
 });
 
 ctrls.controller('RatesCtrl', function ($scope, $http, PackageService){
@@ -235,17 +241,15 @@ ctrls.controller('RatesCtrl', function ($scope, $http, PackageService){
     port = ':' + window.location.port;
 
   $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/buy';
-  $scope.buy = function (pacId) {
-    $http.post('/buy', { packageId : pacId })
-         .success(function(data, status, headers, config) {
-      if (data.success && data.approve_url) {
-        window.location = response.approve_url;
-      }
-    }).error(function(data, status, headers, config) {
-      alert(data)
-    });
+
+  $scope.buyPackage = function(event) {
+    if(!$scope.loginUser || $scope.loginUser.length == 0){
+      alert('User is not logged In');
+      angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+      angular.element('.login-toggle').click();
+      event.preventDefault();
+    }
   }
-  
 })
 
 ctrls.controller('InstructorCtrl', function ($scope, $timeout) {
@@ -268,11 +272,18 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout) {
 });
 
 
-ctrls.controller('ReservedCtrl', function ($scope, BookService) {
-  $scope.reservations = BookService.query();
-  $scope.reservations.$promise.then(function(data) {
-    $scope.reservations = data;
-  });
+ctrls.controller('ReservedCtrl', function ($scope, $location, BookService) {
+
+  if(!$scope.loginUser || $scope.loginUser.length == 0){
+    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+    angular.element('.login-toggle').click();
+    $location.path("/")
+  }else{
+    $scope.reservations = BookService.query();
+    $scope.reservations.$promise.then(function(data) {
+      $scope.reservations = data;
+    });
+  }
 });
 
 
@@ -414,6 +425,13 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
   }
 
   $scope.bookSchedule = function(){
+    
+    if(!$scope.loginUser || $scope.loginUser.length == 0){
+      alert('User is not logged In');
+      angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+      angular.element('.login-toggle').click();
+      return;
+    }
 
     if(seat == 0){
       alert('Please pick a seat');
