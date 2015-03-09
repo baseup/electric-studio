@@ -1070,6 +1070,12 @@ body {
       min-width: 100%;
     }
   }
+  
+  p {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .group-pic {
@@ -1167,7 +1173,7 @@ body {
       left: 48.5%;
     }
     
-    [data-target="rachel"] {
+    [data-target="rache"] {
       position: absolute;
       width: 8%;
       height: 100%;
