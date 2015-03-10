@@ -60,7 +60,7 @@ def send_email_verification(user, url):
     except mandrill.Error:    
         raise
 
-def send_email_booking(date, time, seat_number):
+def send_email_booking(user, date, time, seat_number):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
