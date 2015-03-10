@@ -1,6 +1,14 @@
 
 <div class="content schedule bg-lightGray" ng-controller="ClassCtrl">
   <div class="wrapper">
+
+    <div ng-if="resched">
+      <h2 class="range">
+        <span>Rescheduling: </span> 
+        {{ resched.date | formatDate }} - {{ resched.schedule.start | formatTime }} - Seat {{ resched.seat_number }}</h2>
+      <hr/>
+    </div>
+
     <div class="header">
       <h2 class="range">{{ dateSched }}</h2>
       <!-- <div class="nav left"><i class="fa fa-angle-left"></i></div>
@@ -16,54 +24,54 @@
     <div class="class">
       <table class="seats">
         <tr>
-          <td ng-click="setSeatNumber(1)" ng-class="{unavailable: checkSeat(1) }"><span>1</span></td>
-          <td ng-click="setSeatNumber(2)" ng-class="{unavailable: checkSeat(2) }"><span>2</span></td>
-          <td ng-click="setSeatNumber(3)" ng-class="{unavailable: checkSeat(3) }"><span>3</span></td>
-          <td ng-click="setSeatNumber(4)" ng-class="{unavailable: checkSeat(4) }"><span>4</span></td>
-          <td ng-click="setSeatNumber(5)" ng-class="{unavailable: checkSeat(5) }"><span>5</span></td>
-          <td ng-click="setSeatNumber(6)" ng-class="{unavailable: checkSeat(6) }"><span>6</span></td>
-          <td ng-click="setSeatNumber(7)" ng-class="{unavailable: checkSeat(7) }"><span>7</span></td>
-          <td ng-click="setSeatNumber(8)" ng-class="{unavailable: checkSeat(8) }"><span>8</span></td>
+          <td ng-click="setSeatNumber(1, $event)" ng-class="{unavailable: checkSeat(1) }"><span>1</span></td>
+          <td ng-click="setSeatNumber(2, $event)" ng-class="{unavailable: checkSeat(2) }"><span>2</span></td>
+          <td ng-click="setSeatNumber(3, $event)" ng-class="{unavailable: checkSeat(3) }"><span>3</span></td>
+          <td ng-click="setSeatNumber(4, $event)" ng-class="{unavailable: checkSeat(4) }"><span>4</span></td>
+          <td ng-click="setSeatNumber(5, $event)" ng-class="{unavailable: checkSeat(5) }"><span>5</span></td>
+          <td ng-click="setSeatNumber(6, $event)" ng-class="{unavailable: checkSeat(6) }"><span>6</span></td>
+          <td ng-click="setSeatNumber(7, $event)" ng-class="{unavailable: checkSeat(7) }"><span>7</span></td>
+          <td ng-click="setSeatNumber(8, $event)" ng-class="{unavailable: checkSeat(8) }"><span>8</span></td>
         </tr>
         <tr>
-          <td ng-click="setSeatNumber(9)" ng-class="{unavailable: checkSeat(9) }"><span>9</span></td>
-          <td ng-click="setSeatNumber(10)" ng-class="{unavailable: checkSeat(10) }"><span>10</span></td>
-          <td ng-click="setSeatNumber(11)" ng-class="{unavailable: checkSeat(11) }"><span>11</span></td>
-          <td ng-click="setSeatNumber(12)" ng-class="{unavailable: checkSeat(12) }"><span>12</span></td>
-          <td ng-click="setSeatNumber(13)" ng-class="{unavailable: checkSeat(13) }"><span>13</span></td>
-          <td ng-click="setSeatNumber(14)" ng-class="{unavailable: checkSeat(14) }"><span>14</span></td>
-          <td ng-click="setSeatNumber(15)" ng-class="{unavailable: checkSeat(15) }"><span>15</span></td>
-          <td ng-click="setSeatNumber(16)" ng-class="{unavailable: checkSeat(16) }"><span>16</span></td>
+          <td ng-click="setSeatNumber(9, $event)" ng-class="{unavailable: checkSeat(9) }"><span>9</span></td>
+          <td ng-click="setSeatNumber(10, $event)" ng-class="{unavailable: checkSeat(10) }"><span>10</span></td>
+          <td ng-click="setSeatNumber(11, $event)" ng-class="{unavailable: checkSeat(11) }"><span>11</span></td>
+          <td ng-click="setSeatNumber(12, $event)" ng-class="{unavailable: checkSeat(12) }"><span>12</span></td>
+          <td ng-click="setSeatNumber(13, $event)" ng-class="{unavailable: checkSeat(13) }"><span>13</span></td>
+          <td ng-click="setSeatNumber(14, $event)" ng-class="{unavailable: checkSeat(14) }"><span>14</span></td>
+          <td ng-click="setSeatNumber(15, $event)" ng-class="{unavailable: checkSeat(15) }"><span>15</span></td>
+          <td ng-click="setSeatNumber(16, $event)" ng-class="{unavailable: checkSeat(16) }"><span>16</span></td>
         </tr>
         <tr>
-          <td ng-click="setSeatNumber(17)" ng-class="{unavailable: checkSeat(17) }"><span>17</span></td>
-          <td ng-click="setSeatNumber(18)" ng-class="{unavailable: checkSeat(18) }"><span>18</span></td>
-          <td ng-click="setSeatNumber(19)" ng-class="{unavailable: checkSeat(19) }"><span>19</span></td>
-          <td ng-click="setSeatNumber(20)" ng-class="{unavailable: checkSeat(20) }"><span>20</span></td>
-          <td ng-click="setSeatNumber(21)" ng-class="{unavailable: checkSeat(21) }"><span>21</span></td>
-          <td ng-click="setSeatNumber(22)" ng-class="{unavailable: checkSeat(22) }"><span>22</span></td>
-          <td ng-click="setSeatNumber(23)" ng-class="{unavailable: checkSeat(23) }"><span>23</span></td>
-          <td ng-click="setSeatNumber(24)" ng-class="{unavailable: checkSeat(24) }"><span>24</span></td>
+          <td ng-click="setSeatNumber(17, $event)" ng-class="{unavailable: checkSeat(17) }"><span>17</span></td>
+          <td ng-click="setSeatNumber(18, $event)" ng-class="{unavailable: checkSeat(18) }"><span>18</span></td>
+          <td ng-click="setSeatNumber(19, $event)" ng-class="{unavailable: checkSeat(19) }"><span>19</span></td>
+          <td ng-click="setSeatNumber(20, $event)" ng-class="{unavailable: checkSeat(20) }"><span>20</span></td>
+          <td ng-click="setSeatNumber(21, $event)" ng-class="{unavailable: checkSeat(21) }"><span>21</span></td>
+          <td ng-click="setSeatNumber(22, $event)" ng-class="{unavailable: checkSeat(22) }"><span>22</span></td>
+          <td ng-click="setSeatNumber(23, $event)" ng-class="{unavailable: checkSeat(23) }"><span>23</span></td>
+          <td ng-click="setSeatNumber(24, $event)" ng-class="{unavailable: checkSeat(24) }"><span>24</span></td>
         </tr>
         <tr>
-          <td ng-click="setSeatNumber(25)" ng-class="{unavailable: checkSeat(25) }"><span>25</span></td>
-          <td ng-click="setSeatNumber(26)" ng-class="{unavailable: checkSeat(26) }"><span>26</span></td>
-          <td ng-click="setSeatNumber(27)" ng-class="{unavailable: checkSeat(27) }"><span>27</span></td>
+          <td ng-click="setSeatNumber(25, $event)" ng-class="{unavailable: checkSeat(25) }"><span>25</span></td>
+          <td ng-click="setSeatNumber(26, $event)" ng-class="{unavailable: checkSeat(26) }"><span>26</span></td>
+          <td ng-click="setSeatNumber(27, $event)" ng-class="{unavailable: checkSeat(27) }"><span>27</span></td>
           <td class="hidden"><span></span></td>
-          <td ng-click="setSeatNumber(28)" ng-class="{unavailable: checkSeat(28) }"><span>28</span></td>
-          <td ng-click="setSeatNumber(29)" ng-class="{unavailable: checkSeat(29) }"><span>29</span></td>
-          <td ng-click="setSeatNumber(30)" ng-class="{unavailable: checkSeat(30) }"><span>30</span></td>
-          <td ng-click="setSeatNumber(31)" ng-class="{unavailable: checkSeat(31) }"><span>31</span></td>
+          <td ng-click="setSeatNumber(28, $event)" ng-class="{unavailable: checkSeat(28) }"><span>28</span></td>
+          <td ng-click="setSeatNumber(29, $event)" ng-class="{unavailable: checkSeat(29) }"><span>29</span></td>
+          <td ng-click="setSeatNumber(30, $event)" ng-class="{unavailable: checkSeat(30) }"><span>30</span></td>
+          <td ng-click="setSeatNumber(31, $event)" ng-class="{unavailable: checkSeat(31) }"><span>31</span></td>
         </tr>
         <tr>
-          <td ng-click="setSeatNumber(32)" ng-class="{unavailable: checkSeat(32) }"><span>32</span></td>
-          <td ng-click="setSeatNumber(33)" ng-class="{unavailable: checkSeat(33) }"><span>33</span></td>
-          <td ng-click="setSeatNumber(34)" ng-class="{unavailable: checkSeat(34) }"><span>34</span></td>
+          <td ng-click="setSeatNumber(32, $event)" ng-class="{unavailable: checkSeat(32) }"><span>32</span></td>
+          <td ng-click="setSeatNumber(33, $event)" ng-class="{unavailable: checkSeat(33) }"><span>33</span></td>
+          <td ng-click="setSeatNumber(34, $event)" ng-class="{unavailable: checkSeat(34) }"><span>34</span></td>
           <td class="hidden"><span></span></td>
           <td class="hidden"><span></span></td>
-          <td ng-click="setSeatNumber(35)" ng-class="{unavailable: checkSeat(35) }"><span>35</span></td>
-          <td ng-click="setSeatNumber(36)" ng-class="{unavailable: checkSeat(36) }"><span>36</span></td>
-          <td ng-click="setSeatNumber(37)" ng-class="{unavailable: checkSeat(37) }"><span>37</span></td>
+          <td ng-click="setSeatNumber(35, $event)" ng-class="{unavailable: checkSeat(35) }"><span>35</span></td>
+          <td ng-click="setSeatNumber(36, $event)" ng-class="{unavailable: checkSeat(36) }"><span>36</span></td>
+          <td ng-click="setSeatNumber(37, $event)" ng-class="{unavailable: checkSeat(37) }"><span>37</span></td>
         </tr>
       </table>
       
@@ -80,7 +88,8 @@
       <li class="reserved">Reserved Bikes</li>
       <li class="selection">Your Selection</li>
     </ul>
-    <a class="button large center" ng-click="bookSchedule()">Book A Ride</a>
+    <a ng-if="!resched" class="button large center" ng-click="bookSchedule()">Book A Ride</a>
+    <a ng-if="resched" class="button large center" ng-click="bookSchedule()">Reschedule Ride</a>
     <a class="h small primary center link" href="#/schedule">Back to Schedules</a>
   </div>
 </div>

@@ -2,6 +2,13 @@
   <div class="content schedule bg-lightGray" ng-controller="ScheduleCtrl">
     <div class="wrapper">
       
+      <div ng-if="resched">
+        <h2 class="range">
+          <span>Rescheduling: </span> 
+          {{ resched.date | formatDate }} - {{ resched.schedule.start | formatTime }} - Seat {{ resched.seat_number }}</h2>
+        <hr/>
+      </div>
+
       <div class="header">
         <h2 class="range">{{ monD }} {{ monM }} - {{ nmonD }} {{ nmonM }}</h2>
         <div class="nav left" ng-click="prevWeek()"><i class="fa fa-angle-left"></i></div>

@@ -129,5 +129,9 @@ services.factory('TransactionService', function ($resource) {
 
 services.factory('ScheduleService', function ($resource) {
   return $resource('/admin/schedule/:scheduleId', {}, {
+    query: {
+      method: 'GET',
+      isArray: false
+    }
   });
 });

@@ -6,6 +6,7 @@ from app.models.schedules import InstructorSchedule
 from app.models.admins import Instructor, Admin
 from datetime import datetime
 
+import sys
 import tornado
 import urllib
 import json
@@ -118,6 +119,14 @@ def buy(self):
 
 def addRegularSchedule(self):
 
+    admin = Admin()
+    admin.username = 'admin'
+    admin.password = bcrypt.encrypt('admin')
+    admin.first_name = 'Admin First Name'
+    admin.last_name = 'Admin Last Name'
+    admin.email = 'admin@electricstudio.ph'
+    yield admin.save()
+    
     scheds = yield InstructorSchedule.objects.find_all()
     for i, sched in enumerate(scheds):
         yield sched.delete()
