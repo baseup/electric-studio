@@ -6,6 +6,7 @@
       <h2 class="range">
         <span>Rescheduling: </span> 
         {{ resched.date | formatDate }} - {{ resched.schedule.start | formatTime }} - Seat {{ resched.seat_number }}</h2>
+        <a class="h small primary right" ng-click="cancelResched()">Cancel</a>
       <hr/>
     </div>
 
