@@ -1,6 +1,7 @@
 from motorengine import DESCENDING
 from motorengine.errors import InvalidDocumentError
 from app.models.schedules import BookedSchedule, InstructorSchedule
+from app.helper import send_email_booking
 from app.models.packages import UserPackage
 from app.models.users import User
 
@@ -22,8 +23,9 @@ def find(self):
         if self.get_secure_cookie('loginUserID'):
             user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
             user = yield User.objects.get(user_id)
-            books = yield BookedSchedule.objects.filter(status='booked', user_id=user._id).find_all()
-            self.render_json(books)
+            if user:
+                books = yield BookedSchedule.objects.filter(status='booked', user_id=user._id).find_all()
+                self.render_json(books)
         else:
             self.set_status(403)
             self.write('User not logged In')
@@ -54,12 +56,14 @@ def create(self):
                 if book:
                     user.credits -= 1
                     user = yield user.save();
-                    user_packages = yield UserPackage.objects.order_by("create_at", direction=DESCENDING).filter(user_id=user._id).find_all();
+                    user_packages = yield UserPackage.objects.order_by("create_at", direction=DESCENDING).filter(user_id=user._id).find_all()
                     if user_packages:
                         user_packages[0].remaining_credits -= 1
                         book.user_package = user_packages[0]._id
                         yield book.save()
                         yield user_packages[0].save()
+                        user = (yield User.objects.get(user._id)).serialize()
+                        yield self.io.async_task(send_email_booking, user=user, date=data['date'], time=sched.start.strftime('%I:%M %p'), seat_number=str(book.seat_number))
             else:
                 self.set_status(403)
                 self.write('Unable to book a ride: Insuficient credits');

@@ -1,7 +1,7 @@
 from passlib.hash import bcrypt
 from app.models.users import User
 from app.models.packages import Package, UserPackage
-from app.helper import send_verification
+from app.helper import send_email_verification
 from app.models.schedules import InstructorSchedule
 from app.models.admins import Instructor, Admin
 from datetime import datetime
@@ -61,7 +61,7 @@ def verify(self):
         if 'email' in data:
             user = (yield User.objects.get(email=data['email'])).serialize()
             url = self.request.protocol + '://' + self.request.host + '/verify?ticket=%s' % user['_id']
-            yield self.io.async_task(send_verification, user=user, url=url)
+            yield self.io.async_task(send_email_verification, user=user, url=url)
             self.write(url)
         self.finish()
 
