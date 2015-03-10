@@ -347,6 +347,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
 
   $scope.resched = SharedService.get('resched');
 
+  $scope.cancelResched = function(){
+    SharedService.clear('resched');
+    $location.path('/reserved');
+  }
+
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   $scope.setSchedule = function(schedule, date){
@@ -462,6 +467,11 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
     var days = ['Monday','Tuesday','Friday','Thursday','Friday','Saturday', 'Sunday'];
 
     $scope.resched = SharedService.get('resched');
+    
+    $scope.cancelResched = function(){
+      SharedService.clear('resched');
+      $location.path('/reserved');
+    }
 
     $scope.dateSched = months[sched.date.getMonth()] + ', ' + sched.date.getDate() + ' ' + sched.date.getFullYear();
     $scope.daySched = days[sched.date.getDay()];
