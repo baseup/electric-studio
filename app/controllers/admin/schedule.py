@@ -17,7 +17,7 @@ def find(self):
     ins_sched = yield InstructorSchedule.objects.get(date=date, start_time=time)
     if not ins_sched:
         ins_sched = yield InstructorSchedule.objects.get(day=date.strftime('%a').lower(), start=time)
-    scheds = yield BookedSchedule.objects.filter(date=date, schedule=ins_sched).find_all()
+    scheds = yield BookedSchedule.objects.filter(status='booked', date=date, schedule=ins_sched).find_all()
     self.render_json({
         'bookings': scheds,
         'schedule': ins_sched
@@ -31,7 +31,7 @@ def create(self):
     if not ins_sched:
         ins_sched = yield InstructorSchedule.objects.get(day=special_date.strftime('%a').lower(), start=time)
 
-    total_booked = yield BookedSchedule.objects.filter(date=special_date, schedule=ins_sched).count()
+    total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched).count()
     if total_booked >= 37:
         self.set_status(400)
         self.write('Not available slots')
@@ -81,7 +81,7 @@ def update(self, id):
     if not ins_sched:
         ins_sched = yield InstructorSchedule.objects.get(day=special_date.strftime('%a').lower(), start=time)
 
-    total_booked = yield BookedSchedule.objects.filter(date=special_date, schedule=ins_sched).count()
+    total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched).count()
     if total_booked >= 37:
         self.set_status(400)
         self.write('Not available slots')
@@ -97,11 +97,12 @@ def update(self, id):
 def destroy(self, id):
     booked_schedule = yield BookedSchedule.objects.get(id)
     booked_schedule.user_package.remaining_credits += 1
+    booked_schedule.status = 'cancelled'
     yield booked_schedule.user_package.save()
 
     user = yield User.objects.get(booked_schedule.user_id._id)
     user.credits += 1
     yield user.save()
 
-    yield booked_schedule.delete()
+    yield booked_schedule.save()
     self.render_json(booked_schedule)

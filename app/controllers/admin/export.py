@@ -18,7 +18,7 @@ def download_bookings(self):
     filename = 'bookings-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
 
     with open(filename, 'w') as csvfile:
-        fieldnames = ['first_name', 'last_name', 'seat number', 'date', 'time']
+        fieldnames = ['first_name', 'last_name', 'seat number', 'status', 'date', 'time']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for b in bookings:
@@ -26,6 +26,7 @@ def download_bookings(self):
                 'first_name': b.user_id.first_name,
                 'last_name': b.user_id.last_name,
                 'seat number': b.seat_number,
+                'status': b.status,
                 'date': b.date.strftime('%Y-%m-%d'),
                 'time': b.schedule.start.strftime('%I:%M %p')
             })
