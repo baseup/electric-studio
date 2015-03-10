@@ -104,3 +104,5 @@ DATABASE = {
 }
 
 MANDRILL_API_KEY = 'LJCBoJpHFF7ZRrFqgu9Q2g'
+EMAIL_SENDER = 'ride@electricstudio.ph'
+EMAIL_SENDER_NAME = 'Electric Studio'

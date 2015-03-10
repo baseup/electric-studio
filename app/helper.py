@@ -1,5 +1,5 @@
 from motorengine import *
-from app.settings import MANDRILL_API_KEY
+from app.settings import MANDRILL_API_KEY, EMAIL_SENDER, EMAIL_SENDER_NAME
 
 import mandrill
 
@@ -36,14 +36,14 @@ def mongo_to_dict(obj):
 
     return dict(return_data)
 
-def send_verification(user, url):
+def send_email_verification(user, url):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
-            'from_email': 'ride@electricstudio.ph',
-            'from_name': 'Electic Studio',
+            'from_email': EMAIL_SENDER,
+            'from_name': EMAIL_SENDER_NAME,
             'headers': {
-                'Reply-To': 'ride@electricstudio.ph'
+                'Reply-To': EMAIL_SENDER
             },
             'html': '<p>Example HTML content<br><a href="' + url + '">Click here</a></p>',
             'important': True,
@@ -57,14 +57,29 @@ def send_verification(user, url):
             ]
         }
         mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
-        '''
-        [{'_id': 'abc123abc123abc123abc123abc123',
-          'email': 'recipient.email@example.com',
-          'reject_reason': 'hard-bounce',
-          'status': 'sent'}]
-        '''
-    except mandrill.Error:
-        # Mandrill errors are thrown as exceptions
-        # print 'A mandrill error occurred: %s - %s' % (e.__class__, e)
-        # A mandrill error occurred: <class 'mandrill.UnknownSubaccountError'> - No subaccount exists with the id 'customer-123'    
+    except mandrill.Error:    
+        raise
+
+def send_email_booking(date, time, seat_number):
+    try:
+        mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
+        message = {
+            'from_email': EMAIL_SENDER,
+            'from_name': EMAIL_SENDER_NAME,
+            'headers': {
+                'Reply-To': EMAIL_SENDER
+            },
+            'html': '<p>Booked: ' + date + ' ' + time + ' on seat no. ' + seat_number + '</p>',
+            'important': True,
+            'subject': 'Email Verification',
+            'to': [
+                {
+                    'email': user['email'],
+                    'name': user['first_name'] + ' ' + user['last_name'],
+                    'type': 'to'
+                }
+            ]
+        }
+        mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
+    except mandrill.Error:  
         raise
