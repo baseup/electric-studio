@@ -149,6 +149,9 @@ services.factory('SharedService', function(){
     }, 
     get : function(key) {
       return records[key];
+    },
+    clear : function(key) {
+      delete records[key];
     }
   }
 });

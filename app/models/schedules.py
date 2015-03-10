@@ -1,6 +1,7 @@
 from motorengine import *
 from .admins import Instructor
 from .users import User
+from .packages import UserPackage
 from app.helper import mongo_to_dict
 from hurricane.db import Model
 
@@ -25,6 +26,7 @@ class BookedSchedule(Model):
     date = DateTimeField()
     user_id = ReferenceField(reference_document_type=User)
     schedule = ReferenceField(reference_document_type=InstructorSchedule)
+    user_package = ReferenceField(reference_document_type=UserPackage)
     seat_number = IntField()
     status = StringField()
     create_at = DateTimeField(auto_now_on_insert=True)

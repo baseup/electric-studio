@@ -1,11 +1,13 @@
-import sys
+from motorengine import DESCENDING
 from motorengine.errors import InvalidDocumentError
 from app.models.schedules import BookedSchedule, InstructorSchedule
 from app.models.packages import UserPackage
 from app.models.users import User
+
+from datetime import datetime
 import tornado
 import json
-from datetime import datetime
+import sys
 
 import tornado.escape
 
@@ -52,9 +54,11 @@ def create(self):
                 if book:
                     user.credits -= 1
                     user = yield user.save();
-                    user_packages = yield UserPackage.objects.filter(user_id=user._id).find_all();
+                    user_packages = yield UserPackage.objects.order_by("create_at", direction=DESCENDING).filter(user_id=user._id).find_all();
                     if user_packages:
                         user_packages[0].remaining_credits -= 1
+                        book.user_package = user_packages[0]._id
+                        yield book.save()
                         yield user_packages[0].save()
             else:
                 self.set_status(403)
@@ -70,16 +74,33 @@ def create(self):
 
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
-    try :
-        book = yield BookedSchedule.objects.get(id)
-        book.date = data['date']
-        book.seat_number = data['seat']
-        book.status = data['status']
-        book = yield book.save()
-    except :
-        value = sys.exc_info()[1]
+    if data and self.get_secure_cookie('loginUserID'):
+        try :
+            book = yield BookedSchedule.objects.get(id)
+            if 'sched_id' in data:
+                book.date = datetime.strptime(data['date'],'%Y-%m-%d')
+                sched = yield InstructorSchedule.objects.get(data['sched_id']);
+                book.schedule = sched._id;
+                book.seat_number = data['seat']
+            if 'status' in data:
+                book.status = data['status']
+            book = yield book.save()
+            if book and ('status' in data) and data['status'] == 'cancelled':
+                user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
+                user = yield User.objects.get(user_id)
+                user.credits += 1
+                user = yield user.save();
+                user_packages = yield UserPackage.objects.get(book.user_package);
+                if user_package:
+                    user_package.remaining_credits += 1
+                    yield user_package.save()
+        except :
+            value = sys.exc_info()[1]
+            self.set_status(403)
+            self.write(str(value))
+    else:
         self.set_status(403)
-        self.write(str(value))
+
     self.finish()
 
 def destroy(self, id):
