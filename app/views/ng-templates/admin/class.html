@@ -6,8 +6,8 @@
       <input ng-change="reload()" class="datepicker text-input" ng-model="newBook.date" placeholder="Date">
     </div>
     <div class="float--left">
-      <select class="select" ng-model="newBook.time">
-        <option value="7:00 AM">7:00 AM</option>
+      <select ng-change="reload()" class="select" ng-model="newBook.time">
+        <option selected value="7:00 AM">7:00 AM</option>
         <option value="9:30 AM">9:30 AM</option>
         <option value="1:00 PM">1:00 PM</option>
         <option value="3:30 PM">3:30 PM</option>
@@ -19,15 +19,15 @@
   <div class="data-list cf pad">
     <dl class="float--left space--right">
       <dt>Instructor</dt>
-      <dd class="caps">Marissa</dd>
+      <dd class="caps">{{ schedDetails.instructor.admin_id.first_name }} {{ schedDetails.instructor.admin_id.last_name }}</dd>
     </dl>
-    <dl class="float--left space--right">
+    <!-- <dl class="float--left space--right">
       <dt>Class Type</dt>
       <dd class="caps">Pure Electric</dd>
-    </dl>
+    </dl> -->
     <dl class="float--left space--right">
       <dt>Status</dt>
-      <dd class="caps">6 Bikes Available</dd>
+      <dd class="caps">{{ 37 - books.length }} Bikes Available</dd>
     </dl>
   </div>
 
@@ -72,7 +72,7 @@
                   </a>
                 </li>
                 <li>
-                  <a  class="cancel-booking"><i class="fa fa-times"></i></a>
+                  <a ng-click="cancelBooking(book, $index)" class="cancel-booking"><i class="fa fa-times"></i></a>
                 </li>
               </ul>
 
@@ -111,12 +111,14 @@
         <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
           <span class="label">Rider</span>
           <select class="select" id="select-user-id" ng-change="selectRider()" ng-model="newBook.user_id">
-            <option value="">Select Rider</option>
+            <option selected value="">Select Rider</option>
           </select>
         </div>
         <div class="space--bottom bp-md-one-third float--left">
           <span class="label">Bike Number</span>
-          <select class="select" id="select-bike-number" ng-model="newBook.seat_number"></select>
+          <select class="select" id="select-bike-number" ng-model="newBook.seat_number">
+            <option selected value="">Select Bike no.</option>
+          </select>
         </div>
       </div>
       <div class="user-class-details" ng-show="selectedRider">

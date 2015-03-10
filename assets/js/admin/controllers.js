@@ -146,11 +146,16 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
 ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
   
   $scope.newBook = {};
+  var dateToday = new Date();
+  $scope.newBook.date = dateToday.getFullYear() + '-' + (dateToday.getMonth() + 1) +'-' + dateToday.getDate();
+  $scope.newBook.time = '07:00 AM';
+
   angular.element('#class-tabs').Tab();
 
   $scope.reload = function () {
-    ScheduleService.query({ date: $scope.newBook.date }, function (books) {
-      $scope.books = books;
+    ScheduleService.query({ date: $scope.newBook.date, time: $scope.newBook.time }, function (books) {
+      $scope.books = books.bookings;
+      $scope.schedDetails = books.schedule;
     });
   }
   $scope.reload();
@@ -172,6 +177,11 @@ ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
     }
   }
 
+  $scope.cancelBooking = function (booking, index) {
+    $scope.books.splice(index, 1);
+    ScheduleService.delete({ scheduleId: booking._id });
+  }
+
   var select = angular.element('#select-bike-number')[0].selectize;
   for (var i = 1; i <= 37; i++) {
     select.addOption({ value: i, text: i });
@@ -179,7 +189,7 @@ ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
 
   $scope.sendNewBook = function () {
     ScheduleService.save($scope.newBook, function (savedBook) {
-      console.log(savedBook);
+      $scope.reload();
     });
   }
   
@@ -200,7 +210,7 @@ ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
   }
 
   $scope.downloadBookingList = function () {
-    window.location = '/admin/export/download-bookings';
+    window.location = '/admin/export/download-bookings?date=' + $scope.newBook.date + '&time=' + $scope.newBook.time;
   }
    
 });
