@@ -15,7 +15,7 @@ def find(self):
 
     if self.get_argument('sched_id'):
         sched = yield InstructorSchedule.objects.get(self.get_argument('sched_id'));
-        books = yield BookedSchedule.objects.filter(schedule=sched._id,
+        books = yield BookedSchedule.objects.filter(status="booked", schedule=sched._id,
                               date=datetime.strptime(self.get_argument('date'),'%Y-%m-%d')).find_all()
         self.render_json(books)
     else:
@@ -89,8 +89,8 @@ def update(self, id):
                 user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
                 user = yield User.objects.get(user_id)
                 user.credits += 1
-                user = yield user.save();
-                user_packages = yield UserPackage.objects.get(book.user_package);
+                user = yield user.save()
+                user_package = yield UserPackage.objects.get(book.user_package._id);
                 if user_package:
                     user_package.remaining_credits += 1
                     yield user_package.save()
