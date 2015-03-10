@@ -92,6 +92,10 @@ COOKIE_SECRET = 'elstudio!@#$%123'
 # Global XSS filtering for get_arguments method
 # GLOBAL_XSS_FILTER = False
 
+# Logs
+ENABLE_LOGS = True
+# LOG_PATH = 'logs'
+
 # MotorEngine Configuration
 DATABASE = {
     'default': {
