@@ -1,7 +1,7 @@
 from motorengine import DESCENDING
 from motorengine.errors import InvalidDocumentError
 from app.models.schedules import BookedSchedule, InstructorSchedule
-from app.helper import send_email_booking
+from app.helper import send_email_booking, send_email_cancel
 from app.models.packages import UserPackage
 from app.models.users import User
 
@@ -98,6 +98,12 @@ def update(self, id):
                 if user_package:
                     user_package.remaining_credits += 1
                     yield user_package.save()
+                yield self.io.async_task(
+                    send_email_cancel,
+                    user=user.to_dict(),
+                    date=book.date.strftime('%Y-%M-%D'),
+                    time=book.schedule.start.strftime('%I:%M %p')
+                )
         except :
             value = sys.exc_info()[1]
             self.set_status(403)

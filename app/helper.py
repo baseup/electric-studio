@@ -2,6 +2,7 @@ from motorengine import *
 from app.settings import MANDRILL_API_KEY, EMAIL_SENDER, EMAIL_SENDER_NAME
 
 import mandrill
+import sys
 
 def mongo_to_dict(obj):
     return_data = []
@@ -81,5 +82,29 @@ def send_email_booking(user, date, time, seat_number):
             ]
         }
         mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
-    except mandrill.Error:  
+    except mandrill.Error:
+        raise
+
+def send_email_cancel(user, date, time):
+    try:
+        mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
+        message = {
+            'from_email': EMAIL_SENDER,
+            'from_name': EMAIL_SENDER_NAME,
+            'headers': {
+                'Reply-To': EMAIL_SENDER
+            },
+            'html': '<p>Booking scheduled on ' + date + ' ' + time + ' was cancelled</p>',
+            'important': True,
+            'subject': 'Cancelled Booking',
+            'to': [
+                {
+                    'email': user['email'],
+                    'name': user['first_name'] + ' ' + user['last_name'],
+                    'type': 'to'
+                }
+            ]
+        }
+        mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
+    except mandrill.Error:
         raise
