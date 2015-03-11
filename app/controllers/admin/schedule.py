@@ -45,15 +45,18 @@ def create(self):
         .order_by('create_at', DESCENDING) \
         .find_all()
 
-    if not len(user_package):
-        self.render_json({})
+    user = yield User.objects.get(obj_user_id)
+    if not len(user_package) or (user and not user.credits):
+        self.set_status(400)
+        self.write('Insufficient credits')
+        self.finish()
+        return
+
+    user.credits -= 1
+    yield user.save()
 
     user_package[0].remaining_credits -= 1
     yield user_package[0].save()
-
-    user = yield User.objects.get(obj_user_id)
-    user.credits -= 1
-    yield user.save()
 
     sched = BookedSchedule()
     sched.date = datetime.strptime(data['date'], '%Y-%m-%d')

@@ -190,6 +190,8 @@ ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
   $scope.sendNewBook = function () {
     ScheduleService.save($scope.newBook, function (savedBook) {
       $scope.reload();
+    }, function (error) {
+      $.Notify({ content: error.data });
     });
   }
   
