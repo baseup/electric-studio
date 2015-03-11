@@ -16,8 +16,8 @@ ctrls.controller('AdminCtrl', function ($scope){
     
     //apply selectize on all `.select` element
     angular.element('.select').selectize({
-      create: true,
-      sortField: 'text'
+      create: true
+      // sortField: 'text'
     });
 
     angular.element('.dashboard-menu').Dropdown();
