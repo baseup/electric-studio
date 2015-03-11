@@ -72,7 +72,7 @@ def send_email_booking(user, date, time, seat_number):
             },
             'html': '<p>Booked: ' + date + ' ' + time + ' on seat no. ' + seat_number + '</p>',
             'important': True,
-            'subject': 'Email Verification',
+            'subject': 'Booked',
             'to': [
                 {
                     'email': user['email'],
@@ -97,6 +97,30 @@ def send_email_cancel(user, date, time):
             'html': '<p>Booking scheduled on ' + date + ' ' + time + ' was cancelled</p>',
             'important': True,
             'subject': 'Cancelled Booking',
+            'to': [
+                {
+                    'email': user['email'],
+                    'name': user['first_name'] + ' ' + user['last_name'],
+                    'type': 'to'
+                }
+            ]
+        }
+        mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
+    except mandrill.Error:
+        raise
+
+def send_email_move(user, old_date, new_date, old_time, new_time):
+    try:
+        mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
+        message = {
+            'from_email': EMAIL_SENDER,
+            'from_name': EMAIL_SENDER_NAME,
+            'headers': {
+                'Reply-To': EMAIL_SENDER
+            },
+            'html': '<p>Booking scheduled on ' + old_date + ' ' + old_time + ' was moved to ' + new_date + ' ' + new_time + '</p>',
+            'important': True,
+            'subject': 'Moved Booking',
             'to': [
                 {
                     'email': user['email'],

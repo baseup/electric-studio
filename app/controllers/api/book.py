@@ -1,7 +1,7 @@
 from motorengine import DESCENDING
 from motorengine.errors import InvalidDocumentError
 from app.models.schedules import BookedSchedule, InstructorSchedule
-from app.helper import send_email_booking, send_email_cancel
+from app.helper import send_email_booking, send_email_cancel, send_email_move
 from app.models.packages import UserPackage
 from app.models.users import User
 
@@ -81,14 +81,17 @@ def update(self, id):
     if data and self.get_secure_cookie('loginUserID'):
         try :
             book = yield BookedSchedule.objects.get(id)
+            ref_book_date = book.date
+            ref_book_time = book.schedule.start
+            sched = None
             if 'sched_id' in data:
-                book.date = datetime.strptime(data['date'],'%Y-%m-%d')
+                book.date = datetime.strptime(data['date'], '%Y-%m-%d')
                 sched = yield InstructorSchedule.objects.get(data['sched_id']);
                 book.schedule = sched._id;
                 book.seat_number = data['seat']
             if 'status' in data:
                 book.status = data['status']
-            book = yield book.save()
+            yield book.save()
             if book and ('status' in data) and data['status'] == 'cancelled':
                 user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
                 user = yield User.objects.get(user_id)
@@ -101,10 +104,21 @@ def update(self, id):
                 yield self.io.async_task(
                     send_email_cancel,
                     user=user.to_dict(),
-                    date=book.date.strftime('%Y-%M-%D'),
+                    date=book.date.strftime('%Y-%m-%d'),
                     time=book.schedule.start.strftime('%I:%M %p')
                 )
-        except :
+            elif 'sched_id' in data and ref_book_date != book.date:
+                user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
+                user = yield User.objects.get(user_id)
+                yield self.io.async_task(
+                    send_email_move,
+                    user=user.to_dict(),
+                    old_date=ref_book_date.strftime('%Y-%m-%d'),
+                    new_date=book.date.strftime('%Y-%m-%d'),
+                    old_time=ref_book_time.strftime('%I:%M %p'),
+                    new_time=sched.start.strftime('%I:%M %p')
+                )
+        except:
             value = sys.exc_info()[1]
             self.set_status(403)
             self.write(str(value))
