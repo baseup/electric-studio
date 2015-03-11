@@ -11,7 +11,7 @@ def find(self):
     intructs = {}
     for i, instructor in enumerate(instructors):
         intructs[i] = instructor.to_dict()
-        admin = yield Admin.objects.get(intructs[i]['admin_id']._id)
+        admin = yield Admin.objects.get(instructor.admin_id._id)
         intructs[i]['admin'] = admin.to_dict()
 
     self.write(json.dumps(intructs))
@@ -21,7 +21,7 @@ def find_one(self, id):
     instructor = yield Instructor.objects.get(id)
     if instructor:
         ins_dict = instructor.to_dict()
-        admin = yield Admin.objects.get(ins_dict['admin_id']._id)
+        admin = yield Admin.objects.get(instructor.admin_id._id)
         ins_dict['admin'] = admin.to_dict()
         self.write()
     
@@ -58,7 +58,7 @@ def update(self, id):
         instructor = yield Instructor.objects.get(id)
         if instructor:
             inst_dict = instructor.to_dict()
-            admin = yield Admin.objects.get(inst_dict['admin_id']._id)
+            admin = yield Admin.objects.get(instructor.admin_id._id)
             if admin:
                 admin.username = data['username']
                 admin.password = data['username']
@@ -79,7 +79,7 @@ def update(self, id):
 def destroy(self, id):
     instructor = yield Instructor.objects.get(id)
     inst_dict = instructor.to_dict()
-    admin =  yield Admin.objects.get(inst_dict['admin_id']._id)
+    admin =  yield Admin.objects.get(instructor.admin_id._id)
     if admin:
         admin.delete()
         instructor.delete()
