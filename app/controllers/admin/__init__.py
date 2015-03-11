@@ -7,13 +7,22 @@ def index(self):
 
 def login(self):
     if self.request.method == 'GET':
-        self.render('login')
+        message = self.flash_secure_cookie('admin_login_invalid')
+        if not message:
+            message = ''
+        self.render('login', message=message)
     else:
         username = self.get_argument('username')
         password = self.get_argument('password')
 
         admin = yield Admin.objects.get(username=username)
-        if not admin or not bcrypt.verify(password, admin.password):
+        invalid = False
+        try:
+            if not admin or not bcrypt.verify(password, admin.password):
+                invalid = True
+        except ValueError:
+            invalid = True
+        if invalid:
             self.set_secure_cookie('admin_login_invalid', 'Invalid username and password')
             self.redirect('/admin/login')
 
