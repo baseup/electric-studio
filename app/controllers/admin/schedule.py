@@ -34,11 +34,17 @@ def create(self):
     total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched).count()
     if total_booked >= 37:
         self.set_status(400)
-        self.write('Not available slots')
+        self.write('No available slots')
         self.finish()
         return
 
     obj_user_id = ObjectId(data['user_id'])
+    booked_sched = yield BookedSchedule.objects.get(status='booked', date=special_date, schedule=ins_sched, user_id=obj_user_id)
+    if booked_sched:
+        self.set_status(400)
+        self.write('Already booked on the same schedule')
+        self.finish()
+        return
 
     user_package = yield UserPackage.objects \
         .filter(user_id=obj_user_id) \
