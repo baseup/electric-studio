@@ -167,6 +167,7 @@ ctrls.controller('LoginCtrl', function ($scope) {
         },
         error: function (xhr, code, error) {
           $scope.signInError = xhr.responseText + '.';
+          $scope.$apply();
         }
       });
     }
