@@ -8,11 +8,12 @@ from datetime import datetime
     
 def find(self):
     instructors = yield Instructor.objects.find_all()
-    intructs = {}
+    intructs = []
     for i, instructor in enumerate(instructors):
-        intructs[i] = instructor.to_dict()
+        ins = instructor.to_dict()
         admin = yield Admin.objects.get(instructor.admin_id._id)
-        intructs[i]['admin'] = admin.to_dict()
+        ins['admin'] = admin.to_dict()
+        intructs.append(ins)
 
     self.write(json.dumps(intructs))
     self.finish()
