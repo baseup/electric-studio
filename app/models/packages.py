@@ -6,7 +6,7 @@ from hurricane.db import Model
 class Package(Model):
     __collection__ = 'packages'
     name = StringField(required=True)
-    fee = IntField()
+    fee = DecimalField()
     description = StringField(required=True)
     expiration = IntField(required=False, default=30)
     credits = IntField(required=True)
