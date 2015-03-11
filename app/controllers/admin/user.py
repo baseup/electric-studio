@@ -13,7 +13,7 @@ def find(self):
 
 def find_one(self, id):
     user = yield User.objects.get(id)
-    # user.packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
+    user.packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
     self.render_json(user)
 
 def create(self):
