@@ -1,0 +1,57 @@
+<div ng-controller="TransactionsCtrl">
+
+  <div class="grid content pad">
+    <div class="grid__item">
+    <div class="packages box--white box--bordered">
+      <div class="box__header align--middle cf pad">
+        <span class="label label--inline">Transactions</span>
+        <!-- <button ng-click="showAddPackage()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-package">Add Package</button> -->
+      </div>
+
+      <div class="class-search pad cf">
+        <span class="label">Search</span>
+        <div class="bp-md-one-fourth float--left space--bottom space--right">
+          <input class="text-input" ng-model="search.user_id.first_name" placeholder="Name">
+        </div>
+        <div class="float--left">
+          <select class="select" id="search-trans-package" ng-model="search.package_id._id">
+            <option value="">Select Package</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pad" ng-show="!isUpdatePackage">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Package Name</th>
+              <th>Credits</th>
+              <th>Price</th>
+              <th>Date</th>
+              <!-- <th>&nbsp;</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="transaction in transactions | filter:search">
+              <td>{{ transaction.user_id.first_name }} {{ transaction.user_id.last_name }}</td>
+              <td>{{ transaction.package_id.name }}</td>
+              <td>{{ transaction.package_id.credits }} Classes</td>
+              <td><small>PHP</small> {{ transaction.package_id.fee }}</td>
+              <td>{{ transaction.create_at }}</td>
+              <!-- <td>
+                <button class="btn btn--small btn--secondary" ng-click="removePackage(package)">
+                  <i class="fa fa-trash"></i> Remove
+                </button>
+                <button class="btn btn--small btn--secondary" ng-click="setToUpdate(package)" data-modal-toggle="update-package">
+                  <i class="fa fa-pencil"></i> Edit
+                </button>
+              </td> -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>

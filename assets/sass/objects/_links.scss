@@ -1,0 +1,17 @@
+/*------------------------------------*\
+    #LINKS
+\*------------------------------------*/
+/**
+ * Add hover behaviour to only selected items within links
+ */
+.link,
+.link:hover,
+.link:active,
+.link:focus{
+  text-decoration:none;
+}
+  .link:hover .link__target,
+  .link:active .link__target,
+  .link:focus .link__target {
+    text-decoration:underline;
+  }

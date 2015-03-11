@@ -1,0 +1,17 @@
+/*------------------------------------*\
+    #MAIN
+\*------------------------------------*/
+
+html {
+  min-height: 100%;
+  font:#{($base-font-size/16px)*1em}/#{$line-height-ratio} $base-font-family;
+  
+  letter-spacing: $base-letter-spacing;
+  color: $color-text;
+  
+  @if $optim-text-render == true {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}

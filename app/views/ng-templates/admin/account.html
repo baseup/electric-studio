@@ -1,0 +1,130 @@
+<div ng-controller="AccountCtrl">
+  <div class="content-filter pad cf border--bottom">
+    <div class="content-filter__item space--right">
+      <span class="label">Search Account</span>
+      <input class="text-input" placeholder="Enter Name" ng-model="search.first_name">
+    </div>
+
+  </div>
+
+
+  <div class="content-result pad">
+    <span class="label">Results</span>
+
+    <div class="account-list grid">
+
+      <div ng-repeat="user in users | filter:search" class="grid__item bp-md-one-half bp-lg-one-third">
+        <div class="account__item box--bordered box--white space--bottom cf">
+
+          <div class="pad">
+            <b class="h--small">{{ user.first_name }} {{ user.last_name }}</b>
+          </div>
+
+          <div class="pad--sides">
+            <div class="data-list">
+
+              <dl class="data--inline">
+                <dt><i class="fa fa-phone"></i></dt>
+                <dd>{{ user.phone_number }}</dd>
+              </dl>
+
+              <dl class="data--inline space--bottom">
+                <dt><i class="fa fa-envelope"></i></dt>
+                <dd class="inline space--bottom">{{ user.email }}</dd>
+              </dl>
+
+              <dl>
+              <dt>Class Package</dt>
+              <dd class="">{{ user.credits }} Classes Left</dd>
+              <!-- <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd> -->
+              </dl>
+            </div>
+
+          </div>
+
+          <div class="account__options pad--sides pad--half-ends space--top cf">
+            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">Add Class</a>
+            <ul class="nav float--right">
+              <li>
+                <a href="" ng-click="accountSummary(user)"><i class="fa fa-bars"></i></a>
+              </li>
+              <li>
+                <a href=""><i class="fa fa-ban"></i></a>
+              </li>
+              <li>
+                <a href="" class="pad--off-right"><i class="fa fa-share"></i></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal account summary -->
+  <div class="modal" data-modal="account-summary" id="account-summary-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Summary of Classes and Packages</h3>
+
+      <div class="space--bottom pad--bottom">
+        <span class="label">Rider</span>
+        <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
+      </div>
+
+      <div class="space--bottom one-whole">
+
+        <table class="data-table account-summary-table">
+          <tr>
+            <th>Package Type</th>
+            <th>Classes Used</th>
+            <th>Classes Left</th>
+            <th>Expiration Date</th>
+          </tr>
+          <tr ng-repeat="pack in selectedAccount._packages">
+            <td>{{ pack.package_id.name }} </td>
+            <td>{{ pack.credit_count }}</td>
+            <td>{{ pack.remaining_credits }}</td>
+            <td>{{ pack.create_at }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal Add Class -->
+  <div class="modal" data-modal="add-class" id="add-class-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Add Class</h3>
+      
+      <ul class="form-fields">
+        <li>
+          <span class="label">Rider</span>
+          <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
+        </li>
+        <li>
+          <span class="label">Select Class Package</span>
+          <select class="select" id="select-add-package" ng-change="selectPackage(newCredits.package_id)" ng-model="newCredits.package_id">
+            <option value="">Select Package</option>
+          </select>
+        </li>
+        <li>
+          <span class="label">Or Input Number of Class</span>
+          <input ng-disabled="newCredits.package_id" ng-model="newCredits.credit_count" class="text-input">
+        </li>
+        <li>
+          <span class="label">Set Expiration</span>
+          <input ng-disabled="newCredits.package_id" ng-model="newCredits.expiration" class="text-input datepicker" placeholder="Defaults to 30 days">
+        </li>
+        <li>
+          <span class="label">Notes</span>
+          <textarea class="text-input" cols="3" ng-model="newCredits.notes" placeholder="Indicate reason for free class"></textarea>
+        </li>
+      </ul>
+     
+      <button type="button" ng-click="saveNewCredits()" class="btn btn--primary btn--medium space--top modal-close">Add</button>
+
+    </div>
+  </div>
+</div>

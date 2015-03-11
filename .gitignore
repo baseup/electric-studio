@@ -1,10 +1,16 @@
 uploads/*/*
 node_modules
 bower_components
-assets/lib
+assets/vendor
+assets/css
+assets/sass/.sass-cache
+assets/js/app/templates.js
+assets/js/admin/templates.js
+*.pyc
 .tmp
 *.seed
 *.log
+*.csv
 npm-debug.log
 *~
 *#
@@ -14,3 +20,4 @@ nbproject
 .idea
 .node_history
 __pycache__
+hurricane

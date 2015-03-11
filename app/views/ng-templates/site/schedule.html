@@ -1,0 +1,91 @@
+
+  <div class="content schedule bg-lightGray" ng-controller="ScheduleCtrl">
+    <div class="wrapper">
+      
+      <div ng-if="resched">
+        <h2 class="range">
+          <span>Rescheduling: </span> 
+          {{ resched.date | formatDate }} - {{ resched.schedule.start | formatTime }} - Seat {{ resched.seat_number }}</h2>
+          <a class="h small primary right" ng-click="cancelResched()">Cancel</a>
+        <hr/>
+      </div>
+
+      <div class="header">
+        <h2 class="range">{{ monD }} {{ monM }} - {{ nmonD }} {{ nmonM }}</h2>
+        <div class="nav left" ng-click="prevWeek()"><i class="fa fa-angle-left"></i></div>
+        <div class="nav right" ng-click="nextWeek()"><i class="fa fa-angle-right"></i></div>
+      </div>
+      
+      <div class="column">
+        <h2 class="day">Mon</h2>
+        <h3 class="date">{{ monM }} {{ monD }}</h3>
+        <a ng-class="{row: monday, unavailable: chkSched(monDate, monday)}" ng-repeat="monday in schedules.mon" ng-click="setSchedule(monday, monDate)">
+          <span class="time">{{ monday.start | formatTime }}</span>
+          <span class="instructor">{{ monday.instructor.admin_id.first_name }}</span>
+        </a>
+      </div>
+      
+      <div class="column">
+        <h2 class="day">Tue</h2>
+        <h3 class="date">{{ tueM }} {{ tueD }}</h3>
+        <a ng-class="{row: tuesday, unavailable: chkSched(tueDate, tuesday)}" ng-repeat="tuesday in schedules.tue" ng-click="setSchedule(tuesday, tueDate)">
+          <span class="time">{{ tuesday.start | formatTime }}</span>
+          <span class="instructor">{{ tuesday.instructor.admin_id.first_name }}</span>
+        </a>
+      </div>
+      
+      <div class="column">
+        <h2 class="day">Wed</h2>
+        <h3 class="date">{{ wedM }} {{ wedD }}</h3>
+        <a ng-class="{row: wednesday, unavailable: chkSched(wedDate, wednesday)}" ng-repeat="wednesday in schedules.wed" ng-click="setSchedule(wednesday, wedDate)">
+          <span class="time">{{ wednesday.start | formatTime }}</span>
+          <span class="instructor">{{ wednesday.instructor.admin_id.first_name }}</span>
+        </a>
+      </div>
+      
+      <div class="column">
+        <h2 class="day">Thu</h2>
+        <h3 class="date">{{ thuM }} {{ thuD }}</h3>
+        <a ng-class="{row: thursday, unavailable: chkSched(thuDate, thursday)}" ng-repeat="thursday in schedules.thu" ng-click="setSchedule(thursday, thuDate)">
+          <span class="time">{{ thursday.start | formatTime }}</span>
+          <span class="instructor">{{ thursday.instructor.admin_id.first_name }}</span>
+        </a>
+      </div>
+      
+      <div class="column">
+        <h2 class="day">Fri</h2>
+        <h3 class="date">{{ friM }} {{ friD }}</h3>
+        <a ng-class="{row: friday, unavailable: chkSched(friDate, friday)}" ng-repeat="friday in schedules.fri" ng-click="setSchedule(friday, friDate)">
+          <span class="time">{{ friday.start | formatTime }}</span>
+          <span class="instructor">{{ friday.instructor.admin_id.first_name }}</span>
+        </a>
+      </div>
+      
+      <div class="column">
+        <h2 class="day">Sat</h2>
+        <h3 class="date">{{ satM }} {{ satD }}</h3>
+        <a ng-class="{row: saturday, unavailable: chkSched(satDate, saturday)}" ng-repeat="saturday in schedules.sat" ng-click="setSchedule(saturday, satDate)">
+          <span class="time">{{ saturday.start | formatTime }}</span>
+          <span class="instructor">{{ saturday.instructor.admin_id.first_name }}</span>
+        </a>
+      </div>
+      
+      <div class="column">
+        <h2 class="day">Sun</h2>
+        <h3 class="date">{{ sunM }} {{ sunD }}</h3>
+        <a ng-class="{row: sunday, unavailable: chkSched(sunDate, sunday)}" ng-repeat="sunday in schedules.sun" ng-click="setSchedule(sunday, sunDate)">
+          <span class="time">{{ sunday.start | formatTime }}</span>
+          <span class="instructor">{{ sunday.instructor.admin_id.first_name }}</span>
+        </a>
+      </div>
+
+      <div class="column">
+        <h2 class="day">Mon</h2>
+        <h3 class="date">{{ nmonM }} {{ nmonD }}</h3>
+        <a ng-class="{row: monday, unavailable: chkSched(nmonDate, monday)}" ng-repeat="monday in schedules.mon" ng-click="setSchedule(monday, nmonDate)">
+          <span class="time">{{ monday.start | formatTime }}</span>
+          <span class="instructor">{{ monday.instructor.admin_id.first_name }}</span>
+        </a>
+      </div>
+    </div>  
+  </div>

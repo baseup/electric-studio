@@ -31,7 +31,7 @@ COMPRESS_RESPONSE = True
 # UI_METHODS = ''
 
 # Used by RequestHandler.get_secure_cookie and set_secure_cookie to sign cookies.
-COOKIE_SECRET = '!@#$%123'
+COOKIE_SECRET = 'elstudio!@#$%123'
 
 # The authenticated decorator will redirect to this url if the user is not logged in.
 # Can be further customized by overriding RequestHandler.get_login_url
@@ -92,13 +92,21 @@ COOKIE_SECRET = '!@#$%123'
 # Global XSS filtering for get_arguments method
 # GLOBAL_XSS_FILTER = False
 
+# Logs
+ENABLE_LOGS = True
+# LOG_PATH = 'logs'
+
 # MotorEngine Configuration
 DATABASE = {
     'default': {
-        'db': 'feeghe',
+        'db': 'elstudio_db',
         'port': 27017,
         'host': 'localhost',
-        'username': 'feeghe_user',
-        'password': 'feeghe_notsecure'
+        'username': 'elstudio_user',
+        'password': 'elstudio_notsecure'
     }
 }
+
+MANDRILL_API_KEY = 'LJCBoJpHFF7ZRrFqgu9Q2g'
+EMAIL_SENDER = 'ride@electricstudio.ph'
+EMAIL_SENDER_NAME = 'Electric Studio'

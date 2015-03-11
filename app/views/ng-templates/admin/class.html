@@ -1,0 +1,167 @@
+<div ng-controller="ClassCtrl">
+ 
+  <div class="class-search pad cf">
+    <span class="label">Select Class Schedule</span>
+    <div class="bp-md-one-fourth float--left space--bottom space--right">
+      <input ng-change="reload()" class="datepicker text-input" ng-model="newBook.date" placeholder="Date">
+    </div>
+    <div class="float--left">
+      <select ng-change="reload()" class="select" ng-model="newBook.time">
+        <option selected value="7:00 AM">7:00 AM</option>
+        <option value="9:30 AM">9:30 AM</option>
+        <option value="1:00 PM">1:00 PM</option>
+        <option value="3:30 PM">3:30 PM</option>
+        <option value="5:00 PM">5:00 PM</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="data-list cf pad">
+    <dl class="float--left space--right">
+      <dt>Instructor</dt>
+      <dd class="caps">{{ schedDetails.instructor.admin_id.first_name }} {{ schedDetails.instructor.admin_id.last_name }}</dd>
+    </dl>
+    <!-- <dl class="float--left space--right">
+      <dt>Class Type</dt>
+      <dd class="caps">Pure Electric</dd>
+    </dl> -->
+    <dl class="float--left space--right">
+      <dt>Status</dt>
+      <dd class="caps">{{ 37 - books.length }} Bikes Available</dd>
+    </dl>
+  </div>
+
+
+  <div class="result-container pad">
+
+    <ul class="nav-tabs" id="class-tabs">
+      <li>
+        <a class="active" data-tab-toggle="booking">Booking</a>
+      </li>
+      <li>
+        <a data-tab-toggle="waitlist">Waitlist</a>
+      </li>
+    </ul>
+
+    <div class="booking tab-pane tab-pane--active" data-tab-pane="booking">
+
+      <div class="booking-header space--bottom cf">
+        <div class="stats">
+          <span class="caps">{{ books.length }} Riders</span>
+        </div>
+
+        <div class="options">
+          <button class="btn btn--small btn--primary" data-modal-toggle="book-ride" ng-click="bookRide()">
+            Book A Ride
+          </button>
+          <button class="btn btn--small btn--tertiary" ng-click="downloadBookingList()">Export Booking List</button>
+        </div>
+      </div>
+
+      <div class="booking-list grid">
+
+        <div ng-repeat="book in books" class="grid__item bp-sm-one-half bp-lg-one-third">
+          <div class="booking__item box--bordered box--white space--bottom cf">
+
+            <div class=" box__header">
+              <ul class="booking__actions nav">
+                <li>
+                  <a class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
+                    <i class="fa fa-exchange"></i>
+                    <span class="bike-number">{{ book.seat_number }}</span>
+                  </a>
+                </li>
+                <li>
+                  <a ng-click="cancelBooking(book, $index)" class="cancel-booking"><i class="fa fa-times"></i></a>
+                </li>
+              </ul>
+
+              <h3 class="user--name">{{ book.user_id.first_name }} {{ bookt.user.last_name }}</h3>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.booking -->
+
+    <div class="waitlist tab-pane" data-tab-pane="waitlist">
+
+      <div class="waitlist-header space--bottom cf">
+        <div class="stats">
+          <span class="caps">{{ waitList.length }} Riders</span>
+        </div>
+
+        <div class="options">
+          <button class="btn btn--small btn--tertiary">Print Waitlist</button>
+        </div>
+      </div>
+
+      <div class="account-list grid">
+      </div>
+    </div><!-- /.waitlist -->
+  </div>
+
+  <!-- modal Booking-->
+  <div id="book-ride-modal" class="modal" data-modal="book-ride">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Book A Ride</h3>
+      <div class="user-select cf">
+        <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
+          <span class="label">Rider</span>
+          <select class="select" id="select-user-id" ng-change="selectRider()" ng-model="newBook.user_id">
+            <option selected value="">Select Rider</option>
+          </select>
+        </div>
+        <div class="space--bottom bp-md-one-third float--left">
+          <span class="label">Bike Number</span>
+          <select class="select" id="select-bike-number" ng-model="newBook.seat_number">
+            <option selected value="">Select Bike no.</option>
+          </select>
+        </div>
+      </div>
+      <div class="user-class-details" ng-show="selectedRider">
+        <span class="caps">{{ selectedRider.credits }} Classes Left</span>
+      </div>
+      <button type="button" ng-click="sendNewBook()" class="btn btn--medium btn--primary space--top modal-close">Book</button>
+
+    </div>
+  </div>
+
+  <!-- modal Switch Bike -->
+  <div id="switch-bike-modal" class="modal" data-modal="switch" >
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Switch Bike</h3>
+
+      <div class="user-select space--bottom">
+        <span class="label">Rider</span>
+        <h4 class="h-small">Jeph Fernandez</h4>
+      </div>
+
+       <div class="cf">   
+        <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
+          <span class="label">Current Bike</span>
+          <h4 class="h-small">14</h4>
+        </div>
+        <div class="space--bottom bp-md-one-third float--left">
+          <span class="label">Switch to</span>
+          <select class="select">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7" selected>7</option>
+            <option value="8">8</option>
+          </select>
+        </div>    
+      </div>
+
+      <button class="btn btn--primary btn--medium space--top modal-close">Switch</button>
+    </div>
+  </div>
+
+</div>
