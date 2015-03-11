@@ -23,20 +23,6 @@
         </section>
       </div>
       
-      <div class="sidebar light">
-        <h2 class="h small gray">My Classes</h2>
-        <p>
-          <a href="#/reservation" class="link basic">Reservation</a><br>
-          <a href="#/history" class="link basic">History</a>
-        </p>
-        <h2 class="h small">My Account</h2>
-        <p>
-          <a href="#/account" class="link basic">Personal Info</a><br> 
-          <a href="#/account#billing" class="link basic">Billing</a><br>
-          <a href="#/account#packages" class="link basic">Packages</a><br>
-          <a href="#/rewards" class="link basic">Rewards</a>
-        </p>
-        <a class="link" href="#/logout">Sign Out</a>
-      </div>
+      <div ng-include="'/site/account-nav'"></div>
     </div>
   </div>
