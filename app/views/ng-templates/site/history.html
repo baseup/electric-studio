@@ -1,68 +1,153 @@
 
-  <div class="content bg-lightGray sidebar-layout">
-    <div class="wrapper">
-      
-      <div class="main">
-        <h2 class="h large">History</h2>
-        
-        <div class="stats">
-          <h3 class="h small">34 classes</h3>
-          <h3 class="h small">10 Power Hour classes, 24 Pure Electric classes</h3>
-          <h3 class="h small">12 days consecutive</h3>
-        </div>
-        
-        <section class="col-2">
-          <div class="block">
-            <h3 class="h small primary space--off pad--half-bottom">Jan 20, 2015</h3>
-            <span>8:30 AM</span><br>
-            <span>Class: Pure Electric</span><br>
-            <span>Instructor: Kris</span>
-          </div>
-          <div class="block">
-            <h3 class="h small primary space--off pad--half-bottom">Jan 15, 2015</h3>
-            <span>8:30 AM</span><br>
-            <span>Class: Pure Electric</span><br>
-            <span>Instructor: Abel</span>
-          </div>
-          <div class="block">
-            <h3 class="h small primary space--off pad--half-bottom">Jan 14, 2015</h3>
-            <span>10:30 AM</span><br>
-            <span>Class: Power Hour</span><br>
-            <span>Instructor: Yessa</span>
-          </div>
-          <div class="block">
-            <h3 class="h small primary space--off pad--half-bottom">Jan 13, 2015</h3>
-            <span>5:30 PM</span><br>
-            <span>Class: Pure Electric</span><br>
-            <span>Instructor: Kris</span>
-          </div>
-          <div class="block">
-            <h3 class="h small primary space--off pad--half-bottom">Jan 10, 2015</h3>
-            <span>8:30 AM</span><br>
-            <span>Class: Pure Electric</span><br>
-            <span>Instructor: Kris</span>
-          </div>
-          <div class="block">
-            <h3 class="h small primary space--off pad--half-bottom">Jan 9, 2015</h3>
-            <span>10:30 AM</span><br>
-            <span>Class: Pure Electric</span><br>
-            <span>Instructor: Rachel</span>
-          </div>
-          <div class="block">
-            <h3 class="h small primary space--off pad--half-bottom">Jan 8, 2015</h3>
-            <span>11:30 AM</span><br>
-            <span>Class: Pure Electric</span><br>
-            <span>Instructor: Kris</span>
-          </div>
-          <div class="block">
-            <h3 class="h small primary space--off pad--half-bottom">Jan 7, 2015</h3>
-            <span>5:30 PM</span><br>
-            <span>Class: Pure Electric</span><br>
-            <span>Instructor: Kris</span>
-          </div>
-        </section>
+<div class="content bg-lightGray sidebar-layout" ng-controller="HistoryCtrl">
+  <div class="wrapper">
+
+    <div class="main">
+      <h2 class="h large pad--bottom">History</h2>
+
+      <ul class="nav-tabs" id="history-tabs">
+        <li>
+          <a class="active" data-tab-toggle="classes">Classes</a>
+        </li>
+        <li>
+          <a data-tab-toggle="packages">Packages</a>
+        </li>
+      </ul>
+
+      <div class="tab-pane tab-pane--active" data-tab-pane="classes">
+
+      <div class="stats">
+        <h3 class="h small">34 classes</h3>
+        <h3 class="h small">10 Power Hour classes, 24 Pure Electric classes</h3>
+        <h3 class="h small">12 days consecutive</h3>
       </div>
+
+      <section class="col-2">
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">Jan 20, 2015</h3>
+          <span><span class="label inline">Time:</span> 8:30 AM</span><br>
+          <span><span class="label inline">Class:</span> Pure Electric</span><br>
+          <span><span class="label inline">Instructor:</span> Kris</span>
+        </div>
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">Jan 20, 2015</h3>
+          <span><span class="label inline">Time:</span> 8:30 AM</span><br>
+          <span><span class="label inline">Class:</span> Pure Electric</span><br>
+          <span><span class="label inline">Instructor:</span> Kris</span>
+        </div>
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">Jan 20, 2015</h3>
+          <span><span class="label inline">Time:</span> 8:30 AM</span><br>
+          <span><span class="label inline">Class:</span> Pure Electric</span><br>
+          <span><span class="label inline">Instructor:</span> Kris</span>
+        </div>
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">Jan 20, 2015</h3>
+          <span><span class="label inline">Time:</span> 8:30 AM</span><br>
+          <span><span class="label inline">Class:</span> Pure Electric</span><br>
+          <span><span class="label inline">Instructor:</span> Kris</span>
+        </div>
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">Jan 20, 2015</h3>
+          <span><span class="label inline">Time:</span> 8:30 AM</span><br>
+          <span><span class="label inline">Class:</span> Pure Electric</span><br>
+          <span><span class="label inline">Instructor:</span> Kris</span>
+        </div>
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">Jan 20, 2015</h3>
+          <span><span class="label inline">Time:</span> 8:30 AM</span><br>
+          <span><span class="label inline">Class:</span> Pure Electric</span><br>
+          <span><span class="label inline">Instructor:</span> Kris</span>
+        </div>
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">Jan 20, 2015</h3>
+          <span><span class="label inline">Time:</span> 8:30 AM</span><br>
+          <span><span class="label inline">Class:</span> Pure Electric</span><br>
+          <span><span class="label inline">Instructor:</span> Kris</span>
+        </div>
+      </section>
       
-      <div ng-include="'/site/account-nav'"></div>
+      <ul class="pagination-nav nav nav--block text--center">
+        <li><a href=""><i class="fa fa-angle-left"></i></a></li>
+        <li><a href="" class="disabled">1</a></li>
+        <li><a href="">2</a></li>
+        <li><a href="">3</a></li>
+        <li><a href="">4</a></li>
+        <li><a href=""><i class="fa fa-angle-right"></i></a></li>
+      </ul>
+      
     </div>
+
+    <div class="tab-pane" data-tab-pane="packages">
+
+      <div class="stats">
+        <h3 class="h small">5 Packages Bought</h3>
+      </div>
+
+      <section class="col-2">
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">5 Pax</h3>
+          <span>5 Classes</span><br>
+          <span><span class="label inline">Purchased On:</span> 5 Feb 2015</span><br>
+          <span><span class="label inline">Status:</span> Active</span><br>
+          <span><span class="label inline">Classes Left:</span> 2</span><br>
+          <span><span class="label inline">Expires On:</span> 5 Mar 2015</span>
+        </div>
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">5 Pax</h3>
+          <span>5 Classes</span><br>
+          <span><span class="label inline">Purchased On:</span> 5 Feb 2015</span><br>
+          <span><span class="label inline">Status:</span> Active</span><br>
+          <span><span class="label inline">Classes Left:</span> 2</span><br>
+          <span><span class="label inline">Expires On:</span> 5 Mar 2015</span>
+        </div>
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">5 Pax</h3>
+          <span>5 Classes</span><br>
+          <span><span class="label inline">Purchased On:</span> 5 Feb 2015</span><br>
+          <span><span class="label inline">Status:</span> Active</span><br>
+          <span><span class="label inline">Classes Left:</span> 2</span><br>
+          <span><span class="label inline">Expires On:</span> 5 Mar 2015</span>
+        </div>
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">5 Pax</h3>
+          <span>5 Classes</span><br>
+          <span><span class="label inline">Purchased On:</span> 5 Feb 2015</span><br>
+          <span><span class="label inline">Status:</span> Active</span><br>
+          <span><span class="label inline">Classes Left:</span> 2</span><br>
+          <span><span class="label inline">Expires On:</span> 5 Mar 2015</span>
+        </div>
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">5 Pax</h3>
+          <span>5 Classes</span><br>
+          <span><span class="label inline">Purchased On:</span> 5 Feb 2015</span><br>
+          <span><span class="label inline">Status:</span> Active</span><br>
+          <span><span class="label inline">Classes Left:</span> 2</span><br>
+          <span><span class="label inline">Expires On:</span> 5 Mar 2015</span>
+        </div>
+        <div class="block">
+          <h3 class="h small primary space--off pad--half-bottom">5 Pax</h3>
+          <span>5 Classes</span><br>
+          <span><span class="label inline">Purchased On:</span> 5 Feb 2015</span><br>
+          <span><span class="label inline">Status:</span> Active</span><br>
+          <span><span class="label inline">Classes Left:</span> 2</span><br>
+          <span><span class="label inline">Expires On:</span> 5 Mar 2015</span>
+        </div>
+      </section>
+      
+      <ul class="pagination-nav nav nav--block text--center">
+        <li><a href=""><i class="fa fa-angle-left"></i></a></li>
+        <li><a href="" class="disabled">1</a></li>
+        <li><a href="">2</a></li>
+        <li><a href="">3</a></li>
+        <li><a href="">4</a></li>
+        <li><a href=""><i class="fa fa-angle-right"></i></a></li>
+      </ul>
+      
+    </div>
+
+    </div>
+
+    <div ng-include="'/site/account-nav'"></div>
   </div>
+</div>

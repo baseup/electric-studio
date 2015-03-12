@@ -554,3 +554,9 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
     }
   }
 });
+
+ctrls.controller('HistoryCtrl', function ($scope) {
+  
+  $('#history-tabs').Tab();
+
+});
