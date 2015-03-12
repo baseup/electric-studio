@@ -287,9 +287,9 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService
 ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, SharedService, UserService) {
 
   if (!$scope.loginUser || $scope.loginUser.length == 0) {
+    $location.path("/")
     angular.element("html, body").animate({ scrollTop: 0 }, "slow");
     angular.element('.login-toggle').click();
-    $location.path("/")
   }else{
 
     $scope.reservations = BookService.query();
@@ -555,8 +555,20 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
   }
 });
 
-ctrls.controller('HistoryCtrl', function ($scope) {
-  
-  $('#history-tabs').Tab();
+ctrls.controller('HistoryCtrl', function ($scope, HistoryService) {
+  if (!$scope.loginUser || $scope.loginUser.length == 0) {
+    $location.path("/")
+    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+    angular.element('.login-toggle').click();
+  }else{
+
+    $('#history-tabs').Tab();
+
+    $scope.histories = HistoryService.query();
+    $scope.histories.$promise.then(function (data) {
+      $scope.histories = data;
+    });
+
+  }
 
 });

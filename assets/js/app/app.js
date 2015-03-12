@@ -117,23 +117,43 @@ app.directive("compareTo", function() {
 
 app.filter('formatTime', function() {
   return function(time) {
-    var parts = time.split(/[^0-9]/);
-    var date =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; 
-    minutes = minutes < 10 ? '0' + minutes : minutes;
+    if (time) {
+      var parts = time.split(/[^0-9]/);
+      var date =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; 
+      minutes = minutes < 10 ? '0' + minutes : minutes;
 
-    return hours + ':' + minutes + ' ' + ampm;
+      return hours + ':' + minutes + ' ' + ampm;
+    } else {
+      return time;
+    }
   };
 });
 
 app.filter('formatDate', function() {
   return function(date) {
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var date = new Date(date);
-    return months[date.getMonth()] + ', ' + date.getDate() + ' ' + date.getFullYear();
+    if(date){
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var date = new Date(date);
+      return months[date.getMonth()] + ', ' + date.getDate() + ' ' + date.getFullYear();
+    } else {
+      return date;
+    }
+  };
+});
+
+app.filter('addDay', function() {
+  return function(date, days) {
+    if (date) {
+      var newDate = new Date(date);
+      newDate.setTime(newDate.getTime() +  (days * 24 * 60 * 60 * 1000));
+      return newDate;
+    } else {
+      return date;
+    }
   };
 });
