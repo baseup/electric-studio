@@ -138,6 +138,8 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
       $scope.saving = false;
       $scope.newCredits = {};
       $scope.selectedAccount.credits += credits.credit_count
+    }, function (error) {
+      $.Notify({ content: error.data });
     });
   }
   
@@ -149,14 +151,22 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
   $scope.newBook = {};
   var dateToday = new Date();
   $scope.newBook.date = dateToday.getFullYear() + '-' + (dateToday.getMonth() + 1) +'-' + dateToday.getDate();
-  $scope.newBook.time = '07:00 AM';
 
   angular.element('#class-tabs').Tab();
 
   $scope.reload = function () {
-    ClassService.query({ date: $scope.newBook.date, time: $scope.newBook.time }, function (books) {
+    ClassService.query({ date: $scope.newBook.date, time: $scope.newBook.time, sched_id: $scope.newBook.sched_id }, function (books) {
       $scope.books = books.bookings;
       $scope.schedDetails = books.schedule;
+      if (books.schedules.length) {
+        var selectize = angular.element('#select-class-time')[0].selectize;
+        angular.forEach(books.schedules, function (sched) {
+          selectize.addOption({ value: sched.id, text: sched.text });
+        });
+        if (!$scope.newBook.sched_id) {
+          $scope.newBook.sched_id = books.schedules[0].id;
+        }
+      }
     });
   }
   $scope.reload();
