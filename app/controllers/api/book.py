@@ -5,7 +5,7 @@ from app.helper import send_email_booking, send_email_cancel, send_email_move
 from app.models.packages import UserPackage
 from app.models.users import User
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import tornado
 import json
 import sys
@@ -43,7 +43,6 @@ def create(self):
         try :
             user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
             user = yield User.objects.get(user_id)
-
             if user.credits > 0:
                 sched = yield InstructorSchedule.objects.get(data['sched_id']);
                 book = BookedSchedule(user_id=user._id, 
@@ -51,19 +50,38 @@ def create(self):
                                       schedule=sched._id,
                                       seat_number=data['seat'],
                                       status='booked');
-
-                book = yield book.save()
                 if book:
                     user.credits -= 1
-                    user = yield user.save();
-                    user_packages = yield UserPackage.objects.order_by("create_at", direction=DESCENDING).filter(user_id=user._id).find_all()
+                    user_packages = yield UserPackage.objects.order_by("create_at", direction=DESCENDING) \
+                                                     .filter(user_id=user._id, remaining_credits__gt=0).find_all()
                     if user_packages:
-                        user_packages[0].remaining_credits -= 1
-                        book.user_package = user_packages[0]._id
-                        yield book.save()
-                        yield user_packages[0].save()
-                        user = (yield User.objects.get(user._id)).serialize()
-                        yield self.io.async_task(send_email_booking, user=user, date=data['date'], time=sched.start.strftime('%I:%M %p'), seat_number=str(book.seat_number))
+                        has_valid_package = False
+                        for i, user_package in enumerate(user_packages):
+                            # check expiration
+                            expireDate = user_package.create_at + timedelta(days=user_package.expiration)
+                            if datetime.now() > expireDate:
+                                continue;
+
+                            has_valid_package = True
+
+                            user_package.remaining_credits -= 1
+                            book.user_package = user_package._id
+                            
+                            yield book.save()
+                            user = yield user.save();
+                            yield user_package.save()
+
+                            user = (yield User.objects.get(user._id)).serialize()
+                            yield self.io.async_task(send_email_booking, 
+                                                     user=user, 
+                                                     date=data['date'], 
+                                                     time=sched.start.strftime('%I:%M %p'), 
+                                                     seat_number=str(book.seat_number))
+                            break
+
+                        if not has_valid_package:
+                            self.set_status(403)
+                            self.write('Unable to book a ride: Account doesnt have a valid package.');
             else:
                 self.set_status(403)
                 self.write('Unable to book a ride: Insuficient credits');

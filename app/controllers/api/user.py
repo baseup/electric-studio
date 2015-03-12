@@ -13,9 +13,8 @@ def find(self):
 def find_one(self, id):
     user = yield User.objects.get(id)
     if user:
-        user_dict = user.to_dict(); 
-        user_dict['password'] = None
-        self.write(user_dict)
+        user.password = None
+        self.render_json(user)
     
     self.finish()
 

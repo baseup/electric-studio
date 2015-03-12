@@ -35,7 +35,8 @@ routes.prefix('/api', [
     ('resource', '/instructor', 'api.instructor'),
     ('resource', '/transaction', 'api.transaction'),
     ('resource', '/schedule', 'api.schedules'),
-    ('resource', '/book', 'api.book')
+    ('resource', '/book', 'api.book'),
+    ('resource', '/history', 'api.history')
 ])
 
 routes.subdomain('api.electric-studio.dev', [

@@ -141,6 +141,15 @@ services.factory('BookService', function($resource) {
   });
 });
 
+services.factory('HistoryService', function($resource) {
+  return $resource('/api/history', {}, {
+    query: {
+      method: 'GET',
+      isArray: false
+    }
+  });
+});
+
 services.factory('SharedService', function(){
   var records = {};
   return {
