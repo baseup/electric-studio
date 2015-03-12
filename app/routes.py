@@ -11,6 +11,7 @@ routes.post('/verify', 'home.verify')
 routes.post('/user/login', 'home.login')
 routes.get('/user/logout', 'home.logout')
 routes.get('/add_regular_schedules', 'home.addRegularSchedule')
+routes.post('/upload/instructor', 'upload.instructor')
 
 routes.prefix('/admin', [
 

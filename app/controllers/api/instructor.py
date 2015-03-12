@@ -1,31 +1,29 @@
 
-import sys
 from motorengine.errors import InvalidDocumentError
 from app.models.admins import Instructor, Admin
+from datetime import datetime
+from passlib.hash import bcrypt
+
 import tornado
 import json
-from datetime import datetime
+import sys
     
 def find(self):
     instructors = yield Instructor.objects.find_all()
-    intructs = []
+    
     for i, instructor in enumerate(instructors):
-        ins = instructor.to_dict()
-        admin = yield Admin.objects.get(instructor.admin_id._id)
-        ins['admin'] = admin.to_dict()
-        intructs.append(ins)
+        if instructor.image:
+            instructor.image = self.static_url(instructor.image)
+        instructor.admin.password = None
 
-    self.write(json.dumps(intructs))
-    self.finish()
+    self.render_json(instructors)
 
 def find_one(self, id):
     instructor = yield Instructor.objects.get(id)
-    if instructor:
-        ins_dict = instructor.to_dict()
-        admin = yield Admin.objects.get(instructor.admin_id._id)
-        ins_dict['admin'] = admin.to_dict()
-        self.write()
-    
+    instructor.admin.password = None
+    if instructor.image:
+        instructor.image = self.static_url(instructor.image)
+    self.render_json(instructor)
     self.finish()
 
 def create(self):
@@ -33,16 +31,19 @@ def create(self):
     data = tornado.escape.json_decode(self.request.body)
     try :
         admin = Admin(username=data['username'],
-                      password=data['password'],
+                      password=bcrypt.encrypt(data['password']),
                       first_name=data['first_name'],
                       last_name=data['last_name'],
                       contact_number=data['contact_number'],
                       email=data['email'])
+
         admin = yield admin.save()
         
-        instructor = Instructor(admin_id=admin._id,
+        instructor = Instructor(admin=admin._id,
                                 gender=data['gender'],
                                 birthdate=datetime.strptime(data['birthdate'],'%Y-%m-%d'))
+        if 'motto' in data:
+            instructor.motto = data['motto']
         instructor = yield instructor.save()
     except :
         if admin: admin.delete()
@@ -58,8 +59,7 @@ def update(self, id):
     try :
         instructor = yield Instructor.objects.get(id)
         if instructor:
-            inst_dict = instructor.to_dict()
-            admin = yield Admin.objects.get(instructor.admin_id._id)
+            admin = yield Admin.objects.get(instructor.admin._id)
             if admin:
                 admin.username = data['username']
                 admin.password = data['username']
@@ -69,7 +69,10 @@ def update(self, id):
                 admin.email = data['email']
                 admin = yield admin.save()
             instructor.gender = data['gender']
-            instructor.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+            if not data['birthdate'] == '':
+                instructor.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+            if 'motto' in data:
+                instructor.motto = data['motto']
             instructor = yield instructor.save()
     except :
         value = sys.exc_info()[1]
@@ -79,8 +82,7 @@ def update(self, id):
 
 def destroy(self, id):
     instructor = yield Instructor.objects.get(id)
-    inst_dict = instructor.to_dict()
-    admin =  yield Admin.objects.get(instructor.admin_id._id)
+    admin =  yield Admin.objects.get(instructor.admin._id)
     if admin:
         admin.delete()
         instructor.delete()

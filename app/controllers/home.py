@@ -8,7 +8,6 @@ from datetime import datetime
 
 import sys
 import tornado
-import urllib
 import json
 
 def index(self):
@@ -119,6 +118,10 @@ def buy(self):
 
 def addRegularSchedule(self):
 
+    admins = yield Admin.objects.find_all()
+    for i, a in enumerate(admins):
+        yield a.delete()
+
     admin = Admin()
     admin.username = 'admin'
     admin.password = bcrypt.encrypt('admin')
@@ -132,33 +135,37 @@ def addRegularSchedule(self):
         yield sched.delete()
 
     instructors = yield Instructor.objects.find_all()
-    print(instructors)
     for i, instructor in enumerate(instructors):
         admin = yield Admin.objects.get(instructor._id)
         yield instructor.delete()
         if admin:
             yield admin.delete()
 
-    adkris = Admin(username='kris', password='kris', first_name='kris', last_name='kris', email='kris@electric.com')
+    adkris = Admin(username='kris', password=bcrypt.encrypt('kris'), first_name='kris', last_name='kris', email='kris@electric.com')
     adkris = yield adkris.save()
-    adyessa = Admin(username='yessa', password='yessa', first_name='yessa', last_name='yessa', email='yessa@electric.com')
+    adyessa = Admin(username='yessa', password=bcrypt.encrypt('yessa'), first_name='yessa', last_name='yessa', email='yessa@electric.com')
     adyessa = yield adyessa.save()
-    admigs = Admin(username='migs', password='migs', first_name='migs', last_name='migs', email='migs@electric.com')
+    admigs = Admin(username='migs', password=bcrypt.encrypt('migs'), first_name='migs', last_name='migs', email='migs@electric.com')
     admigs = yield admigs.save()
-    adabel = Admin(username='abel', password='abel', first_name='abel', last_name='abel', email='abel@electric.com')
+    adabel = Admin(username='abel', password=bcrypt.encrypt('abel'), first_name='abel', last_name='abel', email='abel@electric.com')
     adabel = yield adabel.save()
-    admitch = Admin(username='mitch', password='mitch', first_name='mitch', last_name='mitch', email='mitch@electric.com')
+    admitch = Admin(username='mitch', password=bcrypt.encrypt('mitch'), first_name='mitch', last_name='mitch', email='mitch@electric.com')
     admitch = yield admitch.save()
 
-    kris = Instructor(admin_id=adkris._id, gender='female')
+    kris = Instructor(admin=adkris._id, gender='female', image='images/instructors/instructor-kris.jpg')
+    kris.motto = 'Party on the bike with me for a high energy ride that will leave you feeling stronger inside and out. Together let’s push beyond the impossible while riding as one.'
     kris = yield kris.save()
-    yessa = Instructor(admin_id=adyessa._id, gender='female')
+    yessa = Instructor(admin=adyessa._id, gender='female', image='images/instructors/instructor-yessa.jpg')
+    yessa.motto = 'Look no further, want much more. The music matters, once you walk through my door. #ridewithyu'
     yessa = yield yessa.save()
-    migs = Instructor(admin_id=admigs._id, gender='male') 
+    migs = Instructor(admin=admigs._id, gender='male', image='images/instructors/instructor-migs.jpg') 
+    migs.motto = "Clip in and find yourself letting everything go. My class will help you feel challenged and accomplished down to the very last energetic beat. We ride to improve and we'll do it all together."
     migs = yield migs.save()
-    abel = Instructor(admin_id=adabel._id, gender='male')
+    abel = Instructor(admin=adabel._id, gender='male', image='images/instructors/instructor-abel.jpg')
+    abel.motto = 'Ride with me for a motivating workout that you can control at your own pace. It can be as easy or as challenging as you want it to be. Like many things in life, you will get what you put into it #abletoride'
     abel = yield abel.save()
-    mitch = Instructor(admin_id=admitch._id, gender='female')
+    mitch = Instructor(admin=admitch._id, gender='female', image='images/instructors/instructor-mitch.jpg')
+    mitch.motto = 'My ride will empower you to discover your strengths and help you forget your fears. Each pedal stroke will bring you to the next level of excitement and fitness.  Find out what you have and what you can.  Possibilities are endless.'
     mitch = yield mitch.save()
 
     days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']

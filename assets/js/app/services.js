@@ -89,7 +89,7 @@ services.factory('InstructorService', function($resource) {
   return $resource('/api/instructor/:instructorId', {}, {
     query: {
       method: 'GET',
-      isArray: false
+      isArray: true
     },
     update: {
       method: 'PUT',
