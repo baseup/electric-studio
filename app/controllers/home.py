@@ -148,6 +148,16 @@ def addRegularSchedule(self):
     admigs = yield admigs.save()
     adabel = Admin(username='abel', password=bcrypt.encrypt('abel'), first_name='abel', last_name='abel', email='abel@electric.com')
     adabel = yield adabel.save()
+    admel = Admin(username='mel', password=bcrypt.encrypt('mel'), first_name='mel', last_name='mel', email='mel@electric.com')
+    admel = yield admel.save()
+    adrache = Admin(username='rache', password=bcrypt.encrypt('rache'), first_name='rache', last_name='rache', email='rache@electric.com')
+    adrache = yield adrache.save()
+    adraisa = Admin(username='raisa', password=bcrypt.encrypt('raisa'), first_name='raisa', last_name='raisa', email='raisa@electric.com')
+    adraisa = yield adraisa.save()
+    adtrish = Admin(username='trish', password=bcrypt.encrypt('trish'), first_name='trish', last_name='trish', email='trish@electric.com')
+    adtrish = yield adtrish.save()
+    adarmand = Admin(username='armand', password=bcrypt.encrypt('armand'), first_name='armand', last_name='armand', email='armand@electric.com')
+    adarmand = yield adarmand.save()
     admitch = Admin(username='mitch', password=bcrypt.encrypt('mitch'), first_name='mitch', last_name='mitch', email='mitch@electric.com')
     admitch = yield admitch.save()
 
@@ -166,6 +176,21 @@ def addRegularSchedule(self):
     mitch = Instructor(admin=admitch._id, gender='female', image='images/instructors/instructor-mitch.jpg')
     mitch.motto = 'My ride will empower you to discover your strengths and help you forget your fears. Each pedal stroke will bring you to the next level of excitement and fitness.  Find out what you have and what you can.  Possibilities are endless.'
     mitch = yield mitch.save()
+    mel = Instructor(admin=admel._id, gender='female', image='images/instructors/instructor-mel.jpg')
+    mel.motto = 'Party on the bike with me for a high energy ride that will leave you feeling stronger inside and out. Together let’s push beyond the impossible while riding as one.'
+    mel = yield mel.save()
+    rache = Instructor(admin=adrache._id, gender='female', image='images/instructors/instructor-rachel.jpg')
+    rache.motto = 'Look no further, want much more. The music matters, once you walk through my door. #ridewithyu'
+    rache = yield rache.save()
+    raisa = Instructor(admin=adraisa._id, gender='male', image='images/instructors/instructor-raisa.jpg') 
+    raisa.motto = "Clip in and find yourself letting everything go. My class will help you feel challenged and accomplished down to the very last energetic beat. We ride to improve and we'll do it all together."
+    raisa = yield raisa.save()
+    trish = Instructor(admin=adtrish._id, gender='male', image='images/instructors/instructor-trish.jpg')
+    trish.motto = 'Ride with me for a motivating workout that you can control at your own pace. It can be as easy or as challenging as you want it to be. Like many things in life, you will get what you put into it #abletoride'
+    trish = yield trish.save()
+    armand = Instructor(admin=adarmand._id, gender='female', image='images/instructors/instructor-armand.jpg')
+    armand.motto = 'My ride will empower you to discover your strengths and help you forget your fears. Each pedal stroke will bring you to the next level of excitement and fitness.  Find out what you have and what you can.  Possibilities are endless.'
+    armand = yield armand.save()
 
     days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
     times = ['7:00 AM', '9:30 AM', '1:00 PM', '3:30 PM', '5:00 PM']

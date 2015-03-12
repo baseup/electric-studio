@@ -125,6 +125,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
     $scope.verificationLink = null;
     var sendEmailSuccess = function () {
       $scope.sendingEmail = false;
+      alert('Successfully send email verification');
     }
 
     var sendEmailFailed = function (error) {
@@ -205,7 +206,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
         alert(error.data);
       }
 
-      UserService.update({ userId: $scope.loginUser.id }, $scope.account).$promise.then(addSuccess, addFail);
+      UserService.update({ userId: $scope.loginUser._id }, $scope.account).$promise.then(addSuccess, addFail);
     }
 
     $scope.changePassword = function () {
@@ -224,7 +225,9 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
           alert(error.data);
           $scope.pass = null;
         }
-        UserService.update({ userId: $scope.loginUser.id }, $scope.pass).$promise.then(addSuccess, addFail);
+        UserService.update({ userId: $scope.loginUser._id }, $scope.pass).$promise.then(addSuccess, addFail);
+      } else {
+        alert('Please fill up the form')
       }
 
     }
@@ -384,8 +387,9 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
     if ($scope.reserved) {
       for (var i in $scope.reserved) {
         var rDate = new Date($scope.reserved[i].date);
-        if ($scope.loginUser && +date === +rDate && sched._id == $scope.reserved[i].schedule._id)
-          return true;
+        if ($scope.loginUser && +date === +rDate)
+          if(sched && $scope.reserved[i].schedule && sched._id == $scope.reserved[i].schedule._id)
+            return true;
       }
     }
 
@@ -492,9 +496,13 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
     book_filter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
     book_filter.sched_id = sched.schedule._id;
 
+    $scope.forWaitlist = false;
     $scope.reserved = BookService.query(book_filter);
     $scope.reserved.$promise.then(function (data) {
       $scope.reserved = data;
+      if($scope.reserved.length >= 37){
+        $scope.forWaitlist = true;
+      }
     });
 
   }
@@ -536,6 +544,9 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
     book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
     book.seat = seat;
     book.sched_id = sched.schedule._id;
+    if($scope.forWaitlist){
+      book.status = 'waitlisted';
+    }
 
     var bookSuccess = function () {
       if ($scope.resched) {
