@@ -154,6 +154,11 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
 
   angular.element('#class-tabs').Tab();
 
+  $scope.reloadDate = function () {
+    angular.element('#select-class-time')[0].selectize.clearOptions();
+    $scope.reload();
+  }
+
   $scope.reload = function () {
     ClassService.query({ date: $scope.newBook.date, time: $scope.newBook.time, sched_id: $scope.newBook.sched_id }, function (books) {
       $scope.books = books.bookings;
@@ -169,7 +174,7 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
       }
     });
   }
-  $scope.reload();
+  $scope.reloadDate();
 
   UserService.query(function (users) {
     $scope.users = users;
