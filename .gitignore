@@ -2,6 +2,7 @@ uploads/*/*
 node_modules
 bower_components
 assets/vendor
+assets/uploads
 assets/css
 assets/sass/.sass-cache
 assets/js/app/templates.js

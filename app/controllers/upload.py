@@ -17,11 +17,12 @@ def instructor(self):
                 upload_file = self.request.files['file'][0]
                 extn = os.path.splitext(upload_file['filename'])[1]
                 new_name = str(instructor._id) + '-' + str(instructor.admin.username) + extn
-
-                new_file = open("assets/images/instructors/" + new_name, 'wb')
+                path = 'assets/uploads/'
+                os.makedirs(path, exist_ok=True)
+                new_file = open(path + new_name, 'wb')
                 new_file.write(upload_file['body'])
 
-                instructor.image = 'images/instructors/' + new_name;
+                instructor.image = 'uploads/' + new_name;
                 yield instructor.save()
         except :
             value = sys.exc_info()[1]
