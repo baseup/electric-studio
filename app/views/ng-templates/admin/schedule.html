@@ -46,7 +46,7 @@
   <div id="add-special-sched-modal" class="modal" data-modal="add-special-schedule">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
-      <h3 class="h--medium brand-color space--bottom">8:30 AM &mdash; mon 2/23</h3>
+      <h3 class="h--medium brand-color space--bottom"></h3>
 
      <div class="data-list cf pad--ends">
        <dl class="space--bottom">
@@ -91,14 +91,18 @@
           <dd>
         </dl>
       </div>
-      <button ng-click="saveSpecialSchedule()" class="btn btn--medium btn--primary space--top modal-close">Add</button>
+      <button ng-click="saveSpecialSchedule()"
+        class="btn btn--medium btn--primary space--top modal-close"
+        ng-disabled="!newSpecSched.day || !newSpecSched.instructor || !newSpecSched.start || !newSpecSched.end">
+        Add
+      </button>
     </div>
   </div>
 
   <div id="add-regular-sched-modal" class="modal" data-modal="add-regular-schedule">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
-      <h3 class="h--medium brand-color space--bottom">8:30 AM &mdash; mon 2/23</h3>
+      <h3 class="h--medium brand-color space--bottom">Add Regular Schedule</h3>
 
      <div class="data-list cf pad--ends">
        <dl class="space--bottom">
@@ -152,14 +156,18 @@
           <dd>
         </dl>
       </div>
-      <button ng-click="saveRegularSchedule()" class="btn btn--medium btn--primary space--top modal-close">Add</button>
+      <button ng-click="saveRegularSchedule()"
+        class="btn btn--medium btn--primary space--top modal-close"
+        ng-disabled="!newRegSched.day || !newRegSched.instructor || !newRegSched.start || !newRegSched.end">
+        Add
+      </button>
     </div>
   </div>
 
   <div id="edit-regular-sched-modal" class="modal" data-modal="add-regular-schedule">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
-      <h3 class="h--medium brand-color space--bottom">8:30 AM &mdash; mon 2/23</h3>
+      <h3 class="h--medium brand-color space--bottom">{{ selectedSched.day }} {{ selectedSched.start_time }} &ndash; {{ selectedSched.end_time }}</h3>
 
      <div class="data-list cf pad--ends">
        <dl class="space--bottom">
@@ -213,7 +221,11 @@
           <dd>
         </dl>
       </div>
-      <button ng-click="updateRegularSchedule()" class="btn btn--medium btn--primary space--top modal-close">Update</button>
+      <button ng-click="updateRegularSchedule()"
+        class="btn btn--medium btn--primary space--top modal-close"
+        ng-disabled="!editRegSched.day || !editRegSched.instructor || !editRegSched.start || !editRegSched.end">
+        Update
+      </button>
     </div>
   </div>
 </div>
