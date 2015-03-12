@@ -252,10 +252,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
       angular.element('#edit-reg-class-instructor')[0].selectize.setValue($scope.selectedSched.instructor._id);
       $scope.$apply();
       angular.element('#view-schedule-modal').Modal();
-    },
-    windowResize: function (view) {
-      angular.element('.calendar').fullCalendar('changeView', 'agendaDay');
     }
+    // windowResize: function (view) {
+    //   angular.element('.calendar').fullCalendar('changeView', 'agendaDay');
+    // }
   });
 
   $scope.updateRegularSchedule = function () {
@@ -283,7 +283,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
   }
 
   $scope.saveRegularSchedule = function () {
-    ScheduleService.save($scope.newRegSched, function (response) {
+    var newSched = angular.copy($scope.newRegSched);
+    newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
+    newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
+    ScheduleService.save(newSched, function (response) {
       calendar.fullCalendar('refetchEvents');
     }, function (error) {
       $.Notify({ content: error.data });
@@ -300,7 +303,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
   }
 
   $scope.saveSpecialSchedule = function () {
-    ScheduleService.save($scope.newSpecSched, function (response) {
+    var newSched = angular.copy($scope.newSpecSched);
+    newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
+    newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
+    ScheduleService.save(newSched, function (response) {
       calendar.fullCalendar('refetchEvents');
     }, function (error) {
       $.Notify({ content: error.data });
