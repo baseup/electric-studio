@@ -1,7 +1,8 @@
 'use strict';
 
 var ctrls = angular.module('elstudio.controllers.admin', [
-  'elstudio.services'
+  'elstudio.services',
+  'angularFileUpload'
 ]);
 
 ctrls.controller('PackageCtrl', function ($scope, PackageService) {
@@ -88,7 +89,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
       alert(error.data);
     }
 
-    PackageService.delete({packageId : pac.id}).$promise.then(addSuccess, addFail);
+    PackageService.delete({packageId : pac._id}).$promise.then(addSuccess, addFail);
   }
 });
 
@@ -378,7 +379,7 @@ ctrls.controller('AnalyticsCtrl', function ($scope) {
 
 });
 
-ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
+ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService) {
 
    $scope.showAddInstructor = function () {
     angular.element('#add-instructor-modal').Modal();
@@ -432,12 +433,76 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
     }
   }
 
+  $scope.picInstructor = null;
+  $scope.changeInsPic = function(ins){
+    if(!$scope.uploading){
+      $scope.picInstructor = ins;
+    }
+  }
+
+  $scope.chkChangePic = function(id){
+    if($scope.picInstructor && $scope.picInstructor._id == id){
+      return true;
+    }
+    return false;
+  }
+
+  $scope.cancelChangePic = function(){
+    $scope.picInstructor = null;
+  }
+
+  $scope.uploading = false;
+  $scope.uploadInsPic = function(files){
+
+    if(files && files[0]){
+      var file = files[0];
+      if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
+        alert('Invalid file type');
+        return;
+      } else if (file.size > (1024 * 1024 * 3)) {
+        alert('Must not exceed 3MB');
+        return;
+      }
+
+      $scope.uploading = true;
+      $upload.upload({
+        url: '/upload/instructor',
+        method: 'POST',
+        data: { 'id' :$scope.picInstructor._id },
+        file: file
+      }).then(
+        function (e) {
+          $scope.instructors = InstructorService.query();
+          $scope.instructors.$promise.then(function (data) {
+            $scope.instructors = data;
+          });
+          $scope.picInstructor = null;
+          $scope.uploading = false;
+        },
+        function (e) {
+          $scope.uploading = false;
+          alert(e.data);
+        },
+        function (e) {
+          $scope.progress = parseInt(100.0 * e.loaded / e.total);
+        }
+      );
+    } else {
+      alert('Please select image to upload');
+    }
+  }
+
   $scope.setToUpdate = function (ins) {
     $scope.isUpdateInstructor = true;
     $scope.updateInstructor = ins.admin;
-    $scope.updateInstructor.id = ins.id;
+    $scope.updateInstructor._id = ins._id;
     $scope.updateInstructor.gender = ins.gender;
-    $scope.updateInstructor.birthdate = ins.birthdate.replace(' 00:00:00', '');
+    $scope.updateInstructor.motto = ins.motto;
+    if(ins.birthdate){
+      $scope.updateInstructor.birthdate = ins.birthdate.replace(' 00:00:00', '');
+    }else{
+      $scope.updateInstructor.birthdate = '';
+    }
   }
 
   $scope.cancelUpdateInstructor = function () {
@@ -446,7 +511,6 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
   }
 
   $scope.setInstructor = function () {
-    console.log($scope.updateInstructor)
     if ($scope.updateInstructor) {
       var addSuccess = function () {
         InstructorService.query().$promise.then(function (data) {
@@ -460,7 +524,7 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
         alert(error.data);
       }
 
-      InstructorService.update({ instructorId: $scope.updateInstructor.id }, $scope.updateInstructor).$promise.then(addSuccess, addFail);
+      InstructorService.update({ instructorId: $scope.updateInstructor._id }, $scope.updateInstructor).$promise.then(addSuccess, addFail);
     }
   }
 
@@ -475,7 +539,7 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
       alert(error.data);
     }
 
-    InstructorService.delete({instructorId : ins.id}).$promise.then(addSuccess, addFail);
+    InstructorService.delete({instructorId : ins._id}).$promise.then(addSuccess, addFail);
   }
 
 });

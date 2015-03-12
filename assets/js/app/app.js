@@ -73,6 +73,10 @@ app.config(function ($routeProvider, $httpProvider) {
     '/workouts': {
       templateUrl: '/site/workouts',
       controller: 'SiteCtrl'
+    },
+    '/history': {
+      templateUrl: '/site/history',
+      controller: 'SiteCtrl'
     }
   };
 

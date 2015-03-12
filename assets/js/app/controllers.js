@@ -251,10 +251,20 @@ ctrls.controller('RatesCtrl', function ($scope, $http, PackageService) {
       angular.element('.login-toggle').click();
       event.preventDefault();
     }
+
+    if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
+      alert('User is Unverified, Please check your email');
+      event.preventDefault();
+    }
   }
 })
 
-ctrls.controller('InstructorCtrl', function ($scope, $timeout) {
+ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService) {
+
+  $scope.instructors = InstructorService.query();
+  $scope.instructors.$promise.then(function (data) {
+    $scope.instructors = data;
+  });
 
   angular.element('.imgmap a').click(function () {
    var id = angular.element(this).data('target'),
@@ -476,7 +486,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
     $scope.dateSched = months[sched.date.getMonth()] + ', ' + sched.date.getDate() + ' ' + sched.date.getFullYear();
     $scope.daySched = days[sched.date.getDay()];
     $scope.timeSched = sched.schedule.start;
-    $scope.instructor = sched.schedule.instructor.admin_id.first_name;
+    $scope.instructor = sched.schedule.instructor;
 
     var book_filter = {};
     book_filter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
