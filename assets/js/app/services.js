@@ -89,7 +89,7 @@ services.factory('InstructorService', function($resource) {
   return $resource('/api/instructor/:instructorId', {}, {
     query: {
       method: 'GET',
-      isArray: false
+      isArray: true
     },
     update: {
       method: 'PUT',
@@ -136,6 +136,15 @@ services.factory('BookService', function($resource) {
     },
     book: {
       method: 'POST',
+      isArray: false
+    }
+  });
+});
+
+services.factory('HistoryService', function($resource) {
+  return $resource('/api/history', {}, {
+    query: {
+      method: 'GET',
       isArray: false
     }
   });

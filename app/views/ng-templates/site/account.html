@@ -36,7 +36,8 @@
           <h3 class="h medium gray">Packages</h3>
           <div ng-repeat="trans in transactions">
             <span class="h small block">{{ trans.package_id.name }}</span>
-            <span class="h small block">{{ trans.remaining_credits }} Classes Left, Expires in {{ trans.expiration }}days</span>
+            <span class="h small block">{{ trans.remaining_credits }} Classes Left</span>
+            <span class="h small block">Expires on {{ trans.create_at | addDay:trans.expiration | formatDate }}</span>
             <hr>
           </div>
           <a href="#/rates" class="button small pads primary">Buy Package</a>
@@ -44,20 +45,6 @@
         
       </div>
       
-      <div class="sidebar light">
-        <h2 class="h small gray">My Classes</h2>
-        <p>
-          <a href="#/reserved" class="link basic">Reservation</a><br>
-          <!-- <a href="#/history" class="link basic">History</a> -->
-        </p>
-        <h2 class="h small">My Account</h2>
-        <p>
-          <a href="#/account" class="link basic">Personal Info</a><br> 
-          <a href="#/account#billing" class="link basic">Billing</a><br>
-          <a href="#/account#packages" class="link basic">Packages</a><br>
-          <a href="#/rewards" class="link basic">Rewards</a>
-        </p>
-        <a class="link" href="#/logout">Sign Out</a>
-      </div>
+      <div ng-include="'/site/account-nav'"></div>
     </div>
   </div>

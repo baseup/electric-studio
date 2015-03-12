@@ -128,10 +128,13 @@ services.factory('TransactionService', function ($resource) {
 });
 
 services.factory('ScheduleService', function ($resource) {
-  return $resource('/admin/schedule/:scheduleId', {}, {
+  return $resource('/admin/instructor/schedules/:scheduleId', {}, {
     query: {
       method: 'GET',
-      isArray: false
+      isArray: true
+    },
+    update: {
+      method: 'PUT'
     }
   });
 });

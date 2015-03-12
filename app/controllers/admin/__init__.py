@@ -3,7 +3,7 @@ from passlib.hash import bcrypt
 import json
 
 def index(self):
-    self.render('admin', user=self.get_secure_cookie('user'))
+    self.render('admin', user=self.get_secure_cookie('admin'))
 
 def login(self):
     if self.request.method == 'GET':

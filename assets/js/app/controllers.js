@@ -251,10 +251,20 @@ ctrls.controller('RatesCtrl', function ($scope, $http, PackageService) {
       angular.element('.login-toggle').click();
       event.preventDefault();
     }
+
+    if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
+      alert('User is Unverified, Please check your email');
+      event.preventDefault();
+    }
   }
 })
 
-ctrls.controller('InstructorCtrl', function ($scope, $timeout) {
+ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService) {
+
+  $scope.instructors = InstructorService.query();
+  $scope.instructors.$promise.then(function (data) {
+    $scope.instructors = data;
+  });
 
   angular.element('.imgmap a').click(function () {
    var id = angular.element(this).data('target'),
@@ -277,9 +287,9 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout) {
 ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, SharedService, UserService) {
 
   if (!$scope.loginUser || $scope.loginUser.length == 0) {
+    $location.path("/")
     angular.element("html, body").animate({ scrollTop: 0 }, "slow");
     angular.element('.login-toggle').click();
-    $location.path("/")
   }else{
 
     $scope.reservations = BookService.query();
@@ -476,7 +486,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
     $scope.dateSched = months[sched.date.getMonth()] + ', ' + sched.date.getDate() + ' ' + sched.date.getFullYear();
     $scope.daySched = days[sched.date.getDay()];
     $scope.timeSched = sched.schedule.start;
-    $scope.instructor = sched.schedule.instructor.admin_id.first_name;
+    $scope.instructor = sched.schedule.instructor;
 
     var book_filter = {};
     book_filter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
@@ -543,4 +553,69 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
       BookService.update({ bookId: $scope.resched._id }, book).$promise.then(bookSuccess, bookFail);
     }
   }
+});
+
+ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) {
+  if (!$scope.loginUser || $scope.loginUser.length == 0) {
+    $location.path("/")
+    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+    angular.element('.login-toggle').click();
+  }else{
+
+    $('#history-tabs').Tab();
+
+    $scope.currentScheds = 0;
+    $scope.currentTrans = 0;
+
+    $scope.histories = HistoryService.query();
+    $scope.histories.$promise.then(function (data) {
+      $scope.histories = data;
+    });
+
+    $scope.prevScheds = function(event){
+      if($scope.currentScheds > 0){
+        $scope.currentScheds -= 1;
+        $scope.histories = HistoryService.query({ schedPage : $scope.currentScheds });
+        $scope.histories.$promise.then(function (data) {
+          $scope.histories = data;
+        });
+      }
+      event.preventDefault();
+    }
+
+    $scope.nextScheds = function(event){
+      if($scope.currentScheds < parseInt($scope.histories.schedsTotal)){
+        $scope.currentScheds += 1;
+        $scope.histories = HistoryService.query({ schedPage : $scope.currentScheds });
+        $scope.histories.$promise.then(function (data) {
+          $scope.histories = data;
+        });
+      }
+      event.preventDefault();
+    }
+
+    $scope.prevTrans = function(event){
+      if($scope.currentTrans > 0){
+        $scope.currentTrans -= 1;
+        $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
+        $scope.histories.$promise.then(function (data) {
+          $scope.histories = data;
+        });
+      }
+      event.preventDefault();
+    }
+
+    $scope.nextTrans = function(event){
+      if($scope.currentTrans > parseInt($scope.histories.transTotal)){
+        $scope.currentTrans += 1;
+        $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
+        $scope.histories.$promise.then(function (data) {
+          $scope.histories = data;
+        });
+      }        
+      event.preventDefault();
+    }
+
+  }
+
 });

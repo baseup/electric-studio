@@ -1,7 +1,8 @@
 'use strict';
 
 var ctrls = angular.module('elstudio.controllers.admin', [
-  'elstudio.services'
+  'elstudio.services',
+  'angularFileUpload'
 ]);
 
 ctrls.controller('PackageCtrl', function ($scope, PackageService) {
@@ -88,7 +89,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
       alert(error.data);
     }
 
-    PackageService.delete({packageId : pac.id}).$promise.then(addSuccess, addFail);
+    PackageService.delete({packageId : pac._id}).$promise.then(addSuccess, addFail);
   }
 });
 
@@ -218,60 +219,114 @@ ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope) {
+ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorService) {
   
-  angular.element('.calendar').fullCalendar({
+  var calendar = angular.element('.calendar');
+  calendar.fullCalendar({
     defaultView: 'agendaWeek',
     allDaySlot: false,
     allDay: false,
     minTime: '07:00:00',
     maxTime: '20:00:00',
-    events: [
-      {
-        title: 'Pure Electric',
-        start: '2015-02-22T08:30:00',
-      },
-      {
-        title: 'Power Hour',
-        start: '2015-02-22T10:30:00'
-      },
-      {
-        title: 'Pure Electric',
-        start: '2015-02-23T08:30:00',
-      },
-      {
-        title: 'Power Hour',
-        start: '2015-02-23T11:30:00'
-      },
-      {
-        title: 'Pure Electric',
-        start: '2015-02-24T10:30:00',
-      },
-      {
-        title: 'Power Hour',
-        start: '2015-02-24T16:30:00'
-      },
-      {
-        title: 'Pure Electric',
-        start: '2015-02-25T08:30:00',
-      },
-      {
-        title: 'Power Hour',
-        start: '2015-02-25T10:30:00'
-      }
-    ],
-    eventClick: function () {
-      angular.element('#view-schedule-modal').Modal();
+    events: function (start, end, timezone, callback) {
+      var events = [];
+      ScheduleService.query({ start: start.unix(), end: end.unix() }, function (scheds) {
+        $scope.schedules = scheds;
+        angular.forEach(scheds, function (s, i) {
+          s.index = i;
+          events.push(s);
+        });
+        callback(events);
+      });
     },
-    windowResize: function (view) {
-      angular.element('.calendar').fullCalendar('changeView', 'agendaDay');
+    eventClick: function (calEvent, jsEvent, view) {
+      $scope.selectedSched = $scope.schedules[calEvent.index];
+      $scope.editRegSched = {
+        start: new Date(0, 0, 0, calEvent.start.hour(), calEvent.start.minute(), 0, 0),
+        end: new Date(0, 0, 0, calEvent.end.hour(), calEvent.end.minute(), 0, 0),
+        id: calEvent.id
+      };
+      if ($scope.selectedSched.type == 'regular') {
+        angular.element('#edit-reg-sched-day')[0].selectize.setValue($scope.selectedSched.day);
+      }
+      angular.element('#edit-reg-class-instructor')[0].selectize.setValue($scope.selectedSched.instructor._id);
+      $scope.$apply();
+      angular.element('#view-schedule-modal').Modal();
     }
+    // windowResize: function (view) {
+    //   angular.element('.calendar').fullCalendar('changeView', 'agendaDay');
+    // }
   });
-  
-  $scope.addSchedule = function () {
-    angular.element('#add-schedule-modal').Modal();
+
+  $scope.updateRegularSchedule = function () {
+    var updatedSched = angular.copy($scope.editRegSched);
+    updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
+    updatedSched.end = updatedSched.end.getHours() + ':' + updatedSched.end.getMinutes();
+    ScheduleService.update(
+      { scheduleId: updatedSched.id },
+      updatedSched,
+      function (response) {
+        calendar.fullCalendar('refetchEvents');
+      },
+      function (error) {
+        $.Notify({ content: error.data });
+      }
+    );
   }
   
+  $scope.addSpecialSchedule = function () {
+    angular.element('#add-special-sched-modal').Modal();
+  }
+
+  $scope.addRegularSchedule = function () {
+    angular.element('#add-regular-sched-modal').Modal();
+  }
+
+  $scope.saveRegularSchedule = function () {
+    var newSched = angular.copy($scope.newRegSched);
+    newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
+    newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
+    ScheduleService.save(newSched, function (response) {
+      calendar.fullCalendar('refetchEvents');
+      $scope.newRegSched = {};
+    }, function (error) {
+      $.Notify({ content: error.data });
+      $scope.newRegSched = {};
+    });
+  }
+
+  $scope.removeSchedule = function (sched) {
+    ScheduleService.delete({ scheduleId: sched.id });
+    calendar.fullCalendar('removeEvents', sched.id);
+  }
+
+  $scope.editSchedule = function (sched) {
+    angular.element('#edit-regular-sched-modal').Modal();
+  }
+
+  $scope.saveSpecialSchedule = function () {
+    var newSched = angular.copy($scope.newSpecSched);
+    newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
+    newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
+    ScheduleService.save(newSched, function (response) {
+      calendar.fullCalendar('refetchEvents');
+      $scope.newSpecSched = {};
+    }, function (error) {
+      $.Notify({ content: error.data });
+      $scope.newSpecSched = {};
+    });
+  }
+
+  InstructorService.query(function (instructors) {
+    var regSelectize = angular.element('#add-reg-class-instructor')[0].selectize;
+    var specSelectize = angular.element('#add-spec-class-instructor')[0].selectize;
+    var editRegInstructor = angular.element('#edit-reg-class-instructor')[0].selectize;
+    angular.forEach(instructors, function (instructor) {
+      regSelectize.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
+      specSelectize.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
+      editRegInstructor.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
+    });
+  });
 });
 
 
@@ -378,7 +433,7 @@ ctrls.controller('AnalyticsCtrl', function ($scope) {
 
 });
 
-ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
+ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService) {
 
    $scope.showAddInstructor = function () {
     angular.element('#add-instructor-modal').Modal();
@@ -432,12 +487,76 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
     }
   }
 
+  $scope.picInstructor = null;
+  $scope.changeInsPic = function(ins){
+    if(!$scope.uploading){
+      $scope.picInstructor = ins;
+    }
+  }
+
+  $scope.chkChangePic = function(id){
+    if($scope.picInstructor && $scope.picInstructor._id == id){
+      return true;
+    }
+    return false;
+  }
+
+  $scope.cancelChangePic = function(){
+    $scope.picInstructor = null;
+  }
+
+  $scope.uploading = false;
+  $scope.uploadInsPic = function(files){
+
+    if(files && files[0]){
+      var file = files[0];
+      if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
+        alert('Invalid file type');
+        return;
+      } else if (file.size > (1024 * 1024 * 3)) {
+        alert('Must not exceed 3MB');
+        return;
+      }
+
+      $scope.uploading = true;
+      $upload.upload({
+        url: '/upload/instructor',
+        method: 'POST',
+        data: { 'id' :$scope.picInstructor._id },
+        file: file
+      }).then(
+        function (e) {
+          $scope.instructors = InstructorService.query();
+          $scope.instructors.$promise.then(function (data) {
+            $scope.instructors = data;
+          });
+          $scope.picInstructor = null;
+          $scope.uploading = false;
+        },
+        function (e) {
+          $scope.uploading = false;
+          alert(e.data);
+        },
+        function (e) {
+          $scope.progress = parseInt(100.0 * e.loaded / e.total);
+        }
+      );
+    } else {
+      alert('Please select image to upload');
+    }
+  }
+
   $scope.setToUpdate = function (ins) {
     $scope.isUpdateInstructor = true;
     $scope.updateInstructor = ins.admin;
-    $scope.updateInstructor.id = ins.id;
+    $scope.updateInstructor._id = ins._id;
     $scope.updateInstructor.gender = ins.gender;
-    $scope.updateInstructor.birthdate = ins.birthdate.replace(' 00:00:00', '');
+    $scope.updateInstructor.motto = ins.motto;
+    if(ins.birthdate){
+      $scope.updateInstructor.birthdate = ins.birthdate.replace(' 00:00:00', '');
+    }else{
+      $scope.updateInstructor.birthdate = '';
+    }
   }
 
   $scope.cancelUpdateInstructor = function () {
@@ -446,7 +565,6 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
   }
 
   $scope.setInstructor = function () {
-    console.log($scope.updateInstructor)
     if ($scope.updateInstructor) {
       var addSuccess = function () {
         InstructorService.query().$promise.then(function (data) {
@@ -460,7 +578,7 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
         alert(error.data);
       }
 
-      InstructorService.update({ instructorId: $scope.updateInstructor.id }, $scope.updateInstructor).$promise.then(addSuccess, addFail);
+      InstructorService.update({ instructorId: $scope.updateInstructor._id }, $scope.updateInstructor).$promise.then(addSuccess, addFail);
     }
   }
 
@@ -475,7 +593,7 @@ ctrls.controller('InstructorCtrl', function ($scope, InstructorService) {
       alert(error.data);
     }
 
-    InstructorService.delete({instructorId : ins.id}).$promise.then(addSuccess, addFail);
+    InstructorService.delete({instructorId : ins._id}).$promise.then(addSuccess, addFail);
   }
 
 });

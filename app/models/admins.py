@@ -21,10 +21,11 @@ class Admin(Model):
 class Instructor(Model):
     __collection__ = 'instructors'
     __lazy__ = False
-    admin_id = ReferenceField(reference_document_type=Admin)
+    admin = ReferenceField(reference_document_type=Admin)
     gender = StringField()
     birthdate = DateTimeField()
     image = StringField()
+    motto = StringField()
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 

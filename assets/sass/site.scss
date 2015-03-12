@@ -1958,6 +1958,14 @@ body {
 
 }
 
+.pagination-nav {
+  .disabled {
+    color: $brand-color-secondary;
+    cursor: default;
+  }
+}
+
+
 
 @-webkit-keyframes fadeInDown {
   0% {
