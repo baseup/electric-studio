@@ -144,7 +144,7 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
 });
 
 
-ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
+ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
   
   $scope.newBook = {};
   var dateToday = new Date();
@@ -154,7 +154,7 @@ ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
   angular.element('#class-tabs').Tab();
 
   $scope.reload = function () {
-    ScheduleService.query({ date: $scope.newBook.date, time: $scope.newBook.time }, function (books) {
+    ClassService.query({ date: $scope.newBook.date, time: $scope.newBook.time }, function (books) {
       $scope.books = books.bookings;
       $scope.schedDetails = books.schedule;
     });
@@ -180,7 +180,7 @@ ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
 
   $scope.cancelBooking = function (booking, index) {
     $scope.books.splice(index, 1);
-    ScheduleService.delete({ scheduleId: booking._id });
+    ClassService.delete({ scheduleId: booking._id });
   }
 
   var select = angular.element('#select-bike-number')[0].selectize;
@@ -189,7 +189,7 @@ ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
   }
 
   $scope.sendNewBook = function () {
-    ScheduleService.save($scope.newBook, function (savedBook) {
+    ClassService.save($scope.newBook, function (savedBook) {
       $scope.reload();
     }, function (error) {
       $.Notify({ content: error.data });

@@ -138,3 +138,15 @@ services.factory('ScheduleService', function ($resource) {
     }
   });
 });
+
+services.factory('ClassService', function ($resource) {
+  return $resource('/admin/schedule/:scheduleId', {}, {
+    query: {
+      method: 'GET',
+      isArray: false
+    },
+    update: {
+      method: 'PUT'
+    }
+  });
+});
