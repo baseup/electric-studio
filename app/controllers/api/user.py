@@ -15,8 +15,8 @@ def find_one(self, id):
     if user:
         user.password = None
         self.render_json(user)
-    
-    self.finish()
+    else:
+        self.finish()
 
 def create(self):
 
