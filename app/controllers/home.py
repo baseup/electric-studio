@@ -19,12 +19,11 @@ def login(self):
     login_user = yield User.objects.filter(email=email).find_all()
     if (login_user):
         if bcrypt.verify(passWord, login_user[0].password):
-            login_user[0].password = None
-            user = login_user[0].to_dict()
-            self.set_secure_cookie('loginUser', user['first_name'], expires_days=None)
-            self.set_secure_cookie('loginUserID', user['id'], expires_days=None)
+            user = login_user[0]
+            self.set_secure_cookie('loginUser', user.first_name, expires_days=None)
+            self.set_secure_cookie('loginUserID', str(user._id), expires_days=None)
             self.set_header("Content-Type", "application/json")
-            self.write(json.dumps({ 'success' : True, 'user' : user['id'] }))
+            self.write(json.dumps({ 'success' : True, 'user' : str(user._id) }))
         else:
             self.set_status(403)
             self.write('Invalid Password')
