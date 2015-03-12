@@ -1,0 +1,28 @@
+  <div class="content bg-lightGray sidebar-layout" ng-controller="ReservedCtrl">
+    <div class="wrapper">
+      
+      <div class="main">
+        <h2 class="h large">Reservation</h2>
+        
+        <div class="stats">
+          <h3 class="h small">{{ user.credits || 0 }} classes</h3>
+        </div>
+        
+        <section class="col-2">
+          <div class="block" ng-repeat="res in reservations">
+            <h4 class="h small primary space--off pad--half-bottom">{{ res.date | formatDate }}</h4>
+            <span>{{ res.schedule.start | formatTime }}</span><br>
+            <!-- <span>Class: Type 2</span><br> -->
+            <span>Instructor: {{ res.schedule.instructor.admin.first_name }}</span><br>
+            <span>Seat: {{ res.seat_number }}</span><br>
+            <div class="pad--ends">
+              <a class="btn btn--small btn--secondary" ng-click="reSched(res)">Reschedule</a>
+              <a class="btn btn--small btn--tertiary" ng-click="cancelSched(res)">Cancel</a>
+            </div>
+          </div>
+        </section>
+      </div>
+      
+      <div ng-include="'/site/account-nav'"></div>
+    </div>
+  </div>

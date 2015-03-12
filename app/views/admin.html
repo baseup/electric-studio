@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html ng-app="elstudio-admin">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Admin | Electric Studio</title>
+
+    <link rel="stylesheet" href="{{ static_url('css/admin.css') }}">
+
+    <script src="{{ static_url('vendor/jquery/dist/jquery.min.js') }}"></script>
+   
+    <script src="{{ static_url('vendor/angular/angular.min.js') }}"></script> 
+    <script src="{{ static_url('vendor/angular-route/angular-route.min.js') }}"></script>
+    <script src="{{ static_url('vendor/angular-resource/angular-resource.min.js') }}"></script>
+    <script src="{{ static_url('vendor/angular-sanitize/angular-sanitize.min.js') }}"></script>
+    <script src="{{ static_url('vendor/ng-file-upload/angular-file-upload-shim.min.js') }}"></script> 
+    <script src="{{ static_url('vendor/ng-file-upload/angular-file-upload.min.js') }}"></script> 
+
+    <script src="{{ static_url('js/admin/templates.js') }}"></script>
+    <script src="{{ static_url('js/admin/services.js') }}"></script>
+    <script src="{{ static_url('js/admin/base-controllers.js') }}"></script>
+    <script src="{{ static_url('js/admin/controllers.js') }}"></script>
+    <script src="{{ static_url('js/admin/admin.js') }}"></script>
+
+  </head>
+
+  <body ng-controller="AdminCtrl">
+    <div class="page-wrapper">
+      <div class="page-sidebar">
+        <div class="brand pad">
+          <img src="{{ static_url('images/electricstudio-nameplate.png') }}" class="nameplate">
+          <img src="{{ static_url('images/electricstudio-logo.png') }}" class="logo">
+        </div>
+
+        <ul class="main-nav nav nav--stacked">
+          <li class="active">
+            <a class="dashboard-menu" data-dropdown-toggle="dashboard-sub-menu">
+              <i class="fa fa-th-large"></i>
+              <span class="nav-label">Dashboard</span>
+            </a>
+
+            <ul class="nav nav--stacked sub-nav" data-dropdown="dashboard-sub-menu">
+              <li><a href="#/analytics">Analytics</a></li>
+              <li><a href="#/packages">Packages</a></li>
+              <li><a href="#/instructors">Instructors</a></li>
+              <li><a href="#/sliders">Sliders</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#/classes">
+              <i class="fa fa-th-list"></i>
+              <span class="nav-label">Classes</span>
+            </a>
+          </li>
+          <li>
+            <a href="#/accounts">
+              <i class="fa fa-users"></i>
+              <span class="nav-label">Accounts</span>
+            </a>
+          </li>
+          <li>
+            <a href="#/schedules">
+              <i class="fa fa-calendar"></i>
+              <span class="nav-label">Schedules</span>
+            </a>
+          </li>
+          <li>
+            <a href="#/transactions">
+              <i class="fa fa-credit-card"></i>
+              <span class="nav-label">Transactions</span>
+            </a>
+          </li>
+        </ul>
+
+      </div>
+
+      <div class="page-content">
+
+        <div class="page-header pad">
+
+          <button class="sidebar-toggle btn btn--small btn--primary">
+            <i class="fa fa-bars"></i>
+          </button>
+          
+          <div class="user">
+            <div class="user__pic">
+              <img src="{{ static_url('images/pic-placeholder.png') }}" alt="">
+            </div>
+            
+            <span class="user__name">{{ user }}</span>
+            <a href="/admin/logout" class="user__logout"><i class="fa fa-sign-out"></i> Log Out</a>
+          </div>
+
+        </div>
+
+        <div class="main-content" ng-view ></div><!-- .main-content -->
+      </div>
+    </div>
+
+
+    <link rel="stylesheet" href="{{ static_url('vendor/selectize/dist/css/selectize.default.css') }}">
+    <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.css') }}">
+    <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.date.css') }}">
+    <link rel="stylesheet" href="{{ static_url('vendor/fullcalendar/dist/fullcalendar.min.css') }}">
+
+    
+    <script src="{{ static_url('vendor/selectize/dist/js/standalone/selectize.min.js') }}"></script>
+    <script src="{{ static_url('vendor/pickadate/lib/picker.js') }}"></script>
+    <script src="{{ static_url('vendor/pickadate/lib/picker.date.js') }}"></script>
+    <script src="{{ static_url('vendor/moment/moment.js') }}"></script>
+    <script src="{{ static_url('vendor/fullcalendar/dist/fullcalendar.min.js') }}"></script>
+    <script src="{{ static_url('vendor/Chart.js/Chart.min.js') }}"></script>
+
+    <script src="{{ static_url('js/script.js') }}"></script> 
+  </body>
+</html>

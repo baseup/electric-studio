@@ -1,9 +1,152 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="elstudio">
 <head>
-  <title></title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+  <title>Home - Electric Studio</title>
+  
+  <link rel="stylesheet" href="{{ static_url('css/site.css') }}">
+
 </head>
-<body>
-async
-</body>
+<body ng-controller="SiteCtrl">
+  <header class="main-header">
+    <div class="wrapper">
+      <h1 class="brand">
+        <a href="#/">
+        <img src="{{ static_url('images/electricstudio-nameplate.png') }}" alt="Electric Studio Logo" class="nameplate">
+        </a>
+        <img src="{{ static_url('images/electricstudio-logo.png') }}" class="logo">
+      </h1>
+      
+      <ul class="main-menu">
+        <li>
+          <a ng-class="{ active : activeMainNav('/about') }" href="#/about">About Us</a>
+        </li>  
+        <li>
+          <a ng-class="{ active : activeMainNav('/instructors') }" href="#/instructors">Instructors</a>
+        </li>  
+        <li>
+          <a ng-class="{ active : activeMainNav('/whats-new') }" href="#/whats-new">What's New</a>
+        </li>
+      </ul>
+      
+      <div class="account-menu">
+        <div class="account-menu__options">
+          {% if not loginUser %}
+            <a class="login-toggle">Login</a> /  
+            <a class="signup-toggle">Sign up</a>
+          {% else %}
+          <a href="javascript:void(0)" class="user-loggedin">Hi <strong>{{ loginUser }}</strong>! <i class="fa fa-caret-down"></i></a>
+          {% end %}            
+        </div>
+        {% if loginUser %}  
+        <div class="account-menu__list">
+          <div class="account-menu__holder">
+            <a href="#/account">My Account</a>
+            <a href="#/reserved">My Classes</a>
+            <a href="javascript:void(0)" ng-click="logout()" >Sign Out</a>
+          </div>  
+        </div>
+        {% end %}  
+      </div>  
+        
+      <div class="sub-menu">
+        <a class="sub-menu__toggle">Book A Ride</a>
+        
+        <div class="sub-menu__list">
+          <div class="sub-menu__holder">
+            <a href="#/workouts">The Workouts</a>
+            <a href="#/rates-and-packages">Rates &amp; Packages</a>
+            <a href="#/schedule">Schedule</a>
+          </div>  
+        </div>  
+      </div>
+        
+      
+      <a class="menu-toggle"><i class="fa fa-bars"></i></a>
+      
+    </div>  
+  </header>
+  
+  <div class="header-form-container login" ng-controller="LoginCtrl">
+    <div class="wrapper">
+      <h2 class="h large light">Log In</h2>
+      <p class="notify">{{! signInError }} Please re-enter your informatin to Log In.</p>
+      <form class="login-form" method="post">
+        <input class="input-box" placeholder="Email Address" ng-model="login.email" required>
+        <input type="password" class="input-box" placeholder="Password" ng-model="login.password" required>
+
+        <input type="submit" value="Log In" class="button" ng-click="signIn()">
+      </form>
+    </div>  
+  </div>
+  
+  <div class="header-form-container signup" ng-controller="SignUpCtrl">
+    <div class="wrapper" ng-show="!registered">
+      <h2 class="h large light">Sign Up</h2>
+      <p class="notify">{{! signupError }} Please re-enter your informatin to Log In.</p>
+      <form class="signup-form" method="post">
+        <input class="input-box" placeholder="First Name" ng-model="user.first_name">
+        <input class="input-box" placeholder="Last Name" ng-model="user.last_name">
+        <input class="input-box" placeholder="Email Address" ng-model="user.email">
+        <input class="input-box" placeholder="Mobile Number" ng-model="user.phone_number">
+        <input type="password" class="input-box" placeholder="Password" ng-model="user.password">
+        <input type="password" required compare-to="user.password" class="input-box" placeholder="Re-type Password" ng-model="user.confirm_password">
+
+        <input type="button" value="Sign Up" class="button" ng-click="signUp()">
+      </form>
+    </div>
+    <div class="wrapper" ng-show="registered">
+      <h2 class="h large light">Please check your email for confirmation</h2>
+      <button class="button" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
+      <!-- We didn't setup the mailchimp yet, go <a href="{{! verificationLink }}">here</a> to verify account.  -->
+    </div>
+  </div>
+
+  <div ng-view ></div>
+
+  <footer class="main-footer">
+    <div class="wrapper">
+      <ul class="footer-links">
+        <li>© ELECTRIC STUDIO 2015</li>
+        <li><a href="#/faq">FAQ</a></li>
+        <li><a href="#/career">Careers</a></li>
+        <li><a href="#/contact">Contact Us</a></li>
+      </ul>
+      
+      <ul class="social-links">
+        <li>
+          <a href="mailto:info@electricstudio.ph"><i class="fa fa-envelope"></i></a>
+        </li>
+        <li>
+          <a href="https://www.facebook.com/teamelectricph"><i class="fa fa-facebook"></i></a>
+        </li>
+        <li>
+          <a href="http://instagram.com/teamelectricph/"><i class="fa fa-instagram"></i></a>
+        </li>
+        <li>
+          <a href="https://twitter.com/"><i class="fa fa-twitter"></i></a>
+        </li>
+      </ul>
+    </div>  
+  </footer>
+  
+  <script src="{{ static_url('vendor/jquery/dist/jquery.min.js') }}"></script>
+  
+  <script src="{{ static_url('vendor/angular/angular.min.js') }}"></script> 
+  <script src="{{ static_url('vendor/angular-route/angular-route.min.js') }}"></script>
+  <script src="{{ static_url('vendor/angular-resource/angular-resource.min.js') }}"></script>
+  <script src="{{ static_url('vendor/angular-sanitize/angular-sanitize.min.js') }}"></script>
+  
+  <script src="{{ static_url('vendor/FitText.js/jquery.fittext.js') }}"></script>
+  <script src="{{ static_url('vendor/glidejs/dist/jquery.glide.min.js') }}"></script>
+
+  <script src="{{ static_url('js/app/templates.js') }}"></script>
+  <script src="{{ static_url('js/app/services.js') }}"></script>
+  <script src="{{ static_url('js/app/controllers.js') }}"></script>
+  <script src="{{ static_url('js/app/app.js') }}"></script>
+  <script src="{{ static_url('js/script.js') }}"></script> 
+</body>  
 </html>

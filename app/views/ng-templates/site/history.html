@@ -1,0 +1,78 @@
+
+<div class="content bg-lightGray sidebar-layout" ng-controller="HistoryCtrl">
+  <div class="wrapper">
+
+    <div class="main">
+      <h2 class="h large pad--bottom">History</h2>
+
+      <ul class="nav-tabs" id="history-tabs">
+        <li>
+          <a class="active" data-tab-toggle="classes">Classes</a>
+        </li>
+        <li>
+          <a data-tab-toggle="packages">Packages</a>
+        </li>
+      </ul>
+
+      <div class="tab-pane tab-pane--active" data-tab-pane="classes">
+
+      <!-- <div class="stats">
+        <h3 class="h small">34 classes</h3>
+        <h3 class="h small">10 Power Hour classes, 24 Pure Electric classes</h3>
+        <h3 class="h small">12 days consecutive</h3>
+      </div> -->
+
+      <section class="col-2">
+        <div class="block" ng-repeat="book in histories.schedules">
+          <h3 class="h small primary space--off pad--half-bottom">{{ book.date | formatDate }}</h3>
+          <span><span class="label inline">Time:</span> {{ book.schedule.start | formatTime }}</span><br>
+          <span><span class="label inline">Seat:</span> {{ book.seat_number }}</span><br>
+          <span><span class="label inline">Instructor:</span> {{ book.schedule.instructor.admin.first_name }}</span><br>
+          <span><span class="label inline">Status:</span> {{ book.status | uppercase }}</span><br>
+          <span><span class="label inline">Created At:</span> {{ book.create_at | formatDate }}</span>
+        </div>
+      </section>
+      
+      <ul class="pagination-nav nav nav--block text--center">
+        <li><a ng-click="prevScheds($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
+        <!-- <li><a href="" class="disabled">1</a></li>
+        <li><a href="">2</a></li>
+        <li><a href="">3</a></li>
+        <li><a href="">4</a></li> -->
+        <li><a ng-click="nextScheds($event)">Next <i class="fa fa-angle-right"></i></a></li>
+      </ul>
+      
+    </div>
+
+    <div class="tab-pane" data-tab-pane="packages">
+
+      <div class="stats">
+        <h3 class="h small">{{ histories.transactions.length }} Packages Bought</h3>
+      </div>
+
+      <section class="col-2">
+        <div class="block" ng-repeat="package in histories.transactions">
+          <h3 class="h small primary space--off pad--half-bottom">{{ package.name }}</h3>
+          <span>{{ package.credit_count }} Classes</span><br>
+          <span><span class="label inline">Purchased On:</span> {{ package.create_at | formatDate }}</span><br>
+          <span><span class="label inline">Classes Left:</span> {{ package.remaining_credits || 0 }}</span><br>
+          <span><span class="label inline">Expires On:</span> {{ package.create_at | addDay:package.expiration | formatDate }}</span>
+        </div>
+      </section>
+      
+      <ul class="pagination-nav nav nav--block text--center">
+        <li><a ng-click="prevTrans($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
+        <!-- <li><a href="" class="disabled">1</a></li>
+        <li><a href="">2</a></li>
+        <li><a href="">3</a></li>
+        <li><a href="">4</a></li> -->
+        <li><a ng-click="nextTrans($event)">Next <i class="fa fa-angle-right"></i></a></li>
+      </ul>
+      
+    </div>
+
+    </div>
+
+    <div ng-include="'/site/account-nav'"></div>
+  </div>
+</div>

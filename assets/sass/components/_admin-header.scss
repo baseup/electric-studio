@@ -1,0 +1,28 @@
+.page-header {
+  background-color: #fff;
+  border-bottom: 1px solid $border-color; 
+  @extend .cf;
+  
+  .user {
+    float: right;
+    height: 28px;
+    line-height: 28px;
+    
+   
+    .user__pic {
+      display: inline-block;
+      vertical-align: middle;
+      height: 28px;
+      width: 28px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+    .user__name {
+      display: inline-block;
+      color: $color-text-light;
+      margin-right: $base-spacing-unit/2;
+    }
+  }
+}
+

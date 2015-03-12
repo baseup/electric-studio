@@ -1,0 +1,22 @@
+/*------------------------------------*\
+    #BRAND
+\*------------------------------------*/
+
+/**
+ * Brand modifiers for colors, faces, links etc.
+ */
+
+.brand {
+  color: $brand-color-primary;
+  text-transform: uppercase;
+}
+
+.brand-link {
+  color: $brand-color-primary;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.brand-color {
+  color: $brand-color-primary;
+}

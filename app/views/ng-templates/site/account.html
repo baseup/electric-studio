@@ -1,0 +1,50 @@
+
+  <div class="content bg-lightGray sidebar-layout">
+    <div class="wrapper">
+      
+      <div class="main" ng-controller="AccountCtrl">
+        <h2 class="h large">Your Account Info</h2>
+        <section>
+          <h3 class="h medium gray">Personal Info</h3>
+          <div class="col-2">
+            <input class="input" placeholder="First Name" ng-model="account.first_name">
+            <input class="input" placeholder="Last Name" ng-model="account.last_name">
+            <input class="input" placeholder="Email Address" ng-model="account.email">
+            <input class="input" placeholder="Mobile Number" ng-model="account.phone_number">
+          </div>  
+          <h4 class="h small">Emergency Contact</h4>
+          <input class="input" placeholder="Contact Number" ng-model="account.emergency_contact">
+          <input class="input" placeholder="Contact Full Name" ng-model="account.contact_person"/>
+          <h4 class="h small">Birthday</h4>
+          <input class="input" placeholder="yyyy-mm-dd" ng-model="account.birthdate">
+        </section>
+        <a class="button small pads primary" ng-click="updateAccount()" >Save</a> 
+        <section>
+          <h3 class="h medium gray">Change Password</h3>
+          <input class="input" type="password" ng-model="pass.current_password" placeholder="Current Password">
+          <input class="input" type="password" ng-model="pass.password" placeholder="New Password">
+          <input class="input" type="password" ng-model="pass.confirm_password" placeholder="Retype New Password">
+          <a class="button small pads primary" ng-click="changePassword()">Update Password</a> 
+        </section>
+        <section id="billing">
+          <h3 class="h medium gray">Billing</h3>
+          <input class="input" placeholder="Full Name" >
+          <input class="input" placeholder="Email Address" >
+        </section>
+        
+        <section id="packages">
+          <h3 class="h medium gray">Packages</h3>
+          <div ng-repeat="trans in transactions">
+            <span class="h small block">{{ trans.package_id.name }}</span>
+            <span class="h small block">{{ trans.remaining_credits }} Classes Left</span>
+            <span class="h small block">Expires on {{ trans.create_at | addDay:trans.expiration | formatDate }}</span>
+            <hr>
+          </div>
+          <a href="#/rates" class="button small pads primary">Buy Package</a>
+        </section>
+        
+      </div>
+      
+      <div ng-include="'/site/account-nav'"></div>
+    </div>
+  </div>

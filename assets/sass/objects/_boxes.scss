@@ -1,0 +1,34 @@
+/*------------------------------------*\
+    #BOXES
+\*------------------------------------*/
+
+
+.box__header { 
+  
+  &.align--middle {
+    @include breakpoint(md) {
+      display: table;  
+      width: 100%;
+
+      > * {
+        display: table-cell!important;
+        vertical-align: middle;
+      }
+    }
+  }
+   
+}
+
+.box--collapsible {
+  .box__collapse {
+    display: none;
+  }
+}
+
+.box--bordered {
+  border: 1px solid $border-color;
+}
+
+.box--white {
+  background-color: #fff;
+}

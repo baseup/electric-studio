@@ -1,0 +1,64 @@
+/*------------------------------------*\
+    $NAV
+\*------------------------------------*/
+
+.nav-tabs {
+  list-style: none;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid $brand-color-tertiary;
+  @extend .cf;
+  margin-bottom: $base-spacing-unit;
+  
+  > li {
+    display: block;
+    float: left;
+    
+    > a {
+      display: block;
+      color: inherit;
+      padding: $base-spacing-unit/2 $base-spacing-unit;
+      border: 1px solid transparent;
+      border-left: 0;
+      margin-bottom: -1px;
+      //background-color: $brand-color-tertiary;
+      
+      &:not(.active):hover {
+        background-color: $brand-color-tertiary;
+        color: #fff;
+      }
+      
+      &.active {
+        font-weight: bold;
+        color: $brand-color-primary;
+        border: 1px solid $brand-color-tertiary;
+        border-bottom-color: $brand-color-quaternary;
+        background: none;
+      }
+      
+      &:active, &:focus {
+        outline: 0;
+      }
+      
+    }
+    
+    &:first-child {
+      a {
+        margin-left: 10px;
+        
+        &.active {
+          border-left: 1px solid $brand-color-tertiary;
+        }
+      }
+    }
+  }
+}
+
+.tab-pane, [data-tab-pane] {
+  display: none;
+  
+  &.tab-pane--active {
+    display: block;
+  }
+}
