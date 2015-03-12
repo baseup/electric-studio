@@ -138,6 +138,8 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
       $scope.saving = false;
       $scope.newCredits = {};
       $scope.selectedAccount.credits += credits.credit_count
+    }, function (error) {
+      $.Notify({ content: error.data });
     });
   }
   
