@@ -100,7 +100,10 @@ def update(self, id):
         try :
             book = yield BookedSchedule.objects.get(id)
             ref_book_date = book.date
-            ref_book_time = book.schedule.start
+            ref_book_time = datetime.strptime('0:00','%H:%M')
+            if book.schedule:
+                ref_book_time = book.schedule.start
+
             sched = None
             if 'sched_id' in data:
                 book.date = datetime.strptime(data['date'], '%Y-%m-%d')

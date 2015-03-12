@@ -387,8 +387,9 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
     if ($scope.reserved) {
       for (var i in $scope.reserved) {
         var rDate = new Date($scope.reserved[i].date);
-        if ($scope.loginUser && +date === +rDate && sched._id == $scope.reserved[i].schedule._id)
-          return true;
+        if ($scope.loginUser && +date === +rDate)
+          if(sched && $scope.reserved[i].schedule && sched._id == $scope.reserved[i].schedule._id)
+            return true;
       }
     }
 
