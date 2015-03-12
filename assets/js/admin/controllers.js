@@ -288,8 +288,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
     newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
     ScheduleService.save(newSched, function (response) {
       calendar.fullCalendar('refetchEvents');
+      $scope.newRegSched = {};
     }, function (error) {
       $.Notify({ content: error.data });
+      $scope.newRegSched = {};
     });
   }
 
@@ -308,8 +310,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
     newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
     ScheduleService.save(newSched, function (response) {
       calendar.fullCalendar('refetchEvents');
+      $scope.newSpecSched = {};
     }, function (error) {
       $.Notify({ content: error.data });
+      $scope.newSpecSched = {};
     });
   }
 
