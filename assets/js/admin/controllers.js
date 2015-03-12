@@ -219,60 +219,110 @@ ctrls.controller('ClassCtrl', function ($scope, ScheduleService, UserService) {
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope) {
+ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorService) {
   
-  angular.element('.calendar').fullCalendar({
+  var calendar = angular.element('.calendar');
+  calendar.fullCalendar({
     defaultView: 'agendaWeek',
     allDaySlot: false,
     allDay: false,
     minTime: '07:00:00',
     maxTime: '20:00:00',
-    events: [
-      {
-        title: 'Pure Electric',
-        start: '2015-02-22T08:30:00',
-      },
-      {
-        title: 'Power Hour',
-        start: '2015-02-22T10:30:00'
-      },
-      {
-        title: 'Pure Electric',
-        start: '2015-02-23T08:30:00',
-      },
-      {
-        title: 'Power Hour',
-        start: '2015-02-23T11:30:00'
-      },
-      {
-        title: 'Pure Electric',
-        start: '2015-02-24T10:30:00',
-      },
-      {
-        title: 'Power Hour',
-        start: '2015-02-24T16:30:00'
-      },
-      {
-        title: 'Pure Electric',
-        start: '2015-02-25T08:30:00',
-      },
-      {
-        title: 'Power Hour',
-        start: '2015-02-25T10:30:00'
-      }
-    ],
-    eventClick: function () {
-      angular.element('#view-schedule-modal').Modal();
+    events: function (start, end, timezone, callback) {
+      var events = [];
+      ScheduleService.query({ start: start.unix(), end: end.unix() }, function (scheds) {
+        $scope.schedules = scheds;
+        angular.forEach(scheds, function (s, i) {
+          s.index = i;
+          events.push(s);
+        });
+        callback(events);
+      });
     },
-    windowResize: function (view) {
-      angular.element('.calendar').fullCalendar('changeView', 'agendaDay');
+    eventClick: function (calEvent, jsEvent, view) {
+      $scope.selectedSched = $scope.schedules[calEvent.index];
+      $scope.editRegSched = {
+        start: new Date(0, 0, 0, calEvent.start.hour(), calEvent.start.minute(), 0, 0),
+        end: new Date(0, 0, 0, calEvent.end.hour(), calEvent.end.minute(), 0, 0),
+        id: calEvent.id
+      };
+      if ($scope.selectedSched.type == 'regular') {
+        angular.element('#edit-reg-sched-day')[0].selectize.setValue($scope.selectedSched.day);
+      }
+      angular.element('#edit-reg-class-instructor')[0].selectize.setValue($scope.selectedSched.instructor._id);
+      $scope.$apply();
+      angular.element('#view-schedule-modal').Modal();
     }
+    // windowResize: function (view) {
+    //   angular.element('.calendar').fullCalendar('changeView', 'agendaDay');
+    // }
   });
-  
-  $scope.addSchedule = function () {
-    angular.element('#add-schedule-modal').Modal();
+
+  $scope.updateRegularSchedule = function () {
+    var updatedSched = angular.copy($scope.editRegSched);
+    updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
+    updatedSched.end = updatedSched.end.getHours() + ':' + updatedSched.end.getMinutes();
+    ScheduleService.update(
+      { scheduleId: updatedSched.id },
+      updatedSched,
+      function (response) {
+        calendar.fullCalendar('refetchEvents');
+      },
+      function (error) {
+        $.Notify({ content: error.data });
+      }
+    );
   }
   
+  $scope.addSpecialSchedule = function () {
+    angular.element('#add-special-sched-modal').Modal();
+  }
+
+  $scope.addRegularSchedule = function () {
+    angular.element('#add-regular-sched-modal').Modal();
+  }
+
+  $scope.saveRegularSchedule = function () {
+    var newSched = angular.copy($scope.newRegSched);
+    newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
+    newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
+    ScheduleService.save(newSched, function (response) {
+      calendar.fullCalendar('refetchEvents');
+    }, function (error) {
+      $.Notify({ content: error.data });
+    });
+  }
+
+  $scope.removeSchedule = function (sched) {
+    ScheduleService.delete({ scheduleId: sched.id });
+    calendar.fullCalendar('removeEvents', sched.id);
+  }
+
+  $scope.editSchedule = function (sched) {
+    angular.element('#edit-regular-sched-modal').Modal();
+  }
+
+  $scope.saveSpecialSchedule = function () {
+    var newSched = angular.copy($scope.newSpecSched);
+    newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
+    newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
+    ScheduleService.save(newSched, function (response) {
+      calendar.fullCalendar('refetchEvents');
+    }, function (error) {
+      $.Notify({ content: error.data });
+    });
+  }
+
+  InstructorService.query(function (instructors) {
+    var regSelectize = angular.element('#add-reg-class-instructor')[0].selectize;
+    var specSelectize = angular.element('#add-spec-class-instructor')[0].selectize;
+    var editRegInstructor = angular.element('#edit-reg-class-instructor')[0].selectize;
+    angular.forEach(instructors, function (instructor) {
+      regSelectize.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
+      specSelectize.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
+      editRegInstructor.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
+    });
+  });
 });
 
 
