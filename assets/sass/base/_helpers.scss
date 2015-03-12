@@ -21,7 +21,7 @@
 /**
  * Text uppercase
  */
-.text-uppercase { text-transform: uppercase; }
+.text-uppercase, .caps { text-transform: uppercase!important; }
 
 
 /**
@@ -100,13 +100,6 @@
     display: table;
     clear: both;
   }
-}
-
-/**
- * Apply capital case to an element (usually a `strong`).
- */
-.caps{
-    text-transform:uppercase!important;
 }
 
 /**
