@@ -3,7 +3,7 @@
   <div class="class-search pad cf">
     <span class="label">Select Class Schedule</span>
     <div class="bp-md-one-fourth float--left space--bottom space--right">
-      <input ng-change="reload()" class="datepicker text-input" ng-model="newBook.date" placeholder="Date">
+      <input ng-change="reloadDate()" class="datepicker text-input" ng-model="newBook.date" placeholder="Date">
     </div>
     <div class="float--left">
       <select ng-change="reload()" class="select" id="select-class-time" ng-model="newBook.sched_id">
