@@ -57,6 +57,11 @@ def create(self):
         new_sched.date = parser.parse(data['date'])
     new_sched.start = parser.parse(data['start'])
     new_sched.end = parser.parse(data['end'])
+    if new_sched.start > new_sched.end:
+        self.set_status(400)
+        self.write('Invalid start and end time')
+        self.finish()
+        return
     new_sched.instructor = ObjectId(data['instructor'])
     yield new_sched.save()
     self.render_json(new_sched)
@@ -79,6 +84,11 @@ def update(self, id):
         sched.day = data['day']
     sched.start = parser.parse(data['start'])
     sched.end = parser.parse(data['end'])
+    if sched.start > sched.end:
+        self.set_status(400)
+        self.write('Invalid start and end time')
+        self.finish()
+        return
     if 'instructor' in data:
         sched.instructor = ObjectId(data['instructor'])
     yield sched.save()
