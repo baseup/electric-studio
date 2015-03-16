@@ -30,6 +30,16 @@
         <li>
           <a ng-class="{ active : activeMainNav('/whats-new') }" href="#/whats-new">What's New</a>
         </li>
+        <li class="class-menu">
+          <a>Classes <i class="fa fa-caret-down"></i></a>
+          <div class="class-menu__list">
+            <div class="class-menu__holder">
+              <a href="#/workouts">The Workouts</a>
+              <a href="#/rates-and-packages">Rates &amp; Packages</a>
+              <a href="#/schedule">Schedule</a>
+            </div>  
+          </div>  
+        </li>
       </ul>
       
       <div class="account-menu">
@@ -52,19 +62,8 @@
         {% end %}  
       </div>  
         
-      <div class="sub-menu">
-        <a class="sub-menu__toggle">Book A Ride</a>
-        
-        <div class="sub-menu__list">
-          <div class="sub-menu__holder">
-            <a href="#/workouts">The Workouts</a>
-            <a href="#/rates-and-packages">Rates &amp; Packages</a>
-            <a href="#/schedule">Schedule</a>
-          </div>  
-        </div>  
-      </div>
-        
-      
+      <a class="book-ride-btn" href="#/schedule">Book A Ride</a>
+
       <a class="menu-toggle"><i class="fa fa-bars"></i></a>
       
     </div>  
