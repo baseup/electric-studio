@@ -169,7 +169,7 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
           selectize.addOption({ value: sched.id, text: sched.text });
         });
         if (!$scope.newBook.sched_id) {
-          $scope.newBook.sched_id = books.schedules[0].id;
+          $scope.newBook.sched_id = books.schedules[0].id
         }
       }
     });
@@ -204,6 +204,25 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
   }
 
   $scope.sendNewBook = function () {
+
+    var now = new Date();
+    var parts = $scope.schedDetails.start.split(/[^0-9]/);
+    var dTime =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+    var hours = dTime.getHours();
+    var minutes = dTime.getMinutes();
+    var chkDate = new Date($scope.newBook.date);
+    chkDate.setHours(hours - 1, minutes, 0, 0);
+    if (chkDate < now){
+      $.Notify({ content: "Booking should be 1 hour before" });
+      return;
+    }
+
+    var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
+    if (chkDate > nextMonth) {
+      $.Notify({ content: "Booking 1 month in advance is prohibited" });
+      return;
+    }
+
     ClassService.save($scope.newBook, function (savedBook) {
       $scope.reload();
     }, function (error) {
@@ -241,7 +260,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
     defaultView: 'agendaWeek',
     allDaySlot: false,
     allDay: false,
-    minTime: '07:00:00',
+    minTime: '05:00:00',
     maxTime: '20:00:00',
     events: function (start, end, timezone, callback) {
       var events = [];

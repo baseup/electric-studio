@@ -381,7 +381,16 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   $scope.chkSched = function (date, sched) {
 
     var now = new Date();
+    var parts = sched.start.split(/[^0-9]/);
+    var dTime =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+    var hours = dTime.getHours();
+    var minutes = dTime.getMinutes();
+    date.setHours(hours - 1, minutes, 0, 0);
     if (date < now)
+      return true;
+
+    var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
+    if (date > nextMonth) 
       return true;
 
     if ($scope.reserved) {
