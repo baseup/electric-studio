@@ -85,7 +85,6 @@ body {
   -ms-user-select: none;
   user-select: none;
   background: $brand-color-primary;
-  text-align: center;
   font-family: 'Brandon_Grotesque';
   position: relative;
   z-index: 10;
@@ -139,6 +138,11 @@ body {
       bottom: 20px;
       height: 54px;
       margin-bottom: 0;
+      display: none;
+    }
+    
+    @include breakpoint(lg) {
+      display: block;
     }
   }
   
@@ -168,7 +172,7 @@ body {
   li {
     display: block;
     
-    @include breakpoint(sm) {
+    @include breakpoint(md) {
       display: inline-block;
       margin: 0 10px;
     }
@@ -211,12 +215,15 @@ body {
   
   @include breakpoint(md) {
     position: absolute;
-    right: 100px;
+    right: 20px;
     bottom: 50px;
     text-align: right;
     display: block;
   }
   
+  @include breakpoint(lg) {
+    right: 100px;
+  }
   
   &:hover { 
     .account-menu__list {
@@ -261,13 +268,13 @@ body {
     top: auto;
     left: -20px;
     right: -20px;
-    padding-top: 50px;
+    padding-top: 48px;
     display: none;
     
     @include breakpoint(md) {
       left: auto;
       right: -100px;
-      width: 220px;
+      width: 200px;
       padding-top: 60px;
     }
   }
@@ -292,61 +299,96 @@ body {
   
 }
 
-.sub-menu {
+.class-menu {
   position: relative;
+  
+  &:hover {
+    .class-menu__list {
+      display: block;
+    }
+  }
+  
+  .class-menu__list {
+    display: none;
+    
+    
+    @include breakpoint(md) {
+      position: absolute;
+      top: 20px;
+      left: -55px;
+      right: auto;
+      width: 220px;
+      padding-top: 24px;
+      z-index: 9;
+    }
+  }
+  
+  .class-menu__holder { 
+    padding-left: 20px;
+    
+    @include breakpoint(md) {
+      
+      background: $brand-color-quaternary;
+      box-shadow: 0 1px 2px rgba($brand-color-secondary, .6);
+      padding: 15px;
+      text-align: center;
+
+      a {
+        display: block;
+        border-bottom: 2px solid #fff;
+        color: inherit;
+        text-transform: uppercase;
+        padding: 10px 0;
+        color: $color-text-light;
+        font-size: 16px;
+        font-weight: normal;
+
+        &:last-child {
+          border: none;
+        }
+
+        &:hover {
+          color: $brand-color-primary!important;
+        }
+      }
+      
+    }
+    
+  }
+  
+}
+
+
+.book-ride-btn {
+  font-size: 18px;
+  font-weight: bold;
   text-align: left;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-right: 40px;
+  cursor: pointer;
+  color: purple;
+  
+  &:hover {
+    color: $color-text-light;
+  }
   
   @include breakpoint(md) {
     position: absolute;
-    right: 100px;
+    right: 20px;
     bottom: 15px;
+    text-align: right;
+    margin-right: 0;
+    font-size: 22px
   }
   
-  &:hover {
-    .sub-menu__list {
-      display: block!important;
-    }
+  @include breakpoint(lg) {
+    right: 100px;
+    font-size: 28px;
   }
- 
-  .sub-menu__toggle {
-    display: inline-block;
-    font-size: 18px;
-    font-weight: bold;
-    text-align: left;
-    color: #fff;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-right: 40px;
-    cursor: pointer;
-    color: purple;
-    
-    @include breakpoint(md) {
-      text-align: right;
-      margin-right: 0;
-      font-size: 28px
-    }
-  }
-  
-  .sub-menu__list {
-    display: none;
-    position: absolute;
-    z-index: 9;
-    top: 0;
-    left: -20px;
-    right: -20px;
-    padding-top: 38px;
-    
-    @include breakpoint(md) {
-      left: auto;
-      right: -100px;
-      width: 320px;
-      padding-top: 46px;
-    }
-  }
-  
-  .sub-menu__holder { @extend .menu-holder; }
-  
 }
+
 
 .menu-holder {
   background: $brand-color-quaternary;
@@ -368,7 +410,7 @@ body {
     }
 
     &:hover {
-      color: $brand-color-primary;
+      color: $brand-color-primary!important;
     }
   }
 }
