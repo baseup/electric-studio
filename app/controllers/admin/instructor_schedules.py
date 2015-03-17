@@ -5,6 +5,8 @@ from bson.objectid import ObjectId
 
 import tornado.escape
 
+DEFAULT_TIME = datetime(1900, 1, 1)
+
 def find(self):
 
     start_timestamp = self.get_query_argument('start')
@@ -55,8 +57,8 @@ def create(self):
         new_sched.day = data['day']
     elif 'date' in date:
         new_sched.date = parser.parse(data['date'])
-    new_sched.start = parser.parse(data['start'])
-    new_sched.end = parser.parse(data['end'])
+    new_sched.start = parser.parse(data['start'], default=DEFAULT_TIME)
+    new_sched.end = parser.parse(data['end'], default=DEFAULT_TIME)
     if new_sched.start > new_sched.end:
         self.set_status(400)
         self.write('Invalid start and end time')
@@ -82,8 +84,8 @@ def update(self, id):
     sched = yield InstructorSchedule.objects.get(id)
     if 'day' in data:
         sched.day = data['day']
-    sched.start = parser.parse(data['start'])
-    sched.end = parser.parse(data['end'])
+    sched.start = parser.parse(data['start'], default=DEFAULT_TIME)
+    sched.end = parser.parse(data['end'], default=DEFAULT_TIME)
     if sched.start > sched.end:
         self.set_status(400)
         self.write('Invalid start and end time')
