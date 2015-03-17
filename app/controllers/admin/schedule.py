@@ -15,29 +15,45 @@ def find(self):
     else:
         date = datetime.strptime(date, '%Y-%m-%d')
 
-    schedules = yield InstructorSchedule.objects.filter(day=date.strftime('%a').lower()).find_all()
-    list_scheds = []
-    for s in schedules:
-        list_scheds.append({
-            'id': str(s._id),
-            'text': s.start.strftime('%I:%M %p') + ' - ' + s.end.strftime('%I:%M %p')
-        })
-
-    ins_sched = schedules[0]
-    if time:
-        time = datetime.strptime(time, '%I:%M %p')
-        ins_sched = yield InstructorSchedule.objects.get(date=date, start_time=time)
-        if not ins_sched:
-            ins_sched = yield InstructorSchedule.objects.get(day=date.strftime('%a').lower(), start=time)
-    elif sched_id:
+    if self.get_query_argument('seats'):
         ins_sched = yield InstructorSchedule.objects.get(sched_id)
+        scheds = yield BookedSchedule.objects.filter(status='booked', date=date, schedule=ins_sched._id).find_all()
+        available_seats = []
+        for seat in range(1, 38):
+            seat_exists = yield BookedSchedule.objects.get(seat_number=str(seat),
+                                                           status='booked', date=date, schedule=ins_sched._id)
+            if not seat_exists:
+                available_seats.append(seat)
 
-    scheds = yield BookedSchedule.objects.filter(status='booked', date=date, schedule=ins_sched._id).find_all()
-    self.render_json({
-        'bookings': scheds,
-        'schedule': ins_sched,
-        'schedules': list_scheds
-    })
+        self.render_json({
+            'available': available_seats
+        })
+    else:
+        schedules = yield InstructorSchedule.objects.filter(day=date.strftime('%a').lower()).find_all()
+        list_scheds = []
+        for s in schedules:
+            list_scheds.append({
+                'id': str(s._id),
+                'text': s.start.strftime('%I:%M %p') + ' - ' + s.end.strftime('%I:%M %p')
+            })
+
+        ins_sched = schedules[0]
+        if time:
+            time = datetime.strptime(time, '%I:%M %p')
+            ins_sched = yield InstructorSchedule.objects.get(date=date, start_time=time)
+            if not ins_sched:
+                ins_sched = yield InstructorSchedule.objects.get(day=date.strftime('%a').lower(), start=time)
+        elif sched_id:
+            ins_sched = yield InstructorSchedule.objects.get(sched_id)
+
+        scheds = yield BookedSchedule.objects.filter(status='booked', date=date, schedule=ins_sched._id).find_all()
+        waitlist = yield BookedSchedule.objects.filter(status='waitlisted', date=date, schedule=ins_sched._id).find_all()
+        self.render_json({
+            'bookings': scheds,
+            'waitlist': waitlist,
+            'schedule': ins_sched,
+            'schedules': list_scheds
+        })
 
 def create(self):
     data = tornado.escape.json_decode(self.request.body)
@@ -89,6 +105,7 @@ def create(self):
     self.render_json(sched)
 
 def update(self, id):
+
     booked_schedule = yield BookedSchedule.objects.get(id)
     if not booked_schedule:
         self.set_status(404)
@@ -97,22 +114,28 @@ def update(self, id):
         return
 
     data = tornado.escape.json_decode(self.request.body)
-    special_date = datetime.strptime(data['date'], '%Y-%m-%d')
-    time = datetime.strptime(data['time'], '%I:%M %p')
-    ins_sched = yield InstructorSchedule.objects.get(date=special_date, start=time)
-    if not ins_sched:
-        ins_sched = yield InstructorSchedule.objects.get(day=special_date.strftime('%a').lower(), start=time)
 
-    total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched).count()
-    if total_booked >= 37:
-        self.set_status(400)
-        self.write('Not available slots')
-        self.finish()
-        return
+    if 'move_to_seat' in data:
+        booked_schedule.status = 'booked'
+        booked_schedule.seat_number = data['move_to_seat']
+        booked_schedule = yield booked_schedule.save()
+    else: 
+        special_date = datetime.strptime(data['date'], '%Y-%m-%d')
+        time = datetime.strptime(data['time'], '%I:%M %p')
+        ins_sched = yield InstructorSchedule.objects.get(date=special_date, start=time)
+        if not ins_sched:
+            ins_sched = yield InstructorSchedule.objects.get(day=special_date.strftime('%a').lower(), start=time)
 
-    booked_schedule.date = special_date
-    booked_schedule.schedule = ins_sched._id
-    booked_schedule = yield booked_schedule.save()
+        total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched).count()
+        if total_booked >= 37:
+            self.set_status(400)
+            self.write('Not available slots')
+            self.finish()
+            return
+
+        booked_schedule.date = special_date
+        booked_schedule.schedule = ins_sched._id
+        booked_schedule = yield booked_schedule.save()
 
     self.render_json(booked_schedule)
 

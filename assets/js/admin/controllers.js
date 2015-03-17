@@ -162,6 +162,7 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
   $scope.reload = function () {
     ClassService.query({ date: $scope.newBook.date, time: $scope.newBook.time, sched_id: $scope.newBook.sched_id }, function (books) {
       $scope.books = books.bookings;
+      $scope.waitList = books.waitlist;
       $scope.schedDetails = books.schedule;
       if (books.schedules.length) {
         var selectize = angular.element('#select-class-time')[0].selectize;
@@ -238,12 +239,34 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
     angular.element('#switch-bike-modal').Modal();
   }
   
-  $scope.moveToClass = function () {
-    $.Notify({ content: 'User moved to class' });
+  $scope.moveToClass = function (wait) {
+    ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+      $scope.selectedWaitList = wait;
+      if (seats.available.length) {
+        var selectize = angular.element('#select-seat')[0].selectize;
+        angular.forEach(seats.available, function (seat) {
+          selectize.addOption({ value: seat, text: seat });
+        });
+        
+        angular.element('#move-to-class-modal').Modal();
+      }else{
+        $.Notify({ content: 'No seats available' });    
+      }
+    });
+    
+  }
+
+  $scope.bookWaitList = function(){
+    ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number }, function(){
+      $scope.reload();
+    }, function(error){
+      $.Notify({ content: error.data });
+    });
   }
   
-  $scope.removeFromWaitlist = function () {
-    $.Notify({ content: 'User removed from Waitlist' });
+  $scope.removeFromWaitlist = function (wait, index) {
+    $scope.waitList.splice(index, 1);
+    ClassService.delete({ scheduleId: wait._id });
   }
 
   $scope.downloadBookingList = function () {

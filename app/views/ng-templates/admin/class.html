@@ -72,7 +72,7 @@
                 </li>
               </ul>
 
-              <h3 class="user--name">{{ book.user_id.first_name }} {{ bookt.user.last_name }}</h3>
+              <h3 class="user--name">{{ book.user_id.first_name }} {{ bookt.user_id.last_name }}</h3>
             </div>
 
           </div>
@@ -85,7 +85,7 @@
 
       <div class="waitlist-header space--bottom cf">
         <div class="stats">
-          <span class="caps">{{ waitList.length }} Riders</span>
+          <span class="caps">{{ waitList.length || 0 }} Riders</span>
         </div>
 
         <div class="options">
@@ -94,6 +94,38 @@
       </div>
 
       <div class="account-list grid">
+
+        <div class="grid__item bp-sm-one-half bp-lg-one-third" ng-repeat="wait in waitList">  
+          <div class="account__item box--bordered box--white space--bottom cf">
+
+            <div class="pad">
+              <b class="h--small">{{ wait.user_id.first_name }} {{ wait.user_id.last_name }}</b>
+            </div>
+
+            <div class="pad--sides">
+              <div class="data-list">
+
+                <dl class="data--inline">
+                  <dt><i class="fa fa-phone"></i></dt>
+                  <dd>{{ wait.user_id.phone_number }}</dd>
+                </dl>
+
+                <dl class="data--inline space--bottom">
+                  <dt><i class="fa fa-envelope"></i></dt>
+                  <dd class="inline space--bottom">{{ wait.user_id.email }}</dd>
+                </dl>
+              </div>
+
+            </div>
+
+            <div class="account__options pad--sides pad--half-ends space--top cf">
+              <a class="user-move-class" ng-click="moveToClass(wait)">Move to Class</a>
+              <a class="user-remove-waitlist space--left link--secondary float--right" ng-click="removeFromWaitlist(wait, $index)">Remove</a>
+            </div>
+
+          </div>
+        </div>
+        
       </div>
     </div><!-- /.waitlist -->
   </div>
@@ -124,6 +156,28 @@
 
     </div>
   </div>
+  
+  <!-- move to class -->
+  <div id="move-to-class-modal" class="modal" data-modal="move-to-class" >
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Move to class</h3>
+
+      <div class="user-select space--bottom">
+        <span class="label">Rider</span>
+        <h4 class="h-small">{{ selectedWaitList.user_id.first_name }} {{ selectedWaitList.user_id.last_name }}</h4>
+      </div>
+
+       <div class="cf">   
+        <select class="select space--bottom bp-md-one-third float--left" id="select-seat" ng-model="selectedWaitList.seat_number">
+          <option selected value="">Select Seat</option>
+        </select>    
+      </div>
+
+      <button class="btn btn--primary btn--medium space--top modal-close" ng-click="bookWaitList()">Move to Class</button>
+    </div>
+  </div>
+
 
   <!-- modal Switch Bike -->
   <div id="switch-bike-modal" class="modal" data-modal="switch" >

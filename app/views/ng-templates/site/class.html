@@ -89,8 +89,9 @@
       <li class="reserved">Reserved Bikes</li>
       <li class="selection">Your Selection</li>
     </ul>
-    <a ng-if="!resched" class="button large center" ng-click="bookSchedule()">Book A Ride</a>
-    <a ng-if="resched" class="button large center" ng-click="bookSchedule()">Reschedule Ride</a>
+    <a ng-if="!resched && !forWaitlist" class="button large center" ng-click="bookSchedule()">Book A Ride</a>
+    <a ng-if="resched && !forWaitlist" class="button large center" ng-click="bookSchedule()">Reschedule Ride</a>
+    <a ng-if="forWaitlist" class="button large center" ng-click="bookSchedule()">Add To Ride WaitList</a>
     <a class="h small primary center link" href="#/schedule">Back to Schedules</a>
   </div>
 </div>

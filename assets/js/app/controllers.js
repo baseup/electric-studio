@@ -544,7 +544,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
       return;
     }
 
-    if (seat == 0) {
+    if (!$scope.forWaitlist && seat == 0) {
       alert('Please pick a seat');
       return;
     }

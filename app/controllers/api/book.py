@@ -24,7 +24,7 @@ def find(self):
             user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
             user = yield User.objects.get(user_id)
             if user:
-                books = yield BookedSchedule.objects.filter(status='booked', user_id=user._id).find_all()
+                books = yield BookedSchedule.objects.filter(user_id=user._id, status__ne='cancelled').find_all()
                 self.render_json(books)
         else:
             self.set_status(403)
@@ -45,11 +45,16 @@ def create(self):
             user = yield User.objects.get(user_id)
             if user.credits > 0:
                 sched = yield InstructorSchedule.objects.get(data['sched_id']);
+
+                book_status = 'booked'
+                if 'status' in data:
+                    book_status = data['status']
+
                 book = BookedSchedule(user_id=user._id, 
                                       date=datetime.strptime(data['date'],'%Y-%m-%d'),
                                       schedule=sched._id,
                                       seat_number=data['seat'],
-                                      status='booked');
+                                      status=book_status);
                 if book:
                     user.credits -= 1
                     user_packages = yield UserPackage.objects.order_by("create_at", direction=DESCENDING) \
