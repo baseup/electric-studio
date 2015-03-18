@@ -16,27 +16,27 @@ def find(self):
     start_date = datetime.fromtimestamp(int(start_timestamp))
     end_date = datetime.fromtimestamp(int(end_timestamp))
     while start_date < end_date:
-        reg_day = start_date.strftime('%a').lower()
-        reg_scheds = yield InstructorSchedule.objects.filter(day=reg_day, type='regular').find_all()
+        # reg_day = start_date.strftime('%a').lower()
+        # reg_scheds = yield InstructorSchedule.objects.filter(day=reg_day, type='regular').find_all()
         start_date_string = start_date.strftime('%Y-%m-%d')
         start_date_filter = datetime.strptime(start_date_string, '%Y-%m-%d')
-        for sched in reg_scheds:
-            events.append({
-                'title': sched.instructor.admin.first_name + "'s class \n( Regular )",
-                'start': start_date_string + sched.start.strftime(' %H:%M:%S'),
-                'end': start_date_string + sched.end.strftime(' %H:%M:%S'),
-                'instructor': sched.instructor,
-                'start_time': sched.start.strftime('%I:%M %p'),
-                'end_time': sched.end.strftime('%I:%M %p'),
-                'id': str(sched._id),
-                'type': 'regular',
-                'day': reg_day,
-                'ridersCount': (yield BookedSchedule.objects.filter(status='booked', date=start_date_filter, schedule=sched._id).count())
-            })
-        spec_scheds = yield InstructorSchedule.objects.filter(date=start_date, type='special').find_all()
+        # for sched in reg_scheds:
+        #     events.append({
+        #         'title': sched.instructor.admin.first_name + "'s class \n( Regular )",
+        #         'start': start_date_string + sched.start.strftime(' %H:%M:%S'),
+        #         'end': start_date_string + sched.end.strftime(' %H:%M:%S'),
+        #         'instructor': sched.instructor,
+        #         'start_time': sched.start.strftime('%I:%M %p'),
+        #         'end_time': sched.end.strftime('%I:%M %p'),
+        #         'id': str(sched._id),
+        #         'type': 'regular',
+        #         'day': reg_day,
+        #         'ridersCount': (yield BookedSchedule.objects.filter(status='booked', date=start_date_filter, schedule=sched._id).count())
+        #     })
+        spec_scheds = yield InstructorSchedule.objects.filter(date=start_date_filter).find_all()
         for sched in spec_scheds:
             events.append({
-                'title': sched.instructor.admin.first_name + "'s class \n( Special )",
+                'title': sched.instructor.admin.first_name + "'s class",
                 'start': start_date_string + sched.start.strftime(' %H:%M:%S'),
                 'end': start_date_string + sched.end.strftime(' %H:%M:%S'),
                 'instructor': sched.instructor,
@@ -55,7 +55,7 @@ def create(self):
     new_sched = InstructorSchedule()
     if 'day' in data:
         new_sched.day = data['day']
-    elif 'date' in date:
+    elif 'date' in data:
         new_sched.date = parser.parse(data['date'])
     new_sched.start = parser.parse(data['start'], default=DEFAULT_TIME)
     new_sched.end = parser.parse(data['end'], default=DEFAULT_TIME)

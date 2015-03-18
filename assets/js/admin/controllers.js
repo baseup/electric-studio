@@ -298,15 +298,13 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
     },
     eventClick: function (calEvent, jsEvent, view) {
       $scope.selectedSched = $scope.schedules[calEvent.index];
-      $scope.editRegSched = {
+      $scope.editSched = {
+        date: calEvent.start.year() + '-' + (calEvent.start.month() + 1) + '-' + calEvent.start.date(),
         start: new Date(0, 0, 0, calEvent.start.hour(), calEvent.start.minute(), 0, 0),
         end: new Date(0, 0, 0, calEvent.end.hour(), calEvent.end.minute(), 0, 0),
         id: calEvent.id
       };
-      if ($scope.selectedSched.type == 'regular') {
-        angular.element('#edit-reg-sched-day')[0].selectize.setValue($scope.selectedSched.day);
-      }
-      angular.element('#edit-reg-class-instructor')[0].selectize.setValue($scope.selectedSched.instructor._id);
+      angular.element('#edit-class-instructor')[0].selectize.setValue($scope.selectedSched.instructor._id);
       $scope.$apply();
       angular.element('#view-schedule-modal').Modal();
     }
@@ -315,8 +313,67 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
     // }
   });
 
-  $scope.updateRegularSchedule = function () {
-    var updatedSched = angular.copy($scope.editRegSched);
+  // $scope.updateRegularSchedule = function () {
+  //   var updatedSched = angular.copy($scope.editRegSched);
+  //   updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
+  //   updatedSched.end = updatedSched.end.getHours() + ':' + updatedSched.end.getMinutes();
+  //   ScheduleService.update(
+  //     { scheduleId: updatedSched.id },
+  //     updatedSched,
+  //     function (response) {
+  //       calendar.fullCalendar('refetchEvents');
+  //     },
+  //     function (error) {
+  //       $.Notify({ content: error.data });
+  //     }
+  //   );
+  // }
+  
+  $scope.addSchedule = function () {
+    angular.element('#add-sched-modal').Modal();
+  }
+
+  // $scope.addRegularSchedule = function () {
+  //   angular.element('#add-regular-sched-modal').Modal();
+  // }
+
+  // $scope.saveRegularSchedule = function () {
+  //   var newSched = angular.copy($scope.newRegSched);
+  //   newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
+  //   newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
+  //   ScheduleService.save(newSched, function (response) {
+  //     calendar.fullCalendar('refetchEvents');
+  //     $scope.newRegSched = {};
+  //   }, function (error) {
+  //     $.Notify({ content: error.data });
+  //     $scope.newRegSched = {};
+  //   });
+  // }
+
+  $scope.removeSchedule = function (sched) {
+    ScheduleService.delete({ scheduleId: sched.id });
+    calendar.fullCalendar('removeEvents', sched.id);
+  }
+
+  $scope.editSchedule = function (sched) {
+    angular.element('#edit-sched-modal').Modal();
+  }
+
+  $scope.saveSchedule = function () {
+    var newSched = angular.copy($scope.newSpecSched);
+    newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
+    newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
+    ScheduleService.save(newSched, function (response) {
+      calendar.fullCalendar('refetchEvents');
+      $scope.newSpecSched = {};
+    }, function (error) {
+      $.Notify({ content: error.data });
+      $scope.newSpecSched = {};
+    });
+  }
+
+  $scope.updateSchedule = function () {
+    var updatedSched = angular.copy($scope.editSched);
     updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
     updatedSched.end = updatedSched.end.getHours() + ':' + updatedSched.end.getMinutes();
     ScheduleService.update(
@@ -330,58 +387,15 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
       }
     );
   }
-  
-  $scope.addSpecialSchedule = function () {
-    angular.element('#add-special-sched-modal').Modal();
-  }
-
-  $scope.addRegularSchedule = function () {
-    angular.element('#add-regular-sched-modal').Modal();
-  }
-
-  $scope.saveRegularSchedule = function () {
-    var newSched = angular.copy($scope.newRegSched);
-    newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
-    newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
-    ScheduleService.save(newSched, function (response) {
-      calendar.fullCalendar('refetchEvents');
-      $scope.newRegSched = {};
-    }, function (error) {
-      $.Notify({ content: error.data });
-      $scope.newRegSched = {};
-    });
-  }
-
-  $scope.removeSchedule = function (sched) {
-    ScheduleService.delete({ scheduleId: sched.id });
-    calendar.fullCalendar('removeEvents', sched.id);
-  }
-
-  $scope.editSchedule = function (sched) {
-    angular.element('#edit-regular-sched-modal').Modal();
-  }
-
-  $scope.saveSpecialSchedule = function () {
-    var newSched = angular.copy($scope.newSpecSched);
-    newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
-    newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
-    ScheduleService.save(newSched, function (response) {
-      calendar.fullCalendar('refetchEvents');
-      $scope.newSpecSched = {};
-    }, function (error) {
-      $.Notify({ content: error.data });
-      $scope.newSpecSched = {};
-    });
-  }
 
   InstructorService.query(function (instructors) {
-    var regSelectize = angular.element('#add-reg-class-instructor')[0].selectize;
-    var specSelectize = angular.element('#add-spec-class-instructor')[0].selectize;
-    var editRegInstructor = angular.element('#edit-reg-class-instructor')[0].selectize;
+    // var regSelectize = angular.element('#add-reg-class-instructor')[0].selectize;
+    var specSelectize = angular.element('#add-class-instructor')[0].selectize;
+    var editInstructor = angular.element('#edit-class-instructor')[0].selectize;
     angular.forEach(instructors, function (instructor) {
-      regSelectize.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
+      // regSelectize.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
       specSelectize.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
-      editRegInstructor.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
+      editInstructor.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
     });
   });
 });

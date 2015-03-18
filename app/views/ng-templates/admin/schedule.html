@@ -4,8 +4,8 @@
     <div class="sliders box--white box--bordered">
       <div class="box__header align--middle cf pad">
         <span class="label label--inline">Schedules</span>
-        <button ng-click="addRegularSchedule()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-regular-schedule">Add Regular Schedule</button>
-        <!-- <button ng-click="addSpecialSchedule()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-special-schedule">Add Special Schedule</button> -->
+        <!-- <button ng-click="addRegularSchedule()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-regular-schedule">Add Regular Schedule</button> -->
+        <button ng-click="addSchedule()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-schedule">Add Schedule</button>
       </div>
       <div class="calendar pad">
       </div>
@@ -43,16 +43,16 @@
   </div>
   
   <!-- modal Add Schedule -->
-  <div id="add-special-sched-modal" class="modal" data-modal="add-special-schedule">
+  <div id="add-sched-modal" class="modal" data-modal="add-schedule">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
-      <h3 class="h--medium brand-color space--bottom">Add Special Schedule</h3>
+      <h3 class="h--medium brand-color space--bottom">Add Schedule</h3>
 
      <div class="data-list cf pad--ends">
        <dl class="space--bottom">
           <dt class="label">Date</span>
           <dd class="bp-md-one-half">
-            <input class="text-input datepicker">
+            <input class="text-input datepicker" ng-model="newSpecSched.date" >
           <dd>
         </dl>
 
@@ -84,22 +84,78 @@
         <dl class="space--bottom">
           <dt class="label">Instructor</span>
           <dd class="bp-md-one-half">
-            <select id="add-spec-class-instructor" ng-model="newSpecSched.instructor" class="select">
+            <select id="add-class-instructor" ng-model="newSpecSched.instructor" class="select">
               <option selected value="">Select Instructor</option>
               <option ng-repeat="instructor in instructors" value="{{ instructor._id }}">{{ instructor.admin.first_name }} {{ instructor.admin.last_name }}</option>
             </select>
           <dd>
         </dl>
       </div>
-      <button ng-click="saveSpecialSchedule()"
+      <button ng-click="saveSchedule()"
         class="btn btn--medium btn--primary space--top modal-close"
-        ng-disabled="!newSpecSched.day || !newSpecSched.instructor || !newSpecSched.start || !newSpecSched.end">
+        ng-disabled="!newSpecSched.date || !newSpecSched.instructor || !newSpecSched.start || !newSpecSched.end">
         Add
       </button>
     </div>
   </div>
 
-  <div id="add-regular-sched-modal" class="modal" data-modal="add-regular-schedule">
+  <div id="edit-sched-modal" class="modal" data-modal="edit-schedule">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Edit Schedule</h3>
+
+     <div class="data-list cf pad--ends">
+       <dl class="space--bottom">
+          <dt class="label">Date</span>
+          <dd class="bp-md-one-half">
+            <input class="text-input datepicker" ng-model="editSched.date" >
+          <dd>
+        </dl>
+
+        <dl class="space--bottom">
+          <dt class="label">Start</span>
+          <dd class="bp-md-one-half">
+            <input class="text-input" ng-model="editSched.start" type="time">
+          <dd>
+        </dl>
+
+        <dl class="space--bottom">
+          <dt class="label">End</span>
+          <dd class="bp-md-one-half">
+            <input class="text-input" ng-model="editSched.end" type="time">
+          <dd>
+        </dl>
+
+        <!-- <dl class="space--bottom">
+          <dt class="label">Class Type</span>
+          <dd class="bp-md-one-half">
+            <select class="select">
+              <option value="marissa">Pure Electric</option>
+              <option value="abel">Power Hour</option>
+              <option value="mc">Electric Endurance</option>
+            </select>
+          <dd>
+        </dl> -->
+
+        <dl class="space--bottom">
+          <dt class="label">Instructor</span>
+          <dd class="bp-md-one-half">
+            <select id="edit-class-instructor" ng-model="editSched.instructor" class="select">
+              <option selected value="">Select Instructor</option>
+              <option ng-repeat="instructor in instructors" value="{{ instructor._id }}">{{ instructor.admin.first_name }} {{ instructor.admin.last_name }}</option>
+            </select>
+          <dd>
+        </dl>
+      </div>
+      <button ng-click="updateSchedule()"
+        class="btn btn--medium btn--primary space--top modal-close"
+        ng-disabled="!editSched.date || !editSched.instructor || !editSched.start || !editSched.end">
+        Update
+      </button>
+    </div>
+  </div>
+
+ <!--  <div id="add-regular-sched-modal" class="modal" data-modal="add-regular-schedule">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Add Regular Schedule</h3>
@@ -134,17 +190,6 @@
             <input class="text-input" ng-model="newRegSched.end" type="time">
           <dd>
         </dl>
-
-        <!-- <dl class="space--bottom">
-          <dt class="label">Class Type</span>
-          <dd class="bp-md-one-half">
-            <select class="select">
-              <option value="marissa">Pure Electric</option>
-              <option value="abel">Power Hour</option>
-              <option value="mc">Electric Endurance</option>
-            </select>
-          <dd>
-        </dl> -->
 
         <dl class="space--bottom">
           <dt class="label">Instructor</span>
@@ -200,17 +245,6 @@
           <dd>
         </dl>
 
-        <!-- <dl class="space--bottom">
-          <dt class="label">Class Type</span>
-          <dd class="bp-md-one-half">
-            <select class="select">
-              <option value="marissa">Pure Electric</option>
-              <option value="abel">Power Hour</option>
-              <option value="mc">Electric Endurance</option>
-            </select>
-          <dd>
-        </dl> -->
-
         <dl class="space--bottom">
           <dt class="label">Instructor</span>
           <dd class="bp-md-one-half">
@@ -227,5 +261,5 @@
         Update
       </button>
     </div>
-  </div>
+  </div> -->
 </div>
