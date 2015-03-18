@@ -78,7 +78,7 @@
       
       <div class="class-instructor">
         <div class="image">
-          <img src="assets/{{ instructor.image }}">
+          <img src="{{ instructor.image ? '/assets/' + instructor.image : 'http://placehold.it/350x150' }}">
         </div>
         <h3 class="h small center primary">{{ instructor.admin.first_name }}</h3>
       </div>
