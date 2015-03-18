@@ -2,10 +2,10 @@ from passlib.hash import bcrypt
 from app.models.users import User
 from app.models.packages import Package, UserPackage
 from app.helper import send_email_verification
-from app.models.schedules import InstructorSchedule
+from app.models.schedules import InstructorSchedule, BookedSchedule
 from app.models.admins import Instructor, Admin
 from datetime import datetime
-
+from bson.objectid import ObjectId
 import sys
 import tornado
 import json
@@ -114,6 +114,44 @@ def buy(self):
                     self.write(str(value))  
             else:
                 self.redirect('/#/rates')
+
+def testWaitList(self):
+
+    if self.get_argument('date'):
+        date = datetime.strptime(self.get_argument('date'),'%Y-%m-%d');
+        sched_id = ObjectId(self.get_argument('sched_id'))
+        sched = yield InstructorSchedule.objects.get(sched_id)
+        if not sched:
+            ins = yield Instructor.objects.limit(1).find_all()
+            if ins:
+                sched = InstructorSchedule(instructor=ins[0], type='regular', day='mon',
+                                           start=datetime.strptime('7:00 AM','%I:%M %p'), 
+                                           end=datetime.strptime('9:30 AM','%I:%M %p'))
+                sched = yield sched.save()
+
+        user = yield User.objects.get(email='user@waitlist.com')
+        if not user:
+            user = User(first_name='user', last_name='user', password='user', email='user@waitlist.com', credits=3)
+            user = yield user.save();
+
+        yield BookedSchedule.objects.filter(user_id=user._id).delete()
+        for x in range(0, 37):
+            if user:            
+                book = BookedSchedule(user_id=user._id, 
+                                      date=date,
+                                      schedule=sched._id,
+                                      seat_number=x + 1,
+                                      status='booked');
+                book = yield book.save()
+    else:
+        self.write('Please provide a date')
+    self.finish()
+
+def removeTestWaitList(self):
+    user = yield User.objects.get(email='user@waitlist.com')
+    yield BookedSchedule.objects.filter(user_id=user._id).delete();
+    yield user.delete()
+
 
 def addRegularSchedule(self):
 
