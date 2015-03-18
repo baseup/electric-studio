@@ -230,16 +230,16 @@ def add_regular_schedule(self):
     armand.motto = 'My ride will empower you to discover your strengths and help you forget your fears. Each pedal stroke will bring you to the next level of excitement and fitness.  Find out what you have and what you can.  Possibilities are endless.'
     armand = yield armand.save()
 
-    days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
-    times = ['7:00 AM', '9:30 AM', '1:00 PM', '3:30 PM', '5:00 PM']
-    endtimes = ['9:30 AM', '1:00 PM', '3:30 PM', '5:00 PM', '7:00 PM']
-    instruts = [kris._id, yessa._id, migs._id, abel._id, mitch._id]
+    # days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+    # times = ['7:00 AM', '9:30 AM', '1:00 PM', '3:30 PM', '5:00 PM']
+    # endtimes = ['9:30 AM', '1:00 PM', '3:30 PM', '5:00 PM', '7:00 PM']
+    # instruts = [kris._id, yessa._id, migs._id, abel._id, mitch._id]
 
-    for d, day in enumerate(days):
-        for t, time in enumerate(times):
-            schedule = InstructorSchedule(instructor=instruts[t], type='regular', day=day,
-                                          start=datetime.strptime(time,'%I:%M %p'), 
-                                          end=datetime.strptime(endtimes[t],'%I:%M %p'))
-            schedule = yield schedule.save()
+    # for d, day in enumerate(days):
+    #     for t, time in enumerate(times):
+    #         schedule = InstructorSchedule(instructor=instruts[t], type='regular', day=day,
+    #                                       start=datetime.strptime(time,'%I:%M %p'), 
+    #                                       end=datetime.strptime(endtimes[t],'%I:%M %p'))
+    #         schedule = yield schedule.save()
 
     self.finish()

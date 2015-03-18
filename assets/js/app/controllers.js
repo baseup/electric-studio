@@ -348,16 +348,6 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 
 
 ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, SharedService, BookService) {
-  $scope.schedules = ScheduleService.query();
-  $scope.schedules.$promise.then(function (data) {
-    $scope.schedules = data;
-  });
-
-  $scope.reserved = BookService.query();
-  $scope.reserved.$promise.then(function (data) {
-    $scope.reserved = data;
-  });
-
   $scope.resched = SharedService.get('resched');
 
   $scope.cancelResched = function () {
@@ -406,15 +396,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   }
 
   $scope.getWeek = function (date) {
-    $scope.schedules = ScheduleService.query();
-    $scope.schedules.$promise.then(function (data) {
-      $scope.schedules = data;
-    });
-
-    $scope.reserved = BookService.query();
-    $scope.reserved.$promise.then(function (data) {
-      $scope.reserved = data;
-    });
 
     var now = date? new Date(date) : new Date();
     now.setHours(0,0,0,0);
@@ -466,16 +447,37 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
     $scope.nmonD = n_mon.getDate();
     $scope.nmonM = months[n_mon.getMonth()];
     $scope.nmonDate = n_mon;
+
+    $scope.schedules = ScheduleService.query({ date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate() });
+    $scope.schedules.$promise.then(function (data) {
+      $scope.schedules = data;
+    });
+
+    $scope.reserved = BookService.query();
+    $scope.reserved.$promise.then(function (data) {
+      $scope.reserved = data;
+    });
+
   }
 
   $scope.getWeek(new Date());
   $scope.nextWeek = function () {
-    $scope.getWeek($scope.nmonDate);
+    var now = new Date();
+    var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
+    if ($scope.nmonDate < nextMonth) {
+      $scope.getWeek($scope.nmonDate);
+    }
   }
   $scope.prevWeek = function () {
     var pWeek = new Date($scope.monDate);
     pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 1);
-    $scope.getWeek(pWeek);
+
+    var now = new Date();
+    now.setDate(now.getDate() - now.getDay() + 1);
+
+    if(pWeek > now){
+      $scope.getWeek(pWeek);
+    }
   }
 });
 

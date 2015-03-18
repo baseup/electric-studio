@@ -26,6 +26,8 @@ def find(self):
             if user:
                 books = yield BookedSchedule.objects.filter(user_id=user._id, status__ne='cancelled').find_all()
                 self.render_json(books)
+            else:
+                self.finish()
         else:
             self.set_status(403)
             self.write('User not logged In')
