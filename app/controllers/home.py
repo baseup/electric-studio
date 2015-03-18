@@ -115,7 +115,7 @@ def buy(self):
             else:
                 self.redirect('/#/rates')
 
-def testWaitList(self):
+def test_waitlist(self):
 
     if self.get_argument('date'):
         date = datetime.strptime(self.get_argument('date'),'%Y-%m-%d');
@@ -147,13 +147,13 @@ def testWaitList(self):
         self.write('Please provide a date')
     self.finish()
 
-def removeTestWaitList(self):
+def remove_test_waitlist(self):
     user = yield User.objects.get(email='user@waitlist.com')
     yield BookedSchedule.objects.filter(user_id=user._id).delete();
     yield user.delete()
 
 
-def addRegularSchedule(self):
+def add_regular_schedule(self):
 
     admins = yield Admin.objects.find_all()
     for i, a in enumerate(admins):

@@ -10,9 +10,9 @@ routes.get('/verify', 'home.verify')
 routes.post('/verify', 'home.verify')
 routes.post('/user/login', 'home.login')
 routes.get('/user/logout', 'home.logout')
-routes.get('/add_regular_schedules', 'home.addRegularSchedule')
-routes.get('/test_waitlist', 'home.testWaitList')
-routes.get('/remove_test_waitlist', 'home.removeTestWaitList')
+routes.get('/add_regular_schedules', 'home.add_regular_schedule')
+routes.get('/test_waitlist', 'home.test_waitlist')
+routes.get('/remove_test_waitlist', 'home.remove_test_waitlist')
 routes.post('/upload/instructor', 'upload.instructor')
 
 routes.prefix('/admin', [
