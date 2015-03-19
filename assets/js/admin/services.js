@@ -150,3 +150,15 @@ services.factory('ClassService', function ($resource) {
     }
   });
 });
+
+services.factory('SliderService', function ($resource) {
+  return $resource('/admin/slider/:sliderId', {}, {
+    query: {
+      method: 'GET',
+      isArray: true
+    },
+    update: {
+      method: 'PUT'
+    }
+  });
+});

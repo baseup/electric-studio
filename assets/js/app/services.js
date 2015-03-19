@@ -3,6 +3,15 @@
 var loginUser = window.localStorage.getItem('login-user');
 var services = angular.module('elstudio.services', ['ngResource']);
 
+services.factory('SliderService', function ($resource) {
+  return $resource('/admin/slider/:sliderId', {}, {
+    query: {
+      method: 'GET',
+      isArray: true
+    }
+  });
+});
+
 services.factory('UserService', function($resource) {
   return $resource('/api/user/:userId/:action', {}, {
     logout: {

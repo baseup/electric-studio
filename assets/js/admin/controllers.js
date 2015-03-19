@@ -401,10 +401,121 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
 });
 
 
-ctrls.controller('SliderCtrl', function ($scope) {
+ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
   
+  $scope.sliders = SliderService.query();
+  $scope.sliders.$promise.then(function (data) {
+    $scope.sliders = data;
+  });
+
   $scope.addSlide = function () {
     angular.element('#add-slide-modal').Modal();
+  }
+
+  $scope.uploadSlider = function(files){
+    if(files && files[0]){
+      var file = files[0];
+      if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
+        alert('Invalid file type');
+        return;
+      } else if (file.size > (1024 * 1024 * 3)) {
+        alert('Must not exceed 3MB');
+        return;
+      }
+      $scope.toUploadFile = file;
+    }else{
+      $scope.toUploadFile = null;
+    }
+  }
+
+  $scope.saveSlider = function(){
+    if($scope.toUploadFile &&
+       $scope.newSlider && $scope.newSlider.text){
+      $scope.uploading = true;
+      $upload.upload({
+        url: '/admin/slider',
+        method: 'POST',
+        data: { 'text' : $scope.newSlider.text },
+        file: $scope.toUploadFile
+      }).then(
+        function (e) {
+          $scope.sliders = SliderService.query();
+          $scope.sliders.$promise.then(function (data) {
+            $scope.sliders = data;
+          });
+          $scope.toUploadFile = null;
+          $scope.uploading = false;
+        },
+        function (e) {
+          $scope.uploading = false;
+          alert(e.data);
+        },
+        function (e) {
+          var progress = parseInt(100.0 * e.loaded / e.total);
+          if(progress < 100)
+          $.Notify({ content: 'Uploading (' + progress + '%)' });
+        }
+      );
+    } else {
+      $.Notify({ content: 'Please upload a file and input a text.' });
+    }
+  }
+
+  $scope.updateSliderImg = null;
+  $scope.changeSliderImg = function(slider){
+    if(!$scope.uploading){
+      $scope.updateSliderImg = slider;
+    }
+  }
+
+  $scope.chkChangeImg = function(id){
+    if($scope.updateSliderImg && $scope.updateSliderImg._id == id){
+      return true;
+    }
+    return false;
+  }
+
+  $scope.cancelChangeImg = function(){
+    $scope.updateSliderImg = null;
+  }
+
+  $scope.updateSlider = function(){
+    if($scope.toUploadFile ||
+       ($scope.updateSliderImg && $scope.updateSliderImg.text)){
+      $scope.uploading = true;
+      $upload.upload({
+        url: '/admin/slider/' + $scope.updateSliderImg._id,
+        method: 'PUT',
+        data: { 'text' : $scope.updateSliderImg.text },
+        file: $scope.toUploadFile
+      }).then(
+        function (e) {
+          $scope.sliders = SliderService.query();
+          $scope.sliders.$promise.then(function (data) {
+            $scope.sliders = data;
+          });
+          $scope.updateSliderImg = null;
+          $scope.uploading = false;
+        },
+        function (e) {
+          $scope.uploading = false;
+          alert(e.data);
+        },
+        function (e) {
+          var progress = parseInt(100.0 * e.loaded / e.total);
+          if(progress < 100)
+          $.Notify({ content: 'Uploading (' + progress + '%)' });
+        }
+      );
+    }
+  }
+
+  $scope.removeSlider = function(slider){
+    SliderService.delete({ sliderId: slider._id });
+    $scope.sliders = SliderService.query();
+    $scope.sliders.$promise.then(function (data) {
+      $scope.sliders = data;
+    });
   }
   
 });

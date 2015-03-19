@@ -9,10 +9,15 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 });
 
 
-ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
+ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService, SliderService) {
 
   $scope.loginUser = AuthService.getCurrentUser();
   $scope.selectedSched = null;
+
+  $scope.sliders = SliderService.query();
+  $scope.sliders.$promise.then(function (data) {
+    $scope.sliders = data;
+  });
   
   $scope.activeMainNav = function (path) {
     return window.location.hash.indexOf('#' + path) == 0;
