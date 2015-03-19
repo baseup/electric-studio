@@ -32,4 +32,11 @@ class Instructor(Model):
     def to_dict(self):
        return mongo_to_dict(self)
 
+class Slider(Model):
+    __collection__ = 'sliders'
+    image = StringField(required=True)
+    text = StringField(required=True)
+    create_at = DateTimeField(auto_now_on_insert=True)
+    update_at = DateTimeField(auto_now_on_update=True)
+    
 

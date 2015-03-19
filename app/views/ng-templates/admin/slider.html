@@ -16,44 +16,26 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr ng-repeat="slider in sliders">
               <td>
-                <img class="slider-image" src="/assets/images/slider-image-1.jpg">
+                <div align="center" class="image" ng-click="changeSliderImg(slider)">
+                  <img width="200" height="200" ng-src="{{ slider.image }}">
+                </div>  
               </td>
-              <td>Let's go for a ride</td>
               <td>
-                <button class="btn btn--small btn--secondary">
-                  <i class="fa fa-trash"></i> Edit
-                </button>
-                <button class="btn btn--small btn--secondary">
-                  <i class="fa fa-pencil"></i> Remove
-                </button>
+                <div class="pad" style="height: 203px;" ng-show="chkChangeImg(slider._id)">
+                  Text : <input class="text-input" ng-model="updateSliderImg.text"/><br/><br/>
+                  <input ng-show="!uploading" type="file" ng-file-select="uploadSlider($files)"/>
+                  <span ng-show="uploading">Uploading: {{ progress }}</span>
+                  <div class="account__options pad--sides pad--half-ends space--top cf">
+                    <a class="float--left" ng-click="updateSlider()" >Update</a>
+                    <a class="float--right" ng-click="cancelChangeImg()" >Cancel</a>
+                  </div>
+                </div>
+                <span ng-if="!updateSliderImg">{{ slider.text }}</span>
               </td>
-            </tr>
-            <tr>
               <td>
-                <img class="slider-image" src="/assets/images/slider-image-2.jpg">
-              </td>
-              <td>Plug In</td>
-              <td>
-                <button class="btn btn--small btn--secondary">
-                  <i class="fa fa-trash"></i> Edit
-                </button>
-                <button class="btn btn--small btn--secondary">
-                  <i class="fa fa-pencil"></i> Remove
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <img class="slider-image" src="/assets/images/slider-image-3.jpg">
-              </td>
-              <td>RIDE - CLIMB - PUSH - STRETCH - SPRINT - CRUNCH - LIFT - DANCE</td>
-              <td>
-                <button class="btn btn--small btn--secondary">
-                  <i class="fa fa-trash"></i> Edit
-                </button>
-                <button class="btn btn--small btn--secondary">
+                <button class="btn btn--small btn--secondary" ng-click="removeSlider(slider)">
                   <i class="fa fa-pencil"></i> Remove
                 </button>
               </td>
@@ -72,13 +54,13 @@
       <h3 class="h--medium brand-color space--bottom">Add Slide</h3>
       <div class="space--bottom">
         <span class="label">Background Image</span>
-        <input type="file">
+        <input type="file" ng-file-select="uploadSlider($files)" >
       </div>
       <div class="space--bottom">
         <span class="label">Text</span>
-        <input placeholder="Add Text" class="text-input">
+        <input placeholder="Add Text" class="text-input" ng-model="newSlider.text">
       </div>
-      <button class="btn btn--medium btn--primary space--top modal-close">Add</button>
+      <button class="btn btn--medium btn--primary space--top modal-close" ng-click="saveSlider()">Add</button>
     </div>
   </div>
 </div>

@@ -9,10 +9,23 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 });
 
 
-ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
+ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService, SliderService) {
 
   $scope.loginUser = AuthService.getCurrentUser();
   $scope.selectedSched = null;
+
+  $scope.sliders = SliderService.query();
+  $scope.sliders.$promise.then(function (data) {
+    $scope.sliders = data;
+
+    $timeout(function(){
+      angular.element('.slider-container').glide({
+        autoplay: 3000,
+        hoverpause: false,
+        arrows: false
+      });
+    }, 400);
+  });
   
   $scope.activeMainNav = function (path) {
     return window.location.hash.indexOf('#' + path) == 0;
@@ -26,11 +39,7 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
       bookToggle = angular.element('.book-toggle'),
       menuToggle = angular.element('.menu-toggle');
     
-  angular.element('.slider-container').glide({
-    autoplay: 3000,
-    hoverpause: false,
-    arrows: false
-  });
+  
 
   angular.element('.fit-text span').fitText(2);
 

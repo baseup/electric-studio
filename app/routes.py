@@ -27,6 +27,7 @@ routes.prefix('/admin', [
     ('resource', '/user', 'admin.user'),
     ('resource', '/schedule', 'admin.schedule'),
     ('resource', '/instructor/schedules', 'admin.instructor_schedules'),
+    ('resource', '/slider', 'admin.slider'),
 
     ('get', '/export/download-bookings', 'admin.export.download_bookings')
 ])
