@@ -708,6 +708,23 @@ body {
     }
   }
   
+  .wrapper {
+    position: relative;
+  }
+  
+  .close-btn {
+    position: absolute;
+    color: #fff;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 20px;
+    
+    &:hover {
+      color: $brand-color-primary;
+    }
+  }
+  
   @include breakpoint(md) {
     text-align: left;
     
