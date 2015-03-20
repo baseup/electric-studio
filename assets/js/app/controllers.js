@@ -650,3 +650,11 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
   }
 
 });
+
+ctrls.controller('WhatsnewCtrl', function ($scope, Instagram) {
+  
+  Instagram.fetchRecent(function(data) {
+    $scope.instagram = data;
+  });
+  
+});

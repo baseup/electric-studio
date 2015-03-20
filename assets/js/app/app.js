@@ -157,3 +157,17 @@ app.filter('addDay', function() {
     }
   };
 });
+
+app.factory('Instagram', ['$http', function($http) {
+  return {
+    fetchRecent: function(callback) {
+      var userID = '1505862477',
+          clientID = 'e6be793a6b2d4618a0efc919862a53f3',
+          endPoint = 'https://api.instagram.com/v1/users/' + userID + '/media/recent/?client_id='+ clientID +'&callback=JSON_CALLBACK';
+
+      $http.jsonp(endPoint).success(function(response) {
+        callback(response.data);
+      });
+    }
+  }
+}]);
