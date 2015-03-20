@@ -97,6 +97,10 @@ body {
       display: block;
       clear: both;
     }
+    
+    @include breakpoint(md) {
+      padding: $base-spacing-unit*2 $base-spacing-unit;
+    }
   }
 }
 
@@ -135,7 +139,7 @@ body {
     @include breakpoint(md) {
       position: absolute;
       right: 20px;
-      bottom: 20px;
+      bottom: 36px;
       height: 54px;
       margin-bottom: 0;
       display: none;
@@ -155,7 +159,7 @@ body {
 .main-menu {
   letter-spacing: 2px;
   cursor: default;
-  font-size: 16px;
+  font-size: 14px;
   display: none;
   padding: $base-spacing-unit / 2 0;
   text-align: left;
@@ -164,7 +168,7 @@ body {
     padding: 0;
     display: block;
     position: absolute;
-    bottom: 15px;
+    bottom: 32px;
     left: 240px;
     margin: 0;
   }
@@ -216,7 +220,7 @@ body {
   @include breakpoint(md) {
     position: absolute;
     right: 20px;
-    bottom: 50px;
+    bottom: 64px;
     text-align: right;
     display: block;
   }
@@ -232,7 +236,7 @@ body {
   }
   
   .account-menu__options {
-    font-size: 0.8em;
+    font-size: 14px;
     text-align: left;
   
   
@@ -275,7 +279,7 @@ body {
       left: auto;
       right: -100px;
       width: 200px;
-      padding-top: 60px;
+      padding-top: 74px;
     }
   }
   
@@ -318,7 +322,7 @@ body {
       left: -55px;
       right: auto;
       width: 220px;
-      padding-top: 24px;
+      padding-top: 38px;
       z-index: 9;
     }
   }
@@ -340,7 +344,7 @@ body {
         text-transform: uppercase;
         padding: 10px 0;
         color: $color-text-light;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: normal;
 
         &:last-child {
@@ -377,7 +381,7 @@ body {
   @include breakpoint(md) {
     position: absolute;
     right: 20px;
-    bottom: 15px;
+    bottom: 31px;
     text-align: right;
     margin-right: 0;
     font-size: 22px
@@ -385,7 +389,7 @@ body {
   
   @include breakpoint(lg) {
     right: 100px;
-    font-size: 28px;
+    font-size: 26px;
   }
 }
 
@@ -403,7 +407,7 @@ body {
     text-transform: uppercase;
     padding: 10px;
     color: $color-text-light;
-    font-size: 16px;
+    font-size: 14px;
 
     &:last-child {
       border: none;
@@ -723,6 +727,10 @@ body {
     &:hover {
       color: $brand-color-primary;
     }
+    
+    @include breakpoint(md) {
+      font-size: 24px;
+    }
   }
   
   @include breakpoint(md) {
@@ -750,7 +758,7 @@ body {
   padding: 0;
 }
   
-.slide {
+.slide, .banner {
   display: block;
   position: relative;
   height: 400px;
@@ -863,6 +871,46 @@ body {
   }
 }
 
+.banner {
+  float: none!important;
+  height: 300px;
+  width: 100%;
+  background-color: $brand-color-secondary;
+  
+  
+  @include breakpoint(md) {
+    height: 540px!important;
+  }
+  
+  &.about {
+    background-image: url(/assets/images/slider-image-6.jpg);
+  }
+  
+  &.workouts {
+    background-image: url(/assets/images/slider-image-5.jpg);
+  }
+  
+  &.rates {
+    background-image: url(/assets/images/slider-image-3.png);
+  }
+  
+  &.first-ride {
+    background-image: url(/assets/images/slider-image-4.png);
+  }
+  
+  span {
+    font-size: 70px;
+    
+    @include breakpoint(md) {
+      font-size: 140px;
+    }
+    
+    @include breakpoint(lg) {
+      font-size: 200px;
+    }
+  }
+}
+
 .slider__nav {
   padding: 0;
   position: absolute;
@@ -893,6 +941,12 @@ body {
 .main-footer {
   background: $brand-color-tertiary;
   font-family: 'Brandon_Grotesque';
+  
+  .wrapper {
+    @include breakpoint(md) {
+      padding: $base-spacing-unit*2 $base-spacing-unit;
+    }
+  }
 }
 
 .footer-links {
@@ -1833,6 +1887,8 @@ body {
 }
 
 .instagram-link {
+  text-transform: none;
+  
   &:hover .caption {
     color: $brand-color-primary;
   }
@@ -1842,7 +1898,7 @@ body {
   
   
   
-  .slide {
+  .slide, .banner {
     font-size: 100px;
     
     &.font-medium {
@@ -1866,12 +1922,8 @@ body {
 
 @media only screen and (min-width: 980px){
   
-  body {
-    font-size: 18px;
-  }
   
-  
-  .slide {
+  .slide, .banner {
     height: 560px;
     font-size: 180px;
     

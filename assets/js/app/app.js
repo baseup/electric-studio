@@ -158,7 +158,7 @@ app.filter('addDay', function() {
   };
 });
 
-app.factory('Instagram', ['$http', function($http) {
+app.factory('Instagram', function($http) {
   return {
     fetchRecent: function(callback) {
       var userID = '1505862477',
@@ -170,4 +170,4 @@ app.factory('Instagram', ['$http', function($http) {
       });
     }
   }
-}]);
+});
