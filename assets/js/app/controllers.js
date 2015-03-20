@@ -92,7 +92,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
         window.location = '/';        
       },
       error: function (xhr, code, error) {
-        alert(xhr.responseText);
+        $.Alert(xhr.responseText);
       }
     });
 
@@ -140,7 +140,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
     $scope.verificationLink = null;
     var sendEmailSuccess = function () {
       $scope.sendingEmail = false;
-      alert('Successfully send email verification');
+      $.Alert('Successfully send email verification');
     }
 
     var sendEmailFailed = function (error) {
@@ -215,10 +215,10 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 
       var addSuccess = function () {
         $scope.loginUser = AuthService.getCurrentUser();
-        alert('Successfully updated user info')
+        $.Alert('Successfully updated user info')
       }
       var addFail = function (error) {
-        alert(error.data);
+        $.Alert(error.data);
       }
 
       UserService.update({ userId: $scope.loginUser._id }, $scope.account).$promise.then(addSuccess, addFail);
@@ -229,20 +229,20 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
       if ($scope.pass && $scope.pass.current_password) {
 
         if ($scope.pass.password != $scope.pass.confirm_password) {
-          alert("Retype Password didn't match");
+          $.Alert("Retype Password didn't match");
           return;
         }
         var addSuccess = function () {
-          alert("Successfully updated your password")
+          $.Alert("Successfully updated your password")
           $scope.pass = null;
         }
         var addFail = function (error) {
-          alert(error.data);
+          $.Alert(error.data);
           $scope.pass = null;
         }
         UserService.update({ userId: $scope.loginUser._id }, $scope.pass).$promise.then(addSuccess, addFail);
       } else {
-        alert('Please fill up the form')
+        $.Alert('Please fill up the form')
       }
 
     }
@@ -264,14 +264,14 @@ ctrls.controller('RatesCtrl', function ($scope, $http, PackageService) {
 
   $scope.buyPackage = function (event) {
     if (!$scope.loginUser || $scope.loginUser.length == 0) {
-      alert('User is not logged In');
+      $.Alert('User is not logged In');
       angular.element("html, body").animate({ scrollTop: 0 }, "slow");
       angular.element('.login-toggle').click();
       event.preventDefault();
     }
 
     if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
-      alert('User is Unverified, Please check your email');
+      $.Alert('User is Unverified, Please check your email');
       event.preventDefault();
     }
   }
@@ -331,7 +331,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
       var time = book.schedule.start.split(/[^0-9]/);
       var chkDate =  new Date(date[0], date[1]-1, date[2], time[3] - 1, time[4], time[5]);
       if (+today >= +chkDate) {
-        alert('Schedule could not be cancelled anymore')
+        $.Alert('Schedule could not be cancelled anymore')
         return;
       }
 
@@ -352,7 +352,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
           });
         }
         var bookFail = function (error) {
-          alert(error.data)
+          $.Alert(error.data)
         }
         
         BookService.update({ bookId: book._id }, data).$promise.then(bookSuccess, bookFail);
@@ -555,14 +555,14 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
   $scope.bookSchedule = function () {
     
     if (!$scope.loginUser || $scope.loginUser.length == 0) {
-      alert('User is not logged In');
+      $.Alert('User is not logged In');
       angular.element("html, body").animate({ scrollTop: 0 }, "slow");
       angular.element('.login-toggle').click();
       return;
     }
 
     if (!$scope.forWaitlist && seat == 0) {
-      alert('Please pick a seat');
+      $.Alert('Please pick a seat');
       return;
     }
 
@@ -581,7 +581,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
       $location.path('/reserved')
     }
     var bookFail = function (error) {
-      alert(error.data)
+      $.Alert(error.data)
     }
 
     if ($scope.resched == undefined) {

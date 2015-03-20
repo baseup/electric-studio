@@ -132,4 +132,13 @@
     }
   }
 
+  $.Alert = function (message) {
+    var content = message;
+    if (typeof message == 'object') {
+      content = message.content;
+    }
+    $('#alert-modal-message').html(message);
+    $('#alert-modal').Modal();
+  }
+
 })(jQuery);
