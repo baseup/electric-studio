@@ -1,10 +1,6 @@
   
-  <div class="slider-container rates">
-    <ul class="slider">
-      <li ng-repeat="slider in sliders" class="slide" style="background-image: url('{{ slider.image }}');">
-        <span>{{ slider.text }}</span>
-      </li>
-    </ul>
+  <div class="banner rates">
+    <span>Fire Up that Energy Factory</span> 
   </div>
 
   <div class="content">
@@ -33,7 +29,7 @@
           <input type="hidden" name="return" value="{{ redirectUrl }}?pid={{ package.id }}&success=True">
           <input type="hidden" name="cancel_return" value="{{ redirectUrl }}?success=False">
           <input type="hidden" name="cbt" value="Return to Electric Studio">
-          <input class="button small" ng-click="buyPackage($event)" value = "Buy" class = "button" type = "submit">
+          <input class="button primary small" ng-click="buyPackage($event)" value = "Buy" class = "button" type = "submit">
         </form>
       </section>
       <div class="faq">

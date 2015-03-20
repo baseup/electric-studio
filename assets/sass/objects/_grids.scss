@@ -28,6 +28,12 @@
   float: left;
 }
 
+.grid__item--inline {
+  float: none;
+  display: inline-block;
+  vertical-align: top;
+}
+
 /**
  * Grid modifiers
  */

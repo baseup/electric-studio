@@ -42,6 +42,12 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
   
 
   angular.element('.fit-text span').fitText(2);
+  
+  angular.element('.close-btn').click(function() {
+    var headerForm = angular.element(this).closest(login.add(signup));
+    
+    headerForm.removeClass('show');
+  });
 
 
   loginToggle.off('click').on('click', function () {
@@ -649,4 +655,12 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
 
   }
 
+});
+
+ctrls.controller('WhatsnewCtrl', function ($scope, Instagram) {
+  
+  Instagram.fetchRecent(function(data) {
+    $scope.instagram = data;
+  });
+  
 });

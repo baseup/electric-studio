@@ -72,20 +72,21 @@
   <div class="header-form-container login" ng-controller="LoginCtrl">
     <div class="wrapper">
       <h2 class="h large light">Log In</h2>
-      <p class="notify">{{! signInError }} Please re-enter your informatin to Log In.</p>
+      <p class="notify">{{! signInError }}</p>
       <form class="login-form" method="post">
         <input class="input-box" placeholder="Email Address" ng-model="login.email" required>
         <input type="password" class="input-box" placeholder="Password" ng-model="login.password" required>
 
-        <input type="submit" value="Log In" class="button" ng-click="signIn()">
+        <input type="submit" value="Log In" class="button primary" ng-click="signIn()">
       </form>
+      <span class="close-btn">X</span>
     </div>  
   </div>
   
   <div class="header-form-container signup" ng-controller="SignUpCtrl">
     <div class="wrapper" ng-show="!registered">
       <h2 class="h large light">Sign Up</h2>
-      <p class="notify">{{! signupError }} Please re-enter your informatin to Log In.</p>
+      <p class="notify">{{! signupError }}</p>
       <form class="signup-form" method="post">
         <input class="input-box" placeholder="First Name" ng-model="user.first_name">
         <input class="input-box" placeholder="Last Name" ng-model="user.last_name">
@@ -94,8 +95,9 @@
         <input type="password" class="input-box" placeholder="Password" ng-model="user.password">
         <input type="password" required compare-to="user.password" class="input-box" placeholder="Re-type Password" ng-model="user.confirm_password">
 
-        <input type="button" value="Sign Up" class="button" ng-click="signUp()">
+        <input type="button" value="Sign Up" class="button primary" ng-click="signUp()">
       </form>
+      <span class="close-btn">X</span>
     </div>
     <div class="wrapper" ng-show="registered">
       <h2 class="h large light">Please check your email for confirmation</h2>
