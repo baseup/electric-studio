@@ -20,17 +20,17 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
 
     if ($scope.newPackage) {
       if (!$scope.newPackage.name) {
-        alert('Package must have name')
+        $.Alert('Package must have name')
         return;
       }
       
       if (!$scope.newPackage.fee) {
-        alert('Package must have price')
+        $.Alert('Package must have price')
         return;
       }
       
       if (!$scope.newPackage.credits) {
-        alert('Package must have number of credits')
+        $.Alert('Package must have number of credits')
         return;
       }
 
@@ -42,7 +42,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
       }
 
       var addFail = function (error) {
-        alert(error.data);
+        $.Alert(error.data);
       }
 
       PackageService.create($scope.newPackage).$promise.then(addSuccess, addFail);
@@ -71,7 +71,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
       }
 
       var addFail = function (error) {
-        alert(error.data);
+        $.Alert(error.data);
       }
 
       PackageService.update({ packageId: $scope.updatePackage._id }, $scope.updatePackage).$promise.then(addSuccess, addFail);
@@ -86,7 +86,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
     }
 
     var addFail = function (error) {
-      alert(error.data);
+      $.Alert(error.data);
     }
 
     PackageService.delete({packageId : pac._id}).$promise.then(addSuccess, addFail);
@@ -416,10 +416,10 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
     if(files && files[0]){
       var file = files[0];
       if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
-        alert('Invalid file type');
+        $.Alert('Invalid file type');
         return;
       } else if (file.size > (1024 * 1024 * 3)) {
-        alert('Must not exceed 3MB');
+        $.Alert('Must not exceed 3MB');
         return;
       }
       $scope.toUploadFile = file;
@@ -448,7 +448,7 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         },
         function (e) {
           $scope.uploading = false;
-          alert(e.data);
+          $.Alert(e.data);
         },
         function (e) {
           var progress = parseInt(100.0 * e.loaded / e.total);
@@ -499,7 +499,7 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         },
         function (e) {
           $scope.uploading = false;
-          alert(e.data);
+          $.Alert(e.data);
         },
         function (e) {
           var progress = parseInt(100.0 * e.loaded / e.total);
@@ -632,22 +632,22 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
     
     if ($scope.newInstructor) {
       if (!$scope.newInstructor.first_name) {
-        alert('Package must have first name')
+        $.Alert('Package must have first name')
         return;
       }
 
       if (!$scope.newInstructor.last_name) {
-        alert('Package must have last name')
+        $.Alert('Package must have last name')
         return;
       }      
       
       if (!$scope.newInstructor.email) {
-        alert('Package must have email')
+        $.Alert('Package must have email')
         return;
       }
       
       if (!$scope.newInstructor.contact_number) {
-        alert('Package must have number of contact_number')
+        $.Alert('Package must have number of contact_number')
         return;
       }
 
@@ -662,7 +662,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
       }
 
       var addFail = function (error) {
-        alert(error.data);
+        $.Alert(error.data);
       }
 
       InstructorService.create($scope.newInstructor).$promise.then(addSuccess, addFail);
@@ -693,10 +693,10 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
     if(files && files[0]){
       var file = files[0];
       if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
-        alert('Invalid file type');
+        $.Alert('Invalid file type');
         return;
       } else if (file.size > (1024 * 1024 * 3)) {
-        alert('Must not exceed 3MB');
+        $.Alert('Must not exceed 3MB');
         return;
       }
 
@@ -717,14 +717,14 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
         },
         function (e) {
           $scope.uploading = false;
-          alert(e.data);
+          $.Alert(e.data);
         },
         function (e) {
           $scope.progress = parseInt(100.0 * e.loaded / e.total);
         }
       );
     } else {
-      alert('Please select image to upload');
+      $.Alert('Please select image to upload');
     }
   }
 
@@ -757,7 +757,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
       }
 
       var addFail = function (error) {
-        alert(error.data);
+        $.Alert(error.data);
       }
 
       InstructorService.update({ instructorId: $scope.updateInstructor._id }, $scope.updateInstructor).$promise.then(addSuccess, addFail);
@@ -772,7 +772,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
     }
 
     var addFail = function (error) {
-      alert(error.data);
+      $.Alert(error.data);
     }
 
     InstructorService.delete({instructorId : ins._id}).$promise.then(addSuccess, addFail);
