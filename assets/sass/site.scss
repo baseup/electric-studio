@@ -654,10 +654,13 @@ body {
   }
   
   &.primary {
-    color: $brand-color-primary;
+    color: $brand-color-primary!important;
     background-color: #fff;
   }
   
+  &:focus {
+    outline: 0;
+  }
 }
 
 .header-form-container {
