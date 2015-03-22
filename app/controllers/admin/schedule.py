@@ -29,7 +29,7 @@ def find(self):
             'available': available_seats
         })
     else:
-        schedules = yield InstructorSchedule.objects.filter(day=date.strftime('%a').lower()).find_all()
+        schedules = yield InstructorSchedule.objects.filter(date=date).find_all()
         list_scheds = []
         for s in schedules:
             list_scheds.append({
@@ -41,8 +41,8 @@ def find(self):
         if time:
             time = datetime.strptime(time, '%I:%M %p')
             ins_sched = yield InstructorSchedule.objects.get(date=date, start_time=time)
-            if not ins_sched:
-                ins_sched = yield InstructorSchedule.objects.get(day=date.strftime('%a').lower(), start=time)
+            # if not ins_sched:
+            #     ins_sched = yield InstructorSchedule.objects.get(day=date.strftime('%a').lower(), start=time)
         elif sched_id:
             ins_sched = yield InstructorSchedule.objects.get(sched_id)
 
