@@ -408,8 +408,43 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
     $scope.sliders = data;
   });
 
+  angular.element('#class-tabs').Tab();
+
   $scope.addSlide = function () {
     angular.element('#add-slide-modal').Modal();
+  }
+
+  $scope.uploadImage = function(files, type){
+    if(files && files[0]){
+      var file = files[0];
+      if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
+        $.Alert('Invalid file type');
+        return;
+      } else if (file.size > (1024 * 1024 * 3)) {
+        $.Alert('Must not exceed 3MB');
+        return;
+      }
+
+      $upload.upload({
+        url: '/upload/images',
+        method: 'POST',
+        data: { 'type' : type },
+        file: file
+      }).then(
+        function (e) {
+          $("#" + type).attr("src", $("#" + type).attr("src")+"?timestamp=" + new Date().getTime());
+        },
+        function (e) {
+          $scope.uploading = false;
+          $.Alert(e.data);
+        },
+        function (e) {
+          var progress = parseInt(100.0 * e.loaded / e.total);
+          if(progress < 100)
+          $.Notify({ content: 'Uploading (' + progress + '%)' });
+        }
+      );
+    }
   }
 
   $scope.uploadSlider = function(files){

@@ -2,11 +2,24 @@
    <div class="grid content pad">
     <div class="grid__item">
     <div class="sliders box--white box--bordered">
-      <div class="box__header align--middle cf pad">
-        <span class="label label--inline">Homepage Slider</span>
-        <button ng-click="addSlide()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-slide">Add Slide</button>
-      </div>
+      <br/>
       <div class="pad pad--off-top">
+
+
+    <ul class="nav-tabs" id="class-tabs">
+      <li>
+        <a class="active" data-tab-toggle="tab-sliders">Slider</a>
+      </li>
+      <li>
+        <a data-tab-toggle="tab-images">Static Images</a>
+      </li>
+    </ul>
+
+    <div class="tab-sliders tab-pane tab-pane--active" data-tab-pane="tab-sliders">
+        <div class="box__header align--middle cf pad">
+          <button ng-click="addSlide()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-slide">Add Slide</button>
+        </div>
+
         <table class="slider-list data-table">
           <thead>
             <tr>
@@ -42,6 +55,75 @@
             </tr>
           </tbody>
         </table>
+
+    </div><!-- /.sliders -->
+
+    <div class="tab-images tab-pane" data-tab-pane="tab-images">
+
+      <table class="slider-list data-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Page</th>
+              <th class="options-cell">Action</th>
+            </tr>
+          </thead>
+           <tbody>
+            <tr>
+              <td>
+                <div align="center" class="image">
+                  <img id='about-us' width="200" height="200" src="assets/images/about-us.jpg">
+                </div>  
+              </td>
+              <td>
+                About Us
+              </td>
+              <td>
+                  <input type="file" ng-file-select="uploadImage($files,'about-us')"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div align="center" class="image">
+                  <img id='workouts' width="200" height="200" src="assets/images/workouts.jpg">
+                </div>  
+              </td>
+              <td>
+                Workouts
+              </td>
+              <td>
+                  <input type="file" ng-file-select="uploadImage($files,'workouts')"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div align="center" class="image">
+                  <img id='first-ride' width="200" height="200" src="assets/images/first-ride.png">
+                </div>  
+              </td>
+              <td>
+                First Ride
+              </td>
+              <td>
+                  <input type="file" ng-file-select="uploadImage($files,'first-ride')"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div align="center" class="image">
+                  <img id='rates' width="200" height="200" src="assets/images/rates.png">
+                </div>  
+              </td>
+              <td>
+                Rates & Packages
+              </td>
+              <td>
+                  <input type="file" ng-file-select="uploadImage($files,'rates')"/>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
       </div>
     </div>
     </div>

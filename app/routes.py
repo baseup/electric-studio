@@ -14,6 +14,7 @@ routes.get('/add_regular_schedules', 'home.add_regular_schedule')
 routes.get('/test_waitlist', 'home.test_waitlist')
 routes.get('/remove_test_waitlist', 'home.remove_test_waitlist')
 routes.post('/upload/instructor', 'upload.instructor')
+routes.post('/upload/images', 'upload.images')
 
 routes.prefix('/admin', [
 
