@@ -33,7 +33,7 @@ def find(self):
     scheds = { 
         'mon' : mon, 
         'tue' : tue,
-        'wed' : tue,
+        'wed' : wed,
         'thu' : thu,
         'fri' : fri,
         'sat' : sat,
