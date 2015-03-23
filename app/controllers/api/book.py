@@ -79,11 +79,8 @@ def create(self):
                             yield user_package.save()
 
                             user = (yield User.objects.get(user._id)).serialize()
-                            yield self.io.async_task(send_email_booking, 
-                                                     user=user, 
-                                                     date=data['date'], 
-                                                     time=sched.start.strftime('%I:%M %p'), 
-                                                     seat_number=str(book.seat_number))
+                            content = str(self.render_string('emails/booking', date=data['date'], user=user, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p'), seat_number=str(book.seat_number)), 'UTF-8')
+                            yield self.io.async_task(send_email_booking, user=user, content=content)
                             break
 
                         if not has_valid_package:
@@ -108,6 +105,7 @@ def update(self, id):
             book = yield BookedSchedule.objects.get(id)
             ref_book_date = book.date
             ref_book_time = datetime.strptime('0:00','%H:%M')
+            ref_sched_id = book.schedule._id
             if book.schedule:
                 ref_book_time = book.schedule.start
 
@@ -132,19 +130,16 @@ def update(self, id):
                 yield self.io.async_task(
                     send_email_cancel,
                     user=user.to_dict(),
-                    date=book.date.strftime('%Y-%m-%d'),
-                    time=book.schedule.start.strftime('%I:%M %p')
+                    content=str(self.render_string('emails/cancel', instructor=book.schedule.instructor, user=user.to_dict(), date=book.date.strftime('%Y-%m-%d'), seat_number=book.seat_number, time=book.schedule.start.strftime('%I:%M %p')), 'UTF-8')
+                    
                 )
-            elif 'sched_id' in data and ref_book_date != book.date:
+            elif 'sched_id' in data and str(ref_sched_id) != str(data['sched_id']):
                 user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
                 user = yield User.objects.get(user_id)
                 yield self.io.async_task(
                     send_email_move,
-                    user=user.to_dict(),
-                    old_date=ref_book_date.strftime('%Y-%m-%d'),
-                    new_date=book.date.strftime('%Y-%m-%d'),
-                    old_time=ref_book_time.strftime('%I:%M %p'),
-                    new_time=sched.start.strftime('%I:%M %p')
+                    content=str(self.render_string('emails/moved', user=user.to_dict(), instructor=sched.instructor, date=book.date.strftime('%Y-%m-%d'), seat_number=book.seat_number, time=sched.start.strftime('%I:%M %p')), 'UTF-8'),
+                    user=user.to_dict()
                 )
         except:
             value = sys.exc_info()[1]

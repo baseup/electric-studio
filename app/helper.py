@@ -37,7 +37,7 @@ def mongo_to_dict(obj):
 
     return dict(return_data)
 
-def send_email_verification(user, url):
+def send_email_verification(user, content):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
@@ -46,7 +46,7 @@ def send_email_verification(user, url):
             'headers': {
                 'Reply-To': EMAIL_SENDER
             },
-            'html': '<p>Example HTML content<br><a href="' + url + '">Click here</a></p>',
+            'html': content,
             'important': True,
             'subject': 'Email Verification',
             'to': [
@@ -61,7 +61,7 @@ def send_email_verification(user, url):
     except mandrill.Error:    
         raise
 
-def send_email_booking(user, date, time, seat_number):
+def send_email_booking(user, content):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
@@ -70,7 +70,7 @@ def send_email_booking(user, date, time, seat_number):
             'headers': {
                 'Reply-To': EMAIL_SENDER
             },
-            'html': '<p>Booked: ' + date + ' ' + time + ' on seat no. ' + seat_number + '</p>',
+            'html':  content,
             'important': True,
             'subject': 'Booked',
             'to': [
@@ -85,7 +85,7 @@ def send_email_booking(user, date, time, seat_number):
     except mandrill.Error:
         raise
 
-def send_email_cancel(user, date, time):
+def send_email_cancel(user, content):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
@@ -94,7 +94,7 @@ def send_email_cancel(user, date, time):
             'headers': {
                 'Reply-To': EMAIL_SENDER
             },
-            'html': '<p>Booking scheduled on ' + date + ' ' + time + ' was cancelled</p>',
+            'html': content,
             'important': True,
             'subject': 'Cancelled Booking',
             'to': [
@@ -109,7 +109,7 @@ def send_email_cancel(user, date, time):
     except mandrill.Error:
         raise
 
-def send_email_move(user, old_date, new_date, old_time, new_time):
+def send_email_move(user, content):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
@@ -118,7 +118,7 @@ def send_email_move(user, old_date, new_date, old_time, new_time):
             'headers': {
                 'Reply-To': EMAIL_SENDER
             },
-            'html': '<p>Booking scheduled on ' + old_date + ' ' + old_time + ' was moved to ' + new_date + ' ' + new_time + '</p>',
+            'html': content,
             'important': True,
             'subject': 'Moved Booking',
             'to': [

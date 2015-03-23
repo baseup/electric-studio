@@ -59,7 +59,11 @@ def verify(self):
         if 'email' in data:
             user = (yield User.objects.get(email=data['email'])).serialize()
             url = self.request.protocol + '://' + self.request.host + '/verify?ticket=%s' % user['_id']
-            yield self.io.async_task(send_email_verification, user=user, url=url)
+            yield self.io.async_task(
+                send_email_verification,
+                user=user,
+                content=str(self.render_string('emails/registration', user=user, url=url), 'UTF-8')
+            )
             self.write(url)
         self.finish()
 
