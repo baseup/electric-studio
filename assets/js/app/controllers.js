@@ -19,11 +19,20 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
     $scope.sliders = data;
 
     $timeout(function(){
+
       angular.element('.slider-container').glide({
         autoplay: 3000,
         hoverpause: false,
         arrows: false
       });
+
+      var winH = angular.element(window).height(), 
+        headerH = angular.element('.main-header').outerHeight(),
+        footerH = angular.element('.main-footer').height();
+
+      if (angular.element(window).width() >= 980) {
+        angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
+      }
     }, 400);
   });
   
@@ -78,10 +87,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
         footerH = angular.element('.main-footer').height();
 
     if (angular.element(this).width() >= 980) {
-      $timeout(function () {
-        angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
-      });
-      
+      angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
     }
   }).trigger('resize');
 
