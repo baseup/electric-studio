@@ -1,7 +1,7 @@
 from motorengine import DESCENDING
 from motorengine.errors import InvalidDocumentError
 from app.models.schedules import BookedSchedule, InstructorSchedule
-from app.helper import send_email_booking, send_email_cancel, send_email_move
+from app.helper import send_email_booking, send_email_cancel, send_email_move, send_email
 from app.models.packages import UserPackage
 from app.models.users import User
 
@@ -79,8 +79,12 @@ def create(self):
                             yield user_package.save()
 
                             user = (yield User.objects.get(user._id)).serialize()
-                            content = str(self.render_string('emails/booking', date=data['date'], user=user, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p'), seat_number=str(book.seat_number)), 'UTF-8')
-                            yield self.io.async_task(send_email_booking, user=user, content=content)
+                            if book_status == 'booked':
+                                content = str(self.render_string('emails/booking', date=data['date'], user=user, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p'), seat_number=str(book.seat_number)), 'UTF-8')
+                                yield self.io.async_task(send_email_booking, user=user, content=content)
+                            elif book_status == 'waitlisted':
+                                content = str(self.render_string('emails/waitlist', date=data['date'], user=user, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p')), 'UTF-8')
+                                yield self.io.async_task(send_email, user=user, content=content, subject='WaitList Schedule')
                             break
 
                         if not has_valid_package:
@@ -106,6 +110,7 @@ def update(self, id):
             ref_book_date = book.date
             ref_book_time = datetime.strptime('0:00','%H:%M')
             ref_sched_id = book.schedule._id
+            ref_book_status = book.status
             if book.schedule:
                 ref_book_time = book.schedule.start
 

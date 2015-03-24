@@ -365,6 +365,11 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, SharedService, BookService) {
   $scope.resched = SharedService.get('resched');
 
+  $scope.reserved = BookService.query();
+  $scope.reserved.$promise.then(function (data) {
+    $scope.reserved = data;
+  });
+
   $scope.cancelResched = function () {
     SharedService.clear('resched');
     $location.path('/reserved');
@@ -385,6 +390,17 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
 
   $scope.chkSched = function (date, sched) {
 
+  
+    if ($scope.reserved) {
+      for (var i in $scope.reserved) {
+        var rDate = new Date($scope.reserved[i].date);
+        if ($scope.loginUser && +date == +rDate){
+          if(sched && $scope.reserved[i].schedule && sched._id == $scope.reserved[i].schedule._id)
+            return true;
+        }
+      }
+    }
+
     var now = new Date();
     var parts = sched.start.split(/[^0-9]/);
     var dTime =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
@@ -397,15 +413,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
     var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
     if (date > nextMonth) 
       return true;
-
-    if ($scope.reserved) {
-      for (var i in $scope.reserved) {
-        var rDate = new Date($scope.reserved[i].date);
-        if ($scope.loginUser && +date === +rDate)
-          if(sched && $scope.reserved[i].schedule && sched._id == $scope.reserved[i].schedule._id)
-            return true;
-      }
-    }
 
     return false;
   }

@@ -132,3 +132,27 @@ def send_email_move(user, content):
         mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
     except mandrill.Error:
         raise
+
+def send_email(user, content, subject):
+    try:
+        mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
+        message = {
+            'from_email': EMAIL_SENDER,
+            'from_name': EMAIL_SENDER_NAME,
+            'headers': {
+                'Reply-To': EMAIL_SENDER
+            },
+            'html': content,
+            'important': True,
+            'subject': subject,
+            'to': [
+                {
+                    'email': user['email'],
+                    'name': user['first_name'] + ' ' + user['last_name'],
+                    'type': 'to'
+                }
+            ]
+        }
+        mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
+    except mandrill.Error:
+        raise

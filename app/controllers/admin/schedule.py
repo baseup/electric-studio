@@ -3,6 +3,7 @@ from app.models.packages import *
 from datetime import datetime
 from bson.objectid import ObjectId
 from motorengine import DESCENDING
+from app.helper import send_email
 
 import tornado.escape
 
@@ -37,23 +38,24 @@ def find(self):
                 'text': s.start.strftime('%I:%M %p') + ' - ' + s.end.strftime('%I:%M %p')
             })
 
-        ins_sched = schedules[0]
-        if time:
-            time = datetime.strptime(time, '%I:%M %p')
-            ins_sched = yield InstructorSchedule.objects.get(date=date, start_time=time)
-            # if not ins_sched:
-            #     ins_sched = yield InstructorSchedule.objects.get(day=date.strftime('%a').lower(), start=time)
-        elif sched_id:
-            ins_sched = yield InstructorSchedule.objects.get(sched_id)
+        if schedules:
+            ins_sched = schedules[0]
+            if time:
+                time = datetime.strptime(time, '%I:%M %p')
+                ins_sched = yield InstructorSchedule.objects.get(date=date, start_time=time)
+                # if not ins_sched:
+                #     ins_sched = yield InstructorSchedule.objects.get(day=date.strftime('%a').lower(), start=time)
+            elif sched_id:
+                ins_sched = yield InstructorSchedule.objects.get(sched_id)
 
-        scheds = yield BookedSchedule.objects.filter(status='booked', date=date, schedule=ins_sched._id).find_all()
-        waitlist = yield BookedSchedule.objects.filter(status='waitlisted', date=date, schedule=ins_sched._id).find_all()
-        self.render_json({
-            'bookings': scheds,
-            'waitlist': waitlist,
-            'schedule': ins_sched,
-            'schedules': list_scheds
-        })
+            scheds = yield BookedSchedule.objects.filter(status='booked', date=date, schedule=ins_sched._id).find_all()
+            waitlist = yield BookedSchedule.objects.filter(status='waitlisted', date=date, schedule=ins_sched._id).find_all()
+            self.render_json({
+                'bookings': scheds,
+                'waitlist': waitlist,
+                'schedule': ins_sched,
+                'schedules': list_scheds
+            })
 
 def create(self):
     data = tornado.escape.json_decode(self.request.body)
@@ -116,9 +118,15 @@ def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
 
     if 'move_to_seat' in data:
+        sched = yield InstructorSchedule.objects.get(booked_schedule.schedule._id)
+
         booked_schedule.status = 'booked'
         booked_schedule.seat_number = data['move_to_seat']
         booked_schedule = yield booked_schedule.save()
+
+        user = (yield User.objects.get(booked_schedule.user_id._id)).serialize()
+        content = str(self.render_string('emails/waitlist_approved', date=booked_schedule.date.strftime('%Y-%m-%d'), user=user, seat_number=booked_schedule.seat_number, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p')), 'UTF-8')
+        yield self.io.async_task(send_email, user=user, content=content, subject='Waitlist moved to class')
     else: 
         special_date = datetime.strptime(data['date'], '%Y-%m-%d')
         time = datetime.strptime(data['time'], '%I:%M %p')
@@ -141,9 +149,10 @@ def update(self, id):
 
 def destroy(self, id):
     booked_schedule = yield BookedSchedule.objects.get(id)
-    booked_schedule.user_package.remaining_credits += 1
     booked_schedule.status = 'cancelled'
-    yield booked_schedule.user_package.save()
+    if booked_schedule.user_package:
+        booked_schedule.user_package.remaining_credits += 1
+        yield booked_schedule.user_package.save()
 
     user = yield User.objects.get(booked_schedule.user_id._id)
     user.credits += 1
