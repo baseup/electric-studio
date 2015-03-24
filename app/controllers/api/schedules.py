@@ -29,7 +29,9 @@ def find(self):
     date += timedelta(days=1)
     sun = yield InstructorSchedule.objects.filter(date=date) \
                                           .order_by('start', direction=ASCENDING).find_all(lazy=True)
-
+    date += timedelta(days=1)
+    nmon = yield InstructorSchedule.objects.filter(date=date) \
+                                          .order_by('start', direction=ASCENDING).find_all(lazy=True)
     scheds = { 
         'mon' : mon, 
         'tue' : tue,
@@ -37,7 +39,8 @@ def find(self):
         'thu' : thu,
         'fri' : fri,
         'sat' : sat,
-        'sun' : sun
+        'sun' : sun,
+        'nmon' : nmon
     }
 
     self.render_json(scheds)

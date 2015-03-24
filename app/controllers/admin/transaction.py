@@ -1,5 +1,6 @@
 from app.models.packages import UserPackage, Package
 from app.models.users import User
+from app.helper import send_email
 from motorengine.errors import *
 
 import tornado.escape
@@ -37,6 +38,11 @@ def create(self):
         yield trans.save()
         user.credits += int(trans.credit_count)
         yield user.save()
+
+        user = (yield User.objects.get(user._id)).serialize()
+        content = str(self.render_string('emails/freeclass', user=user, credits=trans.credit_count), 'UTF-8')
+        yield self.io.async_task(send_email, user=user, content=content, subject='Free Class')
+
     except InvalidDocumentError:
         self.set_status(400)
         self.write(str(sys.exc_info()[1]))
