@@ -78,7 +78,10 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
         footerH = angular.element('.main-footer').height();
 
     if (angular.element(this).width() >= 980) {
-      angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
+      $timeout(function () {
+        angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
+      });
+      
     }
   }).trigger('resize');
 
