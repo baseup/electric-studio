@@ -26,13 +26,16 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
         arrows: false
       });
 
-      var winH = angular.element(window).height(), 
+      var win = angular.element(window);
+      var winH = win.height(), 
         headerH = angular.element('.main-header').outerHeight(),
         footerH = angular.element('.main-footer').height();
 
-      if (angular.element(window).width() >= 980) {
+      if (win.width() >= 980) {
         angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
       }
+
+      win.trigger('resize');
     }, 400);
   });
   
