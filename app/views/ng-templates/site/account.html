@@ -1,7 +1,12 @@
 
+
+
   <div class="content bg-lightGray sidebar-layout">
     <div class="wrapper">
-      
+      <div ng-controller="SignUpCtrl" ng-show="isVerified">
+          <h2 class="h large">Please check your email for confirmation</h2>
+          <a class="button large pads primary" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</a>
+      </div>
       <div class="main" ng-controller="AccountCtrl">
         <h2 class="h large">Your Account Info</h2>
         <section>

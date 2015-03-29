@@ -17,7 +17,7 @@ def login(self):
     email = self.get_argument('email')
     passWord = self.get_argument('password')
     login_user = yield User.objects.filter(email=email).find_all()
-    if (login_user):
+    if login_user:
         if bcrypt.verify(passWord, login_user[0].password):
             user = login_user[0]
             self.set_secure_cookie('loginUser', user.first_name, expires_days=None)
