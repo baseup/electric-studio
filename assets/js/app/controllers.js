@@ -12,6 +12,13 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService, SliderService) {
 
   $scope.loginUser = AuthService.getCurrentUser();
+
+  $scope.isVerified = false;
+  if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
+    $scope.user = $scope.loginUser;
+    $scope.isVerified = true;
+  }
+
   $scope.selectedSched = null;
 
   $scope.sliders = SliderService.query();
@@ -228,6 +235,10 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 
       var addSuccess = function () {
         $scope.loginUser = AuthService.getCurrentUser();
+        if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
+          $scope.user = $scope.loginUser;
+          $scope.isVerified = true;
+        }
         $.Alert('Successfully updated user info')
       }
       var addFail = function (error) {
@@ -423,8 +434,8 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
     if (date < now)
       return true;
 
-    var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
-    if (date > nextMonth) 
+    var next7Days = new Date(now.getFullYear(), now.getMonth(), now.getDate()+8);
+    if (date > next7Days) 
       return true;
 
     return false;
@@ -498,10 +509,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   $scope.getWeek(new Date());
   $scope.nextWeek = function () {
     var now = new Date();
-    var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
-    if ($scope.nmonDate < nextMonth) {
+    // var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
+    // if ($scope.nmonDate < nextMonth) {
       $scope.getWeek($scope.nmonDate);
-    }
+    // }
   }
   $scope.prevWeek = function () {
     var pWeek = new Date($scope.monDate);
@@ -578,6 +589,11 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
       $.Alert('User is not logged In');
       angular.element("html, body").animate({ scrollTop: 0 }, "slow");
       angular.element('.login-toggle').click();
+      return;
+    }
+
+    if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
+      $.Alert('User is Unverified, Please check your email');
       return;
     }
 

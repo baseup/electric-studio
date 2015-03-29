@@ -64,11 +64,19 @@ def update(self, id):
             user.first_name = data['first_name']
             # user.middle_name = data['middle_name']
             user.last_name = data['last_name']
-            user.email = data['email']
-            user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+
+            if user.email != data['email']:
+                user.email = data['email']
+                user.status = 'Unverified'
+
+            if data['birthdate'] != None:
+                user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+
             user.phone_number = data['phone_number']
-            user.contact_person = data['contact_person']
-            user.emergency_contact = data['emergency_contact']
+            if data['contact_person'] != None:
+                user.contact_person = data['contact_person']
+            if data['emergency_contact'] != None:
+                user.emergency_contact = data['emergency_contact']
             # user.address = data['address']
             # user.status = data['status']
             # user.profile_pic = data['profile_pic']
