@@ -1,9 +1,7 @@
-
-  <div class="slider-container home fitscreen">
-    <ul class="slider">
-      <li ng-repeat="slider in sliders" class="slide" style="background-image: url('{{ slider.image }}');">
-        <span>{{ slider.text }}</span>
-      </li>
-    </ul>
-  </div>
-
+<div ng-show="sliderLoaded" class="slider-container home fitscreen">
+  <ul class="slider">
+    <li ng-repeat="slider in sliders" class="slide" style="background-image: url('{{ slider.image }}');">
+      <span>{{ slider.text }}</span>
+    </li>
+  </ul>
+</div>
