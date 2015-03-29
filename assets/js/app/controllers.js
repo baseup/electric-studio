@@ -36,6 +36,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       }
 
       win.trigger('resize');
+      $scope.sliderLoaded = true;
     }, 400);
   });
   
