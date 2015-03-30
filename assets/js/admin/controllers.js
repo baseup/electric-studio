@@ -160,6 +160,10 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
   }
 
   $scope.reload = function () {
+    $scope.books = null;
+    $scope.waitList = null;
+    $scope.schedDetails = null;
+    $scope.newBook.sched_id = null;
     ClassService.query({ date: $scope.newBook.date, time: $scope.newBook.time, sched_id: $scope.newBook.sched_id }, function (books) {
       $scope.books = books.bookings;
       $scope.waitList = books.waitlist;
@@ -840,8 +844,9 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
 
   PackageService.query(function (packages) {
     var select = angular.element('#search-trans-package')[0].selectize;
+
     angular.forEach(packages, function (pack) {
-      select.addOption({ value: pack._id, text: pack.name });
+      if(pack) select.addOption({ value: pack._id, text: pack.name });
     });
   });
 });

@@ -11,10 +11,10 @@
       <div class="class-search pad cf">
         <span class="label">Search</span>
         <div class="bp-md-one-fourth float--left space--bottom space--right">
-          <input class="text-input" ng-model="search.user_id.first_name" placeholder="Name">
+          <input class="text-input" ng-model="searchTrans" placeholder="Name">
         </div>
         <div class="float--left">
-          <select class="select" id="search-trans-package" ng-model="search.package_id._id">
+          <select class="select" id="search-trans-package" ng-model="searchPac">
             <option value="">Select Package</option>
           </select>
         </div>
@@ -33,7 +33,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="transaction in transactions | filter:search">
+            <tr ng-repeat="transaction in transactions | search:'user_id.first_name':searchTrans | search:'package_id._id':searchPac">
               <td>{{ transaction.user_id.first_name }} {{ transaction.user_id.last_name }}</td>
               <td>{{ transaction.package_id.name }}</td>
               <td>{{ transaction.package_id.credits }} Classes</td>
