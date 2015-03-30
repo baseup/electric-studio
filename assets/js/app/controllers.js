@@ -359,9 +359,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
         return;
       }
 
-      var confirm = window.confirm('Are you sure on cancelling schedule?')
-      if (confirm) {
-
+      $.Confirm('Are you sure on cancelling schedule?', function(){
         var data = {};
         data.status = 'cancelled';
         
@@ -380,7 +378,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
         }
         
         BookService.update({ bookId: book._id }, data).$promise.then(bookSuccess, bookFail);
-      }
+      });
     }
   }
 });
@@ -610,21 +608,24 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
       book.status = 'waitlisted';
     }
 
-    var bookSuccess = function () {
-      if ($scope.resched) {
-        SharedService.clear('resched');
-      }
-      $location.path('/reserved')
-    }
-    var bookFail = function (error) {
-      $.Alert(error.data)
-    }
+    $.Confirm('Your about to book a ride on '+ $scope.daySched + ' ' + $scope.dateSched + ' with seat number ' + seat, function(){
 
-    if ($scope.resched == undefined) {
-      BookService.book(book).$promise.then(bookSuccess, bookFail);
-    }else{
-      BookService.update({ bookId: $scope.resched._id }, book).$promise.then(bookSuccess, bookFail);
-    }
+      var bookSuccess = function () {
+        if ($scope.resched) {
+          SharedService.clear('resched');
+        }
+        $location.path('/reserved')
+      }
+      var bookFail = function (error) {
+        $.Alert(error.data)
+      }
+
+      if ($scope.resched == undefined) {
+        BookService.book(book).$promise.then(bookSuccess, bookFail);
+      }else{
+        BookService.update({ bookId: $scope.resched._id }, book).$promise.then(bookSuccess, bookFail);
+      }
+    });
   }
 });
 

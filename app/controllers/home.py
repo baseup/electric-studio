@@ -20,10 +20,14 @@ def login(self):
     if login_user:
         if bcrypt.verify(passWord, login_user[0].password):
             user = login_user[0]
-            self.set_secure_cookie('loginUser', user.first_name, expires_days=None)
-            self.set_secure_cookie('loginUserID', str(user._id), expires_days=None)
-            self.set_header("Content-Type", "application/json")
-            self.write(json.dumps({ 'success' : True, 'user' : str(user._id) }))
+            if user.status != 'Unverified':
+                self.set_secure_cookie('loginUser', user.first_name, expires_days=None)
+                self.set_secure_cookie('loginUserID', str(user._id), expires_days=None)
+                self.set_header("Content-Type", "application/json")
+                self.write(json.dumps({ 'success' : True, 'user' : str(user._id) }))
+            else:
+                self.set_status(403)
+                self.write('User email is not verified, Please check your email for confirmation')
         else:
             self.set_status(403)
             self.write('Invalid Password')
