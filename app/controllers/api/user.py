@@ -1,6 +1,7 @@
 import sys
 from passlib.hash import bcrypt
 from motorengine.errors import InvalidDocumentError
+from app.helper import send_email_verification, send_email
 from app.models.users import User
 from datetime import datetime
 import tornado
@@ -82,7 +83,14 @@ def update(self, id):
             # user.profile_pic = data['profile_pic']
             # user.credits = data['credits']
             user = yield user.save()
-
+            if user.status == 'Unverified':
+                user = user.serialize()
+                url = self.request.protocol + '://' + self.request.host + '/verify?ticket=%s' % user['_id']
+                yield self.io.async_task(
+                    send_email_verification,
+                    user=user,
+                    content=str(self.render_string('emails/registration', user=user, url=url), 'UTF-8')
+                )
     except :
         value = sys.exc_info()[1]
         self.set_status(403)

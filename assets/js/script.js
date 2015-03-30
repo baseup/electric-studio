@@ -141,4 +141,18 @@
     $('#alert-modal').Modal();
   }
 
+  $.Confirm = function (message, okcallback) {
+    var content = message;
+    if (typeof message == 'object') {
+      content = message.content;
+    }
+    $('#confirm-modal-message').html(message);
+    $('#confirm-ok-button').off('click');
+    $('#confirm-ok-button').click(function(){
+      okcallback();
+    });
+
+    $('#confirm-modal').Modal();
+  }
+
 })(jQuery);

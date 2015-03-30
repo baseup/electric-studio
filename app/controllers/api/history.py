@@ -1,3 +1,4 @@
+from motorengine import DESCENDING
 from app.models.packages import UserPackage, Package
 from app.models.schedules import BookedSchedule
 from app.models.users import User
@@ -20,8 +21,8 @@ def find(self):
             if self.get_argument('transPage'):
                 transPage = int(self.get_argument('transPage'))
 
-            schedules = yield BookedSchedule.objects.filter(user_id=user._id).skip(schedPage * 10).limit(10).find_all()
-            transactions = yield UserPackage.objects.filter(user_id=user._id).skip(transPage * 10).limit(10).find_all()
+            schedules = yield BookedSchedule.objects.order_by("create_at", direction=DESCENDING).filter(user_id=user._id).skip(schedPage * 10).limit(10).find_all()
+            transactions = yield UserPackage.objects.order_by("create_at", direction=DESCENDING).filter(user_id=user._id).skip(transPage * 10).limit(10).find_all()
 
             self.render_json({
                 'schedules' : schedules,

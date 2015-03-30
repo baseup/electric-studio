@@ -200,6 +200,7 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
   }
 
   var select = angular.element('#select-bike-number')[0].selectize;
+  select.settings.sortField = 'text';
   for (var i = 1; i <= 37; i++) {
     select.addOption({ value: i, text: i });
   }
@@ -232,7 +233,11 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
   }
   
   $scope.bookRide = function () {
-    angular.element('#book-ride-modal').Modal();
+    if ($scope.newBook.sched_id) {
+      angular.element('#book-ride-modal').Modal();
+    } else {
+      $.Alert('Please select schedule date and time');
+    }
   }
   
   $scope.switchBike = function () {
@@ -244,6 +249,7 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
       $scope.selectedWaitList = wait;
       if (seats.available.length) {
         var selectize = angular.element('#select-seat')[0].selectize;
+        selectize.settings.sortField = 'text';
         angular.forEach(seats.available, function (seat) {
           selectize.addOption({ value: seat, text: seat });
         });
