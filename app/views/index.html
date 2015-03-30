@@ -73,6 +73,11 @@
     <div class="wrapper">
       <h2 class="h large light">Log In</h2>
       <p class="notify">{{! signInError }}</p>
+
+    <div class="wrapper" ng-controller="SignUpCtrl" ng-show="unverifiedLogin">
+      <button class="button" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
+    </div>
+
       <form class="login-form" method="post">
         <input class="input-box" placeholder="Email Address" ng-model="login.email" required>
         <input type="password" class="input-box" placeholder="Password" ng-model="login.password" required>
@@ -156,8 +161,13 @@
   <script src="{{ static_url('vendor/angular-resource/angular-resource.min.js') }}"></script>
   <script src="{{ static_url('vendor/angular-sanitize/angular-sanitize.min.js') }}"></script>
   
+  <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.css') }}">
+  <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.date.css') }}">
+  
   <script src="{{ static_url('vendor/FitText.js/jquery.fittext.js') }}"></script>
   <script src="{{ static_url('vendor/glidejs/dist/jquery.glide.min.js') }}"></script>
+    <script src="{{ static_url('vendor/pickadate/lib/picker.js') }}"></script>
+    <script src="{{ static_url('vendor/pickadate/lib/picker.date.js') }}"></script>
 
   <script src="{{ static_url('js/app/templates.js') }}"></script>
   <script src="{{ static_url('js/app/services.js') }}"></script>

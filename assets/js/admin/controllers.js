@@ -171,6 +171,16 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
         });
         if (!$scope.newBook.sched_id) {
           $scope.newBook.sched_id = books.schedules[0].id
+          ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+            if (seats.available.length) {
+              angular.element('#select-bike-number')[0].selectize.clearOptions();
+              var selectbike = angular.element('#select-bike-number')[0].selectize;
+              selectbike.settings.sortField = 'text';
+              angular.forEach(seats.available, function (seat) {
+                selectbike.addOption({ value: seat, text: seat });
+              }); 
+            }
+          });
         }
       }
     });

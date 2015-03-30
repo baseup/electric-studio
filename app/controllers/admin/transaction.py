@@ -15,7 +15,7 @@ def create(self):
     trans = UserPackage()
     user = yield User.objects.get(data['user_id'])
 
-    if 'package_id' in data:
+    if 'package_id' in data and data['package_id'] != '':
         package = yield Package.objects.get(data['package_id'])
         trans.package_id = package._id
         trans.credit_count = package.credits

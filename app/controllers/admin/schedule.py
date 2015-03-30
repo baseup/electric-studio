@@ -69,6 +69,17 @@ def create(self):
         self.finish()
         return
 
+    if not 'user_id' in data or data['user_id'] == '':
+        self.set_status(400)
+        self.write('Please select a rider')
+        self.finish()
+
+    if not 'seat_number' in data or data['seat_number'] == '':
+        self.set_status(400)
+        self.write('Please select a bike')
+        self.finish()
+
+
     obj_user_id = ObjectId(data['user_id'])
     booked_sched = yield BookedSchedule.objects.get(status='booked', date=special_date, schedule=ins_sched, user_id=obj_user_id)
     if booked_sched:

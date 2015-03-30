@@ -60,6 +60,11 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       menuToggle = angular.element('.menu-toggle');
     
   
+  angular.element('.datepicker').pickadate({
+    format: 'yyyy-mm-dd',
+    formatSubmit: 'yyyy-mm-dd',
+    today: false
+  });
 
   angular.element('.fit-text span').fitText(2);
   
@@ -160,7 +165,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
     $scope.verificationLink = null;
     var sendEmailSuccess = function () {
       $scope.sendingEmail = false;
-      $.Alert('Successfully send email verification');
+      $.Alert('Successfully sent email verification');
     }
 
     var sendEmailFailed = function (error) {
@@ -177,7 +182,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
 ctrls.controller('LoginCtrl', function ($scope) {
 
   $scope.signIn = function () {
-
+    $scope.unverifiedLogin = false;
     if ($scope.login) {
 
       var email = $scope.login.email;
@@ -202,6 +207,9 @@ ctrls.controller('LoginCtrl', function ($scope) {
           }
         },
         error: function (xhr, code, error) {
+          if (xhr.responseText.indexOf('User email is not verified') > -1) {
+            $scope.unverifiedLogin = true;
+          }
           $scope.signInError = xhr.responseText + '.';
           $scope.$apply();
         }
@@ -542,7 +550,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
       $location.path('/reserved');
     }
 
-    $scope.dateSched = months[sched.date.getMonth()] + ', ' + sched.date.getDate() + ' ' + sched.date.getFullYear();
+    $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() + ' ' + sched.date.getFullYear();
     $scope.daySched = days[sched.date.getDay()];
     $scope.timeSched = sched.schedule.start;
     $scope.instructor = sched.schedule.instructor;
@@ -608,7 +616,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
       book.status = 'waitlisted';
     }
 
-    $.Confirm('Your about to book a ride on '+ $scope.daySched + ' ' + $scope.dateSched + ' with seat number ' + seat, function(){
+    $.Confirm('Your about to book a ride on '+ $scope.daySched + ', ' + $scope.dateSched + ' with seat number ' + seat, function(){
 
       var bookSuccess = function () {
         if ($scope.resched) {
