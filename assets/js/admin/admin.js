@@ -65,3 +65,32 @@ app.config(function ($routeProvider, $httpProvider) {
     redirectTo: '/notfound'
   });
 });
+
+app.filter('search', function($filter){
+
+  var parseString = function(input){
+    if(input)
+      return input.split(".");
+  }
+
+  function getValue(element, propertyArray) {
+    var value = element;
+      angular.forEach(propertyArray, function(property) {
+        if(value) value = value[property];
+      });
+
+    return value;
+  }
+
+  return function (array, propertyString, target) {
+    var properties = parseString(propertyString);
+    return $filter('filter')(array, function(item){
+      if(target != null && target.length > 0){
+        return getValue(item, properties) == target;
+      } else {
+        return true;
+      }
+
+    });
+  }
+})

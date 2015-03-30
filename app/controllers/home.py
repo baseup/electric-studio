@@ -91,6 +91,11 @@ def buy(self):
                     'receiver_id' : self.get_argument('receiver_id'),
                     'verify_sign' : self.get_argument('verify_sign')
                 }
+
+                payment_exist = yield UserPackage.objects.get(trans_info=str(data));
+                if payment_exist:
+                    self.redirect('/#/account#packages')
+                    return;
                 
                 try: 
                     pid = self.get_argument('pid');

@@ -160,6 +160,10 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
   }
 
   $scope.reload = function () {
+    $scope.books = null;
+    $scope.waitList = null;
+    $scope.schedDetails = null;
+    $scope.newBook.sched_id = null;
     ClassService.query({ date: $scope.newBook.date, time: $scope.newBook.time, sched_id: $scope.newBook.sched_id }, function (books) {
       $scope.books = books.bookings;
       $scope.waitList = books.waitlist;
@@ -171,6 +175,16 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
         });
         if (!$scope.newBook.sched_id) {
           $scope.newBook.sched_id = books.schedules[0].id
+          ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+            if (seats.available.length) {
+              angular.element('#select-bike-number')[0].selectize.clearOptions();
+              var selectbike = angular.element('#select-bike-number')[0].selectize;
+              selectbike.settings.sortField = 'text';
+              angular.forEach(seats.available, function (seat) {
+                selectbike.addOption({ value: seat, text: seat });
+              }); 
+            }
+          });
         }
       }
     });
@@ -830,8 +844,9 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
 
   PackageService.query(function (packages) {
     var select = angular.element('#search-trans-package')[0].selectize;
+
     angular.forEach(packages, function (pack) {
-      select.addOption({ value: pack._id, text: pack.name });
+      if(pack) select.addOption({ value: pack._id, text: pack.name });
     });
   });
 });
