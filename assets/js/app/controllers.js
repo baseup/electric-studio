@@ -27,11 +27,11 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
 
     $timeout(function(){
 
-      angular.element('.slider-container').glide({
+      var glideObj = angular.element('.slider-container').glide({
         autoplay: 3000,
         hoverpause: false,
         arrows: false
-      });
+      }).data('glide_api');
 
       var win = angular.element(window);
       var winH = win.height(), 
@@ -40,6 +40,10 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
 
       if (win.width() >= 980) {
         angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
+      }
+
+      if (!angular.element('.slider > li').css('width')) {
+        glideObj.reinit();
       }
 
       win.trigger('resize');
