@@ -208,6 +208,8 @@ ctrls.controller('LoginCtrl', function ($scope) {
         },
         error: function (xhr, code, error) {
           if (xhr.responseText.indexOf('User email is not verified') > -1) {
+            $scope.user = {};
+            $scope.user.email = email;
             $scope.unverifiedLogin = true;
           }
           $scope.signInError = xhr.responseText + '.';
@@ -242,6 +244,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
     $scope.updateAccount = function () {
 
       var addSuccess = function () {
+        AuthService.setCurrentUser();
         $scope.loginUser = AuthService.getCurrentUser();
         if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
           $scope.user = $scope.loginUser;
