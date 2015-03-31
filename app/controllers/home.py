@@ -68,7 +68,6 @@ def verify(self):
                 user=user,
                 content=str(self.render_string('emails/registration', user=user, url=url), 'UTF-8')
             )
-            self.write(url)
         self.finish()
 
 def buy(self):
