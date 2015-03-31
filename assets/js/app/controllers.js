@@ -31,7 +31,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
         autoplay: 3000,
         hoverpause: false,
         arrows: false
-      }).data('glide_api');
+      }).data('api_glide');
 
       var win = angular.element(window);
       var winH = win.height(), 
