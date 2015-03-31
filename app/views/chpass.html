@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html ng-app="elstudio">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Verification | Electric Studio Admin</title>
+
+    <link rel="stylesheet" href="/assets/css/verify.css">
+  </head>
+  
+  <body ng-controller="SiteCtrl">
+    <div class="page-header pad">
+      <img src="/assets/images/electricstudio-logo.png" class="logo">
+      <img src="/assets/images/electricstudio-nameplate.png" class="nameplate">
+    </div>
+    <br/><br/>
+    <div ng-controller="ForgotPasswordCtrl">
+    {% if user %}
+      <h1 class="page-title h--medium">Reset Password ({{ user.email }})</h1> <br/><br/>
+      <input class="input" type="password" ng-model="pass.password" placeholder="New Password"><br>
+      <input class="input" type="password" ng-model="pass.confirm_password" placeholder="Retype Password"><br><br>
+      <a class="button medium pads primary" ng-click="resetPassword('{{ user._id }}')">Save</a> 
+    {% else %}
+      <h1 class="page-title h--small">Page Not Found</h1>
+    {% end %}
+
+      <br><br><br>
+      <a href="/">Go To Home Page</a>
+    </div>
+      
+    <footer class="main-footer">
+    <div class="wrapper">
+      <ul class="footer-links">
+        <li>© ELECTRIC STUDIO 2015</li>
+        <li><a href="/#/faq">FAQ</a></li>
+        <li><a href="/#/career">Carreer</a></li>
+        <li><a href="/#/contact">Contact Us</a></li>
+      </ul>
+      
+      <ul class="social-links">
+        <li>
+          <a href="mailto:info@electricstudio.ph"><i class="fa fa-envelope"></i></a>
+        </li>
+        <li>
+          <a href="https://www.facebook.com/teamelectricph"><i class="fa fa-facebook"></i></a>
+        </li>
+        <li>
+          <a href="http://instagram.com/teamelectricph/"><i class="fa fa-instagram"></i></a>
+        </li>
+        <li>
+          <a href="https://twitter.com/"><i class="fa fa-twitter"></i></a>
+        </li>
+      </ul>
+    </div>  
+  </footer>
+
+  
+  <div class="modal" id="alert-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <p id="alert-modal-message"></p>
+    </div>
+  </div>
+  <script src="{{ static_url('vendor/jquery/dist/jquery.min.js') }}"></script>
+  
+  <script src="{{ static_url('vendor/angular/angular.min.js') }}"></script> 
+  <script src="{{ static_url('vendor/angular-route/angular-route.min.js') }}"></script>
+  <script src="{{ static_url('vendor/angular-resource/angular-resource.min.js') }}"></script>
+  <script src="{{ static_url('vendor/angular-sanitize/angular-sanitize.min.js') }}"></script>
+  
+  <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.css') }}">
+  <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.date.css') }}">
+  
+  <script src="{{ static_url('vendor/FitText.js/jquery.fittext.js') }}"></script>
+  <script src="{{ static_url('vendor/glidejs/dist/jquery.glide.min.js') }}"></script>
+  <script src="{{ static_url('vendor/pickadate/lib/picker.js') }}"></script>
+  <script src="{{ static_url('vendor/pickadate/lib/picker.date.js') }}"></script>
+
+  <script src="{{ static_url('js/app/templates.js') }}"></script>
+  <script src="{{ static_url('js/app/services.js') }}"></script>
+  <script src="{{ static_url('js/app/controllers.js') }}"></script>
+  <script src="{{ static_url('js/app/app.js') }}"></script>
+  <script src="{{ static_url('js/script.js') }}"></script> 
+  </body>
+</html>

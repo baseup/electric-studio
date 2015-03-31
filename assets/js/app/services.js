@@ -40,6 +40,15 @@ services.factory('UserService', function($resource) {
   });
 });
 
+services.factory('ForgotPasswordService', function($resource) {
+  return $resource('/fpass/:user', {}, {
+    send_email: {
+      method: 'POST',
+      isArray: false
+    }
+  });
+});
+
 services.factory('EmailVerifyService', function($resource) {
   return $resource('/verify/:user', {}, {
     email_verify: {

@@ -9,6 +9,7 @@ from bson.objectid import ObjectId
 import sys
 import tornado
 import json
+import base64
 
 def index(self):
     self.render('index', loginUser=self.get_secure_cookie('loginUser'))
@@ -69,6 +70,37 @@ def verify(self):
                 content=str(self.render_string('emails/registration', user=user, url=url), 'UTF-8')
             )
         self.finish()
+
+def forgot_password(self):
+    if self.request.method == 'GET':
+        encoded_id = self.get_argument('q')
+        user = None
+        if encoded_id:
+            user_id = base64.b64decode(encoded_id)
+            user = yield User.objects.get(str(user_id, 'UTF-8'))
+
+        self.render('chpass', user=user)
+
+    else:
+        data = tornado.escape.json_decode(self.request.body)
+        if 'email' in data:
+            user = yield User.objects.get(email=data['email'])
+            if user:
+                encoded_id = base64.b64encode(str(user._id).encode('ascii'))
+                url = self.request.protocol + '://' + self.request.host + '/fpass?q=%s' % str(encoded_id, 'UTF-8')
+
+                user = user.serialize()
+                yield self.io.async_task(
+                send_email,
+                    user=user,
+                    content=str(self.render_string('emails/resetpass', user=user, url=url), 'UTF-8'),
+                    subject='Reset Password'
+                )
+            else: 
+                self.set_status(400)
+                self.write('No user found for the specified email address')
+        self.finish()
+
 
 def buy(self):
     if self.request.method == 'GET':
