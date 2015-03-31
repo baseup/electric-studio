@@ -83,10 +83,29 @@ app.filter('search', function($filter){
   }
 
   return function (array, propertyString, target) {
-    var properties = parseString(propertyString);
+    var properties = null;
+    var propStrArr = null;
+    if(propertyString.indexOf(',') > -1) {
+      propStrArr = propertyString.split(',');
+    } else {
+      properties = parseString(propertyString);
+    }
+
     return $filter('filter')(array, function(item){
-      if(target != null && target.length > 0){
-        return getValue(item, properties) == target;
+      if (target != null && target.length > 0) {
+        if (propStrArr) {
+          for (var i in propStrArr) {
+            properties = parseString(propStrArr[i]);
+            if (getValue(item, properties).toLowerCase().indexOf(target.toLowerCase()) > -1) {
+              return true;
+            }
+          }
+        } else {
+          var val = getValue(item, properties);
+          if (val) {
+            return val.toLowerCase().indexOf(target.toLowerCase()) > -1;
+          }
+        }
       } else {
         return true;
       }
