@@ -61,6 +61,9 @@ def update(self, id):
             else:
                 self.set_status(403)
                 self.write('Current Password did not match')
+        if 'reset_password' in data:
+            user.password = bcrypt.encrypt(data['reset_password'])
+            user = yield user.save()
         else:
             user.first_name = data['first_name']
             # user.middle_name = data['middle_name']

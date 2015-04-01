@@ -185,6 +185,10 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
 
 ctrls.controller('LoginCtrl', function ($scope) {
 
+  $scope.forgotPass = function(){
+    angular.element('#forgot-password-modal').Modal();
+  }
+
   $scope.signIn = function () {
     $scope.unverifiedLogin = false;
     if ($scope.login) {
@@ -224,6 +228,50 @@ ctrls.controller('LoginCtrl', function ($scope) {
 
   }
 
+});
+
+ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, UserService) {
+
+  $scope.resetPassword = function (id) {
+
+    if($scope.pass && $scope.pass.password && $scope.pass.password.length > 0){
+
+      if ($scope.pass.password != $scope.pass.confirm_password) {
+        $.Alert("Retype Password didn't match");
+        return;
+      }
+
+      var account = {}
+      account.reset_password = $scope.pass.password;
+
+      var addSuccess = function () {
+        $.Alert('Successfully updated password')
+      }
+
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
+
+      UserService.update({ userId: id }, account).$promise.then(addSuccess, addFail);
+    } 
+  }
+
+  $scope.sendForgotPassEmail = function () {
+    if ($scope.forgotPassEmail && $scope.forgotPassEmail.length > 0) {
+      var user = {};
+      user.email = $scope.forgotPassEmail;
+      var sendEmailSuccess = function () {
+        $.Alert('Successfully sent email for reset password confirmation');
+      }
+
+      var sendEmailFailed = function (error) {
+        $.Alert(error.data);
+      }
+
+      ForgotPasswordService.send_email(user)
+                      .$promise.then(sendEmailSuccess, sendEmailFailed);
+    }
+  }
 });
 
 ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthService, UserPackageService) {
