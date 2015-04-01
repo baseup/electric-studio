@@ -51,6 +51,12 @@ a {
   }
 }
 
+.alert-modal {
+  .close-btn {
+    top: 9px;
+  }
+}
+
 select, .select {
   max-width: 200px;
 }
