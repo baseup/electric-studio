@@ -76,8 +76,8 @@ def forgot_password(self):
         encoded_id = self.get_argument('q')
         user = None
         if encoded_id:
-            user_id = base64.b64decode(encoded_id)
-            user = yield User.objects.get(str(user_id, 'UTF-8'))
+            pass_id = base64.b64decode(encoded_id)
+            user = yield User.objects.get(password=str(pass_id, 'UTF-8'))
 
         self.render('chpass', user=user)
 
@@ -86,7 +86,7 @@ def forgot_password(self):
         if 'email' in data:
             user = yield User.objects.get(email=data['email'])
             if user:
-                encoded_id = base64.b64encode(str(user._id).encode('ascii'))
+                encoded_id = base64.b64encode(str(user.password).encode('ascii'))
                 url = self.request.protocol + '://' + self.request.host + '/fpass?q=%s' % str(encoded_id, 'UTF-8')
 
                 user = user.serialize()

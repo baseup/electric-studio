@@ -17,9 +17,9 @@
     <div ng-controller="ForgotPasswordCtrl">
     {% if user %}
       <h1 class="page-title h--medium">Reset Password ({{ user.email }})</h1> <br/><br/>
-      <input class="input" type="password" ng-model="pass.password" placeholder="New Password"><br>
-      <input class="input" type="password" ng-model="pass.confirm_password" placeholder="Retype Password"><br><br>
-      <a class="button medium pads primary" ng-click="resetPassword('{{ user._id }}')">Save</a> 
+      <input class="text-input" type="password" ng-model="pass.password" placeholder="New Password"><br><br>
+      <input class="text-input" type="password" ng-model="pass.confirm_password" placeholder="Retype Password"><br><br>
+      <input type="submit" value="Reset"  ng-click="resetPassword('{{ user._id }}')" class="btn btn--medium btn--primary">
     {% else %}
       <h1 class="page-title h--small">Page Not Found</h1>
     {% end %}

@@ -43,7 +43,9 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       }
 
       if (!angular.element('.slider > li').css('width')) {
-        glideObj.reinit();
+        if (glideObj) {
+          glideObj.reinit();
+        }
       }
 
       win.trigger('resize');
@@ -253,7 +255,9 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
       }
 
       UserService.update({ userId: id }, account).$promise.then(addSuccess, addFail);
-    } 
+    } else {
+      $.Alert('Input passwords cannot be empty.');
+    }
   }
 
   $scope.sendForgotPassEmail = function () {
@@ -270,6 +274,9 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
 
       ForgotPasswordService.send_email(user)
                       .$promise.then(sendEmailSuccess, sendEmailFailed);
+      $scope.forgotPassEmail = null;
+    } else {
+      $.Alert('Input email address cannot be empty.');
     }
   }
 });
