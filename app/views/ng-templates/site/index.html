@@ -1,4 +1,4 @@
-<div ng-show="sliderLoaded" class="slider-container home fitscreen">
+<div class="slider-container home fitscreen" ng-controller="SliderCtrl">
   <ul class="slider">
     <li ng-repeat="slider in sliders" class="slide" style="background-image: url('{{ slider.image }}');">
       <span>{{ slider.text }}</span>
