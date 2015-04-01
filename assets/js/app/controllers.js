@@ -9,7 +9,7 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 });
 
 
-ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService, SliderService) {
+ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
 
   $scope.loginUser = AuthService.getCurrentUser();
 
@@ -20,38 +20,6 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
   }
 
   $scope.selectedSched = null;
-
-  $scope.sliders = SliderService.query();
-  $scope.sliders.$promise.then(function (data) {
-    $scope.sliders = data;
-
-    $timeout(function(){
-
-      var glideObj = angular.element('.slider-container').glide({
-        autoplay: 3000,
-        hoverpause: false,
-        arrows: false
-      }).data('api_glide');
-
-      var win = angular.element(window);
-      var winH = win.height(), 
-        headerH = angular.element('.main-header').outerHeight(),
-        footerH = angular.element('.main-footer').height();
-
-      if (win.width() >= 980) {
-        angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
-      }
-
-      if (!angular.element('.slider > li').css('width')) {
-        if (glideObj) {
-          glideObj.reinit();
-        }
-      }
-
-      win.trigger('resize');
-      $scope.sliderLoaded = true;
-    }, 400);
-  });
   
   $scope.activeMainNav = function (path) {
     return window.location.hash.indexOf('#' + path) == 0;
@@ -129,6 +97,40 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
 
   }
   
+});
+
+ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService){
+  $scope.sliders = SliderService.query();
+  $scope.sliders.$promise.then(function (data) {
+    $scope.sliders = data;
+
+    $timeout(function(){
+
+      var glideObj = angular.element('.slider-container').glide({
+        autoplay: 3000,
+        hoverpause: false,
+        arrows: false
+      }).data('api_glide');
+
+      var win = angular.element(window);
+      var winH = win.height(), 
+        headerH = angular.element('.main-header').outerHeight(),
+        footerH = angular.element('.main-footer').height();
+
+      if (win.width() >= 980) {
+        angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
+      }
+
+      if (!angular.element('.slider > li').css('width')) {
+        // if (glideObj) {
+          glideObj.reinit();
+        // }
+      }
+
+      win.trigger('resize');
+    }, 400);
+
+  });
 });
 
 ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService) {
