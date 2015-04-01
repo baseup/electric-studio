@@ -174,7 +174,8 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
           selectize.addOption({ value: sched.id, text: sched.text });
         });
         if (!$scope.newBook.sched_id) {
-          $scope.newBook.sched_id = books.schedules[0].id
+          selectize.setValue(books.schedules[0].id);
+          $scope.newBook.sched_id = books.schedules[0].id;
           ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
             if (seats.available.length) {
               angular.element('#select-bike-number')[0].selectize.clearOptions();
