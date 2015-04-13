@@ -350,7 +350,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
   }
 });
 
-ctrls.controller('RatesCtrl', function ($scope, $http, PackageService) {
+ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageService) {
 
   $scope.packages = PackageService.query();
   $scope.packages.$promise.then(function (data) {
@@ -364,22 +364,30 @@ ctrls.controller('RatesCtrl', function ($scope, $http, PackageService) {
   $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/buy';
 
   $scope.buyPackage = function (event) {
-    if (!$scope.loginUser || $scope.loginUser.length == 0) {
-      $.Alert('User is not logged In');
-      angular.element("html, body").animate({ scrollTop: 0 }, "slow");
-      angular.element('.login-toggle').click();
-      event.preventDefault();
-    }
+    UserService.get(function(user) {
+      
+      $scope.loginUser = user;
 
-    if($scope.loginUser && $scope.loginUser.status == 'Frozen'){
-      $.Alert('Account is frozen, Please check your contact adminstrator');
-      event.preventDefault();
-    }
+      if (!$scope.loginUser || $scope.loginUser.length == 0) {
+        $.Alert('User is not logged In');
+        angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+        angular.element('.login-toggle').click();
+        return;
+      }
 
-    if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
-      $.Alert('User is Unverified, Please check your email');
-      event.preventDefault();
-    }
+      if($scope.loginUser && $scope.loginUser.status == 'Frozen'){
+        $.Alert('Account is frozen, Please check your contact adminstrator');
+        return;
+      }
+
+      if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
+        $.Alert('User is Unverified, Please check your email');
+        return;
+      }
+
+      angular.element('#payForm').submit();
+
+    })
   }
 })
 
@@ -607,7 +615,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   }
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookService) {
+ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedService, BookService) {
   var sched = SharedService.get('selectedSched');
   if (!sched) {
     $location.path('/schedule')
@@ -664,54 +672,56 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
   }
 
   $scope.bookSchedule = function () {
-    
-    if (!$scope.loginUser || $scope.loginUser.length == 0) {
-      $.Alert('User is not logged In');
-      angular.element("html, body").animate({ scrollTop: 0 }, "slow");
-      angular.element('.login-toggle').click();
-      return;
-    }
+    UserService.get(function(user) {
+      $scope.loginUser = user;
+      if (!$scope.loginUser || $scope.loginUser.length == 0) {
+        $.Alert('User is not logged In');
+        angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+        angular.element('.login-toggle').click();
+        return;
+      }
 
-    if($scope.loginUser && $scope.loginUser.status == 'Frozen'){
-      $.Alert('Account is frozen, Please check your contact adminstrator');
-      return;
-    }
+      if($scope.loginUser && $scope.loginUser.status == 'Frozen'){
+        $.Alert('Account is frozen, Please check your contact adminstrator');
+        return;
+      }
 
-    if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
-      $.Alert('User is Unverified, Please check your email');
-      return;
-    }
+      if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
+        $.Alert('User is Unverified, Please check your email');
+        return;
+      }
 
-    if (!$scope.forWaitlist && seat == 0) {
-      $.Alert('Please pick a seat');
-      return;
-    }
+      if (!$scope.forWaitlist && seat == 0) {
+        $.Alert('Please pick a seat');
+        return;
+      }
 
-    var book = {};
-    book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
-    book.seat = seat;
-    book.sched_id = sched.schedule._id;
-    if($scope.forWaitlist){
-      book.status = 'waitlisted';
-    }
+      var book = {};
+      book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+      book.seat = seat;
+      book.sched_id = sched.schedule._id;
+      if($scope.forWaitlist){
+        book.status = 'waitlisted';
+      }
 
-    $.Confirm('Your about to book a ride on '+ $scope.daySched + ', ' + $scope.dateSched + ' with seat number ' + seat, function(){
+      $.Confirm('Your about to book a ride on '+ $scope.daySched + ', ' + $scope.dateSched + ' with seat number ' + seat, function(){
 
-      var bookSuccess = function () {
-        if ($scope.resched) {
-          SharedService.clear('resched');
+        var bookSuccess = function () {
+          if ($scope.resched) {
+            SharedService.clear('resched');
+          }
+          $location.path('/reserved')
         }
-        $location.path('/reserved')
-      }
-      var bookFail = function (error) {
-        $.Alert(error.data)
-      }
+        var bookFail = function (error) {
+          $.Alert(error.data)
+        }
 
-      if ($scope.resched == undefined) {
-        BookService.book(book).$promise.then(bookSuccess, bookFail);
-      }else{
-        BookService.update({ bookId: $scope.resched._id }, book).$promise.then(bookSuccess, bookFail);
-      }
+        if ($scope.resched == undefined) {
+          BookService.book(book).$promise.then(bookSuccess, bookFail);
+        }else{
+          BookService.update({ bookId: $scope.resched._id }, book).$promise.then(bookSuccess, bookFail);
+        }
+      });
     });
   }
 });
