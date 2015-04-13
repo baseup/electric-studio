@@ -151,6 +151,15 @@ services.factory('ClassService', function ($resource) {
   });
 });
 
+services.factory('StatisticService', function ($resource) {
+  return $resource('/admin/statistic', {}, {
+    query: {
+      method: 'GET',
+      isArray: true
+    },
+  });
+});
+
 services.factory('SliderService', function ($resource) {
   return $resource('/admin/slider/:sliderId', {}, {
     query: {
