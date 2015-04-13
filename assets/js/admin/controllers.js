@@ -953,7 +953,11 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
   angular.element('#filter-date').click(function () {
     $scope.$apply(function () {
       var fromDate = angular.element('#input_from').val();
-      var toDate = angular.element('#input_from').val();
+      var toDate = angular.element('#input_to').val();
+      $scope.stats = StatisticService.query({ fromDate:fromDate, toDate:toDate });
+      $scope.stats.$promise.then(function (data) {
+        $scope.stats = data;
+      });
     });
   });
 
