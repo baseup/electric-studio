@@ -48,16 +48,27 @@
               <li>
                 <a href="" ng-click="accountSummary(user)"><i class="fa fa-bars"></i></a>
               </li>
-              <!-- <li>
-                <a href=""><i class="fa fa-ban"></i></a>
-              </li>
               <li>
+                <a ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
+                <a ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
+              </li>
+              <!-- <li>
                 <a href="" class="pad--off-right"><i class="fa fa-share"></i></a>
               </li> -->
             </ul>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="froze-account" id="froze-account-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Freeze: {{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h3>
+      <span class="label">Reason:</span>
+      <input ng-model="frozeReason" class="text-input">
+      <button type="button" class="btn btn--primary btn--medium space--top modal-close" ng-click="freezeAccount()">Freeze Account</button>
     </div>
   </div>
 

@@ -1,3 +1,9 @@
+<div ng-if="isFrozen" class="content">
+  <div class="wrapper">
+    <h3 class="h--medium brand-color space--bottom">Your Account has been frozen due to:</h3>
+    <p class="intro">{{ loginUser.remarks }}</p>
+  </div>
+</div>
 
 <div class="content schedule bg-lightGray" ng-controller="ClassCtrl">
   <div class="wrapper">

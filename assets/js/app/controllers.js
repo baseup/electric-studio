@@ -19,6 +19,11 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     $scope.isVerified = true;
   }
 
+  $scope.isFrozen = false;
+  if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
+    $scope.isFrozen = true;
+  }
+
   $scope.selectedSched = null;
   
   $scope.activeMainNav = function (path) {
@@ -366,6 +371,11 @@ ctrls.controller('RatesCtrl', function ($scope, $http, PackageService) {
       event.preventDefault();
     }
 
+    if($scope.loginUser && $scope.loginUser.status == 'Frozen'){
+      $.Alert('Account is frozen, Please check your contact adminstrator');
+      event.preventDefault();
+    }
+
     if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
       $.Alert('User is Unverified, Please check your email');
       event.preventDefault();
@@ -659,6 +669,11 @@ ctrls.controller('ClassCtrl', function ($scope, $location, SharedService, BookSe
       $.Alert('User is not logged In');
       angular.element("html, body").animate({ scrollTop: 0 }, "slow");
       angular.element('.login-toggle').click();
+      return;
+    }
+
+    if($scope.loginUser && $scope.loginUser.status == 'Frozen'){
+      $.Alert('Account is frozen, Please check your contact adminstrator');
       return;
     }
 
