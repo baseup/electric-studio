@@ -16,6 +16,7 @@ class User(Model):
     emergency_contact = StringField(required=False)
     address = StringField(required=False)
     status = StringField(default='Active')
+    remarks = StringField(required=False)
     profile_pic = StringField(required=False)
     credits = IntField(default=0)
     create_at = DateTimeField(auto_now_on_insert=True)

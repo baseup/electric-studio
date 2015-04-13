@@ -3,6 +3,7 @@ from passlib.hash import bcrypt
 from motorengine.errors import InvalidDocumentError
 from app.models.users import User
 from app.models.packages import UserPackage
+from app.models.schedules import BookedSchedule
 from datetime import datetime
 import tornado
 import json
@@ -58,6 +59,21 @@ def update(self, id):
             else:
                 self.set_status(403)
                 self.write('Current Password did not match')
+        elif 'froze_account' in data:
+            user.status = 'Frozen'
+            user.remarks = data['froze_account']
+            scheds = yield BookedSchedule.objects.filter(user_id=user._id, status='booked').find_all()
+            for i, sched in enumerate(scheds):
+                sched.status = 'cancelled';
+                if sched.user_package:
+                    sched.user_package.remaining_credits += 1
+                    yield sched.user_package.save()
+                user.credits += 1
+                sched = yield sched.save()
+            user = yield user.save()
+        elif 'unfroze' in data:
+            user.status = 'Active'
+            user = yield user.save()
         else:
             user.first_name = data['first_name']
             # user.middle_name = data['middle_name']

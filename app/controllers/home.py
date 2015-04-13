@@ -134,24 +134,29 @@ def buy(self):
                     if pid:
                         user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
                         user = yield User.objects.get(user_id)
+                        
+                        if user.status != 'Frozen' and user.status != 'Unverified':
+                            transaction = UserPackage()
+                            transaction.user_id = user._id
+                            transaction.package_id = package._id
+                            transaction.credit_count = package.credits
+                            transaction.remaining_credits = package.credits
+                            transaction.expiration = package.expiration
+                            transaction.trans_info = str(data)
+                            user.credits += package.credits
 
-                        transaction = UserPackage()
-                        transaction.user_id = user._id
-                        transaction.package_id = package._id
-                        transaction.credit_count = package.credits
-                        transaction.remaining_credits = package.credits
-                        transaction.expiration = package.expiration
-                        transaction.trans_info = str(data)
-                        user.credits += package.credits
+                            transaction = yield transaction.save()
+                            user = yield user.save()
 
-                        transaction = yield transaction.save()
-                        user = yield user.save()
+                            user = (yield User.objects.get(user._id)).serialize()
+                            content = str(self.render_string('emails/buy', user=user, host=self.request.host), 'UTF-8')
+                            yield self.io.async_task(send_email, user=user, content=content, subject='Bought Package')
 
-                        user = (yield User.objects.get(user._id)).serialize()
-                        content = str(self.render_string('emails/buy', user=user, host=self.request.host), 'UTF-8')
-                        yield self.io.async_task(send_email, user=user, content=content, subject='Bought Package')
-
-                        self.redirect('/#/account#packages')
+                            self.redirect('/#/account#packages')
+                        else:
+                            self.set_status(403)
+                            self.write('Invalid User Status')
+                            self.finish()
                     else:
                         self.set_status(403)
                         self.write('Package not found')

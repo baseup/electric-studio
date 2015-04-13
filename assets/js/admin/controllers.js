@@ -142,6 +142,53 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
       $.Notify({ content: error.data });
     });
   }
+
+  $scope.frozeModal = function (user) {
+    $scope.selectedAccount = user;
+    angular.element('#froze-account-modal').Modal();
+  }
+
+  $scope.freezeAccount = function () {
+    if ($scope.selectedAccount && $scope.frozeReason && $scope.frozeReason.length > 0) {
+      var account_name = $scope.selectedAccount.first_name + ' ' + $scope.selectedAccount.last_name;
+      $.Confirm('Are you sure on freezing (' + account_name + ') account?', function () {
+
+        var freezeSuccess = function () {
+          $.Alert('Successfully freeze account ' + account_name)
+          UserService.query(function (users) {
+            $scope.users = users;
+          });
+        }
+
+        var freezeFailed = function (error) {
+          $.Alert(error.data);
+        }
+
+        UserService.update({ userId: $scope.selectedAccount._id }, { froze_account: $scope.frozeReason }, freezeSuccess, freezeFailed);
+      });
+    } else {
+      $.Alert('Please input a reason on freezing an account');
+    }
+  }
+
+  $scope.unFrozeAccount = function (user) {
+    var name = user.first_name + ' ' + user.last_name;
+    $.Confirm('Are you sure on unfrozing ' + name + ' account ?', function () {
+
+      var unFrozeSuccess = function () {
+        $.Alert('Successfully unfreeze account ' + name)
+        UserService.query(function (users) {
+          $scope.users = users;
+        });
+      }
+
+      var unFrozeFailed = function (error) {
+        $.Alert(error.data);
+      }
+
+      UserService.update({ userId: user._id }, { unfroze: true }, unFrozeSuccess, unFrozeFailed);
+    });
+  }
   
 });
 
