@@ -74,6 +74,9 @@ def update(self, id):
         elif 'unfroze' in data:
             user.status = 'Active'
             user = yield user.save()
+        elif 'verify' in data:
+            user.status = 'Active'
+            user = yield user.save()
         else:
             user.first_name = data['first_name']
             # user.middle_name = data['middle_name']
