@@ -109,6 +109,24 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
     });
   });
 
+  $scope.verifyAccount = function (user) {
+    var username = user.first_name + ' ' + user.last_name;
+    $.Confirm('Are you sure to verify account ' + username + ' - ' + user.email, function () {
+
+      var verifySuccess = function () {
+        $.Alert('Successfully verify account ' + username)
+        UserService.query(function (users) {
+          $scope.users = users;
+        });
+      }
+
+      var verifyFailed = function (error) {
+        $.Alert(error.data);
+      }
+      UserService.update({ userId: user._id }, { verify: true }, verifySuccess, verifyFailed);
+    });
+  }
+
   $scope.selectPackage = function (packageId) {
     for (var i in $scope.packages) {
       if ($scope.packages[i]._id == packageId) {

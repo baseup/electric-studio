@@ -14,8 +14,8 @@
     <div class="account-list grid">
 
       <div ng-repeat="user in users | filter:search" class="grid__item bp-md-one-half bp-lg-one-third">
+          
         <div class="account__item box--bordered box--white space--bottom cf">
-
           <div class="pad">
             <b class="h--small">{{ user.first_name }} {{ user.last_name }}</b>
           </div>
@@ -30,7 +30,8 @@
 
               <dl class="data--inline space--bottom">
                 <dt><i class="fa fa-envelope"></i></dt>
-                <dd class="inline space--bottom">{{ user.email }}</dd>
+                <dd ng-if="user.status != 'Unverified'" class="inline space--bottom">{{ user.email }}</dd>
+                <dd ng-if="user.status == 'Unverified'" class="inline space--bottom">Account is not <a href="" ng-click="verifyAccount(user)">verified</a>.</dd>
               </dl>
 
               <dl>
