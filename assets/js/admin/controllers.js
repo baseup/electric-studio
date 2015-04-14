@@ -110,7 +110,7 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
   });
 
   $scope.verifyAccount = function (user) {
-      var username = user.first_name + ' ' + user.last_name;
+    var username = user.first_name + ' ' + user.last_name;
     $.Confirm('Are you sure to verify account ' + username + ' - ' + user.email, function () {
 
       var verifySuccess = function () {
