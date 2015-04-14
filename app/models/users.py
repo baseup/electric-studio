@@ -15,6 +15,7 @@ class User(Model):
     contact_person = StringField(required=False)
     emergency_contact = StringField(required=False)
     address = StringField(required=False)
+    billing = JsonField(required=False)
     status = StringField(default='Active')
     remarks = StringField(required=False)
     profile_pic = StringField(required=False)

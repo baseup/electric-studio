@@ -118,10 +118,59 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
     }
   }
 
+  $scope.setPackage = function (packageId) {
+    for (var i in $scope.packages) {
+      if ($scope.packages[i]._id == packageId) {
+        $scope.newPackage = $scope.packages[i];
+        break;
+      }
+    }
+  }
+
   $scope.accountAddClass = function (user) {
     $scope.newCredits.user_id = user._id;
     $scope.selectedAccount = user;
     angular.element('#add-class-modal').Modal();
+  }
+
+  $scope.buyPackageModal = function (user) {
+    $scope.selectedAccount = user;
+    if(!(user.billing instanceof Object)){
+      $scope.selectedAccount.billing = JSON.parse(user.billing);
+    }
+    angular.element('#buy-package-modal').Modal();
+  }
+
+  $scope.confirmBilling = function () {
+    if ($scope.newPackage) {
+      angular.element('#billing-preview-modal').Modal();
+    } else {
+      $.Alert("Please select a package");
+    }
+  }
+
+  $scope.buyPackage = function () {
+
+    if ($scope.selectedAccount.billing && 
+        $scope.selectedAccount.billing != 'null') {
+      if ($scope.selectedAccount.billing.first_name &&
+          $scope.selectedAccount.billing.last_name &&
+          $scope.selectedAccount.billing.address &&
+          $scope.selectedAccount.billing.city &&
+          $scope.selectedAccount.billing.province &&
+          $scope.selectedAccount.billing.postalcode &&
+          $scope.selectedAccount.billing.email &&
+          $scope.selectedAccount.billing.card_number  &&
+          $scope.selectedAccount.billing.card_type &&
+          $scope.selectedAccount.billing.card_expiration &&
+          $scope.selectedAccount.billing.csc) {
+        window.location = '/admin/buy?pid=' + $scope.newPackage._id + '&uid=' + $scope.selectedAccount._id + '&success=True';      
+      } else {
+        $.Alert('Billing information is not complete to process the transaction')
+      }
+    }
+
+
   }
   
   $scope.accountSummary = function (user) {
