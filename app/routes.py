@@ -26,6 +26,7 @@ routes.prefix('/admin', [
     ('get', '/logout', 'admin.logout'),
 
     ('resource', '/transaction', 'admin.transaction'),
+    ('resource', '/statistic', 'admin.statistic'),
     ('resource', '/package', 'admin.package'),
     ('resource', '/user', 'admin.user'),
     ('resource', '/schedule', 'admin.schedule'),

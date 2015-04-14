@@ -898,3 +898,94 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
     });
   });
 });
+
+ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService) {
+
+  $scope.stats = StatisticService.query();
+  $scope.stats.$promise.then(function (data) {
+    $scope.stats = data;
+  });
+
+  var from_input = angular.element('#input_from').pickadate({
+      format: 'yyyy-mm-dd',
+      formatSubmit: 'yyyy-mm-dd',
+      today: false
+    }), from_picker = from_input.pickadate('picker')
+
+  var to_input = angular.element('#input_to').pickadate({
+      format: 'yyyy-mm-dd',
+      formatSubmit: 'yyyy-mm-dd',
+      today: false
+    }), to_picker = to_input.pickadate('picker')
+
+
+  var date = new Date();
+  from_picker.set('select', new Date());
+  to_picker.set('select', [date.getFullYear(), date.getMonth(), date.getDate() + 7]);
+
+  // Check if there’s a “from” or “to” date to start with.
+  if ( from_picker.get('value') ) {
+    to_picker.set('min', from_picker.get('select'));
+  }
+  if ( to_picker.get('value') ) {
+    from_picker.set('max', to_picker.get('select'));
+  }
+
+  // When something is selected, update the “from” and “to” limits.
+  from_picker.on('set', function(event) {
+    if ( event.select ) {
+      to_picker.set('min', from_picker.get('select'));
+    }
+    else if ( 'clear' in event ) {
+      to_picker.set('min', false);
+    }
+  });
+  to_picker.on('set', function(event) {
+    if ( event.select ) {
+      from_picker.set('max', to_picker.get('select'));
+    }
+    else if ( 'clear' in event ) {
+      from_picker.set('max', false);
+    }
+  });
+
+
+  angular.element('#filter-date').click(function () {
+    $scope.$apply(function () {
+      var fromDate = angular.element('#input_from').val();
+      var toDate = angular.element('#input_to').val();
+      $scope.stats = StatisticService.query({ fromDate:fromDate, toDate:toDate });
+      $scope.stats.$promise.then(function (data) {
+        $scope.stats = data;
+      });
+    });
+  });
+
+  $scope.viewUserList = function (stat) {
+    $scope.selectedStat = stat;
+    angular.element('#list-users-modal').Modal();
+  }
+
+  InstructorService.query(function (instructors) {
+    var select = angular.element('#search-instructor')[0].selectize;
+
+    angular.forEach(instructors, function (ins) {
+      if(ins) select.addOption({ value: ins._id, text: ins.admin.first_name + ' ' + ins.admin.last_name });
+    });
+  });
+
+  angular.element('#checkAS').click(function(){
+    $scope.$apply(function () {
+      $scope.availableSeats = !$scope.availableSeats;
+    });
+  })
+
+  $scope.withAvailableSeats = function(stat){
+    if ( !$scope.availableSeats ) {
+      return stat._books.length == 37;
+    } 
+
+    return true;
+  }
+
+});

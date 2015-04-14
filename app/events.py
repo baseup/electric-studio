@@ -17,7 +17,7 @@ def schedule_watcher():
                     sched.status = 'completed';
                     yield sched.save();
                 elif sched.status == 'waitlisted':
-                    sched.status == 'completed';
+                    sched.status == 'cancelled';
                     if sched.user_package:
                         sched.user_package.remaining_credits += 1
                         yield sched.user_package.save()

@@ -1,0 +1,78 @@
+<div ng-controller="StatisticCtrl">
+
+  <div class="grid content pad">
+    <div class="grid__item">
+    <div class="packages box--white box--bordered">
+      <div class="box__header align--middle cf pad">
+        <span class="label label--inline">Class Statistics</span>
+      </div>
+
+      <div class="class-search pad cf">
+        <div class="bp-md-one-fourth float--left space--bottom space--right">
+          <span class="label">From</span>
+          <input class="text-input" id='input_from' placeholder="Today">
+          <span class="label">To</span>
+          <input class="text-input" id='input_to' placeholder="To"><br/><br/>
+          <button type="button" class="btn btn--small btn--primary float--right" id="filter-date">Filter Date</button>
+        </div>
+        <div class="float--left">
+          <span class="label">Instructor</span>
+          <select class="select" id="search-instructor" ng-model="searchIns">
+            <option value="">Select Instructor</option>
+          </select><br/>
+          <input type="checkbox" id="checkAS"/> With available seat
+        </div>
+      </div>
+
+      <div class="pad">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Schedule</th>
+              <th>Instructor</th>
+              <th>Total Seats</th>
+              <th>Available Seats</th>
+              <th>Reserved Seats</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="stat in stats | search:'instructor._id':searchIns | filter:withAvailableSeats">
+              <td>{{ stat.date | formatDate }} {{ stat.start | formatTime }}</td>
+              <td>{{ stat.instructor.admin.first_name }} {{ stat.instructor.admin.last_name }}</td>
+              <td>37</td>
+              <td>{{ 37 - stat._books.length }}</td>
+              <td>
+                <a ng-if="stat._books.length > 0" ng-click="viewUserList(stat)">{{ stat._books.length }}</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="list-users" id="list-users-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">List of Users</h3>
+
+      <div class="space--bottom pad--bottom">
+        <span class="label">Schedule</span>
+        <h4 class="h-small">{{ selectedStat.date | formatDate }} {{ selectedStat.start | formatTime }}</h4>
+      </div>
+
+      <div style="height: 400px; overflow: scroll">
+        <table class="data-table account-summary-table">
+          <tr>
+            <th>Name</th>
+          </tr>
+          <tr ng-repeat="book in selectedStat._books">
+            <td>{{ book.user_id.first_name }} {{ book.user_id.last_name }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
