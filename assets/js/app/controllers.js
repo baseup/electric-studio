@@ -291,7 +291,7 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
 ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthService, UserPackageService) {
 
 
- if (!$scope.loginUser || $scope.loginUser.length == 0) {
+ if (!$scope.loginUser) {
     $location.path("/")
     angular.element("html, body").animate({ scrollTop: 0 }, "slow");
     angular.element('.login-toggle').click();
@@ -364,16 +364,18 @@ ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageServi
   $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/buy';
 
   $scope.buyPackage = function (event) {
+
+
+    if (!$scope.loginUser) {
+      $.Alert('User is not logged In');
+      angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+      angular.element('.login-toggle').click();
+      return;
+    }
+
     UserService.get(function(user) {
       
       $scope.loginUser = user;
-
-      if (!$scope.loginUser || $scope.loginUser.length == 0) {
-        $.Alert('User is not logged In');
-        angular.element("html, body").animate({ scrollTop: 0 }, "slow");
-        angular.element('.login-toggle').click();
-        return;
-      }
 
       if($scope.loginUser && $scope.loginUser.status == 'Frozen'){
         $.Alert('Account is frozen, Please check your contact adminstrator');
@@ -418,7 +420,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService
 
 ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, SharedService, UserService) {
 
-  if (!$scope.loginUser || $scope.loginUser.length == 0) {
+  if (!$scope.loginUser) {
     $location.path("/")
     angular.element("html, body").animate({ scrollTop: 0 }, "slow");
     angular.element('.login-toggle').click();
@@ -672,14 +674,16 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
   }
 
   $scope.bookSchedule = function () {
+
+    if (!$scope.loginUser) {
+      $.Alert('User is not logged In');
+      angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+      angular.element('.login-toggle').click();
+      return;
+    }
+
     UserService.get(function(user) {
       $scope.loginUser = user;
-      if (!$scope.loginUser || $scope.loginUser.length == 0) {
-        $.Alert('User is not logged In');
-        angular.element("html, body").animate({ scrollTop: 0 }, "slow");
-        angular.element('.login-toggle').click();
-        return;
-      }
 
       if($scope.loginUser && $scope.loginUser.status == 'Frozen'){
         $.Alert('Account is frozen, Please check your contact adminstrator');
@@ -727,7 +731,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
 });
 
 ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) {
-  if (!$scope.loginUser || $scope.loginUser.length == 0) {
+  if (!$scope.loginUser) {
     $location.path("/")
     angular.element("html, body").animate({ scrollTop: 0 }, "slow");
     angular.element('.login-toggle').click();
