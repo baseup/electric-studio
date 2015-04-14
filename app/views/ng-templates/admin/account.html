@@ -35,11 +35,13 @@
 
               <dl>
               <dt>Class Package</dt>
+              <a ng-if="user.billing != 'null'" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy Package</a>
               <dd class="">{{ user.credits }} Classes Left</dd>
               <!-- <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd> -->
               </dl>
-            </div>
 
+              
+            </div>
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
@@ -100,6 +102,70 @@
           </tr>
         </table>
       </div>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="buy-package" id="buy-package-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Buy Package</h3>
+      
+      <ul class="form-fields">
+        <li>
+          <span class="label">Rider</span>
+          <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
+        </li>
+        <li>
+          <span class="label">Select Class Package</span>
+          <select class="select" id="select-add-package" ng-change="setPackage(newPackageId)" ng-model="newPackageId">
+            <option value="">Select Package</option>
+          </select>
+        </li>
+        <li>
+           <div class="account__item box--bordered box--white space--bottom cf">
+              <div class="pad">
+                <b class="h--small">{{ newPackage.name }}</b>
+                <br/><br/>
+                <span class="h small ">Price: {{ newPackage.fee }} Php</span><br>
+                <span class="h small ">Classes: {{ newPackage.credits }} </span><br>
+                <span class="h small ">Expiration: {{ newPackage.expiration }} days</span><br>
+              </div>
+            </div>
+        </li>
+      </ul>
+     
+      <button type="button" ng-click="confirmBilling()" class="btn btn--primary btn--medium space--top modal-close">Buy</button>
+
+    </div>
+  </div>
+<br/>
+  <div class="modal" data-modal="billing-preview" id="billing-preview-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Billing Information</h3>
+      
+      <ul class="form-fields">
+        <li>
+          <span class="label">Rider</span>
+          <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
+        </li>
+        <li>
+          <b>First Name:</b> {{ selectedAccount.billing.first_name }}<br/>
+          <b>Last Name:</b> {{ selectedAccount.billing.last_name }}<br/>
+          <b>Address:</b> {{ selectedAccount.billing.address }}<br/>
+          <b>City:</b> {{ selectedAccount.billing.city }}<br/>
+          <b>State/Province:</b> {{ selectedAccount.billing.province }}<br/>
+          <b>Postal:</b> {{ selectedAccount.billing.postalcode }}<br/>
+          <b>Email:</b> {{ selectedAccount.billing.email }}<br/>
+          <b>Card #:</b> {{ selectedAccount.billing.card_number }}<br/>
+          <b>Payment Type:</b> {{ selectedAccount.billing.card_type }}<br/>
+          <b>Expiration:</b> {{ selectedAccount.billing.card_expiration }}<br/>
+          <b>CSC:</b> {{ selectedAccount.billing.csc }}<br/>
+        </li>
+      </ul>
+     
+      <button type="button" ng-click="buyPackage()" class="btn btn--primary btn--medium space--top modal-close">Continue</button>
+
     </div>
   </div>
 

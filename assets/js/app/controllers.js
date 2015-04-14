@@ -297,6 +297,11 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
     angular.element('.login-toggle').click();
   } else {
     $scope.account = $scope.loginUser;
+    $scope.billing = {};
+
+    if($scope.account.billing && $scope.account.billing != 'null'){ 
+      $scope.billing = JSON.parse($scope.account.billing);
+    }
 
     $scope.transactions = UserPackageService.query();
     $scope.transactions.$promise.then(function (data) {
@@ -346,6 +351,19 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
         $.Alert('Please fill up the form')
       }
 
+    }
+
+    $scope.updateBilling = function () {
+      if ($scope.billing) {
+        var billingSuccess = function () {
+          $.Alert("Successfully updated billing information");
+        }
+
+        var billingFail = function (error) {
+          $.Alert(error.data)
+        }
+        UserService.update({ userId: $scope.loginUser._id }, { billing: $scope.billing }).$promise.then(billingSuccess, billingFail);
+      }
     }
   }
 });

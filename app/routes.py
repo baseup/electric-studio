@@ -21,6 +21,8 @@ routes.post('/upload/images', 'upload.images')
 routes.prefix('/admin', [
 
     ('get', '/?', 'admin.index'),
+    ('get', '/buy', 'admin.buy'),
+    ('post', '/buy', 'admin.buy'),
     ('get', '/login', 'admin.login'),
     ('post', '/login', 'admin.login'),
     ('get', '/logout', 'admin.logout'),
