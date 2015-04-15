@@ -93,7 +93,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 });
 
-ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, TransactionService) {
+ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, PackageService, TransactionService) {
 
   $scope.newCredits = {};
 
@@ -182,10 +182,29 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
           $scope.selectedAccount.billing.card_type &&
           $scope.selectedAccount.billing.card_expiration &&
           $scope.selectedAccount.billing.csc) {
-        window.location = '/admin/buy?pid=' + $scope.newPackage._id + '&uid=' + $scope.selectedAccount._id + '&success=True';      
+
+        var billingSuccess = function () {
+        $.Alert('Successfully save billing information. Now were redirecting you to paypal');
+          window.location = '/admin/buy?pid=' + $scope.newPackage._id + '&uid=' + $scope.selectedAccount._id + '&success=True';
+        }
+
+        var billingFail = function (error) {
+          $.Alert(error.data)
+        }
+        UserService.update({ userId: $scope.selectedAccount._id }, { billing: $scope.selectedAccount.billing }).$promise.then(billingSuccess, billingFail);
+
+        
       } else {
-        $.Alert('Billing information is not complete to process the transaction')
+        $.Alert('Billing information is not complete to process the transaction');
+        $timeout(function() {
+          angular.element('#billing-preview-modal').Modal();
+        }, 10);
       }
+    } else {
+      $.Alert('Please provide billing information');
+      $timeout(function() {
+        angular.element('#billing-preview-modal').Modal();
+      }, 10);
     }
 
 
