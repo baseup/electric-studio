@@ -779,20 +779,9 @@ body {
 
   li.loading {
     background: url(/assets/images/preloader.gif) center no-repeat;
-<<<<<<< HEAD
-
     span{
       opacity: 0;
     }
-=======
-  }
-
-  li img.preloaded-img {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    visibility: hidden;
->>>>>>> development
   }
 }
   
