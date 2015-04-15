@@ -1,11 +1,12 @@
 import sys
 from passlib.hash import bcrypt
 from motorengine.errors import InvalidDocumentError
+from motorengine import DESCENDING
 from app.models.users import User
 from app.models.packages import UserPackage
 from app.models.schedules import BookedSchedule
 from hurricane.helpers import to_json, to_json_serializable
-from datetime import datetime
+from datetime import datetime, timedelta
 import tornado
 import json
 
@@ -16,8 +17,24 @@ def find(self):
 def find_one(self, id):
     user = yield User.objects.get(id)
     json_user = to_json_serializable(user)
-    packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
-    json_user['packages'] = to_json_serializable(packages)
+
+    withBooks = self.get_query_argument('books')
+    if withBooks:
+        startDate = self.get_query_argument('fromDate')
+        endDate = self.get_query_argument('toDate')
+        fromDate = datetime.now()
+        if startDate:
+            fromDate = datetime.strptime(startDate, '%Y-%m-%d')
+        toDate = datetime.now() + timedelta(days=7)
+        if endDate: 
+            toDate = datetime.strptime(endDate, '%Y-%m-%d')
+
+        books = yield BookedSchedule.objects.filter(user_id=user._id, date__gte=fromDate, date__lte=toDate).order_by('date',direction=DESCENDING).find_all()
+        json_user['books'] = to_json_serializable(books)
+    else:
+        packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
+        json_user['packages'] = to_json_serializable(packages)
+
     self.write(to_json(json_user))
     self.finish()
 
