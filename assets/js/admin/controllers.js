@@ -199,6 +199,70 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
     angular.element('#account-summary-modal').Modal();
   }
 
+  var from_input = angular.element('#input_from').pickadate({
+      format: 'yyyy-mm-dd',
+      formatSubmit: 'yyyy-mm-dd',
+      today: false
+    }), from_picker = from_input.pickadate('picker')
+
+  var to_input = angular.element('#input_to').pickadate({
+      format: 'yyyy-mm-dd',
+      formatSubmit: 'yyyy-mm-dd',
+      today: false
+    }), to_picker = to_input.pickadate('picker')
+
+  // Check if there’s a “from” or “to” date to start with.
+  if ( from_picker.get('value') ) {
+    to_picker.set('min', from_picker.get('select'));
+  }
+  if ( to_picker.get('value') ) {
+    from_picker.set('max', to_picker.get('select'));
+  }
+
+  // When something is selected, update the “from” and “to” limits.
+  from_picker.on('set', function(event) {
+    if ( event.select ) {
+      to_picker.set('min', from_picker.get('select'));
+    }
+    else if ( 'clear' in event ) {
+      to_picker.set('min', false);
+    }
+  });
+  to_picker.on('set', function(event) {
+    if ( event.select ) {
+      from_picker.set('max', to_picker.get('select'));
+    }
+    else if ( 'clear' in event ) {
+      from_picker.set('max', false);
+    }
+  });  
+
+  $scope.filterSchedDate = function (user) {
+    if ($scope.schedFilter) {
+      var fromDate = $scope.schedFilter.fromDate;
+      var toDate = $scope.schedFilter.toDate;
+      UserService.get({ userId: user._id, books: true, fromDate: fromDate, toDate: toDate }, function (userWithScheds) {
+        $scope.selectedAccount = userWithScheds;
+      });
+    } else {
+      $.Alert('Please select a valid date values');
+    }
+  }
+
+  $scope.accountSchedules = function (user) {
+    $scope.selectedAccount = user;
+    var date = new Date();
+    from_picker.set('select', new Date());
+    to_picker.set('select', [date.getFullYear(), date.getMonth(), date.getDate() + 7]);
+    $scope.schedFilter = {};
+    $scope.schedFilter.fromDate = from_picker.get('value');
+    $scope.schedFilter.toDate = to_picker.get('value');
+    UserService.get({ userId: user._id, books: true }, function (userWithScheds) {
+      $scope.selectedAccount = userWithScheds;
+      angular.element('#account-schedules-modal').Modal();
+    });
+  }
+
   $scope.saveNewCredits = function () {
     $scope.saving = true;
     TransactionService.save($scope.newCredits, function (credits) {
@@ -990,6 +1054,10 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
   from_picker.set('select', new Date());
   to_picker.set('select', [date.getFullYear(), date.getMonth(), date.getDate() + 7]);
 
+  $scope.statFilter = {};
+  $scope.statFilter.fromDate = from_picker.get('value');
+  $scope.statFilter.toDate = to_picker.get('value');
+
   // Check if there’s a “from” or “to” date to start with.
   if ( from_picker.get('value') ) {
     to_picker.set('min', from_picker.get('select'));
@@ -1016,20 +1084,36 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     }
   });
 
+  $scope.isCompleted = function (sched) {
 
-  angular.element('#filter-date').click(function () {
-    $scope.$apply(function () {
-      var fromDate = angular.element('#input_from').val();
-      var toDate = angular.element('#input_to').val();
+    var now = new Date();
+    var dateParts = sched.date.split(/[^0-9]/);
+    var timeParts = sched.start.split(/[^0-9]/);
+    var date =  new Date(dateParts[0], dateParts[1]-1, dateParts[2], timeParts[3], timeParts[4], timeParts[5]);
+    if (date < now)
+      return true;
+
+    return false
+
+  }
+
+
+  $scope.filterDate = function () {
+    if ($scope.statFilter) {
+      var fromDate = $scope.statFilter.fromDate;
+      var toDate = $scope.statFilter.toDate;
       $scope.stats = StatisticService.query({ fromDate:fromDate, toDate:toDate });
       $scope.stats.$promise.then(function (data) {
         $scope.stats = data;
       });
-    });
-  });
+    } else {
+      $.Alert('Please select a valid date values');
+    }
+  }
 
-  $scope.viewUserList = function (stat) {
+  $scope.viewUserList = function (stat, sType) {
     $scope.selectedStat = stat;
+    $scope.selectedType = sType;
     angular.element('#list-users-modal').Modal();
   }
 
@@ -1041,16 +1125,14 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     });
   });
 
-  angular.element('#checkAS').click(function(){
-    $scope.$apply(function () {
-      $scope.availableSeats = !$scope.availableSeats;
-    });
-  })
-
   $scope.withAvailableSeats = function(stat){
-    if ( !$scope.availableSeats ) {
-      return stat._books.length == 37;
-    } 
+    if ($scope.selectedOption && $scope.selectedOption != 'all') {
+      if ($scope.selectedOption == 'withAvailable') {
+        return stat.books.length < 37;  
+      } else if ($scope.selectedOption == 'withWaitlisted') {
+        return stat.waitlist.length > 0;
+      }
+    }
 
     return true;
   }

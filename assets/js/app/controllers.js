@@ -47,7 +47,7 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
 
   angular.element('.fit-text span').fitText(2);
   
-  angular.element('.close-btn').click(function() {
+  angular.element('.close-btn').click(function () {
     var headerForm = angular.element(this).closest(login.add(signup));
     
     headerForm.removeClass('show');
@@ -104,12 +104,12 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   
 });
 
-ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService){
+ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
   $scope.sliders = SliderService.query();
   $scope.sliders.$promise.then(function (data) {
     $scope.sliders = data;
 
-    $timeout(function(){
+    $timeout(function () {
 
       var glideObj = angular.element('.slider-container').glide({
         autoplay: 3000,
@@ -123,11 +123,11 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService){
         footerH = angular.element('.main-footer').height();
 
       //preload images
-      angular.forEach(angular.element('.slider .preloaded-img'), function(value, key){
+      angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
         var img = angular.element(value);
         var src = img.attr('src');
         
-        if(img[0].complete){
+        if (img[0].complete) {
           img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
           img.remove();
         }
@@ -205,7 +205,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
 
 ctrls.controller('LoginCtrl', function ($scope) {
 
-  $scope.forgotPass = function(){
+  $scope.forgotPass = function () {
     angular.element('#forgot-password-modal').Modal();
   }
 
@@ -254,7 +254,7 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
 
   $scope.resetPassword = function (id) {
 
-    if($scope.pass && $scope.pass.password && $scope.pass.password.length > 0){
+    if ($scope.pass && $scope.pass.password && $scope.pass.password.length > 0) {
 
       if ($scope.pass.password != $scope.pass.confirm_password) {
         $.Alert("Retype Password didn't match");
@@ -310,7 +310,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
     $scope.account = $scope.loginUser;
     $scope.billing = {};
 
-    if($scope.account.billing && $scope.account.billing != 'null'){ 
+    if ($scope.account.billing && $scope.account.billing != 'null') { 
       $scope.billing = JSON.parse($scope.account.billing);
     }
 
@@ -402,16 +402,16 @@ ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageServi
       return;
     }
 
-    UserService.get(function(user) {
+    UserService.get(function (user) {
       
       $scope.loginUser = user;
 
-      if($scope.loginUser && $scope.loginUser.status == 'Frozen'){
+      if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
         $.Alert('Account is frozen, Please check your contact adminstrator');
         return;
       }
 
-      if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
+      if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
         $.Alert('User is Unverified, Please check your email');
         return;
       }
@@ -480,7 +480,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
         return;
       }
 
-      $.Confirm('Are you sure on cancelling schedule?', function(){
+      $.Confirm('Are you sure on cancelling schedule?', function () {
         var data = {};
         data.status = 'cancelled';
         
@@ -537,8 +537,8 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
     if ($scope.reserved) {
       for (var i in $scope.reserved) {
         var rDate = new Date($scope.reserved[i].date);
-        if ($scope.loginUser && +date == +rDate){
-          if(sched && $scope.reserved[i].schedule && sched._id == $scope.reserved[i].schedule._id)
+        if ($scope.loginUser && +date == +rDate) {
+          if (sched && $scope.reserved[i].schedule && sched._id == $scope.reserved[i].schedule._id)
             return true;
         }
       }
@@ -640,7 +640,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
     var now = new Date();
     now.setDate(now.getDate() - now.getDay() + 1);
 
-    if(pWeek > now){
+    if (pWeek > now) {
       $scope.getWeek(pWeek);
     }
   }
@@ -676,7 +676,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
     $scope.reserved = BookService.query(book_filter);
     $scope.reserved.$promise.then(function (data) {
       $scope.reserved = data;
-      if($scope.reserved.length >= 37){
+      if ($scope.reserved.length >= 37) {
         $scope.forWaitlist = true;
       }
     });
@@ -711,15 +711,15 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
       return;
     }
 
-    UserService.get(function(user) {
+    UserService.get(function (user) {
       $scope.loginUser = user;
 
-      if($scope.loginUser && $scope.loginUser.status == 'Frozen'){
+      if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
         $.Alert('Account is frozen, Please check your contact adminstrator');
         return;
       }
 
-      if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
+      if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
         $.Alert('User is Unverified, Please check your email');
         return;
       }
@@ -733,11 +733,11 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
       book.seat = seat;
       book.sched_id = sched.schedule._id;
-      if($scope.forWaitlist){
+      if ($scope.forWaitlist) {
         book.status = 'waitlisted';
       }
 
-      $.Confirm('Your about to book a ride on '+ $scope.daySched + ', ' + $scope.dateSched + ' with seat number ' + seat, function(){
+      $.Confirm('Your about to book a ride on '+ $scope.daySched + ', ' + $scope.dateSched + ' with seat number ' + seat, function () {
 
         var bookSuccess = function () {
           if ($scope.resched) {
@@ -776,8 +776,8 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
       $scope.histories = data;
     });
 
-    $scope.prevScheds = function(event){
-      if($scope.currentScheds > 0){
+    $scope.prevScheds = function (event) {
+      if ($scope.currentScheds > 0) {
         $scope.currentScheds -= 1;
         $scope.histories = HistoryService.query({ schedPage : $scope.currentScheds });
         $scope.histories.$promise.then(function (data) {
@@ -787,8 +787,8 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
       event.preventDefault();
     }
 
-    $scope.nextScheds = function(event){
-      if($scope.currentScheds < parseInt($scope.histories.schedsTotal)){
+    $scope.nextScheds = function (event) {
+      if ($scope.currentScheds < parseInt($scope.histories.schedsTotal)) {
         $scope.currentScheds += 1;
         $scope.histories = HistoryService.query({ schedPage : $scope.currentScheds });
         $scope.histories.$promise.then(function (data) {
@@ -798,8 +798,8 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
       event.preventDefault();
     }
 
-    $scope.prevTrans = function(event){
-      if($scope.currentTrans > 0){
+    $scope.prevTrans = function (event) {
+      if ($scope.currentTrans > 0) {
         $scope.currentTrans -= 1;
         $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
         $scope.histories.$promise.then(function (data) {
@@ -809,8 +809,8 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
       event.preventDefault();
     }
 
-    $scope.nextTrans = function(event){
-      if($scope.currentTrans > parseInt($scope.histories.transTotal)){
+    $scope.nextTrans = function (event) {
+      if ($scope.currentTrans > parseInt($scope.histories.transTotal)) {
         $scope.currentTrans += 1;
         $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
         $scope.histories.$promise.then(function (data) {
@@ -826,7 +826,7 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
 
 ctrls.controller('WhatsnewCtrl', function ($scope, Instagram) {
   
-  Instagram.fetchRecent(function(data) {
+  Instagram.fetchRecent(function (data) {
     $scope.instagram = data;
   });
   
