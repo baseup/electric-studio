@@ -122,6 +122,17 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService){
         headerH = angular.element('.main-header').outerHeight(),
         footerH = angular.element('.main-footer').height();
 
+      //preload images
+      angular.forEach(angular.element('.slider .preloaded-img'), function(value, key){
+        var img = angular.element(value);
+        var src = img.attr('src');
+        
+        if(img[0].complete){
+          img.parent().css({backgroundImage : 'url('+src+')'});
+          img.remove();
+        }
+      });
+
       if (win.width() >= 980) {
         angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
       }
