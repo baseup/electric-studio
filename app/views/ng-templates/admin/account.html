@@ -83,7 +83,7 @@
         <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
       </div>
 
-      <div class="space--bottom one-whole">
+      <div style="height: 400px; overflow: scroll" class="space--bottom one-whole">
 
         <table class="data-table account-summary-table">
           <tr>
@@ -92,8 +92,8 @@
             <th>Classes Left</th>
             <th>Expiration Date</th>
           </tr>
-          <tr ng-repeat="pack in selectedAccount._packages">
-            <td>{{ pack.package_id.name }} </td>
+          <tr ng-repeat="pack in selectedAccount.packages">
+            <td>{{ pack.package_id.name || 'Free' }} </td>
             <td>{{ pack.credit_count }}</td>
             <td>{{ pack.remaining_credits }}</td>
             <td>{{ pack.create_at }}</td>

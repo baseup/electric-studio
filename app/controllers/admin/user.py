@@ -4,6 +4,7 @@ from motorengine.errors import InvalidDocumentError
 from app.models.users import User
 from app.models.packages import UserPackage
 from app.models.schedules import BookedSchedule
+from hurricane.helpers import to_json, to_json_serializable
 from datetime import datetime
 import tornado
 import json
@@ -14,8 +15,11 @@ def find(self):
 
 def find_one(self, id):
     user = yield User.objects.get(id)
-    user.packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
-    self.render_json(user)
+    json_user = to_json_serializable(user)
+    packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
+    json_user['packages'] = to_json_serializable(packages)
+    self.write(to_json(json_user))
+    self.finish()
 
 def create(self):
 
