@@ -61,7 +61,10 @@
                   <span ng-if="!isCompleted(stat)">Available</span>
                 </td>
                 <td>37</td>
-                <td>{{ 37 - stat.books.length }}</td>
+                <td>
+                  <span ng-if="stat.books.length <= 37">{{ 37 - stat.books.length }}</span>
+                  <span ng-if="stat.books.length > 37">0</span>
+                </td>
                 <td>
                   <a ng-if="stat.books.length > 0" ng-click="viewUserList(stat,'book')">{{ stat.books.length }}</a>
                   <span ng-if="stat.books.length == 0">0</span>
@@ -84,7 +87,7 @@
       <h3 class="h--medium brand-color space--bottom">List of Users</h3>
 
       <div class="space--bottom pad--bottom">
-        <span class="label">Booked Schedule</span>
+        <span class="label">{{ selectedType }}ed Schedule</span>
         <h4 class="h-small">{{ selectedStat.date | formatDate }} {{ selectedStat.start | formatTime }}</h4>
       </div>
 
@@ -104,9 +107,9 @@
             <th>Name</th>
             <th>Date</th>
           </tr>
-          <tr ng-repeat="waitlist in selectedStat.books">
-            <td>{{ waitlist.user_id.first_name }} {{ waitlist.user_id.last_name }}</td>
-            <td>{{ waitlist.create_at | formatDate }}</td>
+          <tr ng-repeat="wait in selectedStat.waitlist">
+            <td>{{ wait.user_id.first_name }} {{ wait.user_id.last_name }}</td>
+            <td>{{ wait.create_at | formatDate }}</td>
           </tr>
         </table>
       </div>
