@@ -760,14 +760,15 @@ body {
   margin: 0;
   padding: 0;
 
-  li{
+  li {
     position: relative;
   }
 
-  li.loading{
+  li.loading {
     background: url(/assets/images/preloader.gif) center no-repeat;
   }
-  li img.preloaded-img{
+
+  li img.preloaded-img {
     position: absolute;
     width: 1px;
     height: 1px;
