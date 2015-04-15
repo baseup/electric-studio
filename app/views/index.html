@@ -44,12 +44,13 @@
       
       <div class="account-menu">
         <div class="account-menu__options">
-          {% if not loginUser %}
-            <a class="login-toggle">Login</a> /  
-            <a class="signup-toggle">Sign up</a>
-          {% else %}
+        {% if not loginUser %}
+          <a class="login-toggle">Login</a> /  
+          <a class="signup-toggle">Sign up</a>
+          <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
+        {% else %}
           <a href="javascript:void(0)" class="user-loggedin">Hi <strong>{{ loginUser }}</strong>! <i class="fa fa-caret-down"></i></a>
-          {% end %}            
+        {% end %}            
         </div>
         {% if loginUser %}  
         <div class="account-menu__list">
