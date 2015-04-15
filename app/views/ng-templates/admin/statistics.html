@@ -2,53 +2,79 @@
 
   <div class="grid content pad">
     <div class="grid__item">
-    <div class="packages box--white box--bordered">
-      <div class="box__header align--middle cf pad">
-        <span class="label label--inline">Class Statistics</span>
-      </div>
-
-      <div class="class-search pad cf">
-        <div class="bp-md-one-fourth float--left space--bottom space--right">
-          <span class="label">From</span>
-          <input class="text-input" id='input_from' placeholder="Today">
-          <span class="label">To</span>
-          <input class="text-input" id='input_to' placeholder="To"><br/><br/>
-          <button type="button" class="btn btn--small btn--primary float--right" id="filter-date">Filter Date</button>
+      <div class="packages box--white box--bordered">
+        <div class="box__header align--middle cf pad">
+          <span class="label label--inline">Class Statistics</span>
         </div>
-        <div class="float--left">
-          <span class="label">Instructor</span>
-          <select class="select" id="search-instructor" ng-model="searchIns">
-            <option value="">Select Instructor</option>
-          </select><br/>
-          <input type="checkbox" id="checkAS"/> With available seat
+
+        <div class="class-search pad cf">
+          <div class="float--left space--right">
+            <span class="label">From</span>
+            <input class="text-input" id="input_from" ng-model='statFilter.fromDate' placeholder="Today" />
+          </div>
+          <div class="float--left space--right">
+            <span class="label">To</span>
+            <input class="text-input" id="input_to" ng-model='statFilter.toDate' placeholder="To" />
+          </div>
+          <div class="float--left space--left space--bottom">
+            <span class="label">&nbsp;</span>
+            <button type="button" class="btn btn--small btn--primary float--left" ng-click="filterDate()">Filter Date</button>
+          </div>
+        </div>
+        <div class="class-search pad cf">
+          <div class="float--left space--right">
+            <span class="label">Instructor</span>
+            <select class="select" id="search-instructor" ng-model="searchIns">
+              <option value="">Select Instructor</option>
+            </select><br/>
+            <!-- <input type="checkbox" id="checkAS"/> With available seat -->
+          </div>
+          <div class="float--left space--left">
+            <span class="label">Option</span>
+            <select class="select" ng-change="changeOp()" ng-model="selectedOption"> 
+              <option value="all">All</option>
+              <option value="withAvailable">With Available Seats Only</option>
+              <option value="withWaitlisted">With Waitlisted Seats Only</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pad">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Schedule</th>
+                <th>Instructor</th>
+                <th>Status</th>
+                <th>Seats</th>
+                <th>Available</th>
+                <th>Reserved</th>
+                <th>Waitlisted</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="stat in stats | search:'instructor._id':searchIns | filter:withAvailableSeats">
+                <td>{{ stat.date | formatDate }} {{ stat.start | formatTime }}</td>
+                <td>{{ stat.instructor.admin.first_name }} {{ stat.instructor.admin.last_name }}</td>
+                <td>
+                  <span ng-if="isCompleted(stat)">Completed</span>
+                  <span ng-if="!isCompleted(stat)">Available</span>
+                </td>
+                <td>37</td>
+                <td>{{ 37 - stat.books.length }}</td>
+                <td>
+                  <a ng-if="stat.books.length > 0" ng-click="viewUserList(stat,'book')">{{ stat.books.length }}</a>
+                  <span ng-if="stat.books.length == 0">0</span>
+                </td>
+                <td>
+                  <a ng-if="stat.waitlist.length > 0" ng-click="viewUserList(stat,'waitlist')">{{ stat.waitlist.length }}</a>
+                  <span ng-if="stat.waitlist.length == 0">0</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-
-      <div class="pad">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Schedule</th>
-              <th>Instructor</th>
-              <th>Total Seats</th>
-              <th>Available Seats</th>
-              <th>Reserved Seats</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="stat in stats | search:'instructor._id':searchIns | filter:withAvailableSeats">
-              <td>{{ stat.date | formatDate }} {{ stat.start | formatTime }}</td>
-              <td>{{ stat.instructor.admin.first_name }} {{ stat.instructor.admin.last_name }}</td>
-              <td>37</td>
-              <td>{{ 37 - stat._books.length }}</td>
-              <td>
-                <a ng-if="stat._books.length > 0" ng-click="viewUserList(stat)">{{ stat._books.length }}</a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
     </div>
   </div>
 
@@ -58,17 +84,29 @@
       <h3 class="h--medium brand-color space--bottom">List of Users</h3>
 
       <div class="space--bottom pad--bottom">
-        <span class="label">Schedule</span>
+        <span class="label">Booked Schedule</span>
         <h4 class="h-small">{{ selectedStat.date | formatDate }} {{ selectedStat.start | formatTime }}</h4>
       </div>
 
       <div style="height: 400px; overflow: scroll">
-        <table class="data-table account-summary-table">
+        <table ng-if="selectedType == 'book'" class="data-table account-summary-table">
           <tr>
             <th>Name</th>
+            <th>Bike</th>
           </tr>
-          <tr ng-repeat="book in selectedStat._books">
+          <tr ng-repeat="book in selectedStat.books">
             <td>{{ book.user_id.first_name }} {{ book.user_id.last_name }}</td>
+            <td>{{ book.seat_number }}</td>
+          </tr>
+        </table>
+        <table ng-if="selectedType == 'waitlist'" class="data-table account-summary-table">
+          <tr>
+            <th>Name</th>
+            <th>Date</th>
+          </tr>
+          <tr ng-repeat="waitlist in selectedStat.books">
+            <td>{{ waitlist.user_id.first_name }} {{ waitlist.user_id.last_name }}</td>
+            <td>{{ waitlist.create_at | formatDate }}</td>
           </tr>
         </table>
       </div>
