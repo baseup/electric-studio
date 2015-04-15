@@ -759,6 +759,21 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
+
+  li {
+    position: relative;
+  }
+
+  li.loading {
+    background: url(/assets/images/preloader.gif) center no-repeat;
+  }
+
+  li img.preloaded-img {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    visibility: hidden;
+  }
 }
   
 .slide, .banner {

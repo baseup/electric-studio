@@ -7,8 +7,9 @@
 
 <div class="slider-container home fitscreen" ng-controller="SliderCtrl">
   <ul class="slider">
-    <li ng-repeat="slider in sliders" class="slide" style="background-image: url('{{ slider.image }}');">
+    <li ng-repeat="slider in sliders" class="slide loading">
       <span>{{ slider.text }}</span>
+      <img src="{{ slider.image }}" class="preloaded-img">
     </li>
   </ul>
 </div>
