@@ -64,7 +64,6 @@ def update(self, id):
         if 'reset_password' in data:
             user.password = bcrypt.encrypt(data['reset_password'])
             user = yield user.save()
-
         elif 'billing' in data:
             user.billing = data['billing']
             user = yield user.save()
