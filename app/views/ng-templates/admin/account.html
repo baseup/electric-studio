@@ -52,6 +52,9 @@
                 <a href="" ng-click="accountSummary(user)"><i class="fa fa-bars"></i></a>
               </li>
               <li>
+                <a href="" ng-click="accountSchedules(user)"><i class="fa fa-book"></i></a>
+              </li>
+              <li>
                 <a ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
                 <a ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
               </li>
@@ -72,6 +75,63 @@
       <span class="label">Reason:</span>
       <input ng-model="frozeReason" class="text-input">
       <button type="button" class="btn btn--primary btn--medium space--top modal-close" ng-click="freezeAccount()">Freeze Account</button>
+    </div>
+  </div>
+
+
+
+  <div class="modal" data-modal="account-schedules" id="account-schedules-modal">
+    <div class="modal__box pad" style="max-width: 100%">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }} schedules</h3>
+      
+      <div class="class-search pad cf">
+        <div class="float--left space--right">
+          <span class="label">From</span>
+          <input class="text-input" id="input_from" ng-model='schedFilter.fromDate' placeholder="Today" />
+        </div>
+        <div class="float--left space--right">
+          <span class="label">To</span>
+          <input class="text-input" id="input_to" ng-model='schedFilter.toDate' placeholder="To" />
+        </div>
+        <div class="float--left space--left space--bottom">
+          <span class="label">&nbsp;</span>
+          <button type="button" class="btn btn--small btn--primary float--left" ng-click="filterSchedDate(selectedAccount)">Filter Date</button>
+        </div>
+        <div class="float--left space--left">
+          <span class="label">Status</span>
+          <select class="select" ng-change="changeStatus()" ng-model="statusFilter"> 
+            <option value="">Select Status</option>
+            <option value="booked">Booked</option>
+            <option value="waitlisted">Waitlisted</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pad"  style="height: 400px; overflow: scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Schedule</th>
+              <th>Instructor</th>
+              <th>Status</th>
+              <th>Seat</th>
+              <th>Create Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sched in selectedAccount.books | search:'status':statusFilter">
+              <td>{{ sched.date | formatDate }} {{ sched.schedule.start | formatTime }}</td>
+              <td>{{ sched.schedule.instructor.admin.first_name }} {{ sched.schedule.instructor.admin.last_name }}</td>
+              <td>{{ sched.status }}</td>
+              <td>{{ sched.seat_number }}</td>
+              <td>{{ sched.create_at | formatDate }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 

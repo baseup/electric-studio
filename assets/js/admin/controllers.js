@@ -199,6 +199,70 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
     angular.element('#account-summary-modal').Modal();
   }
 
+  var from_input = angular.element('#input_from').pickadate({
+      format: 'yyyy-mm-dd',
+      formatSubmit: 'yyyy-mm-dd',
+      today: false
+    }), from_picker = from_input.pickadate('picker')
+
+  var to_input = angular.element('#input_to').pickadate({
+      format: 'yyyy-mm-dd',
+      formatSubmit: 'yyyy-mm-dd',
+      today: false
+    }), to_picker = to_input.pickadate('picker')
+
+  // Check if there’s a “from” or “to” date to start with.
+  if ( from_picker.get('value') ) {
+    to_picker.set('min', from_picker.get('select'));
+  }
+  if ( to_picker.get('value') ) {
+    from_picker.set('max', to_picker.get('select'));
+  }
+
+  // When something is selected, update the “from” and “to” limits.
+  from_picker.on('set', function(event) {
+    if ( event.select ) {
+      to_picker.set('min', from_picker.get('select'));
+    }
+    else if ( 'clear' in event ) {
+      to_picker.set('min', false);
+    }
+  });
+  to_picker.on('set', function(event) {
+    if ( event.select ) {
+      from_picker.set('max', to_picker.get('select'));
+    }
+    else if ( 'clear' in event ) {
+      from_picker.set('max', false);
+    }
+  });  
+
+  $scope.filterSchedDate = function (user) {
+    if ($scope.schedFilter) {
+      var fromDate = $scope.schedFilter.fromDate;
+      var toDate = $scope.schedFilter.toDate;
+      UserService.get({ userId: user._id, books: true, fromDate: fromDate, toDate: toDate }, function (userWithScheds) {
+        $scope.selectedAccount = userWithScheds;
+      });
+    } else {
+      $.Alert('Please select a valid date values');
+    }
+  }
+
+  $scope.accountSchedules = function (user) {
+    $scope.selectedAccount = user;
+    var date = new Date();
+    from_picker.set('select', new Date());
+    to_picker.set('select', [date.getFullYear(), date.getMonth(), date.getDate() + 7]);
+    $scope.schedFilter = {};
+    $scope.schedFilter.fromDate = from_picker.get('value');
+    $scope.schedFilter.toDate = to_picker.get('value');
+    UserService.get({ userId: user._id, books: true }, function (userWithScheds) {
+      $scope.selectedAccount = userWithScheds;
+      angular.element('#account-schedules-modal').Modal();
+    });
+  }
+
   $scope.saveNewCredits = function () {
     $scope.saving = true;
     TransactionService.save($scope.newCredits, function (credits) {
