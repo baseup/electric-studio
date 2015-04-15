@@ -128,7 +128,7 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService){
         var src = img.attr('src');
         
         if(img[0].complete){
-          img.parent().css({backgroundImage : 'url('+src+')'});
+          img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
           img.remove();
         }
       });
