@@ -656,7 +656,7 @@
                         <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;">
                         
                             <div style="padding:10px 30px 30px;font-size:14px; color:#757575!important;">
-<h2 style="font-weight:normal; font-size:18px; color:#757575!important;"><span style="font-size:18px"><span style="font-family:lucida sans unicode,lucida grande,sans-serif">Bike {{ seat_number }} has been cancelled. See you soon?</span></span></h2>
+<h2 style="font-weight:normal; font-size:18px; color:#757575!important;"><span style="font-size:18px"><span style="font-family:lucida sans unicode,lucida grande,sans-serif">{% if seat_number %} Bike {{ seat_number }} {% else %} Waitlist schedule {% end %} has been cancelled . See you soon?</span></span></h2>
 
 <p><span style="font-size:14px"><span style="font-family:lucida sans unicode,lucida grande,sans-serif"><strong style="font-size:0.8em">CLASS:</strong> {{ instructor.admin.first_name }}'s class<br>
 <strong style="font-size:0.8em">DATE/TIME:</strong> {{ date }} {{ time }}<br>

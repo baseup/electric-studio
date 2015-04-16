@@ -681,9 +681,22 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
       }
     });
 
+    book_filter.waitlist = true
+    $scope.waitlist = BookService.query(book_filter);
+    $scope.waitlist.$promise.then(function (waitlist_data) {
+      $scope.waitlist = waitlist_data;
+      if ($scope.waitlist.length > 0) {
+        $scope.forWaitlist = true;
+      }
+    });
+
   }
 
   $scope.checkSeat = function (num) {
+    if ($scope.forWaitlist) {
+      return true;
+    }
+
     for (var r in $scope.reserved) {
       if ($scope.reserved[r].seat_number == num) {
         return true;
@@ -733,11 +746,14 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
       book.seat = seat;
       book.sched_id = sched.schedule._id;
+      var confirm_message = 'Your about to book a ride on ' + 
+                            $scope.daySched + ', ' + $scope.dateSched + ' with seat number ' + seat;
       if ($scope.forWaitlist) {
+        confirm_message = 'Your about to join the waitlist for this schedule ' + $scope.daySched + ', ' + $scope.dateSched;
         book.status = 'waitlisted';
       }
 
-      $.Confirm('Your about to book a ride on '+ $scope.daySched + ', ' + $scope.dateSched + ' with seat number ' + seat, function () {
+      $.Confirm(confirm_message, function () {
 
         var bookSuccess = function () {
           if ($scope.resched) {

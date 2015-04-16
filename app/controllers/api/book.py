@@ -16,9 +16,17 @@ def find(self):
 
     if self.get_argument('sched_id'):
         sched = yield InstructorSchedule.objects.get(self.get_argument('sched_id'));
-        books = yield BookedSchedule.objects.filter(status="booked", schedule=sched._id,
-                              date=datetime.strptime(self.get_argument('date'),'%Y-%m-%d')).find_all()
-        self.render_json(books)
+        is_waitlist = self.get_argument('waitlist')
+
+        if not is_waitlist:
+            books = yield BookedSchedule.objects.filter(status='booked', schedule=sched._id,
+                                  date=datetime.strptime(self.get_argument('date'),'%Y-%m-%d')).find_all()
+            self.render_json(books)
+        else:
+            waitlist = yield BookedSchedule.objects.filter(status='waitlisted', schedule=sched._id,
+                                  date=datetime.strptime(self.get_argument('date'),'%Y-%m-%d')).find_all()
+            self.render_json(waitlist)
+
     else:
         if self.get_secure_cookie('loginUserID'):
             user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
