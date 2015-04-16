@@ -119,6 +119,7 @@
               <th>Status</th>
               <th>Seat</th>
               <th>Create Date</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -127,7 +128,8 @@
               <td>{{ sched.schedule.instructor.admin.first_name }} {{ sched.schedule.instructor.admin.last_name }}</td>
               <td>{{ sched.status }}</td>
               <td>{{ sched.seat_number }}</td>
-              <td>{{ sched.create_at | formatDate }}</td>
+              <td>{{ sched.create_at | formatDate }} {{ sched.create_at | formatTime }} </td>
+              <td><button ng-if="sched.status == 'waitlisted'" class="btn btn--small btn--primary" ng-click="cancelWaitlist($index, sched)">Cancel</button></td>
             </tr>
           </tbody>
         </table>

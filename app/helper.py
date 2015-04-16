@@ -96,7 +96,7 @@ def send_email_cancel(user, content):
             },
             'html': content,
             'important': True,
-            'subject': 'Cancelled Booking',
+            'subject': 'Cancelled Schedule',
             'to': [
                 {
                     'email': user['email'],
