@@ -762,17 +762,26 @@ body {
 
   li {
     position: relative;
+
+    span{
+      opacity: 1;
+      -webkit-transition: all 800ms;
+      -moz-transition: all 800ms;
+      transition: all 800ms;
+    }
+    img.preloaded-img{
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      visibility: hidden;
+    }
   }
 
   li.loading {
     background: url(/assets/images/preloader.gif) center no-repeat;
-  }
-
-  li img.preloaded-img {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    visibility: hidden;
+    span{
+      opacity: 0;
+    }
   }
 }
   
