@@ -139,6 +139,8 @@ def buy(self):
                             transaction = UserPackage()
                             transaction.user_id = user._id
                             transaction.package_id = package._id
+                            transaction.package_name = package.name
+                            transaction.package_fee = package.fee
                             transaction.credit_count = package.credits
                             transaction.remaining_credits = package.credits
                             transaction.expiration = package.expiration
@@ -222,6 +224,17 @@ def remove_test_waitlist(self):
         yield BookedSchedule.objects.filter(user_id=user._id).delete();
         yield user.delete()
     self.finish()
+
+def package_migrate(self):
+
+    user_packages = yield UserPackage.objects.find_all()
+    for i, upack in enumerate(user_packages):
+        if upack.package_id:
+            upack.package_name = upack.package_id.name
+            upack.package_fee = upack.package_id.fee
+            yield upack.save()
+
+    self.redirect('/')
 
 
 def add_regular_schedule(self):
@@ -313,4 +326,4 @@ def add_regular_schedule(self):
     #                                       end=datetime.strptime(endtimes[t],'%I:%M %p'))
     #         schedule = yield schedule.save()
 
-    self.finish()
+    self.redirect('/')
