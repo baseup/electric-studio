@@ -499,8 +499,36 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
     }
   }
   
+  $scope.switchBikeModal = function (book) {
+    ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+      $scope.selectedBook = book;
+      if (seats.available.length) {
+        var selectize = angular.element('#switch-seat')[0].selectize;
+        selectize.settings.sortField = 'text';
+        angular.forEach(seats.available, function (seat) {
+          selectize.addOption({ value: seat, text: seat });
+        });
+
+        angular.element('#switch-bike-modal').Modal();
+      } else{
+        $.Notify({ content: 'No seats available to switch' });    
+      }
+    });
+  }
+
   $scope.switchBike = function () {
-    angular.element('#switch-bike-modal').Modal();
+    if ($scope.selectedBike) {
+      var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
+      $.Confirm(confirm_msg, function () {
+        ClassService.update({ scheduleId: $scope.selectedBook._id }, { move_to_seat : $scope.selectedBike }, function(){
+          $scope.reload();
+        }, function(error){
+          $.Notify({ content: error.data });
+        });
+      });
+    } else {
+      $.Alert('Please select bike to switch')
+    }
   }
   
   $scope.moveToClass = function (wait) {
@@ -521,8 +549,8 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
     
   }
 
-  $scope.bookWaitList = function(){
-    ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number }, function(){
+  $scope.bookWaitList = function () {
+    ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number, waitlist: true }, function(){
       $scope.reload();
     }, function(error){
       $.Notify({ content: error.data });
