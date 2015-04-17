@@ -574,7 +574,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
     allDaySlot: false,
     allDay: false,
     minTime: '05:00:00',
-    maxTime: '20:00:00',
+    maxTime: '23:00:00',
     events: function (start, end, timezone, callback) {
       var events = [];
       ScheduleService.query({ start: start.unix(), end: end.unix() }, function (scheds) {
