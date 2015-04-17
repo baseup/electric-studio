@@ -139,7 +139,7 @@
 
   <!-- modal account summary -->
   <div class="modal" data-modal="account-summary" id="account-summary-modal">
-    <div class="modal__box pad">
+    <div class="modal__box pad" style="max-width: 50%">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Summary of Classes and Packages</h3>
 
@@ -161,7 +161,7 @@
             <td>{{ pack.package_id.name || 'Free' }} </td>
             <td>{{ pack.credit_count }}</td>
             <td>{{ pack.remaining_credits }}</td>
-            <td>{{ pack.create_at }}</td>
+            <td>{{ pack.create_at | addDay:pack.expiration | formatDate }}</td>
           </tr>
         </table>
       </div>

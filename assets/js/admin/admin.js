@@ -101,6 +101,18 @@ app.filter('formatDate', function() {
   };
 });
 
+app.filter('addDay', function() {
+  return function(date, days) {
+    if (date) {
+      var newDate = new Date(date);
+      newDate.setTime(newDate.getTime() +  (days * 24 * 60 * 60 * 1000));
+      return newDate;
+    } else {
+      return date;
+    }
+  };
+});
+
 app.filter('search', function($filter){
 
   var parseString = function(input){
