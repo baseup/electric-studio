@@ -351,7 +351,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
 });
 
 
-ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
+ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserService) {
   
   $scope.newBook = {};
   var dateToday = new Date();
@@ -368,20 +368,22 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
     $scope.books = null;
     $scope.waitList = null;
     $scope.schedDetails = null;
-    $scope.newBook.sched_id = null;
     ClassService.query({ date: $scope.newBook.date, time: $scope.newBook.time, sched_id: $scope.newBook.sched_id }, function (books) {
       $scope.books = books.bookings;
       $scope.waitList = books.waitlist;
       $scope.schedDetails = books.schedule;
       if (books.schedules.length) {
         var selectize = angular.element('#select-class-time')[0].selectize;
+
         angular.forEach(books.schedules, function (sched) {
           selectize.addOption({ value: sched.id, text: sched.text });
         });
         if (!$scope.newBook.sched_id) {
-          $scope.newBook.sched_id = books.schedules[0].id;
-          selectize.setValue(books.schedules[0].id);
-        }
+          $timeout(function () {
+            selectize.setValue(books.schedules[0].id);
+          }, 100);
+        } 
+        
       }
     });
   }
