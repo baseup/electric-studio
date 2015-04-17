@@ -93,7 +93,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 });
 
-ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, PackageService, TransactionService, ClassService) {
+ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, PackageService, TransactionService, ClassService, SecurityService) {
 
   $scope.newCredits = {};
 
@@ -151,12 +151,25 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
     angular.element('#add-class-modal').Modal();
   }
 
-  $scope.buyPackageModal = function (user) {
+  $scope.checkSecurityModal = function (user) {
     $scope.selectedAccount = user;
-    if(!(user.billing instanceof Object)){
-      $scope.selectedAccount.billing = JSON.parse(user.billing);
+    angular.element('#security-check-modal').Modal();
+  }
+
+  $scope.checkSecurity = function () {
+    if ($scope.securityPass) {
+      SecurityService.check({ sudopass: $scope.securityPass }, function () {
+        
+        if(!($scope.selectedAccount.billing instanceof Object)){
+          $scope.selectedAccount.billing = JSON.parse($scope.selectedAccount.billing);
+        }
+        angular.element('#buy-package-modal').Modal();
+        $scope.securityPass = null;
+      }, function (error) {
+        $.Alert(error.data);
+        $scope.securityPass = null;
+      });
     }
-    angular.element('#buy-package-modal').Modal();
   }
 
   $scope.confirmBilling = function () {

@@ -12,11 +12,15 @@ routes.get('/fpass', 'home.forgot_password')
 routes.post('/fpass', 'home.forgot_password')
 routes.post('/user/login', 'home.login')
 routes.get('/user/logout', 'home.logout')
+routes.post('/upload/instructor', 'upload.instructor')
+routes.post('/upload/images', 'upload.images')
+
+# to be remove
+routes.get('/add_default_sudopass', 'home.add_default_sudopass')
 routes.get('/add_regular_schedules', 'home.add_regular_schedule')
 routes.get('/test_waitlist', 'home.test_waitlist')
 routes.get('/remove_test_waitlist', 'home.remove_test_waitlist')
-routes.post('/upload/instructor', 'upload.instructor')
-routes.post('/upload/images', 'upload.images')
+
 
 routes.prefix('/admin', [
 
@@ -27,6 +31,7 @@ routes.prefix('/admin', [
     ('post', '/login', 'admin.login'),
     ('get', '/logout', 'admin.logout'),
 
+    ('resource', '/security', 'admin.security'),
     ('resource', '/transaction', 'admin.transaction'),
     ('resource', '/statistic', 'admin.statistic'),
     ('resource', '/package', 'admin.package'),
