@@ -68,9 +68,7 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     angular.element('.main-menu').toggleClass('show');
   });
 
-
   angular.element('.seats td').find('span').click(function () {
-    angular.element('.seats td').removeClass('selected');
     if (!angular.element(this).parent('td').hasClass('unavailable')) {
       angular.element(this).parent('td').toggleClass('selected');
     }
@@ -646,13 +644,13 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   }
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedService, BookService) {
+ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, SharedService, BookService) {
   var sched = SharedService.get('selectedSched');
   if (!sched) {
     $location.path('/schedule')
   } else {
 
-    var seat = 0;
+    var seats = [];
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var days = ['Monday','Tuesday','Friday','Thursday','Friday','Saturday', 'Sunday'];
 
@@ -706,11 +704,19 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
   }
 
   $scope.setSeatNumber = function (number, event) {
-
+    var seat_index = -1;
+    for (var i = 0; i < seats.length; i++) {
+      if (seats[i] === number) {
+        seat_index = i;
+      }
+    }
     if (!$scope.checkSeat(number)) {
-      seat = number;
+      if(seat_index == -1){
+        seats.push(number);
+      }else{
+        seats.splice(seat_index, 1);
+      }
     }else{
-      seat = 0;
       event.preventDefault();
     }
   }
@@ -737,22 +743,22 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
         return;
       }
 
-      if (!$scope.forWaitlist && seat == 0) {
+      if (!$scope.forWaitlist && seats.length == 0) {
         $.Alert('Please pick a seat');
         return;
       }
 
       var book = {};
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
-      book.seat = seat;
+      book.seats = seats;
       book.sched_id = sched.schedule._id;
       var confirm_message = 'Your about to book a ride on ' + 
-                            $scope.daySched + ', ' + $scope.dateSched + ' with seat number ' + seat;
+                            $scope.daySched + ', ' + $scope.dateSched + ' with seat'+ (seats.length > 1 ? 's' : '') +' number ' + seats;
       if ($scope.forWaitlist) {
         confirm_message = 'Your about to join the waitlist for this schedule ' + $scope.daySched + ', ' + $scope.dateSched;
         book.status = 'waitlisted';
       }
-
+      console.log(book)
       $.Confirm(confirm_message, function () {
 
         var bookSuccess = function () {
@@ -763,6 +769,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
         }
         var bookFail = function (error) {
           $.Alert(error.data)
+          $route.reload();
         }
 
         if ($scope.resched == undefined) {
@@ -835,7 +842,6 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
       }        
       event.preventDefault();
     }
-
   }
 
 });
