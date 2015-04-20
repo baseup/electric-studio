@@ -123,15 +123,17 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
         footerH = angular.element('.main-footer').height();
 
       //preload images
-      angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
-        var img = angular.element(value);
-        var src = img.attr('src');
-        
-        if (img[0].complete) {
-          img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
-          img.remove();
-        }
-      });
+      $timeout(function () {
+        angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
+          var img = angular.element(value);
+          var src = img.attr('src');
+          
+          if (img[0].complete) {
+            img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
+            img.remove();
+          }
+        });
+      }, 300);
 
       if (win.width() >= 980) {
         angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
