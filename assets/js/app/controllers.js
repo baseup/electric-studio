@@ -133,7 +133,7 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
             img.remove();
           }
         });
-      })
+      },300);
 
       if (win.width() >= 980) {
         angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
