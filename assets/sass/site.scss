@@ -763,13 +763,14 @@ body {
   li {
     position: relative;
 
-    span{
+    span {
       opacity: 1;
       -webkit-transition: all 800ms;
       -moz-transition: all 800ms;
       transition: all 800ms;
     }
-    img.preloaded-img{
+
+    img.preloaded-img {
       position: absolute;
       width: 1px;
       height: 1px;
@@ -779,7 +780,8 @@ body {
 
   li.loading {
     background: url(/assets/images/preloader.gif) center no-repeat;
-    span{
+
+    span {
       opacity: 0;
     }
   }

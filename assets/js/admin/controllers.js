@@ -93,7 +93,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 });
 
-ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, PackageService, TransactionService, ClassService) {
+ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, PackageService, TransactionService, ClassService, SecurityService) {
 
   $scope.newCredits = {};
 
@@ -151,12 +151,25 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
     angular.element('#add-class-modal').Modal();
   }
 
-  $scope.buyPackageModal = function (user) {
+  $scope.checkSecurityModal = function (user) {
     $scope.selectedAccount = user;
-    if(!(user.billing instanceof Object)){
-      $scope.selectedAccount.billing = JSON.parse(user.billing);
+    angular.element('#security-check-modal').Modal();
+  }
+
+  $scope.checkSecurity = function () {
+    if ($scope.securityPass) {
+      SecurityService.check({ sudopass: $scope.securityPass }, function () {
+        
+        if(!($scope.selectedAccount.billing instanceof Object)){
+          $scope.selectedAccount.billing = JSON.parse($scope.selectedAccount.billing);
+        }
+        angular.element('#buy-package-modal').Modal();
+        $scope.securityPass = null;
+      }, function (error) {
+        $.Alert(error.data);
+        $scope.securityPass = null;
+      });
     }
-    angular.element('#buy-package-modal').Modal();
   }
 
   $scope.confirmBilling = function () {
@@ -351,7 +364,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
 });
 
 
-ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
+ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserService) {
   
   $scope.newBook = {};
   var dateToday = new Date();
@@ -368,20 +381,22 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
     $scope.books = null;
     $scope.waitList = null;
     $scope.schedDetails = null;
-    $scope.newBook.sched_id = null;
     ClassService.query({ date: $scope.newBook.date, time: $scope.newBook.time, sched_id: $scope.newBook.sched_id }, function (books) {
       $scope.books = books.bookings;
       $scope.waitList = books.waitlist;
       $scope.schedDetails = books.schedule;
       if (books.schedules.length) {
         var selectize = angular.element('#select-class-time')[0].selectize;
+
         angular.forEach(books.schedules, function (sched) {
           selectize.addOption({ value: sched.id, text: sched.text });
         });
         if (!$scope.newBook.sched_id) {
-          $scope.newBook.sched_id = books.schedules[0].id;
-          selectize.setValue(books.schedules[0].id);
-        }
+          $timeout(function () {
+            selectize.setValue(books.schedules[0].id);
+          }, 100);
+        } 
+        
       }
     });
   }

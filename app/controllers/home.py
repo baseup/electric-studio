@@ -3,7 +3,7 @@ from app.models.users import User
 from app.models.packages import Package, UserPackage
 from app.helper import send_email_verification, send_email
 from app.models.schedules import InstructorSchedule, BookedSchedule
-from app.models.admins import Instructor, Admin
+from app.models.admins import Instructor, Admin, Setting
 from datetime import datetime
 from bson.objectid import ObjectId
 import sys
@@ -139,6 +139,8 @@ def buy(self):
                             transaction = UserPackage()
                             transaction.user_id = user._id
                             transaction.package_id = package._id
+                            transaction.package_name = package.name
+                            transaction.package_fee = package.fee
                             transaction.credit_count = package.credits
                             transaction.remaining_credits = package.credits
                             transaction.expiration = package.expiration
@@ -223,6 +225,25 @@ def remove_test_waitlist(self):
         yield user.delete()
     self.finish()
 
+def package_migrate(self):
+
+    user_packages = yield UserPackage.objects.find_all()
+    for i, upack in enumerate(user_packages):
+        if upack.package_id:
+            upack.package_name = upack.package_id.name
+            upack.package_fee = upack.package_id.fee
+            yield upack.save()
+
+    self.redirect('/')
+
+def add_default_sudopass(self): 
+    setting = yield Setting.objects.get(key='security_password')
+    if not setting:
+        setting = Setting()
+        setting.key = 'security_password'
+        setting.value = bcrypt.encrypt('es456')
+        yield setting.save()
+    self.finish()
 
 def add_regular_schedule(self):
 
@@ -240,6 +261,7 @@ def add_regular_schedule(self):
     
     scheds = yield InstructorSchedule.objects.find_all()
     for i, sched in enumerate(scheds):
+        yield BookedSchedule.objects.filter(schedule=sched._id).delete()
         yield sched.delete()
 
     instructors = yield Instructor.objects.find_all()
@@ -313,4 +335,4 @@ def add_regular_schedule(self):
     #                                       end=datetime.strptime(endtimes[t],'%I:%M %p'))
     #         schedule = yield schedule.save()
 
-    self.finish()
+    self.redirect('/')

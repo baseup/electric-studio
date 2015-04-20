@@ -64,6 +64,15 @@ services.factory('AuthService', function (UserService) {
   };
 });
 
+services.factory('SecurityService', function($resource) {
+  return $resource('/admin/security', {}, {
+    check: {
+      method: 'GET',
+      isArray: false
+    },
+  });
+});
+
 services.factory('PackageService', function($resource) {
   return $resource('/admin/package/:packageId', {}, {
     query: {
