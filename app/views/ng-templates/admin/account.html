@@ -36,7 +36,7 @@
 
               <dl>
               <dt>Class Package</dt>
-              <a class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
+              <a class="float--right" data-modal-toggle="buy-package" ng-click="checkSecurityModal(user)">Buy</a>
               <dd class="">{{ user.credits }} Classes Left</dd>
               <!-- <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd> -->
               </dl>
@@ -165,6 +165,23 @@
           </tr>
         </table>
       </div>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="security-check" id="security-check-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Security Check</h3>
+      
+      <ul class="form-fields">
+        <li>
+          <span class="label">Password</span>
+          <input ng-model="securityPass" type="password" class="text-input">
+        </li>
+      </ul>
+     
+      <button type="button" ng-click="checkSecurity()" class="btn btn--primary btn--medium space--top modal-close">Confirm</button>
+
     </div>
   </div>
 
