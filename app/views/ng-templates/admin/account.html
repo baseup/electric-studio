@@ -139,7 +139,7 @@
 
   <!-- modal account summary -->
   <div class="modal" data-modal="account-summary" id="account-summary-modal">
-    <div class="modal__box pad">
+    <div class="modal__box pad" style="max-width: 50%">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Summary of Classes and Packages</h3>
 
@@ -158,10 +158,10 @@
             <th>Expiration Date</th>
           </tr>
           <tr ng-repeat="pack in selectedAccount.packages">
-            <td>{{ pack.package_id.name || 'Free' }} </td>
+            <td>{{ pack.package_name || 'Free' }} </td>
             <td>{{ pack.credit_count }}</td>
             <td>{{ pack.remaining_credits }}</td>
-            <td>{{ pack.create_at }}</td>
+            <td>{{ pack.create_at | formatDate }} {{ pack.create_at | formatTime }}</td>
           </tr>
         </table>
       </div>

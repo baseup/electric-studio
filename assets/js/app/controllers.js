@@ -826,7 +826,7 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
     }
 
     $scope.nextTrans = function (event) {
-      if ($scope.currentTrans > parseInt($scope.histories.transTotal)) {
+      if ($scope.currentTrans < parseInt($scope.histories.transTotal)) {
         $scope.currentTrans += 1;
         $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
         $scope.histories.$promise.then(function (data) {

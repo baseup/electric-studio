@@ -20,7 +20,7 @@ routes.get('/add_default_sudopass', 'home.add_default_sudopass')
 routes.get('/add_regular_schedules', 'home.add_regular_schedule')
 routes.get('/test_waitlist', 'home.test_waitlist')
 routes.get('/remove_test_waitlist', 'home.remove_test_waitlist')
-
+routes.get('/package_migrate', 'home.package_migrate')
 
 routes.prefix('/admin', [
 
