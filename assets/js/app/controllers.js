@@ -508,10 +508,12 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, SharedService, BookService) {
   $scope.resched = SharedService.get('resched');
 
-  $scope.reserved = BookService.query();
-  $scope.reserved.$promise.then(function (data) {
-    $scope.reserved = data;
-  });
+  if ($scope.loginUser) {
+    $scope.reserved = BookService.query();
+    $scope.reserved.$promise.then(function (data) {
+      $scope.reserved = data;
+    });
+  }
 
   $scope.cancelResched = function () {
     SharedService.clear('resched');
@@ -533,7 +535,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
 
   $scope.chkSched = function (date, sched) {
 
-  
     if ($scope.reserved) {
       for (var i in $scope.reserved) {
         var rDate = new Date($scope.reserved[i].date);
@@ -618,10 +619,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
       $scope.schedules = data;
     });
 
-    $scope.reserved = BookService.query();
-    $scope.reserved.$promise.then(function (data) {
-      $scope.reserved = data;
-    });
+    if ($scope.loginUser) {
+      $scope.reserved = BookService.query();
+      $scope.reserved.$promise.then(function (data) {
+        $scope.reserved = data;
+      });
+    }
 
   }
 
@@ -654,7 +657,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
 
     var seat = 0;
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var days = ['Monday','Tuesday','Friday','Thursday','Friday','Saturday', 'Sunday'];
+    var days = ['Sunday','Monday','Tuesday','Friday','Thursday','Friday','Saturday'];
 
     $scope.resched = SharedService.get('resched');
     
@@ -826,7 +829,7 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
     }
 
     $scope.nextTrans = function (event) {
-      if ($scope.currentTrans > parseInt($scope.histories.transTotal)) {
+      if ($scope.currentTrans < parseInt($scope.histories.transTotal)) {
         $scope.currentTrans += 1;
         $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
         $scope.histories.$promise.then(function (data) {

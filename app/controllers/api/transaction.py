@@ -30,6 +30,8 @@ def create(self):
         if 'package_id' in data:
             package = yield Package.objects.get(data['package_id'])
             transaction.package_id = data['package_id']
+            transaction.package_name = package.name
+            transaction.package_fee = package.fee
             transaction.credit_count = package.credits
             transaction.remaining_credits = package.credits
             transaction.expiration = package.expiration

@@ -3,7 +3,7 @@ from app.models.packages import *
 from datetime import datetime
 from bson.objectid import ObjectId
 from motorengine import DESCENDING
-from app.helper import send_email, send_email_cancel, send_email_booking
+from app.helper import send_email, send_email_cancel, send_email_booking, send_email_move
 
 import tornado.escape
 
@@ -30,7 +30,7 @@ def find(self):
             'available': available_seats
         })
     else:
-        schedules = yield InstructorSchedule.objects.filter(date=date).find_all()
+        schedules = yield InstructorSchedule.objects.filter(date=date).order_by('start', direction=ASCENDING).find_all()
         list_scheds = []
         for s in schedules:
             list_scheds.append({
@@ -42,7 +42,7 @@ def find(self):
             ins_sched = schedules[0]
             if time:
                 time = datetime.strptime(time, '%I:%M %p')
-                ins_sched = yield InstructorSchedule.objects.get(date=date, start_time=time)
+                ins_sched = yield InstructorSchedule.objects.get(date=date, start=time)
                 # if not ins_sched:
                 #     ins_sched = yield InstructorSchedule.objects.get(day=date.strftime('%a').lower(), start=time)
             elif sched_id:
@@ -147,13 +147,32 @@ def update(self, id):
     if 'move_to_seat' in data:
         sched = yield InstructorSchedule.objects.get(booked_schedule.schedule._id)
 
-        booked_schedule.status = 'booked'
+        if 'waitlist' in data:
+            booked_schedule.status = 'booked'
+
         booked_schedule.seat_number = data['move_to_seat']
         booked_schedule = yield booked_schedule.save()
 
         user = (yield User.objects.get(booked_schedule.user_id._id)).serialize()
-        content = str(self.render_string('emails/waitlist_approved', date=booked_schedule.date.strftime('%Y-%m-%d'), user=user, seat_number=booked_schedule.seat_number, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p')), 'UTF-8')
-        yield self.io.async_task(send_email, user=user, content=content, subject='Waitlist moved to class')
+        if 'waitlist' in data:
+            content = str(self.render_string('emails/waitlist_approved', 
+                          date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                          user=user, 
+                          seat_number=booked_schedule.seat_number, 
+                          instructor=sched.instructor, 
+                          time=sched.start.strftime('%I:%M %p')), 'UTF-8')
+            yield self.io.async_task(send_email, user=user, content=content, subject='Waitlist moved to class')
+        else:
+            yield self.io.async_task(send_email_move,
+                content=str(self.render_string('emails/moved', 
+                            user=user, 
+                            instructor=sched.instructor, 
+                            date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                            seat_number=booked_schedule.seat_number, 
+                            time=sched.start.strftime('%I:%M %p')), 'UTF-8'),
+                user=user
+            )
+
     else: 
         special_date = datetime.strptime(data['date'], '%Y-%m-%d')
         time = datetime.strptime(data['time'], '%I:%M %p')
