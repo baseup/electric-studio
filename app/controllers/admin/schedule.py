@@ -30,7 +30,7 @@ def find(self):
             'available': available_seats
         })
     else:
-        schedules = yield InstructorSchedule.objects.filter(date=date).order_by('start',direction=ASCENDING).find_all()
+        schedules = yield InstructorSchedule.objects.filter(date=date).order_by('start', direction=ASCENDING).find_all()
         list_scheds = []
         for s in schedules:
             list_scheds.append({
