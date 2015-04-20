@@ -161,7 +161,7 @@
             <td>{{ pack.package_name || 'Free' }} </td>
             <td>{{ pack.credit_count }}</td>
             <td>{{ pack.remaining_credits }}</td>
-            <td>{{ pack.create_at | formatDate }} {{ pack.create_at | formatTime }}</td>
+            <td>{{ pack.create_at | addDay:pack.expiration | formatDate }}</td>
           </tr>
         </table>
       </div>
