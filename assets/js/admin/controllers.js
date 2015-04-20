@@ -93,7 +93,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 });
 
-ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, TransactionService) {
+ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, PackageService, TransactionService, ClassService) {
 
   $scope.newCredits = {};
 
@@ -182,10 +182,29 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
           $scope.selectedAccount.billing.card_type &&
           $scope.selectedAccount.billing.card_expiration &&
           $scope.selectedAccount.billing.csc) {
-        window.location = '/admin/buy?pid=' + $scope.newPackage._id + '&uid=' + $scope.selectedAccount._id + '&success=True';      
+
+        var billingSuccess = function () {
+        $.Alert('Successfully save billing information. Now were redirecting you to paypal');
+          window.location = '/admin/buy?pid=' + $scope.newPackage._id + '&uid=' + $scope.selectedAccount._id + '&success=True';
+        }
+
+        var billingFail = function (error) {
+          $.Alert(error.data)
+        }
+        UserService.update({ userId: $scope.selectedAccount._id }, { billing: $scope.selectedAccount.billing }).$promise.then(billingSuccess, billingFail);
+
+        
       } else {
-        $.Alert('Billing information is not complete to process the transaction')
+        $.Alert('Billing information is not complete to process the transaction');
+        $timeout(function() {
+          angular.element('#billing-preview-modal').Modal();
+        }, 10);
       }
+    } else {
+      $.Alert('Please provide billing information');
+      $timeout(function() {
+        angular.element('#billing-preview-modal').Modal();
+      }, 10);
     }
 
 
@@ -236,6 +255,14 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
       from_picker.set('max', false);
     }
   });  
+
+  $scope.cancelWaitlist = function (index, sched) {
+    ClassService.delete({ scheduleId: sched._id }, function () {
+      $scope.filterSchedDate($scope.selectedAccount);
+      $.Alert('Successfully cancelled waitlisted schedule');
+    });
+
+  }
 
   $scope.filterSchedDate = function (user) {
     if ($scope.schedFilter) {
@@ -324,7 +351,7 @@ ctrls.controller('AccountCtrl', function ($scope, UserService, PackageService, T
 });
 
 
-ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
+ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserService) {
   
   $scope.newBook = {};
   var dateToday = new Date();
@@ -341,30 +368,22 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
     $scope.books = null;
     $scope.waitList = null;
     $scope.schedDetails = null;
-    $scope.newBook.sched_id = null;
     ClassService.query({ date: $scope.newBook.date, time: $scope.newBook.time, sched_id: $scope.newBook.sched_id }, function (books) {
       $scope.books = books.bookings;
       $scope.waitList = books.waitlist;
       $scope.schedDetails = books.schedule;
       if (books.schedules.length) {
         var selectize = angular.element('#select-class-time')[0].selectize;
+
         angular.forEach(books.schedules, function (sched) {
           selectize.addOption({ value: sched.id, text: sched.text });
         });
         if (!$scope.newBook.sched_id) {
-          selectize.setValue(books.schedules[0].id);
-          $scope.newBook.sched_id = books.schedules[0].id;
-          ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
-            if (seats.available.length) {
-              angular.element('#select-bike-number')[0].selectize.clearOptions();
-              var selectbike = angular.element('#select-bike-number')[0].selectize;
-              selectbike.settings.sortField = 'text';
-              angular.forEach(seats.available, function (seat) {
-                selectbike.addOption({ value: seat, text: seat });
-              }); 
-            }
-          });
-        }
+          $timeout(function () {
+            selectize.setValue(books.schedules[0].id);
+          }, 100);
+        } 
+        
       }
     });
   }
@@ -373,8 +392,10 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
   UserService.query(function (users) {
     $scope.users = users;
     var select = angular.element('#select-user-id')[0].selectize;
+    var selectWaitlist = angular.element('#select-waitlist-user')[0].selectize;
     angular.forEach(users, function (user) {
       select.addOption({ value: user._id, text: user.first_name + ' ' + user.last_name });
+      selectWaitlist.addOption({ value: user._id, text: user.first_name + ' ' + user.last_name });
     });
   });
 
@@ -387,15 +408,18 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
     }
   }
 
+  $scope.selectWaitlistRider = function () {
+    for (var i in $scope.users) {
+      if ($scope.users[i]._id == $scope.newWaitlist.user_id) {
+        $scope.selectedRider = $scope.users[i];
+        break;
+      }
+    }
+  }
+
   $scope.cancelBooking = function (booking, index) {
     $scope.books.splice(index, 1);
     ClassService.delete({ scheduleId: booking._id });
-  }
-
-  var select = angular.element('#select-bike-number')[0].selectize;
-  select.settings.sortField = 'text';
-  for (var i = 1; i <= 37; i++) {
-    select.addOption({ value: i, text: i });
   }
 
   $scope.sendNewBook = function () {
@@ -424,10 +448,54 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
       $.Notify({ content: error.data });
     });
   }
+
+  $scope.addNewWaitlist = function () {
+    var now = new Date();
+    var parts = $scope.schedDetails.start.split(/[^0-9]/);
+    var dTime =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+    var hours = dTime.getHours();
+    var minutes = dTime.getMinutes();
+    var chkDate = new Date($scope.newWaitlist.date);
+    chkDate.setHours(hours, minutes, 0, 0);
+    if (chkDate < now){
+      $.Notify({ content: "This schedule is completed" });
+      return;
+    }
+
+    $scope.newWaitlist.status = 'waitlisted';
+    ClassService.save($scope.newWaitlist, function (savedBook) {
+      $scope.reload();
+    }, function (error) {
+      $.Notify({ content: error.data });
+    });
+  }
   
   $scope.bookRide = function () {
     if ($scope.newBook.sched_id) {
-      angular.element('#book-ride-modal').Modal();
+      ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+        if (seats.available.length) {
+          angular.element('#select-bike-number')[0].selectize.clearOptions();
+          var selectbike = angular.element('#select-bike-number')[0].selectize;
+          selectbike.settings.sortField = 'text';
+          angular.forEach(seats.available, function (seat) {
+            selectbike.addOption({ value: seat, text: seat });
+          }); 
+          angular.element('#book-ride-modal').Modal();
+        } else {
+          $.Alert('No available seats');
+        }
+      });
+    } else {
+      $.Alert('Please select schedule date and time');
+    }
+  }
+
+  $scope.addWaitlistModal = function () {
+    if ($scope.newBook.sched_id) {
+      $scope.newWaitlist = {};
+      $scope.newWaitlist.sched_id = $scope.newBook.sched_id;
+      $scope.newWaitlist.date = $scope.newBook.date;
+      angular.element('#add-waitlist-modal').Modal();
     } else {
       $.Alert('Please select schedule date and time');
     }
@@ -466,6 +534,31 @@ ctrls.controller('ClassCtrl', function ($scope, ClassService, UserService) {
   $scope.removeFromWaitlist = function (wait, index) {
     $scope.waitList.splice(index, 1);
     ClassService.delete({ scheduleId: wait._id });
+  }
+
+  $scope.releaseWaitlist = function () {
+    if (!$scope.newBook.sched_id) {
+      $.Alert('Please select a valid schedule');
+      return;
+    }
+
+    $.Confirm('Are you sure on cancelling all waitlist for this schedule ?', function () {
+      $scope.waitList = [];
+      ClassService.delete({ scheduleId: 'None', sched_id: $scope.newBook.sched_id, waitlist: true });
+    });
+  }
+
+  $scope.printWaitlist = function () {
+    if (!$scope.newBook.sched_id) {
+      $.Alert('Please select a valid schedule');
+      return;
+    }
+
+    if ($scope.waitList && $scope.waitList.length > 0) {
+      window.location = '/admin/export/waitlist?sched_id=' + $scope.newBook.sched_id;  
+    } else {
+      $.Alert('No waitlist schedule found');
+    }
   }
 
   $scope.downloadBookingList = function () {

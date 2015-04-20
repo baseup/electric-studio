@@ -193,7 +193,18 @@ def test_waitlist(self):
             user = yield user.save();
 
         yield BookedSchedule.objects.filter(user_id=user._id).delete()
+        currentBooks = yield BookedSchedule.objects.filter(schedule=sched._id).find_all()
+
         for x in range(0, 37):
+            isReserved = False
+            for i, book in enumerate(currentBooks):
+                if (x + 1) == book.seat_number:
+                    isReserved = True
+                    break
+
+            if isReserved:
+                continue
+
             if user:            
                 book = BookedSchedule(user_id=user._id, 
                                       date=date,

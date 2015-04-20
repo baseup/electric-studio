@@ -8,7 +8,7 @@
     </div>
     <div class="float--left">
       <select ng-change="reload()" class="select" id="select-class-time" ng-model="newBook.sched_id">
-        <option selected value="">Select time</option>
+        <option selected value="">Select time &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
       </select>
     </div>
   </div>
@@ -90,7 +90,9 @@
         </div>
 
         <div class="options">
-          <button class="btn btn--small btn--tertiary">Print Waitlist</button>
+          <button class="btn btn--small btn--primary" ng-click="addWaitlistModal()">Add New</button>
+          <button class="btn btn--small btn--primary" ng-click="releaseWaitlist()">Release all Waitlist</button>
+          <button class="btn btn--small btn--tertiary" ng-click="printWaitlist()">Print Waitlist</button>
         </div>
       </div>
 
@@ -121,7 +123,7 @@
 
             <div class="account__options pad--sides pad--half-ends space--top cf">
               <a class="user-move-class" ng-click="moveToClass(wait)">Move to Class</a>
-              <a class="user-remove-waitlist space--left link--secondary float--right" ng-click="removeFromWaitlist(wait, $index)">Remove</a>
+              <a class="user-remove-waitlist space--left link--secondary float--right" ng-click="removeFromWaitlist(wait, $index)">Cancel</a>
             </div>
 
           </div>
@@ -157,7 +159,31 @@
 
     </div>
   </div>
-  
+
+  <!-- modal add waitlist-->
+  <div id="add-waitlist-modal" class="modal" data-modal="add-waitlist">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Waitlist A Rider</h3>
+      <div class="user-select cf">
+        <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
+          <span class="label">Rider</span>
+          <select class="select" id="select-waitlist-user" ng-change="selectWaitlistRider()" ng-model="newWaitlist.user_id">
+            <option selected value="">Select Rider</option>
+          </select>
+        </div>
+      </div>
+      <div class="space--bottom one-whole float--left">
+        <span class="label">Notes</span>
+        <textarea class="text-input" cols="2" ng-model="newWaitlist.notes" placeholder="notes for waitlisting this rider"></textarea>
+      </div>
+      <div class="user-class-details" ng-show="selectedRider">
+        <span class="caps">{{ selectedRider.credits }} Classes Left</span>
+      </div>
+      <button type="button" ng-click="addNewWaitlist()" class="btn btn--medium btn--primary space--top modal-close">Add</button>
+    </div>
+  </div>  
+
   <!-- move to class -->
   <div id="move-to-class-modal" class="modal" data-modal="move-to-class" >
     <div class="modal__box pad">
@@ -171,7 +197,7 @@
 
        <div class="cf">   
         <select class="select space--bottom bp-md-one-third float--left" id="select-seat" ng-model="selectedWaitList.seat_number">
-          <option selected value="">Select Seat</option>
+          <option value="">Select Seat</option>
         </select>    
       </div>
 
