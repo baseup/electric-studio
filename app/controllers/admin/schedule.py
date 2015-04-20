@@ -2,8 +2,8 @@ from app.models.schedules import *
 from app.models.packages import *
 from datetime import datetime
 from bson.objectid import ObjectId
-from motorengine import DESCENDING, ASCENDING
-from app.helper import send_email, send_email_cancel, send_email_booking
+from motorengine import DESCENDING
+from app.helper import send_email, send_email_cancel, send_email_booking, send_email_move
 
 import tornado.escape
 
@@ -147,13 +147,32 @@ def update(self, id):
     if 'move_to_seat' in data:
         sched = yield InstructorSchedule.objects.get(booked_schedule.schedule._id)
 
-        booked_schedule.status = 'booked'
+        if 'waitlist' in data:
+            booked_schedule.status = 'booked'
+
         booked_schedule.seat_number = data['move_to_seat']
         booked_schedule = yield booked_schedule.save()
 
         user = (yield User.objects.get(booked_schedule.user_id._id)).serialize()
-        content = str(self.render_string('emails/waitlist_approved', date=booked_schedule.date.strftime('%Y-%m-%d'), user=user, seat_number=booked_schedule.seat_number, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p')), 'UTF-8')
-        yield self.io.async_task(send_email, user=user, content=content, subject='Waitlist moved to class')
+        if 'waitlist' in data:
+            content = str(self.render_string('emails/waitlist_approved', 
+                          date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                          user=user, 
+                          seat_number=booked_schedule.seat_number, 
+                          instructor=sched.instructor, 
+                          time=sched.start.strftime('%I:%M %p')), 'UTF-8')
+            yield self.io.async_task(send_email, user=user, content=content, subject='Waitlist moved to class')
+        else:
+            yield self.io.async_task(send_email_move,
+                content=str(self.render_string('emails/moved', 
+                            user=user, 
+                            instructor=sched.instructor, 
+                            date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                            seat_number=booked_schedule.seat_number, 
+                            time=sched.start.strftime('%I:%M %p')), 'UTF-8'),
+                user=user
+            )
+
     else: 
         special_date = datetime.strptime(data['date'], '%Y-%m-%d')
         time = datetime.strptime(data['time'], '%I:%M %p')
