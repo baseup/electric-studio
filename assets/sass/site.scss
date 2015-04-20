@@ -76,6 +76,11 @@ body {
   background: #fff;
 }
 
+.clearfix{
+  display: block;
+  content: '';
+  clear: both;
+}
 
 .main-header {
   -webkit-touch-callout: none;

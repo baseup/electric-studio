@@ -24,13 +24,14 @@
   <div class="content bg-lightGray parts-4 instructors-info">
     <div class="wrapper">
       <div class="cf">
-        <section ng-repeat="instructor in instructors" id="{{ instructor.admin.first_name }}">
+        <section ng-repeat-start="instructor in instructors" id="{{ instructor.admin.first_name }}">
           <div class="image">
             <img ng-src="{{ instructor.image ? instructor.image :  'http://placehold.it/350x150' }}">
           </div>  
           <h2 class="h--medium space--ends h--primary">{{ instructor.admin.first_name }}</h2>
           <p class="text-color-light">{{ instructor.motto }}</p>
         </section>
+        <div ng-repeat-end="" class="clearfix" ng-if="($index + 1) % 4 == 0 "></div>
       </div>
 
 
