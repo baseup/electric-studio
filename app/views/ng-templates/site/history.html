@@ -55,7 +55,7 @@
           <h3 class="h small primary space--off pad--half-bottom">{{ package.package_name || 'Free' }}</h3>
           <span>{{ package.credit_count }} Classes</span><br>
           <span><span class="label inline">Purchased On:</span> {{ package.create_at | formatDate }}</span><br>
-          <span><span class="label inline">Cost:</span> {{ package.package_fee }}</span><br>
+          <span><span class="label inline">Cost:</span> {{ package.package_fee | currency:"" }}</span><br>
           <span><span class="label inline">Classes Left:</span> {{ package.remaining_credits || 0 }}</span><br>
           <span><span class="label inline">Expires On:</span> {{ package.create_at | addDay:package.expiration | formatDate }}</span>
         </div>

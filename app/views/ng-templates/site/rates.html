@@ -20,7 +20,7 @@
     <div class="wrapper">
       <section ng-repeat="package in packages">
         <h2>{{ package.credits }} <span>Class</span></h2>
-        <p class="price">PHP <span>{{ package.fee }}</span></p>
+        <p class="price">PHP <span>{{ package.fee | currency:"" }}</span></p>
         <p>Expires in {{ package.expiration }} days</p>
         <!-- <a class="button small" ng-click="buy(package.id)">Buy</a> -->
         <form id="payForm" action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
