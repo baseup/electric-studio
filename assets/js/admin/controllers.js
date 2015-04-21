@@ -374,6 +374,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   $scope.reloadDate = function () {
     angular.element('#select-class-time')[0].selectize.clearOptions();
+    $scope.newBook.sched_id = null;
+    $scope.newBook.time = null;
     $scope.reload();
   }
 
@@ -396,7 +398,6 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
             selectize.setValue(books.schedules[0].id);
           }, 100);
         } 
-        
       }
     });
   }
@@ -430,9 +431,26 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     }
   }
 
+  $scope.isCompleted = function (sched) {
+
+    var now = new Date();
+    var dateParts = sched.date.split(/[^0-9]/);
+    var timeParts = sched.start.split(/[^0-9]/);
+    var date =  new Date(dateParts[0], dateParts[1]-1, dateParts[2], timeParts[3], timeParts[4], timeParts[5]);
+    if (date < now)
+      return true;
+
+    return false
+
+  }
+
   $scope.cancelBooking = function (booking, index) {
-    $scope.books.splice(index, 1);
-    ClassService.delete({ scheduleId: booking._id });
+    if (!$scope.isCompleted(booking.schedule)) {
+      $scope.books.splice(index, 1);
+      ClassService.delete({ scheduleId: booking._id });
+    } else {
+      $.Notify({ content: "Not allow to modify, This schedule is completed" });
+    }
   }
 
   $scope.sendNewBook = function () {
@@ -485,50 +503,62 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   
   $scope.bookRide = function () {
     if ($scope.newBook.sched_id) {
-      ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
-        if (seats.available.length) {
-          angular.element('#select-bike-number')[0].selectize.clearOptions();
-          var selectbike = angular.element('#select-bike-number')[0].selectize;
-          selectbike.settings.sortField = 'text';
-          angular.forEach(seats.available, function (seat) {
-            selectbike.addOption({ value: seat, text: seat });
-          }); 
-          angular.element('#book-ride-modal').Modal();
-        } else {
-          $.Alert('No available seats');
-        }
-      });
+      if (!$scope.isCompleted($scope.schedDetails)) {
+        ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+          if (seats.available.length) {
+            angular.element('#select-bike-number')[0].selectize.clearOptions();
+            var selectbike = angular.element('#select-bike-number')[0].selectize;
+            selectbike.settings.sortField = 'text';
+            angular.forEach(seats.available, function (seat) {
+              selectbike.addOption({ value: seat, text: seat });
+            }); 
+            angular.element('#book-ride-modal').Modal();
+          } else {
+            $.Alert('No available seats');
+          }
+        });
+      } else {
+        $.Notify({ content: "Not allow to modify, This schedule is completed" });
+      }
     } else {
-      $.Alert('Please select schedule date and time');
+      $.Alert('Please select schedule date and time');    
     }
   }
 
   $scope.addWaitlistModal = function () {
     if ($scope.newBook.sched_id) {
-      $scope.newWaitlist = {};
-      $scope.newWaitlist.sched_id = $scope.newBook.sched_id;
-      $scope.newWaitlist.date = $scope.newBook.date;
-      angular.element('#add-waitlist-modal').Modal();
+      if (!$scope.isCompleted($scope.schedDetails)) {
+        $scope.newWaitlist = {};
+        $scope.newWaitlist.sched_id = $scope.newBook.sched_id;
+        $scope.newWaitlist.date = $scope.newBook.date;
+        angular.element('#add-waitlist-modal').Modal();
+      } else {
+        $.Notify({ content: "Not allow to modify, This schedule is completed" });
+      }
     } else {
       $.Alert('Please select schedule date and time');
     }
   }
   
   $scope.switchBikeModal = function (book) {
-    ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
-      $scope.selectedBook = book;
-      if (seats.available.length) {
-        var selectize = angular.element('#switch-seat')[0].selectize;
-        selectize.settings.sortField = 'text';
-        angular.forEach(seats.available, function (seat) {
-          selectize.addOption({ value: seat, text: seat });
-        });
+    if (!$scope.isCompleted($scope.schedDetails)) {
+      ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+        $scope.selectedBook = book;
+        if (seats.available.length) {
+          var selectize = angular.element('#switch-seat')[0].selectize;
+          selectize.settings.sortField = 'text';
+          angular.forEach(seats.available, function (seat) {
+            selectize.addOption({ value: seat, text: seat });
+          });
 
-        angular.element('#switch-bike-modal').Modal();
-      } else{
-        $.Notify({ content: 'No seats available to switch' });    
-      }
-    });
+          angular.element('#switch-bike-modal').Modal();
+        } else{
+          $.Notify({ content: 'No seats available to switch' });    
+        }
+      });
+    } else {
+      $.Notify({ content: "Not allow to modify, This schedule is completed" });
+    }
   }
 
   $scope.switchBike = function () {
@@ -547,21 +577,24 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
   
   $scope.moveToClass = function (wait) {
-    ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
-      $scope.selectedWaitList = wait;
-      if (seats.available.length) {
-        var selectize = angular.element('#select-seat')[0].selectize;
-        selectize.settings.sortField = 'text';
-        angular.forEach(seats.available, function (seat) {
-          selectize.addOption({ value: seat, text: seat });
-        });
-        
-        angular.element('#move-to-class-modal').Modal();
-      }else{
-        $.Notify({ content: 'No seats available' });    
-      }
-    });
-    
+    if (!$scope.isCompleted($scope.schedDetails)) {
+      ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+        $scope.selectedWaitList = wait;
+        if (seats.available.length) {
+          var selectize = angular.element('#select-seat')[0].selectize;
+          selectize.settings.sortField = 'text';
+          angular.forEach(seats.available, function (seat) {
+            selectize.addOption({ value: seat, text: seat });
+          });
+          
+          angular.element('#move-to-class-modal').Modal();
+        }else{
+          $.Notify({ content: 'No seats available' });    
+        }
+      });
+    } else {
+      $.Notify({ content: "Not allow to modify, This schedule is completed" });
+    }
   }
 
   $scope.bookWaitList = function () {
@@ -583,10 +616,19 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       return;
     }
 
-    $.Confirm('Are you sure on cancelling all waitlist for this schedule ?', function () {
-      $scope.waitList = [];
-      ClassService.delete({ scheduleId: 'None', sched_id: $scope.newBook.sched_id, waitlist: true });
-    });
+    if (!$scope.isCompleted($scope.schedDetails)) {
+      if (!$scope.waitlist || $scope.waitlist.length > 0) {
+        $.Notify({ content: "No waitlist found to release" });
+        return;
+      }
+
+      $.Confirm('Are you sure on cancelling all waitlist for this schedule ?', function () {
+        $scope.waitList = [];
+        ClassService.delete({ scheduleId: 'None', sched_id: $scope.newBook.sched_id, waitlist: true });
+      });
+    } else {
+      $.Notify({ content: "Not allow to modify, This schedule is completed" });
+    }
   }
 
   $scope.printWaitlist = function () {
@@ -603,6 +645,11 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
 
   $scope.downloadBookingList = function () {
+    if (!$scope.newBook.sched_id) {
+      $.Alert('Please select a valid schedule');
+      return;
+    }
+
     window.location = '/admin/export/download-bookings?date=' + $scope.newBook.date + '&time=' + $scope.newBook.time;
   }
    

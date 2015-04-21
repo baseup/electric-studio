@@ -56,6 +56,13 @@ def find(self):
                 'schedule': ins_sched,
                 'schedules': list_scheds
             })
+        else:
+            self.render_json({
+                'bookings': [],
+                'waitlist': [],
+                'schedule': {},
+                'schedules': []
+            })
 
 def create(self):
     data = tornado.escape.json_decode(self.request.body)
