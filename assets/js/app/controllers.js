@@ -12,6 +12,11 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
 
   $scope.loginUser = AuthService.getCurrentUser();
+  if (!$scope.loginUser) {
+    UserService.get(function (user) {
+      $scope.loginUser = user;
+    })
+  }
 
   $scope.isVerified = false;
   if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
