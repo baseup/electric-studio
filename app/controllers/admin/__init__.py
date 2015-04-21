@@ -82,7 +82,7 @@ def buy(self):
 
                     user = (yield User.objects.get(user._id)).serialize()
                     content = str(self.render_string('emails/buy', user=user, host=self.request.host), 'UTF-8')
-                    yield self.io.async_task(send_email, user=user, content=content, subject='Bought Package')
+                    yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
 
                     self.redirect('/admin/#/accounts')
                 else:
