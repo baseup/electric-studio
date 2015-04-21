@@ -176,7 +176,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
     if ($scope.newPackage) {
       angular.element('#billing-preview-modal').Modal();
     } else {
-      $.Alert("Please select a package");
+      $.Alert('Please select a package');
     }
   }
 
@@ -449,7 +449,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       $scope.books.splice(index, 1);
       ClassService.delete({ scheduleId: booking._id });
     } else {
-      $.Notify({ content: "Not allow to modify, This schedule is completed" });
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
     }
   }
 
@@ -463,13 +463,13 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var chkDate = new Date($scope.newBook.date);
     chkDate.setHours(hours - 1, minutes, 0, 0);
     if (chkDate < now){
-      $.Notify({ content: "Booking should be 1 hour before" });
+      $.Notify({ content: 'Booking should be 1 hour before' });
       return;
     }
 
     var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
     if (chkDate > nextMonth) {
-      $.Notify({ content: "Booking 1 month in advance is prohibited" });
+      $.Notify({ content: 'Booking 1 month in advance is prohibited' });
       return;
     }
 
@@ -489,7 +489,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var chkDate = new Date($scope.newWaitlist.date);
     chkDate.setHours(hours, minutes, 0, 0);
     if (chkDate < now){
-      $.Notify({ content: "This schedule is completed" });
+      $.Notify({ content: 'This schedule is completed' });
       return;
     }
 
@@ -518,10 +518,10 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
           }
         });
       } else {
-        $.Notify({ content: "Not allow to modify, This schedule is completed" });
+        $.Notify({ content: 'Not allow to modify, This schedule is completed' });
       }
     } else {
-      $.Alert('Please select schedule date and time');    
+      $.Alert('Please select schedule date and time');
     }
   }
 
@@ -533,7 +533,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         $scope.newWaitlist.date = $scope.newBook.date;
         angular.element('#add-waitlist-modal').Modal();
       } else {
-        $.Notify({ content: "Not allow to modify, This schedule is completed" });
+        $.Notify({ content: 'Not allow to modify, This schedule is completed' });
       }
     } else {
       $.Alert('Please select schedule date and time');
@@ -557,7 +557,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         }
       });
     } else {
-      $.Notify({ content: "Not allow to modify, This schedule is completed" });
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
     }
   }
 
@@ -593,7 +593,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         }
       });
     } else {
-      $.Notify({ content: "Not allow to modify, This schedule is completed" });
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
     }
   }
 
@@ -618,7 +618,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
     if (!$scope.isCompleted($scope.schedDetails)) {
       if (!$scope.waitlist || $scope.waitlist.length > 0) {
-        $.Notify({ content: "No waitlist found to release" });
+        $.Notify({ content: 'No waitlist found to release' });
         return;
       }
 
@@ -627,7 +627,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         ClassService.delete({ scheduleId: 'None', sched_id: $scope.newBook.sched_id, waitlist: true });
       });
     } else {
-      $.Notify({ content: "Not allow to modify, This schedule is completed" });
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
     }
   }
 
@@ -812,7 +812,7 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         file: file
       }).then(
         function (e) {
-          $("#" + type).attr("src", $("#" + type).attr("src")+"?timestamp=" + new Date().getTime());
+          $('#' + type).attr('src', $('#' + type).attr('src') + '?timestamp=' + new Date().getTime());
         },
         function (e) {
           $scope.uploading = false;
