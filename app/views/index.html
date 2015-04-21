@@ -51,7 +51,7 @@
         {% else %}
           <a href="javascript:void(0)" class="user-loggedin">
             Hi <strong>{{ loginUser }}</strong>! 
-            <span style="border-radius: 15px;background-color: gray;padding: 3px" ng-bind="loginUser.credits"></span>
+            <span class="badge" ng-bind="loginUser.credits"></span>
             <i class="fa fa-caret-down"></i>
           </a>
         {% end %}            
