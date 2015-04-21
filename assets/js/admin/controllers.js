@@ -169,6 +169,8 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
         $.Alert(error.data);
         $scope.securityPass = null;
       });
+    } else {
+      $.Alert('Access Denied');
     }
   }
 
