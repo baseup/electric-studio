@@ -651,7 +651,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   }
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedService, BookService) {
+ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, SharedService, BookService) {
   var sched = SharedService.get('selectedSched');
   if (!sched) {
     $location.path('/schedule')
@@ -768,6 +768,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
         }
         var bookFail = function (error) {
           $.Alert(error.data)
+          $route.reload();
         }
 
         if ($scope.resched == undefined) {
