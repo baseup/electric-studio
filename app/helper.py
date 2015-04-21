@@ -48,7 +48,7 @@ def send_email_verification(user, content):
             },
             'html': content,
             'important': True,
-            'subject': 'Email Verification',
+            'subject': 'Electric Studio - Email Verification',
             'to': [
                 {
                     'email': user['email'],
@@ -72,7 +72,7 @@ def send_email_booking(user, content):
             },
             'html':  content,
             'important': True,
-            'subject': 'Booked',
+            'subject': 'Electric Studio - Booked',
             'to': [
                 {
                     'email': user['email'],
@@ -96,7 +96,7 @@ def send_email_cancel(user, content):
             },
             'html': content,
             'important': True,
-            'subject': 'Cancelled Schedule',
+            'subject': 'Electric Studio - Cancelled Schedule',
             'to': [
                 {
                     'email': user['email'],
@@ -120,7 +120,7 @@ def send_email_move(user, content):
             },
             'html': content,
             'important': True,
-            'subject': 'Moved Bike',
+            'subject': 'Electric Studio - Moved Bike',
             'to': [
                 {
                     'email': user['email'],
@@ -144,7 +144,7 @@ def send_email(user, content, subject):
             },
             'html': content,
             'important': True,
-            'subject': subject,
+            'subject': 'Electric Studio - ' + subject,
             'to': [
                 {
                     'email': user['email'],
