@@ -18,6 +18,8 @@ def create(self):
     if 'package_id' in data and data['package_id'] != '':
         package = yield Package.objects.get(data['package_id'])
         trans.package_id = package._id
+        trans.package_name = package.name
+        trans.package_fee = package.fee
         trans.credit_count = package.credits
         trans.expiration = package.expiration
         trans.remaining_credits = package.credits

@@ -121,15 +121,17 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
         footerH = angular.element('.main-footer').height();
 
       //preload images
-      angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
-        var img = angular.element(value);
-        var src = img.attr('src');
-        
-        if (img[0].complete) {
-          img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
-          img.remove();
-        }
-      });
+      $timeout(function () {
+        angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
+          var img = angular.element(value);
+          var src = img.attr('src');
+          
+          if (img[0].complete) {
+            img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
+            img.remove();
+          }
+        });
+      }, 300);
 
       if (win.width() >= 980) {
         angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
@@ -506,10 +508,12 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, SharedService, BookService) {
   $scope.resched = SharedService.get('resched');
 
-  $scope.reserved = BookService.query();
-  $scope.reserved.$promise.then(function (data) {
-    $scope.reserved = data;
-  });
+  if ($scope.loginUser) {
+    $scope.reserved = BookService.query();
+    $scope.reserved.$promise.then(function (data) {
+      $scope.reserved = data;
+    });
+  }
 
   $scope.cancelResched = function () {
     SharedService.clear('resched');
@@ -531,7 +535,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
 
   $scope.chkSched = function (date, sched) {
 
-  
     if ($scope.reserved) {
       for (var i in $scope.reserved) {
         var rDate = new Date($scope.reserved[i].date);
@@ -616,10 +619,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
       $scope.schedules = data;
     });
 
-    $scope.reserved = BookService.query();
-    $scope.reserved.$promise.then(function (data) {
-      $scope.reserved = data;
-    });
+    if ($scope.loginUser) {
+      $scope.reserved = BookService.query();
+      $scope.reserved.$promise.then(function (data) {
+        $scope.reserved = data;
+      });
+    }
 
   }
 
@@ -652,7 +657,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
 
     var seats = [];
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var days = ['Monday','Tuesday','Friday','Thursday','Friday','Saturday', 'Sunday'];
+    var days = ['Sunday','Monday','Tuesday','Friday','Thursday','Friday','Saturday'];
 
     $scope.resched = SharedService.get('resched');
     
@@ -833,7 +838,7 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
     }
 
     $scope.nextTrans = function (event) {
-      if ($scope.currentTrans > parseInt($scope.histories.transTotal)) {
+      if ($scope.currentTrans < parseInt($scope.histories.transTotal)) {
         $scope.currentTrans += 1;
         $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
         $scope.histories.$promise.then(function (data) {
