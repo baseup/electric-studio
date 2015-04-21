@@ -763,7 +763,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
         confirm_message = 'Your about to join the waitlist for this schedule ' + $scope.daySched + ', ' + $scope.dateSched;
         book.status = 'waitlisted';
       }
-      console.log(book)
+
       $.Confirm(confirm_message, function () {
 
         var bookSuccess = function () {
