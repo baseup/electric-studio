@@ -93,7 +93,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 });
 
-ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, PackageService, TransactionService, ClassService) {
+ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, PackageService, TransactionService, ClassService, SecurityService) {
 
   $scope.newCredits = {};
 
@@ -151,19 +151,34 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
     angular.element('#add-class-modal').Modal();
   }
 
-  $scope.buyPackageModal = function (user) {
+  $scope.checkSecurityModal = function (user) {
     $scope.selectedAccount = user;
-    if(!(user.billing instanceof Object)){
-      $scope.selectedAccount.billing = JSON.parse(user.billing);
+    angular.element('#security-check-modal').Modal();
+  }
+
+  $scope.checkSecurity = function () {
+    if ($scope.securityPass) {
+      SecurityService.check({ sudopass: $scope.securityPass }, function () {
+        
+        if(!($scope.selectedAccount.billing instanceof Object)){
+          $scope.selectedAccount.billing = JSON.parse($scope.selectedAccount.billing);
+        }
+        angular.element('#buy-package-modal').Modal();
+        $scope.securityPass = null;
+      }, function (error) {
+        $.Alert(error.data);
+        $scope.securityPass = null;
+      });
+    } else {
+      $.Alert('Access Denied');
     }
-    angular.element('#buy-package-modal').Modal();
   }
 
   $scope.confirmBilling = function () {
     if ($scope.newPackage) {
       angular.element('#billing-preview-modal').Modal();
     } else {
-      $.Alert("Please select a package");
+      $.Alert('Please select a package');
     }
   }
 
@@ -361,6 +376,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   $scope.reloadDate = function () {
     angular.element('#select-class-time')[0].selectize.clearOptions();
+    $scope.newBook.sched_id = null;
+    $scope.newBook.time = null;
     $scope.reload();
   }
 
@@ -381,9 +398,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         if (!$scope.newBook.sched_id) {
           $timeout(function () {
             selectize.setValue(books.schedules[0].id);
-          }, 100);
+          }, 400);
         } 
-        
       }
     });
   }
@@ -417,9 +433,26 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     }
   }
 
+  $scope.isCompleted = function (sched) {
+
+    var now = new Date();
+    var dateParts = sched.date.split(/[^0-9]/);
+    var timeParts = sched.start.split(/[^0-9]/);
+    var date =  new Date(dateParts[0], dateParts[1]-1, dateParts[2], timeParts[3], timeParts[4], timeParts[5]);
+    if (date < now)
+      return true;
+
+    return false
+
+  }
+
   $scope.cancelBooking = function (booking, index) {
-    $scope.books.splice(index, 1);
-    ClassService.delete({ scheduleId: booking._id });
+    if (!$scope.isCompleted(booking.schedule)) {
+      $scope.books.splice(index, 1);
+      ClassService.delete({ scheduleId: booking._id });
+    } else {
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+    }
   }
 
   $scope.sendNewBook = function () {
@@ -432,13 +465,13 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var chkDate = new Date($scope.newBook.date);
     chkDate.setHours(hours - 1, minutes, 0, 0);
     if (chkDate < now){
-      $.Notify({ content: "Booking should be 1 hour before" });
+      $.Notify({ content: 'Booking should be 1 hour before' });
       return;
     }
 
     var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
     if (chkDate > nextMonth) {
-      $.Notify({ content: "Booking 1 month in advance is prohibited" });
+      $.Notify({ content: 'Booking 1 month in advance is prohibited' });
       return;
     }
 
@@ -458,7 +491,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var chkDate = new Date($scope.newWaitlist.date);
     chkDate.setHours(hours, minutes, 0, 0);
     if (chkDate < now){
-      $.Notify({ content: "This schedule is completed" });
+      $.Notify({ content: 'This schedule is completed' });
       return;
     }
 
@@ -472,19 +505,23 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   
   $scope.bookRide = function () {
     if ($scope.newBook.sched_id) {
-      ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
-        if (seats.available.length) {
-          angular.element('#select-bike-number')[0].selectize.clearOptions();
-          var selectbike = angular.element('#select-bike-number')[0].selectize;
-          selectbike.settings.sortField = 'text';
-          angular.forEach(seats.available, function (seat) {
-            selectbike.addOption({ value: seat, text: seat });
-          }); 
-          angular.element('#book-ride-modal').Modal();
-        } else {
-          $.Alert('No available seats');
-        }
-      });
+      if (!$scope.isCompleted($scope.schedDetails)) {
+        ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+          if (seats.available.length) {
+            angular.element('#select-bike-number')[0].selectize.clearOptions();
+            var selectbike = angular.element('#select-bike-number')[0].selectize;
+            selectbike.settings.sortField = 'text';
+            angular.forEach(seats.available, function (seat) {
+              selectbike.addOption({ value: seat, text: seat });
+            }); 
+            angular.element('#book-ride-modal').Modal();
+          } else {
+            $.Alert('No available seats');
+          }
+        });
+      } else {
+        $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+      }
     } else {
       $.Alert('Please select schedule date and time');
     }
@@ -492,39 +529,78 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   $scope.addWaitlistModal = function () {
     if ($scope.newBook.sched_id) {
-      $scope.newWaitlist = {};
-      $scope.newWaitlist.sched_id = $scope.newBook.sched_id;
-      $scope.newWaitlist.date = $scope.newBook.date;
-      angular.element('#add-waitlist-modal').Modal();
+      if (!$scope.isCompleted($scope.schedDetails)) {
+        $scope.newWaitlist = {};
+        $scope.newWaitlist.sched_id = $scope.newBook.sched_id;
+        $scope.newWaitlist.date = $scope.newBook.date;
+        angular.element('#add-waitlist-modal').Modal();
+      } else {
+        $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+      }
     } else {
       $.Alert('Please select schedule date and time');
     }
   }
   
+  $scope.switchBikeModal = function (book) {
+    if (!$scope.isCompleted($scope.schedDetails)) {
+      ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+        $scope.selectedBook = book;
+        if (seats.available.length) {
+          var selectize = angular.element('#switch-seat')[0].selectize;
+          selectize.settings.sortField = 'text';
+          angular.forEach(seats.available, function (seat) {
+            selectize.addOption({ value: seat, text: seat });
+          });
+
+          angular.element('#switch-bike-modal').Modal();
+        } else{
+          $.Notify({ content: 'No seats available to switch' });    
+        }
+      });
+    } else {
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+    }
+  }
+
   $scope.switchBike = function () {
-    angular.element('#switch-bike-modal').Modal();
+    if ($scope.selectedBike) {
+      var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
+      $.Confirm(confirm_msg, function () {
+        ClassService.update({ scheduleId: $scope.selectedBook._id }, { move_to_seat : $scope.selectedBike }, function(){
+          $scope.reload();
+        }, function(error){
+          $.Notify({ content: error.data });
+        });
+      });
+    } else {
+      $.Alert('Please select bike to switch')
+    }
   }
   
   $scope.moveToClass = function (wait) {
-    ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
-      $scope.selectedWaitList = wait;
-      if (seats.available.length) {
-        var selectize = angular.element('#select-seat')[0].selectize;
-        selectize.settings.sortField = 'text';
-        angular.forEach(seats.available, function (seat) {
-          selectize.addOption({ value: seat, text: seat });
-        });
-        
-        angular.element('#move-to-class-modal').Modal();
-      }else{
-        $.Notify({ content: 'No seats available' });    
-      }
-    });
-    
+    if (!$scope.isCompleted($scope.schedDetails)) {
+      ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+        $scope.selectedWaitList = wait;
+        if (seats.available.length) {
+          var selectize = angular.element('#select-seat')[0].selectize;
+          selectize.settings.sortField = 'text';
+          angular.forEach(seats.available, function (seat) {
+            selectize.addOption({ value: seat, text: seat });
+          });
+          
+          angular.element('#move-to-class-modal').Modal();
+        }else{
+          $.Notify({ content: 'No seats available' });    
+        }
+      });
+    } else {
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+    }
   }
 
-  $scope.bookWaitList = function(){
-    ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number }, function(){
+  $scope.bookWaitList = function () {
+    ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number, waitlist: true }, function(){
       $scope.reload();
     }, function(error){
       $.Notify({ content: error.data });
@@ -542,10 +618,19 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       return;
     }
 
-    $.Confirm('Are you sure on cancelling all waitlist for this schedule ?', function () {
-      $scope.waitList = [];
-      ClassService.delete({ scheduleId: 'None', sched_id: $scope.newBook.sched_id, waitlist: true });
-    });
+    if (!$scope.isCompleted($scope.schedDetails)) {
+      if (!$scope.waitlist || $scope.waitlist.length > 0) {
+        $.Notify({ content: 'No waitlist found to release' });
+        return;
+      }
+
+      $.Confirm('Are you sure on cancelling all waitlist for this schedule ?', function () {
+        $scope.waitList = [];
+        ClassService.delete({ scheduleId: 'None', sched_id: $scope.newBook.sched_id, waitlist: true });
+      });
+    } else {
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+    }
   }
 
   $scope.printWaitlist = function () {
@@ -562,13 +647,18 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
 
   $scope.downloadBookingList = function () {
+    if (!$scope.newBook.sched_id) {
+      $.Alert('Please select a valid schedule');
+      return;
+    }
+
     window.location = '/admin/export/download-bookings?date=' + $scope.newBook.date + '&time=' + $scope.newBook.time;
   }
    
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, InstructorService) {
   
   var calendar = angular.element('.calendar');
   calendar.fullCalendar({
@@ -576,7 +666,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
     allDaySlot: false,
     allDay: false,
     minTime: '05:00:00',
-    maxTime: '20:00:00',
+    maxTime: '23:00:00',
     events: function (start, end, timezone, callback) {
       var events = [];
       ScheduleService.query({ start: start.unix(), end: end.unix() }, function (scheds) {
@@ -648,6 +738,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
   }
 
   $scope.editSchedule = function (sched) {
+    $timeout(function () {
+      angular.element('#edit-select-schedule-type')[0].selectize.setValue(sched.type);
+      angular.element('#edit-class-instructor')[0].selectize.setValue(sched.instructor._id);
+    }, 400);
     angular.element('#edit-sched-modal').Modal();
   }
 
@@ -724,7 +818,7 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         file: file
       }).then(
         function (e) {
-          $("#" + type).attr("src", $("#" + type).attr("src")+"?timestamp=" + new Date().getTime());
+          $('#' + type).attr('src', $('#' + type).attr('src') + '?timestamp=' + new Date().getTime());
         },
         function (e) {
           $scope.uploading = false;

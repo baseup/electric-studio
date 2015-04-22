@@ -38,5 +38,12 @@ class Slider(Model):
     text = StringField(required=True)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
+
+class Setting(Model):
+    __collection__ = 'settings'
+    key = StringField(required=True)
+    value = StringField(required=True)
+    create_at = DateTimeField(auto_now_on_insert=True)
+    update_at = DateTimeField(auto_now_on_update=True)
     
 

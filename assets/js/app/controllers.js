@@ -12,6 +12,11 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
 
   $scope.loginUser = AuthService.getCurrentUser();
+  if (!$scope.loginUser) {
+    UserService.get(function (user) {
+      $scope.loginUser = user;
+    })
+  }
 
   $scope.isVerified = false;
   if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
@@ -68,9 +73,7 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     angular.element('.main-menu').toggleClass('show');
   });
 
-
   angular.element('.seats td').find('span').click(function () {
-    angular.element('.seats td').removeClass('selected');
     if (!angular.element(this).parent('td').hasClass('unavailable')) {
       angular.element(this).parent('td').toggleClass('selected');
     }
@@ -123,15 +126,17 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
         footerH = angular.element('.main-footer').height();
 
       //preload images
-      angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
-        var img = angular.element(value);
-        var src = img.attr('src');
-        
-        if (img[0].complete) {
-          img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
-          img.remove();
-        }
-      });
+      $timeout(function () {
+        angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
+          var img = angular.element(value);
+          var src = img.attr('src');
+          
+          if (img[0].complete) {
+            img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
+            img.remove();
+          }
+        });
+      }, 300);
 
       if (win.width() >= 980) {
         angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
@@ -508,10 +513,12 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, SharedService, BookService) {
   $scope.resched = SharedService.get('resched');
 
-  $scope.reserved = BookService.query();
-  $scope.reserved.$promise.then(function (data) {
-    $scope.reserved = data;
-  });
+  if ($scope.loginUser) {
+    $scope.reserved = BookService.query();
+    $scope.reserved.$promise.then(function (data) {
+      $scope.reserved = data;
+    });
+  }
 
   $scope.cancelResched = function () {
     SharedService.clear('resched');
@@ -533,7 +540,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
 
   $scope.chkSched = function (date, sched) {
 
-  
     if ($scope.reserved) {
       for (var i in $scope.reserved) {
         var rDate = new Date($scope.reserved[i].date);
@@ -618,10 +624,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
       $scope.schedules = data;
     });
 
-    $scope.reserved = BookService.query();
-    $scope.reserved.$promise.then(function (data) {
-      $scope.reserved = data;
-    });
+    if ($scope.loginUser) {
+      $scope.reserved = BookService.query();
+      $scope.reserved.$promise.then(function (data) {
+        $scope.reserved = data;
+      });
+    }
 
   }
 
@@ -646,15 +654,15 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   }
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedService, BookService) {
+ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, SharedService, BookService) {
   var sched = SharedService.get('selectedSched');
   if (!sched) {
     $location.path('/schedule')
   } else {
 
-    var seat = 0;
+    var seats = [];
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var days = ['Monday','Tuesday','Friday','Thursday','Friday','Saturday', 'Sunday'];
+    var days = ['Sunday','Monday','Tuesday','Friday','Thursday','Friday','Saturday'];
 
     $scope.resched = SharedService.get('resched');
     
@@ -706,11 +714,19 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
   }
 
   $scope.setSeatNumber = function (number, event) {
-
+    var seat_index = -1;
+    for (var i = 0; i < seats.length; i++) {
+      if (seats[i] === number) {
+        seat_index = i;
+      }
+    }
     if (!$scope.checkSeat(number)) {
-      seat = number;
+      if(seat_index == -1){
+        seats.push(number);
+      }else{
+        seats.splice(seat_index, 1);
+      }
     }else{
-      seat = 0;
       event.preventDefault();
     }
   }
@@ -737,17 +753,17 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
         return;
       }
 
-      if (!$scope.forWaitlist && seat == 0) {
+      if (!$scope.forWaitlist && seats.length == 0) {
         $.Alert('Please pick a seat');
         return;
       }
 
       var book = {};
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
-      book.seat = seat;
+      book.seats = seats;
       book.sched_id = sched.schedule._id;
       var confirm_message = 'Your about to book a ride on ' + 
-                            $scope.daySched + ', ' + $scope.dateSched + ' with seat number ' + seat;
+                            $scope.daySched + ', ' + $scope.dateSched + ' with seat'+ (seats.length > 1 ? 's' : '') +' number ' + seats;
       if ($scope.forWaitlist) {
         confirm_message = 'Your about to join the waitlist for this schedule ' + $scope.daySched + ', ' + $scope.dateSched;
         book.status = 'waitlisted';
@@ -763,6 +779,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
         }
         var bookFail = function (error) {
           $.Alert(error.data)
+          $route.reload();
         }
 
         if ($scope.resched == undefined) {
@@ -826,7 +843,7 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
     }
 
     $scope.nextTrans = function (event) {
-      if ($scope.currentTrans > parseInt($scope.histories.transTotal)) {
+      if ($scope.currentTrans < parseInt($scope.histories.transTotal)) {
         $scope.currentTrans += 1;
         $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
         $scope.histories.$promise.then(function (data) {
@@ -835,7 +852,6 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
       }        
       event.preventDefault();
     }
-
   }
 
 });

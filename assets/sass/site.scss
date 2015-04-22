@@ -76,6 +76,11 @@ body {
   background: #fff;
 }
 
+.clearfix {
+  display: block;
+  content: '';
+  clear: both;
+}
 
 .main-header {
   -webkit-touch-callout: none;
@@ -102,6 +107,12 @@ body {
       padding: $base-spacing-unit*2 $base-spacing-unit;
     }
   }
+}
+
+.badge {
+  border-radius: 15px;
+  background-color: gray;
+  padding: 3px;
 }
 
 .brand {
@@ -790,7 +801,7 @@ body {
 
   li.loading {
     background: url(/assets/images/preloader.gif) center no-repeat;
-
+    
     span {
       opacity: 0;
     }

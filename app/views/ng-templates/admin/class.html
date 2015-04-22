@@ -63,7 +63,7 @@
             <div class=" box__header">
               <ul class="booking__actions nav">
                 <li>
-                  <a class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
+                  <a class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBikeModal(book)">
                     <i class="fa fa-exchange"></i>
                     <span class="bike-number">{{ book.seat_number }}</span>
                   </a>
@@ -214,30 +214,23 @@
 
       <div class="user-select space--bottom">
         <span class="label">Rider</span>
-        <h4 class="h-small">Jeph Fernandez</h4>
+        <h4 class="h-small">{{ selectedBook.user_id.first_name }} {{ selectedBook.user_id.last_name }}</h4>
       </div>
 
        <div class="cf">   
         <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
           <span class="label">Current Bike</span>
-          <h4 class="h-small">14</h4>
+          <h4 class="h-small">{{ selectedBook.seat_number  }}</h4>
         </div>
         <div class="space--bottom bp-md-one-third float--left">
           <span class="label">Switch to</span>
-          <select class="select">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7" selected>7</option>
-            <option value="8">8</option>
+          <select class="select" id="switch-seat" ng-model="selectedBike">
+            <option value="">Select Seat</option>
           </select>
         </div>    
       </div>
 
-      <button class="btn btn--primary btn--medium space--top modal-close">Switch</button>
+      <button class="btn btn--primary btn--medium space--top modal-close" ng-click="switchBike()">Switch</button>
     </div>
   </div>
 

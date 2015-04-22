@@ -2,7 +2,7 @@
   <div class="content-filter pad cf border--bottom">
     <div class="content-filter__item space--right">
       <span class="label">Search Account</span>
-      <input class="text-input" placeholder="Enter Name" ng-model="search.first_name">
+      <input class="text-input" placeholder="Enter Name or Email" ng-model="searchText">
     </div>
 
   </div>
@@ -13,7 +13,7 @@
 
     <div class="account-list grid">
 
-      <div ng-repeat="user in users | filter:search" class="grid__item bp-md-one-half bp-lg-one-third">
+      <div ng-repeat="user in users | search:'first_name,email':searchText" class="grid__item bp-md-one-half bp-lg-one-third">
           
         <div class="account__item box--bordered box--white space--bottom cf">
           <div class="pad">
@@ -36,7 +36,7 @@
 
               <dl>
               <dt>Class Package</dt>
-              <a class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
+              <a class="float--right" data-modal-toggle="buy-package" ng-click="checkSecurityModal(user)">Buy</a>
               <dd class="">{{ user.credits }} Classes Left</dd>
               <!-- <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd> -->
               </dl>
@@ -139,7 +139,7 @@
 
   <!-- modal account summary -->
   <div class="modal" data-modal="account-summary" id="account-summary-modal">
-    <div class="modal__box pad">
+    <div class="modal__box pad" style="max-width: 50%">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Summary of Classes and Packages</h3>
 
@@ -158,13 +158,30 @@
             <th>Expiration Date</th>
           </tr>
           <tr ng-repeat="pack in selectedAccount.packages">
-            <td>{{ pack.package_id.name || 'Free' }} </td>
+            <td>{{ pack.package_name || 'Free' }} </td>
             <td>{{ pack.credit_count }}</td>
             <td>{{ pack.remaining_credits }}</td>
-            <td>{{ pack.create_at }}</td>
+            <td>{{ pack.create_at | addDay:pack.expiration | formatDate }}</td>
           </tr>
         </table>
       </div>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="security-check" id="security-check-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Security Check</h3>
+      
+      <ul class="form-fields">
+        <li>
+          <span class="label">Password</span>
+          <input ng-model="securityPass" type="password" class="text-input">
+        </li>
+      </ul>
+     
+      <button type="button" ng-click="checkSecurity()" class="btn btn--primary btn--medium space--top modal-close">Confirm</button>
+
     </div>
   </div>
 

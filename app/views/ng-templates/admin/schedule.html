@@ -20,10 +20,10 @@
       <h3 class="h--medium brand-color space--bottom">{{ selectedSched.start_time }} &mdash; {{ selectedSched.end_time }}</h3>
 
      <div class="data-list cf pad--ends">
-        <!-- <dl class="space--bottom space--right float--left">
+        <dl class="space--bottom space--right float--left">
           <dt class="label">Class Type</span>
-          <dd>Pure Electric<dd>
-        </dl> -->
+          <dd>{{ selectedSched.type }}<dd>
+        </dl>
 
         <dl class="space--bottom space--sides float--left">
           <dt class="label">Instructor</span>
@@ -56,6 +56,18 @@
           <dd>
         </dl>
 
+       <dl class="space--bottom">
+          <dt class="label">Type</span>
+          <dd class="bp-md-one-half">
+            <select class="select" ng-model="newSpecSched.type">
+              <option value="">Select Type</option>
+              <option value="Pure Electric">Pure Electric</option>
+              <option value="Power Hour">Power Hour</option>
+              <option value="Electric Endurance">Electric Endurance</option>
+            </select>
+          <dd>
+        </dl>
+
         <dl class="space--bottom">
           <dt class="label">Start</span>
           <dd class="bp-md-one-half">
@@ -70,17 +82,6 @@
           <dd>
         </dl>
 
-        <!-- <dl class="space--bottom">
-          <dt class="label">Class Type</span>
-          <dd class="bp-md-one-half">
-            <select class="select">
-              <option value="marissa">Pure Electric</option>
-              <option value="abel">Power Hour</option>
-              <option value="mc">Electric Endurance</option>
-            </select>
-          <dd>
-        </dl> -->
-
         <dl class="space--bottom">
           <dt class="label">Instructor</span>
           <dd class="bp-md-one-half">
@@ -93,7 +94,7 @@
       </div>
       <button ng-click="saveSchedule()"
         class="btn btn--medium btn--primary space--top modal-close"
-        ng-disabled="!newSpecSched.date || !newSpecSched.instructor || !newSpecSched.start || !newSpecSched.end">
+        ng-disabled="!newSpecSched.date || !newSpecSched.type || !newSpecSched.instructor || !newSpecSched.start || !newSpecSched.end">
         Add
       </button>
     </div>
@@ -113,6 +114,18 @@
         </dl>
 
         <dl class="space--bottom">
+          <dt class="label">Type</span>
+          <dd class="bp-md-one-half">
+            <select class="select" id="edit-select-schedule-type" ng-model="editSched.type">
+              <option value="">Select Type</option>
+              <option value="Pure Electric">Pure Electric</option>
+              <option value="Power Hour">Power Hour</option>
+              <option value="Electric Endurance">Electric Endurance</option>
+            </select>
+          <dd>
+        </dl>
+
+        <dl class="space--bottom">
           <dt class="label">Start</span>
           <dd class="bp-md-one-half">
             <input class="text-input" ng-model="editSched.start" type="time">
@@ -126,17 +139,6 @@
           <dd>
         </dl>
 
-        <!-- <dl class="space--bottom">
-          <dt class="label">Class Type</span>
-          <dd class="bp-md-one-half">
-            <select class="select">
-              <option value="marissa">Pure Electric</option>
-              <option value="abel">Power Hour</option>
-              <option value="mc">Electric Endurance</option>
-            </select>
-          <dd>
-        </dl> -->
-
         <dl class="space--bottom">
           <dt class="label">Instructor</span>
           <dd class="bp-md-one-half">
@@ -149,7 +151,7 @@
       </div>
       <button ng-click="updateSchedule()"
         class="btn btn--medium btn--primary space--top modal-close"
-        ng-disabled="!editSched.date || !editSched.instructor || !editSched.start || !editSched.end">
+        ng-disabled="!editSched.date || !editSched.type || !editSched.instructor || !editSched.start || !editSched.end">
         Update
       </button>
     </div>

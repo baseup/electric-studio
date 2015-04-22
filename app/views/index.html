@@ -49,7 +49,11 @@
           <a class="signup-toggle">Sign up</a>
           <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
         {% else %}
-          <a href="javascript:void(0)" class="user-loggedin">Hi <strong>{{ loginUser }}</strong>! <i class="fa fa-caret-down"></i></a>
+          <a href="javascript:void(0)" class="user-loggedin">
+            Hi <strong>{{ loginUser }}</strong>! 
+            <span class="badge" ng-bind="loginUser.credits"></span>
+            <i class="fa fa-caret-down"></i>
+          </a>
         {% end %}            
         </div>
         {% if loginUser %}  
@@ -63,7 +67,7 @@
         {% end %}  
       </div>  
         
-      <a class="book-ride-btn" href="#/schedule">Book A Ride</a>
+      <a class="book-ride-btn" href="#/schedule">Buy/Book A Ride</a>
 
       <a class="menu-toggle"><i class="fa fa-bars"></i></a>
       

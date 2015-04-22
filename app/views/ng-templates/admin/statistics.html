@@ -44,6 +44,7 @@
             <thead>
               <tr>
                 <th>Schedule</th>
+                <th>Type</th>
                 <th>Instructor</th>
                 <th>Status</th>
                 <th>Seats</th>
@@ -55,6 +56,7 @@
             <tbody>
               <tr ng-repeat="stat in stats | search:'instructor._id':searchIns | filter:withAvailableSeats">
                 <td>{{ stat.date | formatDate }} {{ stat.start | formatTime }}</td>
+                <td>{{ stat.type }}</td>
                 <td>{{ stat.instructor.admin.first_name }} {{ stat.instructor.admin.last_name }}</td>
                 <td>
                   <span ng-if="isCompleted(stat)">Completed</span>
