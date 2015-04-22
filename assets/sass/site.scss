@@ -250,6 +250,16 @@ body {
         strong {
           text-transform: uppercase;
         }
+
+        span {
+          display:inline-block;
+          background-color:#fff;
+          border-radius: 100%;
+          color:#FF8F1C;
+          padding: 9px 0;
+          width: 35px;
+          text-align: center
+        }
       }
 
       &:hover {
