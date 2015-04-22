@@ -398,7 +398,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         if (!$scope.newBook.sched_id) {
           $timeout(function () {
             selectize.setValue(books.schedules[0].id);
-          }, 100);
+          }, 400);
         } 
       }
     });
@@ -658,7 +658,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, InstructorService) {
   
   var calendar = angular.element('.calendar');
   calendar.fullCalendar({
@@ -738,6 +738,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
   }
 
   $scope.editSchedule = function (sched) {
+    $timeout(function () {
+      angular.element('#edit-select-schedule-type')[0].selectize.setValue(sched.type);
+      angular.element('#edit-class-instructor')[0].selectize.setValue(sched.instructor._id);
+    }, 400);
     angular.element('#edit-sched-modal').Modal();
   }
 
