@@ -18,10 +18,10 @@
       <dt>Instructor</dt>
       <dd class="caps">{{ schedDetails.instructor.admin.first_name }} {{ schedDetails.instructor.admin.last_name }}</dd>
     </dl>
-    <!-- <dl class="float--left space--right">
+    <dl class="float--left space--right">
       <dt>Class Type</dt>
-      <dd class="caps">Pure Electric</dd>
-    </dl> -->
+      <dd class="caps">{{ schedDetails.type }}</dd>
+    </dl>
     <dl class="float--left space--right">
       <dt>Status</dt>
       <dd class="caps">{{ 37 - books.length }} Bikes Available</dd>

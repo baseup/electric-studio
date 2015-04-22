@@ -24,8 +24,8 @@
 
       <section class="col-2">
         <div class="block" ng-repeat="book in histories.schedules">
-          <h3 class="h small primary space--off pad--half-bottom">{{ book.date | formatDate }}</h3>
-          <span><span class="label inline">Time:</span> {{ book.schedule.start | formatTime }}</span><br>
+          <h3 class="h small primary space--off pad--half-bottom">{{ book.date | formatDate }} {{ book.schedule.start | formatTime }}</h3>
+          <span><span class="label inline">Type:</span> {{ book.schedule.type }}</span><br>
           <span><span class="label inline">Seat:</span> {{ book.seat_number }}</span><br>
           <span><span class="label inline">Instructor:</span> {{ book.schedule.instructor.admin.first_name }}</span><br>
           <span><span class="label inline">Status:</span> {{ book.status | uppercase }}</span><br>

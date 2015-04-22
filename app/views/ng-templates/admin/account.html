@@ -115,6 +115,7 @@
           <thead>
             <tr>
               <th>Schedule</th>
+              <th>Class Type</th>
               <th>Instructor</th>
               <th>Status</th>
               <th>Seat</th>
@@ -125,6 +126,7 @@
           <tbody>
             <tr ng-repeat="sched in selectedAccount.books | search:'status':statusFilter">
               <td>{{ sched.date | formatDate }} {{ sched.schedule.start | formatTime }}</td>
+              <td>{{ sched.schedule.type }}</td>
               <td>{{ sched.schedule.instructor.admin.first_name }} {{ sched.schedule.instructor.admin.last_name }}</td>
               <td>{{ sched.status }}</td>
               <td>{{ sched.seat_number }}</td>
