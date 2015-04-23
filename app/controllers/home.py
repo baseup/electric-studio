@@ -53,8 +53,8 @@ def verify(self):
                     self.set_secure_cookie('loginUser', user.first_name, expires_days=None)
                     self.set_secure_cookie('loginUserID', str(user._id), expires_days=None)
                     user = (yield User.objects.get(user._id)).serialize()
-                    siteUrl = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
-                    content = str(self.render_string('emails/welcome', user=user, site=siteUrl), 'UTF-8')
+                    site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                    content = str(self.render_string('emails/welcome', user=user, site=site_url), 'UTF-8')
                     yield self.io.async_task(send_email, user=user, content=content, subject='Welcome to Team Electric')
                     self.render('verify', success=True)
                 else:
@@ -155,9 +155,9 @@ def buy(self):
                             user = yield user.save()
 
                             user = (yield User.objects.get(user._id)).serialize()
-                            siteUrl = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                            site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
                             exp_date = transaction.create_at + timedelta(days=transaction.expiration)
-                            content = str(self.render_string('emails/buy', user=user, site=siteUrl, package=package.name, expire_date=exp_date.strftime('%B. %d, %Y')), 'UTF-8')
+                            content = str(self.render_string('emails/buy', user=user, site=site_url, package=package.name, expire_date=exp_date.strftime('%B. %d, %Y')), 'UTF-8')
                             yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
 
                             self.redirect('/#/account#packages')

@@ -42,8 +42,8 @@ def create(self):
         yield user.save()
 
         user = (yield User.objects.get(user._id)).serialize()
-        siteUrl = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
-        content = str(self.render_string('emails/freeclass', user=user, site=siteUrl, expiration=trans.expiration, credits=trans.credit_count), 'UTF-8')
+        site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+        content = str(self.render_string('emails/freeclass', user=user, site=site_url, expiration=trans.expiration, credits=trans.credit_count), 'UTF-8')
         yield self.io.async_task(send_email, user=user, content=content, subject='Free Class')
 
     except InvalidDocumentError:
