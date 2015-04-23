@@ -619,7 +619,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     }
 
     if (!$scope.isCompleted($scope.schedDetails)) {
-      if (!$scope.waitlist || $scope.waitlist.length > 0) {
+      if (!$scope.waitList || $scope.waitList.length <= 0) {
         $.Notify({ content: 'No waitlist found to release' });
         return;
       }

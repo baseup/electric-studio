@@ -4,7 +4,7 @@ from app.models.packages import Package, UserPackage
 from app.helper import send_email_verification, send_email
 from app.models.schedules import InstructorSchedule, BookedSchedule
 from app.models.admins import Instructor, Admin, Setting
-from datetime import datetime
+from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import sys
 import tornado
@@ -52,6 +52,10 @@ def verify(self):
                     user = yield user.save()
                     self.set_secure_cookie('loginUser', user.first_name, expires_days=None)
                     self.set_secure_cookie('loginUserID', str(user._id), expires_days=None)
+                    user = (yield User.objects.get(user._id)).serialize()
+                    site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                    content = str(self.render_string('emails/welcome', user=user, site=site_url), 'UTF-8')
+                    yield self.io.async_task(send_email, user=user, content=content, subject='Welcome to Team Electric')
                     self.render('verify', success=True)
                 else:
                     self.render('verify', success=True, message='Account Already Verified')
@@ -151,7 +155,9 @@ def buy(self):
                             user = yield user.save()
 
                             user = (yield User.objects.get(user._id)).serialize()
-                            content = str(self.render_string('emails/buy', user=user, host=self.request.host), 'UTF-8')
+                            site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                            exp_date = transaction.create_at + timedelta(days=transaction.expiration)
+                            content = str(self.render_string('emails/buy', user=user, site=site_url, package=package.name, expire_date=exp_date.strftime('%B. %d, %Y')), 'UTF-8')
                             yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
 
                             self.redirect('/#/account#packages')
