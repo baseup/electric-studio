@@ -96,7 +96,7 @@ def create(self):
             return
 
     user_package = yield UserPackage.objects \
-        .filter(user_id=obj_user_id, remaining_credits__gt=0) \
+        .filter(user_id=obj_user_id, remaining_credits__gt=0, status__ne='Expired') \
         .order_by('create_at', DESCENDING) \
         .find_all()
 

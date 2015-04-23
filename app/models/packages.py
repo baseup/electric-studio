@@ -27,6 +27,7 @@ class UserPackage(Model):
     credit_count = IntField(required=True)
     expiration = IntField(required=True)
     remaining_credits = IntField(required=True)
+    status = StringField(default='Active')
     notes = StringField()
     is_free = BooleanField(default=False)
     trans_info = StringField(default=None)

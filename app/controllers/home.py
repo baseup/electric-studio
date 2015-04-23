@@ -234,11 +234,12 @@ def remove_test_waitlist(self):
 def package_migrate(self):
 
     user_packages = yield UserPackage.objects.find_all()
-    for i, upack in enumerate(user_packages):
+    for upack in user_packages:
         if upack.package_id:
             upack.package_name = upack.package_id.name
             upack.package_fee = upack.package_id.fee
-            yield upack.save()
+        upack.status = 'Active'
+        yield upack.save()
 
     self.redirect('/')
 

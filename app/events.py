@@ -1,18 +1,32 @@
 from tornado.ioloop import PeriodicCallback
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from tornado import gen
 
 from app.models.users import User
 from app.models.schedules import BookedSchedule
+from app.models.packages import UserPackage
 
 @gen.coroutine
 def schedule_watcher():
     now = datetime.now()
+    user_packages = yield UserPackage.objects.filter(status__ne='Expired').find_all()
+    if user_packages:
+        for user_pack in user_packages:
+            expire_date = user_pack.create_at + timedelta(days=user_pack.expiration)
+            if expire_date < datetime.now():
+                user_pack.status = 'Expired'
+                user = User.objects.get(user_pack.user_id._id)
+                user.credits -= user_pack.remaining_credits
+
+                user.save()
+                user_pack.save()
+
     schedules = yield BookedSchedule.objects.filter(date__lte=now, status__ne='completed').filter(status__ne='cancelled').find_all()
     if schedules:
         for i, sched in enumerate(schedules):
-            if sched:
+            sched_date = datetime.combine(sched.date, sched.schedule.start.time())
+            if sched_date < datetime.now():
                 if sched.status == 'booked':
                     sched.status = 'completed';
                     yield sched.save();
