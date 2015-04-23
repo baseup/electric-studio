@@ -102,10 +102,12 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
   });
 
   var select = angular.element('#select-add-package')[0].selectize;
+  var selectBuy = angular.element('#select-buy-package')[0].selectize;
   PackageService.query(function (packages) {
     $scope.packages = packages;
     angular.forEach(packages, function (pack) {
       select.addOption({ value: pack._id, text: pack.name });
+      selectBuy.addOption({ value: pack._id, text: pack.name });
     });
   });
 
@@ -732,9 +734,37 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   //   });
   // }
 
+  $scope.isPastDate = function (sched) {
+    var now = new Date();
+    var date = sched.date;
+    if (date instanceof Date) {
+      date.setHours(sched.start.getHours(), date.start.getMinutes, 0, 0);
+    } else {
+      var dateParts = sched.date.split(/[^0-9]/);
+      date =  new Date(dateParts[0], dateParts[1]-1, dateParts[2], sched.start.getHours(), sched.start.getMinutes());
+    }
+
+    if (date < now){
+      return true;
+    }
+
+    return false
+  }
+
   $scope.removeSchedule = function (sched) {
-    ScheduleService.delete({ scheduleId: sched.id });
-    calendar.fullCalendar('removeEvents', sched.id);
+    if (sched.ridersCount > 0) {
+      $.Alert('Not allowed to remove schedules has reservations')
+      return;
+    }
+
+    if (!$scope.isPastDate($scope.editSched)) {
+      $.Confirm('Are you sure on deleting schedule ?', function(){
+        ScheduleService.delete({ scheduleId: sched.id });
+        calendar.fullCalendar('removeEvents', sched.id);
+      });
+    } else {
+      $.Alert('Not allowed remove schedule on past dates');
+    }
   }
 
   $scope.editSchedule = function (sched) {
@@ -746,32 +776,41 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   }
 
   $scope.saveSchedule = function () {
-    var newSched = angular.copy($scope.newSpecSched);
-    newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
-    newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
-    ScheduleService.save(newSched, function (response) {
-      calendar.fullCalendar('refetchEvents');
+    if (!$scope.isPastDate($scope.newSpecSched)) {
+      var newSched = angular.copy($scope.newSpecSched);
+      newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
+      newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
+      ScheduleService.save(newSched, function (response) {
+        calendar.fullCalendar('refetchEvents');
+        $scope.newSpecSched = {};
+      }, function (error) {
+        $.Notify({ content: error.data });
+        $scope.newSpecSched = {};
+      });
+    } else {
+      $.Alert('Not allowed to schedule past dates');
       $scope.newSpecSched = {};
-    }, function (error) {
-      $.Notify({ content: error.data });
-      $scope.newSpecSched = {};
-    });
+    }
   }
 
   $scope.updateSchedule = function () {
-    var updatedSched = angular.copy($scope.editSched);
-    updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
-    updatedSched.end = updatedSched.end.getHours() + ':' + updatedSched.end.getMinutes();
-    ScheduleService.update(
-      { scheduleId: updatedSched.id },
-      updatedSched,
-      function (response) {
-        calendar.fullCalendar('refetchEvents');
-      },
-      function (error) {
-        $.Notify({ content: error.data });
-      }
-    );
+    if (!$scope.isPastDate($scope.editSched)) {
+      var updatedSched = angular.copy($scope.editSched);
+      updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
+      updatedSched.end = updatedSched.end.getHours() + ':' + updatedSched.end.getMinutes();
+      ScheduleService.update(
+        { scheduleId: updatedSched.id },
+        updatedSched,
+        function (response) {
+          calendar.fullCalendar('refetchEvents');
+        },
+        function (error) {
+          $.Notify({ content: error.data });
+        }
+      );
+    } else {
+      $.Alert('Not allowed to modify/set schedule on past dates');
+    }
   }
 
   InstructorService.query(function (instructors) {
