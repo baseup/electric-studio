@@ -397,8 +397,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageServi
 
   $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/buy';
 
-  $scope.buyPackage = function (event) {
-
+  $scope.buyPackage = function (event, index) {
 
     if (!$scope.loginUser) {
       $.Alert('User is not logged In');
@@ -421,11 +420,11 @@ ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageServi
         return;
       }
 
-      angular.element('#payForm').submit();
+      angular.element('#payForm-' + index).submit();
 
-    })
+    });
   }
-})
+});
 
 ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService) {
 
@@ -458,7 +457,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
     $location.path("/")
     angular.element("html, body").animate({ scrollTop: 0 }, "slow");
     angular.element('.login-toggle').click();
-  }else{
+  } else {
 
     $scope.reservations = BookService.query();
     $scope.reservations.$promise.then(function (data) {
@@ -697,12 +696,12 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       }
     }
     if (!$scope.checkSeat(number)) {
-      if(seat_index == -1){
+      if (seat_index == -1) {
         seats.push(number);
-      }else{
+      } else {
         seats.splice(seat_index, 1);
       }
-    }else{
+    } else {
       event.preventDefault();
     }
   }
@@ -760,7 +759,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
 
         if ($scope.resched == undefined) {
           BookService.book(book).$promise.then(bookSuccess, bookFail);
-        }else{
+        } else {
           BookService.update({ bookId: $scope.resched._id }, book).$promise.then(bookSuccess, bookFail);
         }
       });
@@ -773,7 +772,7 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
     $location.path("/")
     angular.element("html, body").animate({ scrollTop: 0 }, "slow");
     angular.element('.login-toggle').click();
-  }else{
+  } else {
 
     $('#history-tabs').Tab();
 
