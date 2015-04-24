@@ -20,7 +20,7 @@ def find(self):
         ins_sched = yield InstructorSchedule.objects.get(sched_id)
         scheds = yield BookedSchedule.objects.filter(status='booked', date=date, schedule=ins_sched._id).find_all()
         available_seats = []
-        for seat in range(1, 38):
+        for seat in range(1, ins_sched.seats + 1):
             seat_exists = yield BookedSchedule.objects.get(seat_number=str(seat),
                                                            status='booked', date=date, schedule=ins_sched._id)
             if not seat_exists:
@@ -74,10 +74,10 @@ def create(self):
         self.finish()
 
     obj_user_id = ObjectId(data['user_id'])
-    ins_sched = ObjectId(data['sched_id'])
+    ins_sched = yield InstructorSchedule.objects.get(ObjectId(data['sched_id']))
     if not 'status' in data or data['status'] == 'booked':
-        total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched).count()
-        if total_booked >= 37:
+        total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched._id).count()
+        if total_booked >= ins_sched.seats:
             self.set_status(400)
             self.write('No available slots')
             self.finish()
@@ -88,7 +88,7 @@ def create(self):
             self.write('Please select a bike')
             self.finish()
 
-        booked_sched = yield BookedSchedule.objects.get(status='booked', date=special_date, schedule=ins_sched, user_id=obj_user_id)
+        booked_sched = yield BookedSchedule.objects.get(status='booked', date=special_date, schedule=ins_sched._id, user_id=obj_user_id)
         if booked_sched:
             self.set_status(400)
             self.write('Already booked on the same schedule')
@@ -119,7 +119,7 @@ def create(self):
 
     sched = BookedSchedule()
     sched.date = datetime.strptime(data['date'], '%Y-%m-%d')
-    sched.schedule = ins_sched
+    sched.schedule = ins_sched._id
     sched.user_package = user_package[0]._id
     sched.user_id = ObjectId(data['user_id'])
     sched.status = sched_status
@@ -130,7 +130,6 @@ def create(self):
     sched = yield sched.save()
 
     user = (yield User.objects.get(user._id)).serialize()
-    ins_sched = yield InstructorSchedule.objects.get(ins_sched)
     if sched_status == 'booked':
         content = str(self.render_string('emails/booking', date=data['date'], type=ins_sched.type, user=user, instructor=ins_sched.instructor, time=ins_sched.start.strftime('%I:%M %p'), seat_number=str(sched.seat_number)), 'UTF-8')
         yield self.io.async_task(send_email_booking, user=user, content=content)
@@ -190,7 +189,7 @@ def update(self, id):
             ins_sched = yield InstructorSchedule.objects.get(day=special_date.strftime('%a').lower(), start=time)
 
         total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched).count()
-        if total_booked >= 37:
+        if total_booked >= ins_sched.seats:
             self.set_status(400)
             self.write('Not available slots')
             self.finish()

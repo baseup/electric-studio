@@ -203,7 +203,7 @@ def test_waitlist(self):
         yield BookedSchedule.objects.filter(user_id=user._id).delete()
         currentBooks = yield BookedSchedule.objects.filter(schedule=sched._id).find_all()
 
-        for x in range(0, 37):
+        for x in range(0, sched.seats):
             isReserved = False
             for i, book in enumerate(currentBooks):
                 if (x + 1) == book.seat_number:
@@ -230,6 +230,14 @@ def remove_test_waitlist(self):
         yield BookedSchedule.objects.filter(user_id=user._id).delete();
         yield user.delete()
     self.finish()
+
+def schedule_migrate(self):
+    schedules = yield InstructorSchedule.objects.find_all()
+    for sched in schedules:
+        sched.seats = 37
+        sched.save()
+
+    self.redirect('/')
 
 def package_migrate(self):
 
