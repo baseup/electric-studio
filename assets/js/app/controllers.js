@@ -12,10 +12,19 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
 
   $scope.loginUser = AuthService.getCurrentUser();
-  if (!$scope.loginUser) {
+
+  $scope.reloadUser = function (user) {
     UserService.get(function (user) {
-      $scope.loginUser = user;
-    })
+      if ($scope.loginUser) {
+        angular.extend($scope.loginUser, user);
+      } else {
+        $scope.loginUser = user;
+      }
+    });
+  } 
+
+  if (!$scope.loginUser && window.localStorage.getItem('login-user')) {
+    $scope.reloadUser();
   }
 
   $scope.isVerified = false;
@@ -448,7 +457,8 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
 
     UserService.get(function (user) {
       
-      $scope.loginUser = user;
+      $scope.loginUser =  user;
+      $scope.reloadUser(user);
 
       if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
         $.Alert('Account is frozen, Please check your contact adminstrator');
@@ -529,14 +539,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
         data.status = 'cancelled';
         
         var bookSuccess = function () {
-          $scope.reservations = BookService.query();
-          $scope.reservations.$promise.then(function (data) {
-            $scope.reservations = data;
-          });
-          $scope.user = UserService.get();
-          $scope.user.$promise.then(function (data) {
-            $scope.user = data;
-          });
+          window.location.reload();
         }
         var bookFail = function (error) {
           $.Alert(error.data)
@@ -798,6 +801,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     }
 
     UserService.get(function (user) {
+
       $scope.loginUser = user;
 
       if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
@@ -829,10 +833,17 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       $.Confirm(confirm_message, function () {
 
         var bookSuccess = function () {
+
           if ($scope.resched) {
             SharedService.clear('resched');
           }
-          $location.path('/reserved')
+
+          $.Alert('You have successfully booked a ride');
+          UserService.get(function (user) {
+            $scope.reloadUser();
+            window.location = '/#/reserved'
+            window.location.reload();
+          });
         }
         var bookFail = function (error) {
           $.Alert(error.data)
