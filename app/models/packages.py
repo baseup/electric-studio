@@ -26,6 +26,7 @@ class UserPackage(Model):
     package_fee = DecimalField(required=False, default='0.00')
     credit_count = IntField(required=True)
     expiration = IntField(required=True)
+    expire_date = DateTimeField(required=False)
     remaining_credits = IntField(required=True)
     status = StringField(default='Active')
     notes = StringField()

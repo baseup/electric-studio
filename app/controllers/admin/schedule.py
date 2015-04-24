@@ -2,7 +2,7 @@ from app.models.schedules import *
 from app.models.packages import *
 from datetime import datetime
 from bson.objectid import ObjectId
-from motorengine import DESCENDING
+from motorengine import DESCENDING, ASCENDING
 from app.helper import send_email, send_email_cancel, send_email_booking, send_email_move
 
 import tornado.escape
@@ -97,7 +97,7 @@ def create(self):
 
     user_package = yield UserPackage.objects \
         .filter(user_id=obj_user_id, remaining_credits__gt=0, status__ne='Expired') \
-        .order_by('create_at', DESCENDING) \
+        .order_by('expire_date', ASCENDING) \
         .find_all()
 
     user = yield User.objects.get(obj_user_id)
