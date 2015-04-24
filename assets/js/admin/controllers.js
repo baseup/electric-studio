@@ -148,7 +148,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
   }
 
   $scope.accountAddClass = function (user) {
-    Security(function () {
+    chkSecurity(function () {
       $scope.newCredits.user_id = user._id;
       $scope.selectedAccount = user;
       angular.element('#add-class-modal').Modal();
@@ -157,7 +157,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
 
   $scope.buyPackageModal = function (user) {
     $scope.selectedAccount = user;
-    Security(function () {
+    chkSecurity(function () {
       if (!($scope.selectedAccount.billing instanceof Object)) {
         $scope.selectedAccount.billing = JSON.parse($scope.selectedAccount.billing);
       }
@@ -165,7 +165,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
     });
   }
 
-  var Security = function (securityCallback) {
+  var chkSecurity = function (securityCallback) {
 
     $('#btn-security').off('click');
     $('#btn-security').click(function () {
