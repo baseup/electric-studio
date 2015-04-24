@@ -155,4 +155,20 @@
     $('#confirm-modal').Modal();
   }
 
+  $.Prompt = function (message, okcallback) {
+    var content = message;
+    if (typeof message == 'object') {
+      content = message.content;
+    }
+    $('#prompt-modal-message').html(message);
+    $('#prompt-ok-button').off('click');
+    $('#prompt-ok-button').click(function(){
+      var inputval = $('#prompt-input').val();
+      okcallback(inputval);
+      $('#prompt-input').val(null);
+    });
+
+    $('#prompt-modal').Modal();
+  }
+
 })(jQuery);

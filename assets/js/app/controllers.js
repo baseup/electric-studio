@@ -518,9 +518,9 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
       var today = new Date();
       var date = book.date.split(/[^0-9]/);
       var time = book.schedule.start.split(/[^0-9]/);
-      var chkDate =  new Date(date[0], date[1]-1, date[2], time[3] - 1, time[4], time[5]);
+      var chkDate =  new Date(date[0], date[1]-1, date[2]-1, 17, 0, 0);
       if (+today >= +chkDate) {
-        $.Alert('Schedule could not be cancelled anymore')
+        $.Alert('Schedule met the cut-off limit, could not be cancelled anymore')
         return;
       }
 
@@ -562,11 +562,53 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   $scope.setSchedule = function (schedule, date) {
 
     if (!$scope.chkSched(date, schedule)) {
+
+      if ($scope.loginUser && $scope.loginUser.credits <= 0) {
+        $.Alert('Insufficient Credits');
+        return;
+      } 
+
+      var today = new Date();
+      var time = schedule.start.split(/[^0-9]/);
+      var chkDate = date;
+      chkDate.setHours(time[3] - 1, time[4], 0);
+      if (+today >= +chkDate) {
+        $.Alert('You can only book 1 hour before the class or contact studio to book this class')
+        return;
+      }
+
+      var cutOffchkDate = date;
+      cutOffchkDate.setDate(date.getDate() - 1);
+      cutOffchkDate.setHours(17, 0, 0);
+      if (+today >= +cutOffchkDate) {
+        $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+      }
+
       var sched = {};
       sched.date = date;
       sched.schedule = schedule;
-      SharedService.set('selectedSched', sched);
-      $location.path('/class');
+
+      var bfilter = {};
+      bfilter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+      bfilter.sched_id = sched.schedule._id;
+      bfilter.waitlist = true
+      
+      $scope.waitlist = BookService.query(bfilter);
+      $scope.waitlist.$promise.then(function (waitlist_data) {
+        $scope.waitlist = waitlist_data;
+        if ($scope.waitlist.length > 0) {
+          $.Confirm('This schedule is full, would you like to join as waitlist ?', function() {
+            $scope.$apply(function () {
+              SharedService.set('selectedSched', sched);
+              $location.path('/class');
+            });
+          });
+        } else {
+          SharedService.set('selectedSched', sched);
+          $location.path('/class');
+        }
+      });
+
     }
   }
 
@@ -577,7 +619,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
     var dTime =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
     var hours = dTime.getHours();
     var minutes = dTime.getMinutes();
-    date.setHours(hours - 1, minutes, 0, 0);
+    date.setHours(hours, minutes, 0, 0);
     if (date < now)
       return true;
 

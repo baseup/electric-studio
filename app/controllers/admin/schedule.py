@@ -204,8 +204,11 @@ def update(self, id):
 
 def destroy(self, id):
     if id != 'None':
+        notes = self.get_query_argument('notes')
         booked_schedule = yield BookedSchedule.objects.get(id)
         booked_schedule.status = 'cancelled'
+        if notes:
+            booked_schedule.notes = notes
         if booked_schedule.user_package:
             booked_schedule.user_package.remaining_credits += 1
             yield booked_schedule.user_package.save()
