@@ -164,8 +164,14 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
         $scope.signupError = 'Email Field is required';
         return;
       }
+
       if ($scope.user.password != $scope.user.confirm_password) {
         $scope.signupError = "Password didn't match";
+        return;
+      }
+
+      if ($scope.user.password && $scope.user.password.length < 6) {
+        $scope.signupError = "Password must be 6 characters";
         return;
       }
 
