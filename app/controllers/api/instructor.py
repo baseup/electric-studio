@@ -50,7 +50,6 @@ def create(self):
         if admin: admin.delete()
         value = sys.exc_info()[1]
         self.set_status(403)
-        print(str(value))
         self.write(str(value))
     self.finish()
 
