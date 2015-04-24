@@ -1,4 +1,4 @@
-from motorengine import DESCENDING
+from motorengine import DESCENDING, ASCENDING
 from motorengine.errors import InvalidDocumentError
 from app.models.schedules import BookedSchedule, InstructorSchedule
 from app.helper import send_email_booking, send_email_cancel, send_email_move, send_email
@@ -86,7 +86,7 @@ def create(self):
                             
                             if book:
                                 user.credits -= 1
-                                user_packages = yield UserPackage.objects.order_by("create_at", direction=DESCENDING) \
+                                user_packages = yield UserPackage.objects.order_by("expire_date", direction=ASCENDING) \
                                                                  .filter(user_id=user._id, remaining_credits__gt=0, status__ne='Expired').find_all()
                                 if user_packages:
                                     has_valid_package = False
