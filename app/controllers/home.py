@@ -129,7 +129,7 @@ def buy(self):
 
                 payment_exist = yield UserPackage.objects.get(trans_info=str(data));
                 if payment_exist:
-                    self.redirect('/#/account#packages')
+                    self.redirect('/#/account?s=exists#packages')
                     return;
                 
                 try: 
@@ -160,7 +160,7 @@ def buy(self):
                             content = str(self.render_string('emails/buy', user=user, site=site_url, package=package.name, expire_date=exp_date.strftime('%B. %d, %Y')), 'UTF-8')
                             yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
 
-                            self.redirect('/#/account#packages')
+                            self.redirect('/#/account?pname=' + package.name + '&s=success#packages')
                         else:
                             self.set_status(403)
                             self.write('Invalid User Status')
@@ -174,7 +174,7 @@ def buy(self):
                     self.set_status(403)
                     self.write(str(value))  
             else:
-                self.redirect('/#/rates')
+                self.redirect('/#/rates?s=error')
 
 def test_waitlist(self):
 
