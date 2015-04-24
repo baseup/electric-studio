@@ -711,6 +711,19 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     // }
   });
 
+  var addSeats = angular.element('#add-no-seats')[0].selectize;
+  var editSeats = angular.element('#edit-no-seats')[0].selectize;
+  addSeats.settings.sortField = 'text';
+  addSeats.settings.sortDirection = 'desc';
+  editSeats.settings.sortField = 'text';
+  editSeats.settings.sortDirection = 'desc';
+  for (var x = 37; x > 0; x--){
+    addSeats.addOption({ value: x, text: x });
+    editSeats.addOption({ value: x, text: x });
+  }
+  addSeats.setValue(37);
+
+
   // $scope.updateRegularSchedule = function () {
   //   var updatedSched = angular.copy($scope.editRegSched);
   //   updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
@@ -728,6 +741,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   // }
   
   $scope.addSchedule = function () {
+    $timeout(function () {
+      angular.element('#add-select-schedule-type')[0].selectize.setValue('');
+      angular.element('#add-class-instructor')[0].selectize.setValue('');
+      angular.element('#add-no-seats')[0].selectize.setValue(37);
+    }, 400);
     angular.element('#add-sched-modal').Modal();
   }
 
@@ -785,6 +803,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     $timeout(function () {
       angular.element('#edit-select-schedule-type')[0].selectize.setValue(sched.type);
       angular.element('#edit-class-instructor')[0].selectize.setValue(sched.instructor._id);
+      angular.element('#edit-no-seats')[0].selectize.setValue(sched.seats);
     }, 400);
     angular.element('#edit-sched-modal').Modal();
   }
@@ -1368,7 +1387,7 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
   $scope.withAvailableSeats = function(stat){
     if ($scope.selectedOption && $scope.selectedOption != 'all') {
       if ($scope.selectedOption == 'withAvailable') {
-        return stat.books.length < 37;  
+        return stat.books.length < stat.seats;  
       } else if ($scope.selectedOption == 'withWaitlisted') {
         return stat.waitlist.length > 0;
       }

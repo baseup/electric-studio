@@ -573,19 +573,16 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
 
       var today = new Date();
       var time = schedule.start.split(/[^0-9]/);
-      var chkDate = date;
+      var chkDate = new Date(date);
       chkDate.setHours(time[3] - 1, time[4], 0);
       if (+today >= +chkDate) {
         $.Alert('You can only book 1 hour before the class or contact studio to book this class')
         return;
       }
 
-      var cutOffchkDate = date;
+      var cutOffchkDate = new Date(date);
       cutOffchkDate.setDate(date.getDate() - 1);
       cutOffchkDate.setHours(17, 0, 0);
-      if (+today >= +cutOffchkDate) {
-        $.Alert('Warning: Booking on this schedule will no longer be cancelled')
-      }
 
       var sched = {};
       sched.date = date;
@@ -602,11 +599,18 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
         if ($scope.waitlist.length > 0) {
           $.Confirm('This schedule is full, would you like to join as waitlist ?', function() {
             $scope.$apply(function () {
+
+              if (+today >= +cutOffchkDate) {
+                $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+              }
               SharedService.set('selectedSched', sched);
               $location.path('/class');
             });
           });
         } else {
+          if (+today >= +cutOffchkDate) {
+            $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+          }
           SharedService.set('selectedSched', sched);
           $location.path('/class');
         }
@@ -744,7 +748,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     $scope.reserved = BookService.query(book_filter);
     $scope.reserved.$promise.then(function (data) {
       $scope.reserved = data;
-      if ($scope.reserved.length >= 37) {
+      if ($scope.reserved.length >= sched.schedule.seats) {
         $scope.forWaitlist = true;
       }
     });
@@ -766,7 +770,8 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     }
 
     for (var r in $scope.reserved) {
-      if ($scope.reserved[r].seat_number == num) {
+      if ($scope.reserved[r].seat_number == num ||
+          num > sched.schedule.seats) {
         return true;
       }
     }
