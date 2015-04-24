@@ -742,8 +742,8 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   
   $scope.addSchedule = function () {
     $timeout(function () {
-      angular.element('#add-select-schedule-type')[0].selectize.setValue("");
-      angular.element('#add-class-instructor')[0].selectize.setValue("");
+      angular.element('#add-select-schedule-type')[0].selectize.setValue('');
+      angular.element('#add-class-instructor')[0].selectize.setValue('');
       angular.element('#add-no-seats')[0].selectize.setValue(37);
     }, 400);
     angular.element('#add-sched-modal').Modal();
@@ -800,7 +800,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   }
 
   $scope.editSchedule = function (sched) {
-    console.log(sched);
     $timeout(function () {
       angular.element('#edit-select-schedule-type')[0].selectize.setValue(sched.type);
       angular.element('#edit-class-instructor')[0].selectize.setValue(sched.instructor._id);
