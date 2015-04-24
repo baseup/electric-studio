@@ -68,6 +68,8 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   });
 
 
+
+
   loginToggle.off('click').on('click', function () {
     login.toggleClass('show');
     signup.add(book).removeClass('show');
@@ -428,6 +430,9 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 });
 
 ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, PackageService) {
+  
+  var scrollableView = angular.element('#rates-section').offset().top;
+  angular.element("html, body").animate({ scrollTop: scrollableView }, "slow");
 
   var qstring = $location.search();
   if (qstring.s == 'error') {
