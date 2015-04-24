@@ -87,7 +87,7 @@ def create(self):
                             if book:
                                 user.credits -= 1
                                 user_packages = yield UserPackage.objects.order_by("create_at", direction=DESCENDING) \
-                                                                 .filter(user_id=user._id, remaining_credits__gt=0).find_all()
+                                                                 .filter(user_id=user._id, remaining_credits__gt=0, status__ne='Expired').find_all()
                                 if user_packages:
                                     has_valid_package = False
                                     for i, user_package in enumerate(user_packages):

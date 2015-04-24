@@ -57,7 +57,11 @@
           <span><span class="label inline">Purchased On:</span> {{ package.create_at | formatDate }}</span><br>
           <span><span class="label inline">Cost:</span> {{ package.package_fee | currency:"" }}</span><br>
           <span><span class="label inline">Classes Left:</span> {{ package.remaining_credits || 0 }}</span><br>
-          <span><span class="label inline">Expires On:</span> {{ package.create_at | addDay:package.expiration | formatDate }}</span>
+          <span>
+            <span ng-if="package.status != 'Expired'" class="label inline">Expires On:</span> 
+            <span ng-if="package.status == 'Expired'" class="label inline">Expired:</span> 
+            {{ package.create_at | addDay:package.expiration | formatDate }}
+          </span>
         </div>
       </section>
       
