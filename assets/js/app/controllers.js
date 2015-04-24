@@ -306,6 +306,15 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
 
 ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthService, UserPackageService) {
 
+  var qstring = $location.search();
+  if (qstring.s) {
+    if (qstring.s == 'success' && qstring.pname) {
+      $.Alert('Success! You have bought ' + qstring.pname);
+    } else if (qstring.s == 'exists') {
+      $.Alert('Transaction already exists');
+    }
+    $location.search({ s: null, pname: null });
+  }
 
  if (!$scope.loginUser) {
     $location.path("/")
@@ -384,7 +393,13 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
   }
 });
 
-ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageService) {
+ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, PackageService) {
+
+  var qstring = $location.search();
+  if (qstring.s == 'error') {
+    $.Alert('Transaction failed');
+    $location.search('s', null);
+  }
 
   $scope.packages = PackageService.query();
   $scope.packages.$promise.then(function (data) {
