@@ -162,7 +162,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
     if ($scope.securityPass) {
       SecurityService.check({ sudopass: $scope.securityPass }, function () {
         
-        if(!($scope.selectedAccount.billing instanceof Object)){
+        if (!($scope.selectedAccount.billing instanceof Object)) {
           $scope.selectedAccount.billing = JSON.parse($scope.selectedAccount.billing);
         }
         angular.element('#buy-package-modal').Modal();
@@ -213,13 +213,13 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
         
       } else {
         $.Alert('Billing information is not complete to process the transaction');
-        $timeout(function() {
+        $timeout(function () {
           angular.element('#billing-preview-modal').Modal();
         }, 10);
       }
     } else {
       $.Alert('Please provide billing information');
-      $timeout(function() {
+      $timeout(function () {
         angular.element('#billing-preview-modal').Modal();
       }, 10);
     }
@@ -256,7 +256,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
   }
 
   // When something is selected, update the “from” and “to” limits.
-  from_picker.on('set', function(event) {
+  from_picker.on('set', function (event) {
     if ( event.select ) {
       to_picker.set('min', from_picker.get('select'));
     }
@@ -264,7 +264,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
       to_picker.set('min', false);
     }
   });
-  to_picker.on('set', function(event) {
+  to_picker.on('set', function (event) {
     if ( event.select ) {
       from_picker.set('max', to_picker.get('select'));
     }
@@ -474,7 +474,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var minutes = dTime.getMinutes();
     var chkDate = new Date($scope.newBook.date);
     chkDate.setHours(hours, minutes, 0, 0);
-    if (chkDate < now){
+    if (chkDate < now) {
       $.Notify({ content: 'Booking is not allowed anymore' });
       return;
     }
@@ -500,7 +500,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var minutes = dTime.getMinutes();
     var chkDate = new Date($scope.newWaitlist.date);
     chkDate.setHours(hours, minutes, 0, 0);
-    if (chkDate < now){
+    if (chkDate < now) {
       $.Notify({ content: 'This schedule is completed' });
       return;
     }
@@ -577,9 +577,9 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     if ($scope.selectedBike) {
       var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
       $.Confirm(confirm_msg, function () {
-        ClassService.update({ scheduleId: $scope.selectedBook._id }, { move_to_seat : $scope.selectedBike }, function(){
+        ClassService.update({ scheduleId: $scope.selectedBook._id }, { move_to_seat : $scope.selectedBike }, function () {
           $scope.reload();
-        }, function(error){
+        }, function (error) {
           $.Notify({ content: error.data });
         });
       });
@@ -600,7 +600,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
           });
           
           angular.element('#move-to-class-modal').Modal();
-        }else{
+        } else {
           $.Notify({ content: 'No seats available' });    
         }
       });
@@ -610,9 +610,9 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
 
   $scope.bookWaitList = function () {
-    ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number, waitlist: true }, function(){
+    ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number, waitlist: true }, function () {
       $scope.reload();
-    }, function(error){
+    }, function (error) {
       $.Notify({ content: error.data });
     });
   }
@@ -776,7 +776,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       date =  new Date(dateParts[0], dateParts[1]-1, dateParts[2], sched.start.getHours(), sched.start.getMinutes());
     }
 
-    if (date < now){
+    if (date < now) {
       return true;
     }
 
@@ -790,7 +790,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     }
 
     if (!$scope.isPastDate($scope.editSched)) {
-      $.Confirm('Are you sure on deleting schedule ?', function(){
+      $.Confirm('Are you sure on deleting schedule ?', function () {
         ScheduleService.delete({ scheduleId: sched.id });
         calendar.fullCalendar('removeEvents', sched.id);
       });
@@ -872,8 +872,8 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
     angular.element('#add-slide-modal').Modal();
   }
 
-  $scope.uploadImage = function(files, type){
-    if(files && files[0]){
+  $scope.uploadImage = function (files, type) {
+    if (files && files[0]) {
       var file = files[0];
       if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
         $.Alert('Invalid file type');
@@ -898,15 +898,15 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         },
         function (e) {
           var progress = parseInt(100.0 * e.loaded / e.total);
-          if(progress < 100)
+          if (progress < 100)
           $.Notify({ content: 'Uploading (' + progress + '%)' });
         }
       );
     }
   }
 
-  $scope.uploadSlider = function(files){
-    if(files && files[0]){
+  $scope.uploadSlider = function (files) {
+    if (files && files[0]) {
       var file = files[0];
       if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
         $.Alert('Invalid file type');
@@ -916,14 +916,14 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         return;
       }
       $scope.toUploadFile = file;
-    }else{
+    } else {
       $scope.toUploadFile = null;
     }
   }
 
-  $scope.saveSlider = function(){
-    if($scope.toUploadFile &&
-       $scope.newSlider && $scope.newSlider.text){
+  $scope.saveSlider = function () {
+    if ($scope.toUploadFile &&
+       $scope.newSlider && $scope.newSlider.text) {
       $scope.uploading = true;
       $upload.upload({
         url: '/admin/slider',
@@ -945,7 +945,7 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         },
         function (e) {
           var progress = parseInt(100.0 * e.loaded / e.total);
-          if(progress < 100)
+          if (progress < 100)
           $.Notify({ content: 'Uploading (' + progress + '%)' });
         }
       );
@@ -955,26 +955,26 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
   }
 
   $scope.updateSliderImg = null;
-  $scope.changeSliderImg = function(slider){
-    if(!$scope.uploading){
+  $scope.changeSliderImg = function (slider) {
+    if (!$scope.uploading) {
       $scope.updateSliderImg = slider;
     }
   }
 
-  $scope.chkChangeImg = function(id){
-    if($scope.updateSliderImg && $scope.updateSliderImg._id == id){
+  $scope.chkChangeImg = function (id) {
+    if ($scope.updateSliderImg && $scope.updateSliderImg._id == id) {
       return true;
     }
     return false;
   }
 
-  $scope.cancelChangeImg = function(){
+  $scope.cancelChangeImg = function () {
     $scope.updateSliderImg = null;
   }
 
-  $scope.updateSlider = function(){
-    if($scope.toUploadFile ||
-       ($scope.updateSliderImg && $scope.updateSliderImg.text)){
+  $scope.updateSlider = function () {
+    if ($scope.toUploadFile ||
+       ($scope.updateSliderImg && $scope.updateSliderImg.text)) {
       $scope.uploading = true;
       $upload.upload({
         url: '/admin/slider/' + $scope.updateSliderImg._id,
@@ -996,14 +996,14 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         },
         function (e) {
           var progress = parseInt(100.0 * e.loaded / e.total);
-          if(progress < 100)
+          if (progress < 100)
           $.Notify({ content: 'Uploading (' + progress + '%)' });
         }
       );
     }
   }
 
-  $scope.removeSlider = function(slider){
+  $scope.removeSlider = function (slider) {
     SliderService.delete({ sliderId: slider._id });
     $scope.sliders = SliderService.query();
     $scope.sliders.$promise.then(function (data) {
@@ -1148,6 +1148,9 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
         $scope.newInstructor.gender = 'male';
 
       var addSuccess = function (data) {
+        $scope.picInstructor = data;
+        $scope.uploadInsPic($scope.files);
+
         InstructorService.query().$promise.then(function (data) {
           $scope.instructors = data;
         });
@@ -1163,27 +1166,32 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
   }
 
   $scope.picInstructor = null;
-  $scope.changeInsPic = function(ins){
-    if(!$scope.uploading){
+  $scope.changeInsPic = function (ins) {
+    if (!$scope.uploading) {
       $scope.picInstructor = ins;
     }
   }
 
-  $scope.chkChangePic = function(id){
-    if($scope.picInstructor && $scope.picInstructor._id == id){
+  $scope.chkChangePic = function (id) {
+    if ($scope.picInstructor && $scope.picInstructor._id == id) {
       return true;
     }
     return false;
   }
 
-  $scope.cancelChangePic = function(){
+  $scope.cancelChangePic = function () {
     $scope.picInstructor = null;
   }
 
   $scope.uploading = false;
-  $scope.uploadInsPic = function(files){
+  $scope.uploadInsPic = function (files) {
 
-    if(files && files[0]){
+    if (!$scope.picInstructor) {
+      $scope.files = files;
+      return;
+    }
+
+    if (files && files[0]) {
       var file = files[0];
       if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
         $.Alert('Invalid file type');
@@ -1227,9 +1235,9 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
     $scope.updateInstructor._id = ins._id;
     $scope.updateInstructor.gender = ins.gender;
     $scope.updateInstructor.motto = ins.motto;
-    if(ins.birthdate){
+    if (ins.birthdate) {
       $scope.updateInstructor.birthdate = ins.birthdate.replace(' 00:00:00', '');
-    }else{
+    } else {
       $scope.updateInstructor.birthdate = '';
     }
   }
@@ -1284,7 +1292,7 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
     var select = angular.element('#search-trans-package')[0].selectize;
 
     angular.forEach(packages, function (pack) {
-      if(pack) select.addOption({ value: pack._id, text: pack.name });
+      if (pack) select.addOption({ value: pack._id, text: pack.name });
     });
   });
 });
@@ -1326,7 +1334,7 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
   }
 
   // When something is selected, update the “from” and “to” limits.
-  from_picker.on('set', function(event) {
+  from_picker.on('set', function (event) {
     if ( event.select ) {
       to_picker.set('min', from_picker.get('select'));
     }
@@ -1334,7 +1342,7 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
       to_picker.set('min', false);
     }
   });
-  to_picker.on('set', function(event) {
+  to_picker.on('set', function (event) {
     if ( event.select ) {
       from_picker.set('max', to_picker.get('select'));
     }
@@ -1380,11 +1388,11 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     var select = angular.element('#search-instructor')[0].selectize;
 
     angular.forEach(instructors, function (ins) {
-      if(ins) select.addOption({ value: ins._id, text: ins.admin.first_name + ' ' + ins.admin.last_name });
+      if (ins) select.addOption({ value: ins._id, text: ins.admin.first_name + ' ' + ins.admin.last_name });
     });
   });
 
-  $scope.withAvailableSeats = function(stat){
+  $scope.withAvailableSeats = function (stat) {
     if ($scope.selectedOption && $scope.selectedOption != 'all') {
       if ($scope.selectedOption == 'withAvailable') {
         return stat.books.length < stat.seats;  
