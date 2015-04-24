@@ -2,6 +2,7 @@ from app.models.packages import UserPackage, Package
 from app.models.users import User
 from app.helper import send_email
 from motorengine.errors import *
+from datetime import datetime, timedelta
 
 import tornado.escape
 import sys
@@ -28,7 +29,9 @@ def create(self):
             trans.credit_count = data['credit_count']
             trans.remaining_credits = data['credit_count']
         if 'expiration' in data:
-            trans.expiration = data['expiration']
+            trans.expiration = data['expiration'] 
+
+    trans.expire_date = datetime.now() + timedelta(days=int(trans.expiration))
 
     if 'notes' in data:
         trans.notes = data['notes']

@@ -67,7 +67,6 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     headerForm.removeClass('show');
   });
 
-
   loginToggle.off('click').on('click', function () {
     login.toggleClass('show');
     signup.add(book).removeClass('show');
@@ -180,7 +179,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
       }
 
       if ($scope.user.password && $scope.user.password.length < 6) {
-        $scope.signupError = "Password must be 6 characters";
+        $scope.signupError = 'Password must be 6 characters';
         return;
       }
 
@@ -332,8 +331,8 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
   }
 
  if (!$scope.loginUser) {
-    $location.path("/")
-    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+    $location.path('/');
+    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
     angular.element('.login-toggle').click();
   } else {
     $scope.account = $scope.loginUser;
@@ -383,7 +382,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
           return;
         }
         var addSuccess = function () {
-          $.Alert("Successfully updated your password")
+          $.Alert('Successfully updated your password');
           $scope.pass = null;
         }
         var addFail = function (error) {
@@ -412,7 +411,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
             $scope.billing.card_expiration &&
             $scope.billing.csc) {
           var billingSuccess = function () {
-            $.Alert("Successfully updated billing information");
+            $.Alert('Successfully updated billing information');
           }
 
           var billingFail = function (error) {
@@ -428,6 +427,9 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 });
 
 ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, PackageService) {
+  
+  var scrollableView = angular.element('#rates-section').offset().top;
+  angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
 
   var qstring = $location.search();
   if (qstring.s == 'error') {
@@ -450,7 +452,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
 
     if (!$scope.loginUser) {
       $.Alert('User is not logged In');
-      angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
     }
@@ -504,8 +506,8 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService
 ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, SharedService, UserService) {
 
   if (!$scope.loginUser) {
-    $location.path("/")
-    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+    $location.path('/');
+    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
     angular.element('.login-toggle').click();
   } else {
 
@@ -573,19 +575,16 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
 
       var today = new Date();
       var time = schedule.start.split(/[^0-9]/);
-      var chkDate = date;
+      var chkDate = new Date(date);
       chkDate.setHours(time[3] - 1, time[4], 0);
       if (+today >= +chkDate) {
         $.Alert('You can only book 1 hour before the class or contact studio to book this class')
         return;
       }
 
-      var cutOffchkDate = date;
+      var cutOffchkDate = new Date(date);
       cutOffchkDate.setDate(date.getDate() - 1);
       cutOffchkDate.setHours(17, 0, 0);
-      if (+today >= +cutOffchkDate) {
-        $.Alert('Warning: Booking on this schedule will no longer be cancelled')
-      }
 
       var sched = {};
       sched.date = date;
@@ -602,11 +601,18 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
         if ($scope.waitlist.length > 0) {
           $.Confirm('This schedule is full, would you like to join as waitlist ?', function() {
             $scope.$apply(function () {
+
+              if (+today >= +cutOffchkDate) {
+                $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+              }
               SharedService.set('selectedSched', sched);
               $location.path('/class');
             });
           });
         } else {
+          if (+today >= +cutOffchkDate) {
+            $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+          }
           SharedService.set('selectedSched', sched);
           $location.path('/class');
         }
@@ -744,7 +750,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     $scope.reserved = BookService.query(book_filter);
     $scope.reserved.$promise.then(function (data) {
       $scope.reserved = data;
-      if ($scope.reserved.length >= 37) {
+      if ($scope.reserved.length >= sched.schedule.seats) {
         $scope.forWaitlist = true;
       }
     });
@@ -766,7 +772,8 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     }
 
     for (var r in $scope.reserved) {
-      if ($scope.reserved[r].seat_number == num) {
+      if ($scope.reserved[r].seat_number == num ||
+          num > sched.schedule.seats) {
         return true;
       }
     }
@@ -795,7 +802,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
 
     if (!$scope.loginUser) {
       $.Alert('User is not logged In');
-      angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
     }
@@ -862,8 +869,8 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
 
 ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) {
   if (!$scope.loginUser) {
-    $location.path("/")
-    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+    $location.path('/');
+    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
     angular.element('.login-toggle').click();
   } else {
 

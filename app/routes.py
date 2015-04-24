@@ -21,6 +21,7 @@ routes.get('/add_regular_schedules', 'home.add_regular_schedule')
 routes.get('/test_waitlist', 'home.test_waitlist')
 routes.get('/remove_test_waitlist', 'home.remove_test_waitlist')
 routes.get('/package_migrate', 'home.package_migrate')
+routes.get('/schedule_migrate', 'home.schedule_migrate')
 
 routes.prefix('/admin', [
 

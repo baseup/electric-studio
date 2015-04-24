@@ -148,6 +148,7 @@ def buy(self):
                             transaction.credit_count = package.credits
                             transaction.remaining_credits = package.credits
                             transaction.expiration = package.expiration
+                            transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
                             transaction.trans_info = str(data)
                             user.credits += package.credits
 
@@ -203,7 +204,7 @@ def test_waitlist(self):
         yield BookedSchedule.objects.filter(user_id=user._id).delete()
         currentBooks = yield BookedSchedule.objects.filter(schedule=sched._id).find_all()
 
-        for x in range(0, 37):
+        for x in range(0, sched.seats):
             isReserved = False
             for i, book in enumerate(currentBooks):
                 if (x + 1) == book.seat_number:
@@ -231,13 +232,21 @@ def remove_test_waitlist(self):
         yield user.delete()
     self.finish()
 
-def package_migrate(self):
+def schedule_migrate(self):
+    schedules = yield InstructorSchedule.objects.find_all()
+    for sched in schedules:
+        sched.seats = 37
+        sched.save()
 
+    self.redirect('/')
+
+def package_migrate(self):
     user_packages = yield UserPackage.objects.find_all()
     for upack in user_packages:
         if upack.package_id:
             upack.package_name = upack.package_id.name
             upack.package_fee = upack.package_id.fee
+        upack.expire_date = upack.create_at + timedelta(days=upack.expiration)
         upack.status = 'Active'
         yield upack.save()
 

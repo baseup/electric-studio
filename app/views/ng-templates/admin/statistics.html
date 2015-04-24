@@ -62,10 +62,10 @@
                   <span ng-if="isCompleted(stat)">Completed</span>
                   <span ng-if="!isCompleted(stat)">Available</span>
                 </td>
-                <td>37</td>
+                <td>{{ stat.seats }}</td>
                 <td>
-                  <span ng-if="stat.books.length <= 37">{{ 37 - stat.books.length }}</span>
-                  <span ng-if="stat.books.length > 37">0</span>
+                  <span ng-if="stat.books.length <= stat.seats">{{ stat.seats - stat.books.length }}</span>
+                  <span ng-if="stat.books.length > stat.seats">0</span>
                 </td>
                 <td>
                   <a ng-if="stat.books.length > 0" ng-click="viewUserList(stat,'book')">{{ stat.books.length }}</a>
