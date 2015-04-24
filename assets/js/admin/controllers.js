@@ -463,9 +463,9 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var hours = dTime.getHours();
     var minutes = dTime.getMinutes();
     var chkDate = new Date($scope.newBook.date);
-    chkDate.setHours(hours - 1, minutes, 0, 0);
+    chkDate.setHours(hours, minutes, 0, 0);
     if (chkDate < now){
-      $.Notify({ content: 'Booking should be 1 hour before' });
+      $.Notify({ content: 'Booking is not allowed anymore' });
       return;
     }
 
