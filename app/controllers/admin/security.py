@@ -3,9 +3,10 @@ from passlib.hash import bcrypt
 import sys
 import tornado.escape
 
-def find(self):
+def create(self):
     self.set_status(403);
-    sudopass = self.get_query_argument('sudopass')
+    data = tornado.escape.json_decode(self.request.body)
+    sudopass = data['sudopass']
     if sudopass:
         security_password = yield Setting.objects.get(key='security_password')
         if security_password:

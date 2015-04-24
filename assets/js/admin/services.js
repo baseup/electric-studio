@@ -67,7 +67,7 @@ services.factory('AuthService', function (UserService) {
 services.factory('SecurityService', function($resource) {
   return $resource('/admin/security', {}, {
     check: {
-      method: 'GET',
+      method: 'POST',
       isArray: false
     },
   });

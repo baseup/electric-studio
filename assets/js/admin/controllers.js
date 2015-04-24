@@ -148,33 +148,46 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
   }
 
   $scope.accountAddClass = function (user) {
-    $scope.newCredits.user_id = user._id;
-    $scope.selectedAccount = user;
-    angular.element('#add-class-modal').Modal();
+    Security(function () {
+      $scope.newCredits.user_id = user._id;
+      $scope.selectedAccount = user;
+      angular.element('#add-class-modal').Modal();
+    });
   }
 
-  $scope.checkSecurityModal = function (user) {
+  $scope.buyPackageModal = function (user) {
     $scope.selectedAccount = user;
-    angular.element('#security-check-modal').Modal();
+    Security(function () {
+      if (!($scope.selectedAccount.billing instanceof Object)) {
+        $scope.selectedAccount.billing = JSON.parse($scope.selectedAccount.billing);
+      }
+      angular.element('#buy-package-modal').Modal();
+    });
   }
 
-  $scope.checkSecurity = function () {
-    if ($scope.securityPass) {
-      SecurityService.check({ sudopass: $scope.securityPass }, function () {
-        
-        if(!($scope.selectedAccount.billing instanceof Object)){
-          $scope.selectedAccount.billing = JSON.parse($scope.selectedAccount.billing);
+  var Security = function (securityCallback) {
+
+    $('#btn-security').off('click');
+    $('#btn-security').click(function () {
+      $scope.$apply(function () {
+        if ($scope.securityPass) {
+          SecurityService.check({ sudopass: $scope.securityPass }, function () {
+            securityCallback();
+            $scope.securityPass = null;
+          }, function (error) {
+            $.Alert(error.data);
+            $scope.securityPass = null;
+          });
+        } else {
+          $.Alert('Access Denied');
+          $scope.securityPass = null;
         }
-        angular.element('#buy-package-modal').Modal();
-        $scope.securityPass = null;
-      }, function (error) {
-        $.Alert(error.data);
-        $scope.securityPass = null;
       });
-    } else {
-      $.Alert('Access Denied');
-    }
+    });
+
+    $('#security-check-modal').Modal();
   }
+  
 
   $scope.confirmBilling = function () {
     if ($scope.newPackage) {

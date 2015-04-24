@@ -72,6 +72,7 @@
                   <br/><br/>
                   <span class="h small ">{{ trans.remaining_credits }} Class<span ng-if="trans.remaining_credits > 1">es</span> Left</span>
                   <br/><span class="h small ">Expires on {{ trans.create_at | addDay:trans.expiration | formatDate }}</span>
+                  <span ng-if="trans.notes"><br/><span class="label inline">Notes:</span> {{ trans.notes }}</span>
                 </div>
               </div>
             </div>
