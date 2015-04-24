@@ -1129,6 +1129,9 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
         $scope.newInstructor.gender = 'male';
 
       var addSuccess = function (data) {
+        $scope.picInstructor = data;
+        $scope.uploadInsPic($scope.files);
+
         InstructorService.query().$promise.then(function (data) {
           $scope.instructors = data;
         });
@@ -1138,7 +1141,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
       var addFail = function (error) {
         $.Alert(error.data);
       }
-
+      
       InstructorService.create($scope.newInstructor).$promise.then(addSuccess, addFail);
     }
   }
@@ -1163,6 +1166,11 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
 
   $scope.uploading = false;
   $scope.uploadInsPic = function(files){
+
+    if(!$scope.picInstructor){
+      $scope.files = files;
+      return;
+    }
 
     if(files && files[0]){
       var file = files[0];

@@ -131,6 +131,7 @@
             <option value="female">Female</option>
           </select>
         </div>
+
         <div class="space--bottom float--left space--right">
           <span class="label">Email Address</span>
           <input class="text-input" ng-model="newInstructor.email">
@@ -143,6 +144,12 @@
           <span class="label">Motto</span>
           <textarea class="text-input" ng-model="newInstructor.motto"></textarea>
         </div>
+
+        <div class="space--bottom float--left">
+          <input ng-show="!uploading" type="file" ng-file-select="uploadInsPic($files)" ng-model="inspic"/>
+          <span ng-show="uploading">Uploading: {{ progress }}</span>
+        </div>
+        
       </div>
       <button class="btn btn--medium btn--primary space--top modal-close" ng-click="addInstructor()">Add</button>
     </div>

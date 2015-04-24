@@ -45,10 +45,12 @@ def create(self):
         if 'motto' in data:
             instructor.motto = data['motto']
         instructor = yield instructor.save()
+        self.render_json(instructor)
     except :
         if admin: admin.delete()
         value = sys.exc_info()[1]
         self.set_status(403)
+        print(str(value))
         self.write(str(value))
     self.finish()
 
