@@ -23,16 +23,16 @@ def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
 
-    passWord = None
+    password = None
     if 'password' in data:
-        passWord = bcrypt.encrypt(data['password'])
+        password = bcrypt.encrypt(data['password'])
 
     try :
         user = User(first_name=data['first_name'], 
                     # middle_name=data['middle_name'],
                     last_name=data['last_name'],
                     email=data['email'],
-                    password=passWord,
+                    password=password,
                     status='Unverified',
                     credits=0)
 
@@ -61,7 +61,7 @@ def update(self, id):
             else:
                 self.set_status(403)
                 self.write('Current Password did not match')
-        if 'reset_password' in data:
+        elif 'reset_password' in data:
             user.password = bcrypt.encrypt(data['reset_password'])
             user = yield user.save()
         elif 'billing' in data:
@@ -72,31 +72,16 @@ def update(self, id):
             # user.middle_name = data['middle_name']
             user.last_name = data['last_name']
 
-            if user.email != data['email']:
-                user.email = data['email']
-                user.status = 'Unverified'
-
             if data['birthdate'] != None:
                 user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
-
-            user.phone_number = data['phone_number']
+            if data['phone_number'] != None:
+                user.phone_number = data['phone_number']
             if data['contact_person'] != None:
                 user.contact_person = data['contact_person']
             if data['emergency_contact'] != None:
                 user.emergency_contact = data['emergency_contact']
-            # user.address = data['address']
-            # user.status = data['status']
-            # user.profile_pic = data['profile_pic']
-            # user.credits = data['credits']
+
             user = yield user.save()
-            if user.status == 'Unverified':
-                user = user.serialize()
-                url = self.request.protocol + '://' + self.request.host + '/verify?ticket=%s' % user['_id']
-                yield self.io.async_task(
-                    send_email_verification,
-                    user=user,
-                    content=str(self.render_string('emails/registration', user=user, url=url), 'UTF-8')
-                )
     except :
         value = sys.exc_info()[1]
         self.set_status(403)

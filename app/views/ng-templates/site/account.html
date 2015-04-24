@@ -20,14 +20,15 @@
             <input class="input" placeholder="Last Name" ng-model="account.last_name">
             <input class="input" placeholder="Email Address" ng-model="account.email">
             <input class="input" placeholder="Mobile Number" ng-model="account.phone_number">
-          </div>  
-          <div class="col-2">
-            <h4 class="h small">Emergency Contact</h4>
-            <input class="input" placeholder="Contact Number" ng-model="account.emergency_contact">
-            <input class="input" placeholder="Contact Full Name" ng-model="account.contact_person"/>
-            <h4 class="h small"><br/>Birthday</h4>
-            <input class="input datepicker" placeholder="yyyy-mm-dd" ng-model="account.birthdate">
           </div>
+
+          <h4 class="h small">Birthday</h4>
+          <input class="input datepicker" placeholder="yyyy-mm-dd" ng-model="account.birthdate">
+        </section>
+        <section>
+            <h4 class="h small">Emergency Contact</h4>
+            <input class="input" placeholder="Contact Full Name" ng-model="account.contact_person">
+            <input class="input" placeholder="Contact Number" ng-model="account.emergency_contact">
         </section>
         <a class="button small pads primary" ng-click="updateAccount()" >Save</a> 
         <section>

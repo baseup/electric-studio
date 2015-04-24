@@ -358,6 +358,10 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
         $.Alert(error.data);
       }
 
+      if ($scope.account.billing) {
+        delete $scope.account.billing;
+      }
+
       UserService.update({ userId: $scope.loginUser._id }, $scope.account).$promise.then(addSuccess, addFail);
     }
 
@@ -386,14 +390,29 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 
     $scope.updateBilling = function () {
       if ($scope.billing) {
-        var billingSuccess = function () {
-          $.Alert("Successfully updated billing information");
-        }
 
-        var billingFail = function (error) {
-          $.Alert(error.data)
+        if ($scope.billing.first_name &&
+            $scope.billing.last_name &&
+            $scope.billing.address &&
+            $scope.billing.city &&
+            $scope.billing.province &&
+            $scope.billing.postalcode &&
+            $scope.billing.email &&
+            $scope.billing.card_number  &&
+            $scope.billing.card_type &&
+            $scope.billing.card_expiration &&
+            $scope.billing.csc) {
+          var billingSuccess = function () {
+            $.Alert("Successfully updated billing information");
+          }
+
+          var billingFail = function (error) {
+            $.Alert(error.data)
+          }
+          UserService.update({ userId: $scope.loginUser._id }, { billing: $scope.billing }).$promise.then(billingSuccess, billingFail);
+        } else {
+          $.Alert('Please complete billing info')
         }
-        UserService.update({ userId: $scope.loginUser._id }, { billing: $scope.billing }).$promise.then(billingSuccess, billingFail);
       }
     }
   }
