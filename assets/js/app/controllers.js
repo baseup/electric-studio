@@ -164,8 +164,14 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
         $scope.signupError = 'Email Field is required';
         return;
       }
+
       if ($scope.user.password != $scope.user.confirm_password) {
         $scope.signupError = "Password didn't match";
+        return;
+      }
+
+      if ($scope.user.password && $scope.user.password.length < 6) {
+        $scope.signupError = "Password must be 6 characters";
         return;
       }
 
@@ -306,6 +312,15 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
 
 ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthService, UserPackageService) {
 
+  var qstring = $location.search();
+  if (qstring.s) {
+    if (qstring.s == 'success' && qstring.pname) {
+      $.Alert('Success! You have bought ' + qstring.pname);
+    } else if (qstring.s == 'exists') {
+      $.Alert('Transaction already exists');
+    }
+    $location.search({ s: null, pname: null });
+  }
 
  if (!$scope.loginUser) {
     $location.path("/")
@@ -403,7 +418,13 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
   }
 });
 
-ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageService) {
+ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, PackageService) {
+
+  var qstring = $location.search();
+  if (qstring.s == 'error') {
+    $.Alert('Transaction failed');
+    $location.search('s', null);
+  }
 
   $scope.packages = PackageService.query();
   $scope.packages.$promise.then(function (data) {
@@ -416,8 +437,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageServi
 
   $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/buy';
 
-  $scope.buyPackage = function (event) {
-
+  $scope.buyPackage = function (event, index) {
 
     if (!$scope.loginUser) {
       $.Alert('User is not logged In');
@@ -440,11 +460,11 @@ ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageServi
         return;
       }
 
-      angular.element('#payForm').submit();
+      angular.element('#payForm-' + index).submit();
 
-    })
+    });
   }
-})
+});
 
 ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService) {
 
@@ -477,7 +497,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
     $location.path("/")
     angular.element("html, body").animate({ scrollTop: 0 }, "slow");
     angular.element('.login-toggle').click();
-  }else{
+  } else {
 
     $scope.reservations = BookService.query();
     $scope.reservations.$promise.then(function (data) {
@@ -716,12 +736,12 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       }
     }
     if (!$scope.checkSeat(number)) {
-      if(seat_index == -1){
+      if (seat_index == -1) {
         seats.push(number);
-      }else{
+      } else {
         seats.splice(seat_index, 1);
       }
-    }else{
+    } else {
       event.preventDefault();
     }
   }
@@ -779,7 +799,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
 
         if ($scope.resched == undefined) {
           BookService.book(book).$promise.then(bookSuccess, bookFail);
-        }else{
+        } else {
           BookService.update({ bookId: $scope.resched._id }, book).$promise.then(bookSuccess, bookFail);
         }
       });
@@ -792,7 +812,7 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
     $location.path("/")
     angular.element("html, body").animate({ scrollTop: 0 }, "slow");
     angular.element('.login-toggle').click();
-  }else{
+  } else {
 
     $('#history-tabs').Tab();
 

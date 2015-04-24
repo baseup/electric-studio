@@ -23,22 +23,21 @@ def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
 
-    passWord = None
+    password = None
     if 'password' in data:
-        passWord = bcrypt.encrypt(data['password'])
+        password = bcrypt.encrypt(data['password'])
+
     try :
         user = User(first_name=data['first_name'], 
                     # middle_name=data['middle_name'],
                     last_name=data['last_name'],
                     email=data['email'],
-                    password=passWord,
-                    # birthdate=datetime.strptime(data['birthdate'],'%Y-%m-%d'),
-                    phone_number=data['phone_number'],
-                    # emergency_contact=data['emergency_contact'],
-                    # address=data['address'],
+                    password=password,
                     status='Unverified',
-                    # profile_pic=data['profile_pic'],
                     credits=0)
+
+        if 'phone_number' in data:
+            user.phone_number = data['phone_number']
 
         user = yield user.save()
     except :
