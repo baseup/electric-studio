@@ -450,8 +450,16 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   $scope.cancelBooking = function (booking, index) {
     if (!$scope.isCompleted(booking.schedule)) {
-      $scope.books.splice(index, 1);
-      ClassService.delete({ scheduleId: booking._id });
+      $.Confirm('Are you sure on cancelling ' + booking.user_id.first_name + ' ride ?', function () {
+        $.Prompt('Notes on cancelling ' + booking.user_id.first_name + ' ride', function (notes) {
+          if (notes && notes.length > 0) {
+            $scope.books.splice(index, 1);
+            ClassService.delete({ scheduleId: booking._id, notes: notes });
+          } else {
+            $.Alert('Please provide a notes on cancelling schedules');
+          }
+        });
+      });
     } else {
       $.Notify({ content: 'Not allow to modify, This schedule is completed' });
     }
@@ -610,8 +618,14 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
   
   $scope.removeFromWaitlist = function (wait, index) {
-    $scope.waitList.splice(index, 1);
-    ClassService.delete({ scheduleId: wait._id });
+    if (!$scope.isCompleted(wait.schedule)) {
+      $.Confirm('Are you sure on cancelling ' + wait.user_id.first_name + ' waitlist ?', function () {
+        $scope.waitList.splice(index, 1);
+        ClassService.delete({ scheduleId: wait._id });
+      });
+    } else {
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+    }
   }
 
   $scope.releaseWaitlist = function () {
@@ -738,7 +752,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     var now = new Date();
     var date = sched.date;
     if (date instanceof Date) {
-      date.setHours(sched.start.getHours(), date.start.getMinutes, 0, 0);
+      date.setHours(sched.start.getHours(), date.start.getMinutes(), 0, 0);
     } else {
       var dateParts = sched.date.split(/[^0-9]/);
       date =  new Date(dateParts[0], dateParts[1]-1, dateParts[2], sched.start.getHours(), sched.start.getMinutes());
