@@ -1,6 +1,7 @@
 
 from motorengine.errors import InvalidDocumentError
 from app.models.admins import Instructor, Admin
+from app.models.schedules import InstructorSchedule
 from datetime import datetime
 from passlib.hash import bcrypt
 
@@ -83,9 +84,14 @@ def update(self, id):
 
 def destroy(self, id):
     instructor = yield Instructor.objects.get(id)
-    admin =  yield Admin.objects.get(instructor.admin._id)
-    if admin:
-        admin.delete()
-        instructor.delete()
+    scheds = yield InstructorSchedule.objects.filter(instructor=instructor._id).find_all()
+    if len(scheds) > 0:
+        self.set_status(400)
+        self.write('Unable to remove, Instructor has ' + str(len(scheds)) + ' schedule');
+    else:
+        admin =  yield Admin.objects.get(instructor.admin._id)
+        if admin:
+            admin.delete()
+            instructor.delete()
 
     self.finish()

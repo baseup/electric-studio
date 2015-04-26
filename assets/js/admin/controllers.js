@@ -79,17 +79,19 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 
   $scope.removePackage = function (pac) {
-    var addSuccess = function () {
-      PackageService.query().$promise.then(function (data) {
-        $scope.packages = data;
-      });
-    }
+    $.Confirm('Are you sure on deleting ' + pac.name + ' ?', function (){
+      var addSuccess = function () {
+        PackageService.query().$promise.then(function (data) {
+          $scope.packages = data;
+        });
+      }
 
-    var addFail = function (error) {
-      $.Alert(error.data);
-    }
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
 
-    PackageService.delete({packageId : pac._id}).$promise.then(addSuccess, addFail);
+      PackageService.delete({packageId : pac._id}).$promise.then(addSuccess, addFail);
+    });
   }
 });
 
@@ -1134,22 +1136,22 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
     
     if ($scope.newInstructor) {
       if (!$scope.newInstructor.first_name) {
-        $.Alert('Package must have first name')
+        $.Alert('Instructor must have first name')
         return;
       }
 
       if (!$scope.newInstructor.last_name) {
-        $.Alert('Package must have last name')
+        $.Alert('Instructor must have last name')
         return;
       }      
       
       if (!$scope.newInstructor.email) {
-        $.Alert('Package must have email')
+        $.Alert('Instructor must have email')
         return;
       }
       
       if (!$scope.newInstructor.contact_number) {
-        $.Alert('Package must have number of contact_number')
+        $.Alert('Instructor must have number of contact_number')
         return;
       }
 
@@ -1275,17 +1277,19 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
   }
 
   $scope.removeInstructor = function (ins) {
-    var addSuccess = function (data) {
-      InstructorService.query().$promise.then(function (data) {
-        $scope.instructors = data;
-      });
-    }
+    $.Confirm('Are you sure on deleting ' + ins.admin.first_name + ' ' + ins.admin.last_name + ' ?', function(){
+      var addSuccess = function (data) {
+        InstructorService.query().$promise.then(function (data) {
+          $scope.instructors = data;
+        });
+      }
 
-    var addFail = function (error) {
-      $.Alert(error.data);
-    }
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
 
-    InstructorService.delete({instructorId : ins._id}).$promise.then(addSuccess, addFail);
+      InstructorService.delete({instructorId : ins._id}).$promise.then(addSuccess, addFail);
+    });
   }
 
 });
