@@ -1,20 +1,37 @@
 from tornado.ioloop import PeriodicCallback
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, tzinfo
 from tornado import gen
 
 from app.models.users import User
 from app.models.schedules import BookedSchedule
 from app.models.packages import UserPackage
 
+class GMT8(tzinfo):
+    def utcoffset(self, dt):
+        return timedelta(hours=7) + self.dst(dt)
+    def dst(self, dt):
+        d = datetime(dt.year, 4, 1)
+        self.dston = d - timedelta(days=d.weekday() + 1)
+        d = datetime(dt.year, 11, 1)
+        self.dstoff = d - timedelta(days=d.weekday() + 1)
+        if self.dston <=  dt.replace(tzinfo=None) < self.dstoff:
+            return timedelta(hours=1)
+        else:
+            return timedelta(0)
+    def tzname(self,dt):
+        return "GMT +8"
+
 @gen.coroutine
 def schedule_watcher():
-    now = datetime.now()
+    gmt8 = GMT8()
+    now = datetime.now(tz=gmt8)
     user_packages = yield UserPackage.objects.filter(status__ne='Expired').find_all()
     if user_packages:
         for user_pack in user_packages:
             expire_date = user_pack.create_at + timedelta(days=user_pack.expiration)
-            if expire_date < datetime.now():
+            expire_date = expire_date.replace(tzinfo=gmt8)
+            if expire_date < datetime.now(tz=gmt8):
                 user_pack.status = 'Expired'
                 user = yield User.objects.get(user_pack.user_id._id)
                 user.credits -= user_pack.remaining_credits
@@ -26,7 +43,9 @@ def schedule_watcher():
     if schedules:
         for i, sched in enumerate(schedules):
             sched_date = datetime.combine(sched.date, sched.schedule.start.time())
-            if sched_date < datetime.now():
+            sched_date = sched_date.replace(tzinfo=gmt8)
+            print(sched_date)
+            if sched_date < datetime.now(tz=gmt8):
                 if sched.status == 'booked':
                     sched.status = 'completed';
                     yield sched.save();
