@@ -107,6 +107,7 @@ def forgot_password(self):
 
 
 def buy(self):
+
     success = self.get_argument('success')
 
     if not self.get_secure_cookie('loginUserID'):
@@ -115,11 +116,15 @@ def buy(self):
         self.finish()
     else:
         if success == 'True':
+            payment_date = self.get_argument('payment_date')
+            if not payment_date and self.request.method == 'GET':
+                payment_date = datetime.now().strftime("%d/%m/%y %H:%M:%S")
+
             data = {
                 'payment_type' : self.get_argument('payment_type'),
                 'payer_status' : self.get_argument('payer_status'),
                 'payer_id' : self.get_argument('payer_id'),
-                'payment_date' : self.get_argument('payment_date'),
+                'payment_date' : payment_date,
                 'receiver_id' : self.get_argument('receiver_id'),
                 'verify_sign' : self.get_argument('verify_sign')
             }
