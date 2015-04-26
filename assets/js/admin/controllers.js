@@ -792,7 +792,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
 
   $scope.removeSchedule = function (sched) {
     if (sched.ridersCount > 0) {
-      $.Alert('Not allowed to remove schedule, already in use')
+      $.Alert('Not allowed to remove schedules has reservations')
       return;
     }
 
