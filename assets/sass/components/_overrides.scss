@@ -91,7 +91,10 @@
 }
 
 .picker__select--year {
-  height: 38px;
+  min-height: 38px !important;
+}
+.picker__select--month {
+  min-height: 38px !important;
 }
 
 .picker__day--highlighted,
