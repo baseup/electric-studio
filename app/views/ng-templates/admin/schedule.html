@@ -29,11 +29,6 @@
           <dt class="label">Instructor</span>
           <dd>{{ selectedSched.instructor.admin.first_name }} {{ selectedShed.instructor.admin.last_name }}<dd>
         </dl>
-
-        <dl class="space--bottom space--sides float--left">
-          <dt class="label">Riders</span>
-          <dd>{{ selectedSched.ridersCount }}<dd>
-        </dl>
         <dl class="space--bottom space--sides float--left">
           <dt class="label">No. of Seats</span>
           <dd>{{ selectedSched.seats }}<dd>
@@ -106,8 +101,7 @@
         </dl>
       </div>
       <button ng-click="saveSchedule()"
-        class="btn btn--medium btn--primary space--top modal-close"
-        ng-disabled="!newSpecSched.date || !newSpecSched.type || !newSpecSched.instructor || !newSpecSched.start || !newSpecSched.end">
+        class="btn btn--medium btn--primary space--top modal-close">
         Add
       </button>
     </div>
