@@ -47,5 +47,4 @@ def find(self):
 
 def find_one(self, id):
     sched = yield InstructorSchedule.objects.get(id)
-    self.write(sched.to_dict())
-    self.finish()
+    self.render_json(sched)

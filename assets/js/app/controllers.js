@@ -748,7 +748,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   }
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, SharedService, BookService) {
+ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, ScheduleService, SharedService, BookService) {
   var sched = SharedService.get('selectedSched');
   if (!sched) {
     $location.path('/schedule')
@@ -764,6 +764,12 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       SharedService.clear('resched');
       $location.path('/reserved');
     }
+
+    ScheduleService.get({ scheduleId: sched.schedule._id }, function(schedule) {
+      sched.schedule = schedule;
+      $scope.timeSched = sched.schedule.start;
+      $scope.instructor = sched.schedule.instructor;
+    });
 
     $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() + ' ' + sched.date.getFullYear();
     $scope.daySched = days[sched.date.getDay()];
