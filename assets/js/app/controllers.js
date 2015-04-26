@@ -87,12 +87,6 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     angular.element('.main-menu').toggleClass('show');
   });
 
-  angular.element('.seats td').find('span').click(function () {
-    if (!angular.element(this).parent('td').hasClass('unavailable')) {
-      angular.element(this).parent('td').toggleClass('selected');
-    }
-  });
-
   $(window).resize(function () {
     var winH = angular.element(this).height(), 
         headerH = angular.element('.main-header').outerHeight(),
@@ -792,6 +786,12 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
   }
 
   $scope.setSeatNumber = function (number, event) {
+    if ($scope.loginUser && 
+        seats.length >= $scope.loginUser.credits){
+      $.Alert('Not enough credits');
+      return;
+    }
+
     var seat_index = -1;
     for (var i = 0; i < seats.length; i++) {
       if (seats[i] === number) {
@@ -801,6 +801,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     if (!$scope.checkSeat(number)) {
       if (seat_index == -1) {
         seats.push(number);
+        angular.element('#seat' + number).toggleClass('selected');
       } else {
         seats.splice(seat_index, 1);
       }
