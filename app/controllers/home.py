@@ -107,75 +107,72 @@ def forgot_password(self):
 
 
 def buy(self):
-    if self.request.method == 'GET':
-        self.redirect('/#/rates')
+    success = self.get_argument('success')
+
+    if not self.get_secure_cookie('loginUserID'):
+        self.set_status(403)
+        self.write('User not logged in')
+        self.finish()
     else:
-        success = self.get_argument('success')
+        if success == 'True':
+            data = {
+                'payment_type' : self.get_argument('payment_type'),
+                'payer_status' : self.get_argument('payer_status'),
+                'payer_id' : self.get_argument('payer_id'),
+                'payment_date' : self.get_argument('payment_date'),
+                'receiver_id' : self.get_argument('receiver_id'),
+                'verify_sign' : self.get_argument('verify_sign')
+            }
 
-        if not self.get_secure_cookie('loginUserID'):
-            self.set_status(403)
-            self.write('User not logged in')
-            self.finish()
-        else:
-            if success == 'True':
-                data = {
-                    'payment_type' : self.get_argument('payment_type'),
-                    'payer_status' : self.get_argument('payer_status'),
-                    'payer_id' : self.get_argument('payer_id'),
-                    'payment_date' : self.get_argument('payment_date'),
-                    'receiver_id' : self.get_argument('receiver_id'),
-                    'verify_sign' : self.get_argument('verify_sign')
-                }
+            payment_exist = yield UserPackage.objects.get(trans_info=str(data));
+            if payment_exist:
+                self.redirect('/#/account?s=exists#packages')
+                return;
+            
+            try: 
+                pid = self.get_argument('pid');
+                package = yield Package.objects.get(pid)
+                if pid:
+                    user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+                    user = yield User.objects.get(user_id)
+                    
+                    if user.status != 'Frozen' and user.status != 'Unverified':
+                        transaction = UserPackage()
+                        transaction.user_id = user._id
+                        transaction.package_id = package._id
+                        transaction.package_name = package.name
+                        transaction.package_fee = package.fee
+                        transaction.credit_count = package.credits
+                        transaction.remaining_credits = package.credits
+                        transaction.expiration = package.expiration
+                        transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
+                        transaction.trans_info = str(data)
+                        user.credits += package.credits
 
-                payment_exist = yield UserPackage.objects.get(trans_info=str(data));
-                if payment_exist:
-                    self.redirect('/#/account?s=exists#packages')
-                    return;
-                
-                try: 
-                    pid = self.get_argument('pid');
-                    package = yield Package.objects.get(pid)
-                    if pid:
-                        user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-                        user = yield User.objects.get(user_id)
-                        
-                        if user.status != 'Frozen' and user.status != 'Unverified':
-                            transaction = UserPackage()
-                            transaction.user_id = user._id
-                            transaction.package_id = package._id
-                            transaction.package_name = package.name
-                            transaction.package_fee = package.fee
-                            transaction.credit_count = package.credits
-                            transaction.remaining_credits = package.credits
-                            transaction.expiration = package.expiration
-                            transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
-                            transaction.trans_info = str(data)
-                            user.credits += package.credits
+                        transaction = yield transaction.save()
+                        user = yield user.save()
 
-                            transaction = yield transaction.save()
-                            user = yield user.save()
+                        user = (yield User.objects.get(user._id)).serialize()
+                        site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                        exp_date = transaction.create_at + timedelta(days=transaction.expiration)
+                        content = str(self.render_string('emails/buy', user=user, site=site_url, package=package.name, expire_date=exp_date.strftime('%B. %d, %Y')), 'UTF-8')
+                        yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
 
-                            user = (yield User.objects.get(user._id)).serialize()
-                            site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
-                            exp_date = transaction.create_at + timedelta(days=transaction.expiration)
-                            content = str(self.render_string('emails/buy', user=user, site=site_url, package=package.name, expire_date=exp_date.strftime('%B. %d, %Y')), 'UTF-8')
-                            yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
-
-                            self.redirect('/#/account?pname=' + package.name + '&s=success#packages')
-                        else:
-                            self.set_status(403)
-                            self.write('Invalid User Status')
-                            self.finish()
+                        self.redirect('/#/account?pname=' + package.name + '&s=success#packages')
                     else:
                         self.set_status(403)
-                        self.write('Package not found')
+                        self.write('Invalid User Status')
                         self.finish()
-                except :
-                    value = sys.exc_info()[1]
+                else:
                     self.set_status(403)
-                    self.write(str(value))  
-            else:
-                self.redirect('/#/rates?s=error')
+                    self.write('Package not found')
+                    self.finish()
+            except :
+                value = sys.exc_info()[1]
+                self.set_status(403)
+                self.write(str(value))  
+        else:
+            self.redirect('/#/rates?s=error')
 
 def test_waitlist(self):
 
