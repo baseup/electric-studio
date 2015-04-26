@@ -100,7 +100,7 @@
 
   <!-- modal Add Instructor -->
   <div id="add-instructor-modal" class="modal" data-modal="add-instructor">
-    <div class="modal__box pad" style="max-width: 30%">
+    <div class="modal__box pad" style="max-width: 35%">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Add Instructor</h3>
       <div class="cf">
@@ -124,7 +124,7 @@
           <span class="label">BirthDate</span>
           <input class="datepicker text-input" ng-model="newInstructor.birthdate">
         </div>
-        <div class="space--bottom float--left" >
+        <div class="space--bottom space--right float--left" >
           <span class="label">Gender</span>
           <select class="select text-input" ng-model="newInstructor.gender">
             <option value="male" selected="selected">Male</option>
@@ -145,7 +145,7 @@
           <textarea class="text-input" ng-model="newInstructor.motto"></textarea>
         </div>
 
-        <div class="space--bottom float--left">
+        <div class="space--bottom float--left"><br/><br/>
           <input ng-show="!uploading" type="file" ng-file-select="uploadInsPic($files)" ng-model="inspic"/>
           <span ng-show="uploading">Uploading: {{ progress }}</span>
         </div>

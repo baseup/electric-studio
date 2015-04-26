@@ -49,6 +49,9 @@
             <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">Add Class</a>
             <ul class="nav float--right">
               <li>
+                <a href="" ng-click="accountInfo(user)"><i class="fa fa-info-circle"></i></a>
+              </li>
+              <li>
                 <a href="" ng-click="accountSummary(user)"><i class="fa fa-bars"></i></a>
               </li>
               <li>
@@ -92,6 +95,45 @@
      
       <button type="button" id="btn-security" class="btn btn--primary btn--medium space--top modal-close">Confirm</button>
 
+    </div>
+  </div>
+
+  <div class="modal" data-modal="account-info" id="account-info-modal">
+    <div class="modal__box pad" style="max-width: 60%">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h medium gray">Personal Info</h3>
+      <div class="bp-md-one-half float--left space--bottom">
+        <span class="label">First Name</span>
+        <input ng-model="selectedInfo.first_name" class="text-input">
+      </div>
+      <div class="bp-md-one-half float--right space--bottom">
+        <span class="label">Last Name</span>
+        <input ng-model="selectedInfo.last_name" class="text-input">
+      </div>
+      <div class="bp-md-one-half float--left space--bottom">
+        <span class="label">Email</span>
+        <input ng-model="selectedInfo.email" disabled class="text-input">
+      </div>
+      <div class="bp-md-one-half float--right space--bottom">
+        <span class="label">Mobile Number</span>
+        <input ng-model="selectedInfo.phone_number" class="text-input">
+      </div>
+      <div class="bp-md-one-half float--left space--bottom">
+        <span class="label">Birthday</span>
+        <input ng-model="selectedInfo.birthdate" class="text-input datepicker">
+      </div>
+      <div class="bp-md-one-half float--left space--bottom">
+        <span class="label">&nbsp;</span><br/><br/>
+      </div>
+      <div class="bp-md-one-half float--left space--bottom">
+        <span class="label">Emargecy Contact Person</span>
+        <input ng-model="selectedInfo.contact_person" class="text-input">
+      </div>
+      <div class="bp-md-one-half float--right space--bottom">
+        <span class="label">Emergecy Contact Number</span>
+        <input ng-model="selectedInfo.emergency_contact" class="text-input">
+      </div>
+      <button type="button" ng-click="updateAccountInfo()" class="btn btn--primary btn--medium float--right space--top modal-close">Save</button>
     </div>
   </div>
 

@@ -113,6 +113,30 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
     });
   });
 
+  $scope.accountInfo = function (user) {
+    $scope.selectedInfo = user;
+    
+    if ($scope.selectedInfo.birthdate)
+      $scope.selectedInfo.birthdate = $scope.selectedInfo.birthdate.replace(' 00:00:00', '');
+
+    angular.element('#account-info-modal').Modal();
+  }
+
+  $scope.updateAccountInfo = function () {
+    if ($scope.selectedInfo) {
+      var updateSuccess = function () {
+        $.Alert('Successfully updated account information.');
+      }
+
+      var updateFail = function (error) {
+        $.Alert(error.data)
+      }
+
+      delete $scope.selectedInfo.billing;
+      UserService.update({ userId: $scope.selectedInfo._id }, $scope.selectedInfo).$promise.then(updateSuccess, updateFail);
+    }
+  }
+
   $scope.verifyAccount = function (user) {
     var username = user.first_name + ' ' + user.last_name;
     $.Confirm('Are you sure to verify account ' + username + ' - ' + user.email, function () {
