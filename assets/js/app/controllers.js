@@ -59,7 +59,7 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     labelMonthSelect: 'Pick a month from the dropdown',
     labelYearSelect: 'Pick a year from the dropdown',
     selectMonths: true,
-    selectYears: true,
+    selectYears: 20,
     format: 'yyyy-mm-dd',
     formatSubmit: 'yyyy-mm-dd',
     today: false
