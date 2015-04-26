@@ -154,11 +154,11 @@ def update(self, id):
 
         user = (yield User.objects.get(booked_schedule.user_id._id)).serialize()
         if 'waitlist' in data:
-            content = str(self.render_string('emails/waitlist_approved', 
+            content = str(self.render_string('emails/booking', 
                           date=booked_schedule.date.strftime('%Y-%m-%d'), 
                           user=user, 
                           type=sched.type,
-                          seat_number=booked_schedule.seat_number, 
+                          seat_number=str(booked_schedule.seat_number), 
                           instructor=sched.instructor, 
                           time=sched.start.strftime('%I:%M %p')), 'UTF-8')
             yield self.io.async_task(send_email, user=user, content=content, subject='Waitlist moved to class')
@@ -198,6 +198,7 @@ def destroy(self, id):
     if id != 'None':
         notes = self.get_query_argument('notes')
         booked_schedule = yield BookedSchedule.objects.get(id)
+        ref_status = booked_schedule.status
         booked_schedule.status = 'cancelled'
         if notes:
             booked_schedule.notes = notes
@@ -210,18 +211,29 @@ def destroy(self, id):
         yield user.save()
 
         yield booked_schedule.save()
-        yield self.io.async_task(
-            send_email_cancel,
-            user=user.to_dict(),
-            content=str(self.render_string(
-                            'emails/cancel', 
-                            instructor=booked_schedule.schedule.instructor, 
-                            user=user.to_dict(),
-                            type=booked_schedule.schedule.type, 
-                            date=booked_schedule.date.strftime('%Y-%m-%d'), 
-                            seat_number=booked_schedule.seat_number, 
-                            time=booked_schedule.schedule.start.strftime('%I:%M %p')
-                        ), 'UTF-8'))
+
+        if ref_status == 'waitlisted':
+            content = str(self.render_string('emails/waitlist_removed', 
+                                              date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                                              user=user.to_dict(), 
+                                              type=booked_schedule.schedule.type,
+                                              seat_number=booked_schedule.seat_number, 
+                                              instructor=booked_schedule.schedule.instructor, 
+                                              time=booked_schedule.schedule.start.strftime('%I:%M %p')), 'UTF-8')
+            yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Cancelled')
+        else:
+            yield self.io.async_task(
+                send_email_cancel,
+                user=user.to_dict(),
+                content=str(self.render_string(
+                                'emails/cancel', 
+                                instructor=booked_schedule.schedule.instructor, 
+                                user=user.to_dict(),
+                                type=booked_schedule.schedule.type, 
+                                date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                                seat_number=booked_schedule.seat_number, 
+                                time=booked_schedule.schedule.start.strftime('%I:%M %p')
+                            ), 'UTF-8'))
 
         self.render_json(booked_schedule)
     else:
@@ -242,16 +254,12 @@ def destroy(self, id):
                 user.credits += 1
                 yield user.save()
                 yield wait.save()
-                self.io.async_task(
-                    send_email_cancel,
-                    user=user.to_dict(),
-                    content=str(self.render_string(
-                                    'emails/cancel', 
-                                    instructor=wait.schedule.instructor, 
-                                    user=user.to_dict(), 
-                                    type=wait.schedule.type,
-                                    date=wait.date.strftime('%Y-%m-%d'), 
-                                    seat_number=wait.seat_number, 
-                                    time=wait.schedule.start.strftime('%I:%M %p')
-                                ), 'UTF-8'))
+                content = str(self.render_string('emails/waitlist_removed', 
+                                              date=wait.date.strftime('%Y-%m-%d'), 
+                                              user=user.to_dict(), 
+                                              type=wait.schedule.type,
+                                              seat_number=wait.seat_number, 
+                                              instructor=wait.schedule.instructor, 
+                                              time=wait.schedule.start.strftime('%I:%M %p')), 'UTF-8')
+                yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Cancelled')
         self.finish()

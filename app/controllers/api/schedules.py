@@ -24,7 +24,7 @@ def find(self):
                                           .order_by('start', direction=ASCENDING).find_all(lazy=True)
     for t in tue:
         book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=t._id).count())
-        waitlist_count = (yield BookedSchedule.objects.filter(status='watilisted', schedule=t._id).count())
+        waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=t._id).count())
         counts[str(t._id)] = { 'books': book_count, 'waitlist': waitlist_count }
     #wednesday
     date += timedelta(days=1)
