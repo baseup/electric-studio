@@ -24,10 +24,13 @@
 
       <section class="col-2">
         <div class="block" ng-repeat="book in histories.schedules">
-          <h3 class="h small primary space--off pad--half-bottom">{{ book.date | formatDate }} {{ book.schedule.start | formatTime }}</h3>
-          <span><span class="label inline">Type:</span> {{ book.schedule.type }}</span><br>
+          <h3 class="h small primary space--off pad--half-bottom">
+            {{ book.date | formatDate }} 
+            <span ng-if="book.schedule">{{ book.schedule.start | formatTime }}</span>
+          </h3>
+          <span><span class="label inline">Type:</span> {{ book.schedule.type || '(class info not available)' }}</span><br>
           <span><span class="label inline">Seat:</span> {{ book.seat_number }}</span><br>
-          <span><span class="label inline">Instructor:</span> {{ book.schedule.instructor.admin.first_name }}</span><br>
+          <span><span class="label inline">Instructor:</span> {{ book.schedule.instructor.admin.first_name || '(class info not available)' }}</span><br>
           <span><span class="label inline">Status:</span> {{ book.status | uppercase }}</span><br>
           <span ng-if="book.notes"><span class="label inline">Notes:</span> {{ book.notes }}<br></span>
           <span><span class="label inline">Created At:</span> {{ book.create_at | formatDate }}</span>

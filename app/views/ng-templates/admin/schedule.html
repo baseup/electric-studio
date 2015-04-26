@@ -33,6 +33,11 @@
           <dt class="label">No. of Seats</span>
           <dd>{{ selectedSched.seats }}<dd>
         </dl>
+        
+        <dl class="space--bottom space--sides float--left">
+          <dt class="label">Riders</span>
+          <dd>{{ selectedSched.ridersCount }}<dd>
+        </dl>
       </div>
 
       <button ng-click="editSchedule(selectedSched)" class="btn btn--medium btn--primary space--top modal-close">Edit</button>

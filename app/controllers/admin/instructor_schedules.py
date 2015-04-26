@@ -45,7 +45,7 @@ def find(self):
                 'id': str(sched._id),
                 'type': sched.type,
                 'seats': sched.seats,
-                'ridersCount': (yield BookedSchedule.objects.filter(date=start_date_filter, schedule=sched._id).count())
+                'ridersCount': (yield BookedSchedule.objects.filter(status='booked', date=start_date_filter, schedule=sched._id).count())
             })
         start_date += timedelta(days=1)
 
