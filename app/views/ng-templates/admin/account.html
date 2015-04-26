@@ -49,17 +49,17 @@
             <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">Add Class</a>
             <ul class="nav float--right">
               <li>
-                <a href="" ng-click="accountInfo(user)"><i class="fa fa-info-circle"></i></a>
+                <a href="" title="Account Info" ng-click="accountInfo(user)"><i class="fa fa-info-circle"></i></a>
               </li>
               <li>
-                <a href="" ng-click="accountSummary(user)"><i class="fa fa-bars"></i></a>
+                <a href="" title="Package Summary" ng-click="accountSummary(user)"><i class="fa fa-bars"></i></a>
               </li>
               <li>
-                <a href="" ng-click="accountSchedules(user)"><i class="fa fa-book"></i></a>
+                <a href="" title="Schedules" ng-click="accountSchedules(user)"><i class="fa fa-book"></i></a>
               </li>
               <li>
-                <a ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
-                <a ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
+                <a title="Froze Account" ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
+                <a title="Unfroze Account" ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
               </li>
               <!-- <li>
                 <a href="" class="pad--off-right"><i class="fa fa-share"></i></a>
