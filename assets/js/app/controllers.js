@@ -275,6 +275,11 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
 
     if ($scope.pass && $scope.pass.password && $scope.pass.password.length > 0) {
 
+      if ($scope.pass.password.length < 6) {
+        $.Alert('Password should be atleast 6 characters');
+        return;
+      }
+
       if ($scope.pass.password != $scope.pass.confirm_password) {
         $.Alert("Retype Password didn't match");
         return;
