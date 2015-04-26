@@ -16,7 +16,7 @@ def schedule_watcher():
             expire_date = user_pack.create_at + timedelta(days=user_pack.expiration)
             if expire_date < datetime.now():
                 user_pack.status = 'Expired'
-                user = User.objects.get(user_pack.user_id._id)
+                user = yield User.objects.get(user_pack.user_id._id)
                 user.credits -= user_pack.remaining_credits
 
                 user.save()
@@ -31,7 +31,7 @@ def schedule_watcher():
                     sched.status = 'completed';
                     yield sched.save();
                 elif sched.status == 'waitlisted':
-                    sched.status == 'cancelled';
+                    sched.status = 'cancelled';
                     if sched.user_package:
                         sched.user_package.remaining_credits += 1
                         yield sched.user_package.save()
