@@ -1,3 +1,4 @@
+from motorengine import DESCENDING
 from app.models.packages import UserPackage, Package
 from app.models.users import User
 from app.helper import send_email
@@ -8,7 +9,7 @@ import tornado.escape
 import sys
 
 def find(self):
-    transactions = yield UserPackage.objects.find_all()
+    transactions = yield UserPackage.objects.order_by('create_at', direction=DESCENDING).find_all()
     self.render_json(transactions)
 
 def create(self):
@@ -30,6 +31,9 @@ def create(self):
             trans.remaining_credits = data['credit_count']
         if 'expiration' in data:
             trans.expiration = data['expiration'] 
+
+    if not trans.expiration:
+        trans.expiration = 30
 
     trans.expire_date = datetime.now() + timedelta(days=int(trans.expiration))
 
