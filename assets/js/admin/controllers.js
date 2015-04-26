@@ -423,8 +423,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var select = angular.element('#select-user-id')[0].selectize;
     var selectWaitlist = angular.element('#select-waitlist-user')[0].selectize;
     angular.forEach(users, function (user) {
-      select.addOption({ value: user._id, text: user.first_name + ' ' + user.last_name });
-      selectWaitlist.addOption({ value: user._id, text: user.first_name + ' ' + user.last_name });
+      select.addOption({ value: user._id, text: user.first_name + ' ' + user.last_name + ' - ' + user.email });
+      selectWaitlist.addOption({ value: user._id, text: user.first_name + ' ' + user.last_name + ' - ' + user.email });
     });
   });
 
