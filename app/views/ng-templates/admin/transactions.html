@@ -36,10 +36,17 @@
           <tbody>
             <tr ng-repeat="transaction in transactions | search:'user_id.first_name,user_id.last_name':searchTrans | search:'package_id._id':searchPac">
               <td>{{ transaction.user_id.first_name }} {{ transaction.user_id.last_name }}</td>
-              <td>{{ transaction.package_name || 'Free' }}</td>
+              <td>
+                <span ng-if="transaction.package_name && transaction.is_free">Free - </span>
+                {{ transaction.package_name || 'Free' }}
+              </td>
               <td>{{ transaction.credit_count }} Class<span ng-if="transaction.credit_count > 1">es<span></td>
               <td>{{ transaction.remaining_credits }} Class<span ng-if="transaction.remaining_credits > 1">es</span></td>
-              <td><small>PHP</small> {{ transaction.package_fee }}</td>
+              <td>
+                <small>PHP</small>
+                <span ng-if="transaction.is_free">0.00</span> 
+                <span ng-if="!transaction.is_free">{{ transaction.package_fee }}</span>
+              </td>
               <td>{{ transaction.create_at }}</td>
               <!-- <td>
                 <button class="btn btn--small btn--secondary" ng-click="removePackage(package)">
