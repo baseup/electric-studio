@@ -115,11 +115,15 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
 
   $scope.accountInfo = function (user) {
     $scope.selectedInfo = user;
-    
-    if ($scope.selectedInfo.birthdate)
-      $scope.selectedInfo.birthdate = $scope.selectedInfo.birthdate.replace(' 00:00:00', '');
 
-    angular.element('#account-info-modal').Modal();
+    UserService.get({ userId : user._id }, function (userInfo) {
+      $scope.selectedInfo = userInfo;
+      if ($scope.selectedInfo.birthdate) {
+        $scope.selectedInfo.birthdate = $scope.selectedInfo.birthdate.replace(' 00:00:00', '');
+      }
+
+      angular.element('#account-info-modal').Modal();
+    });
   }
 
   $scope.updateAccountInfo = function () {
