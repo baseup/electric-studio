@@ -377,6 +377,11 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 
       if ($scope.pass && $scope.pass.current_password) {
 
+        if ($scope.pass.password && $scope.pass.password.length < 6) {
+          $.Alert('Password should be atleast more than 5 characters');
+          return;
+        }
+
         if ($scope.pass.password != $scope.pass.confirm_password) {
           $.Alert("Retype Password didn't match");
           return;
@@ -610,11 +615,29 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
             });
           });
         } else {
-          if (+today >= +cutOffchkDate) {
-            $.Alert('Warning: Booking on this schedule will no longer be cancelled')
-          }
-          SharedService.set('selectedSched', sched);
-          $location.path('/class');
+          delete bfilter.waitlist;
+          $scope.reserved = BookService.query(bfilter);
+          $scope.reserved.$promise.then(function (data) {
+            $scope.reserved = data;
+            if ($scope.reserved.length >= sched.schedule.seats) {
+              $.Confirm('This schedule is full, would you like to join as waitlist ?', function() {
+                $scope.$apply(function () {
+                  if (+today >= +cutOffchkDate) {
+                    $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+                  }
+                  SharedService.set('selectedSched', sched);
+                  $location.path('/class');
+                });
+              });
+            } else {
+              if (+today >= +cutOffchkDate) {
+                $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+              }
+              SharedService.set('selectedSched', sched);
+              $location.path('/class');
+            }
+          });
+          
         }
       });
 
@@ -786,12 +809,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
   }
 
   $scope.setSeatNumber = function (number, event) {
-    if ($scope.loginUser && 
-        seats.length >= $scope.loginUser.credits){
-      $.Alert('Not enough credits');
-      return;
-    }
-
+    
     var seat_index = -1;
     for (var i = 0; i < seats.length; i++) {
       if (seats[i] === number) {
@@ -800,9 +818,16 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     }
     if (!$scope.checkSeat(number)) {
       if (seat_index == -1) {
-        seats.push(number);
-        angular.element('#seat' + number).toggleClass('selected');
+        if ($scope.loginUser && 
+            seats.length >= $scope.loginUser.credits){
+          $.Alert('Not enough credits');
+          return;
+        } else {
+          angular.element('#seat' + number).toggleClass('selected');
+          seats.push(number);
+        }
       } else {
+        angular.element('#seat' + number).toggleClass('selected');
         seats.splice(seat_index, 1);
       }
     } else {
@@ -857,7 +882,11 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
             SharedService.clear('resched');
           }
 
-          $.Alert('You have successfully booked a ride');
+          if ($scope.forWaitlist) {
+            $.Alert('You have beed added to waitlist');
+          } else {  
+            $.Alert('You have successfully booked a ride');
+          }
           UserService.get(function (user) {
             $scope.reloadUser();
             window.location = '/#/reserved'

@@ -34,7 +34,7 @@
         <section>
           <h3 class="h medium gray">Change Password</h3>
           <input class="input" type="password" ng-model="pass.current_password" placeholder="Current Password">
-          <input class="input" type="password" ng-model="pass.password" placeholder="New Password">
+          <input class="input" type="password" ng-model="pass.password" placeholder="New Password (min. 6 character)">
           <input class="input" type="password" ng-model="pass.confirm_password" placeholder="Retype New Password">
           <a class="button small pads primary" ng-click="changePassword()">Update Password</a> 
         </section>
@@ -57,7 +57,7 @@
             <option vaule="mastercard">Mastercard</option>
           </select>
           <input class="input" ng-model="billing.card_expiration" placeholder="Expiration date (MM/YY)" >
-          <input class="input" ng-model="billing.csc" placeholder="CSC" >
+          <input class="input" type="password" ng-model="billing.csc" placeholder="CSC" >
           <a class="button small pads primary" ng-click="updateBilling()">Save Billing Info</a> 
         </section>
         

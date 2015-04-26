@@ -61,19 +61,20 @@
           <div class="booking__item box--bordered box--white space--bottom cf">
 
             <div class=" box__header">
-              <ul class="booking__actions nav">
+              <ul class=" booking__actions nav">
                 <li>
-                  <a class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBikeModal(book)">
+                  <a style='margin: 0px 0 !important' class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBikeModal(book)">
                     <i class="fa fa-exchange"></i>
                     <span class="bike-number">{{ book.seat_number }}</span>
                   </a>
                 </li>
                 <li>
-                  <a ng-click="cancelBooking(book, $index)" class="cancel-booking"><i class="fa fa-times"></i></a>
+                  <a style='line-height: 30px !important' ng-click="cancelBooking(book, $index)" class="cancel-booking"><i class="fa fa-times"></i></a>
                 </li>
               </ul>
 
-              <h3 class="user--name">{{ book.user_id.first_name }} {{ bookt.user_id.last_name }}</h3>
+              <h5 class="space--left" style='margin-top: 10px !important'>{{ book.user_id.first_name }} {{ book.user_id.last_name }} <br/> </h5>
+              <i class="space--left"> - {{ book.user_id.email }}</i>
             </div>
 
           </div>

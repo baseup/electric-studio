@@ -56,66 +56,70 @@ def create(self):
             if user.status != 'Frozen' and user.status != 'Unverified':
                 if user.credits > 0:
                     sched = yield InstructorSchedule.objects.get(data['sched_id']);
-
+                    
+                    seats = data['seats']
                     book_status = 'booked'
                     if 'status' in data:
                         book_status = data['status']
-
-                    seats = data['seats']
-                    seats_unavailable = []
-                    seats_reserved = yield BookedSchedule.objects.filter({'seat_number':{'$in':seats}}) \
-                                                                .filter(schedule=sched._id) \
-                                                                .filter(status=book_status).find_all()
                     
-                    if len(seats_reserved):
-                        for i, seat_reserved in enumerate(seats_reserved):
-                            seats_unavailable.append(seat_reserved.seat_number)
+                    if book_status == 'booked':
+                        seats_unavailable = []
+                        seats_reserved = yield BookedSchedule.objects.filter({'seat_number':{'$in':seats}}) \
+                                                                    .filter(schedule=sched._id) \
+                                                                    .filter(status=book_status).find_all()
+                        
+                        if len(seats_reserved):
+                            for i, seat_reserved in enumerate(seats_reserved):
+                                seats_unavailable.append(seat_reserved.seat_number)
 
-                        self.set_status(403)
-                        msg = 'Seats ' if len(seats_unavailable) > 1 else 'Seat '
-                        self.write('Unable to book a ride:'+ msg + str(seats_unavailable) +' unavailable');  
-                        self.finish()
+                            self.set_status(403)
+                            msg = 'Seats ' if len(seats_unavailable) > 1 else 'Seat '
+                            self.write('Unable to book a ride:'+ msg + str(seats_unavailable) +' unavailable');
+                            self.finish()
+                            return;
 
-                    else:
-                        for seat in seats:
-                            book = BookedSchedule(user_id=user._id, 
-                                                  date=datetime.strptime(data['date'],'%Y-%m-%d'),
-                                                  schedule=sched._id,
-                                                  seat_number=seat,
-                                                  status=book_status);
+                    elif book_status == 'waitlisted':
+                        seats.append(0)
+                    
+                    for seat in seats:
+                        book = BookedSchedule(user_id=user._id, 
+                                              date=datetime.strptime(data['date'],'%Y-%m-%d'),
+                                              schedule=sched._id,
+                                              seat_number=seat,
+                                              status=book_status);
                             
-                            if book:
-                                user.credits -= 1
-                                user_packages = yield UserPackage.objects.order_by("expire_date", direction=ASCENDING) \
-                                                                 .filter(user_id=user._id, remaining_credits__gt=0, status__ne='Expired').find_all()
-                                if user_packages:
-                                    has_valid_package = False
-                                    for i, user_package in enumerate(user_packages):
-                                        # check expiration
-                                        expireDate = user_package.create_at + timedelta(days=user_package.expiration)
-                                        if datetime.now() > expireDate:
-                                            continue;
+                        if book:
+                            user.credits -= 1
+                            user_packages = yield UserPackage.objects.order_by("expire_date", direction=ASCENDING) \
+                                                             .filter(user_id=user._id, remaining_credits__gt=0, status__ne='Expired').find_all()
+                            if user_packages:
+                                has_valid_package = False
+                                for i, user_package in enumerate(user_packages):
+                                    # check expiration
+                                    expireDate = user_package.create_at + timedelta(days=user_package.expiration)
+                                    if datetime.now() > expireDate:
+                                        continue;
 
-                                        has_valid_package = True
-                                        user_package.remaining_credits -= 1
-                                        book.user_package = user_package._id
-                                        
-                                        yield book.save()
-                                        user = yield user.save()
-                                        yield user_package.save() 
+                                    has_valid_package = True
+                                    user_package.remaining_credits -= 1
+                                    book.user_package = user_package._id
+                                    
+                                    yield book.save()
+                                    user = yield user.save()
+                                    yield user_package.save() 
 
-                                        serialized_user = (yield User.objects.get(user._id)).serialize()
-                                        if book_status == 'booked':
-                                            content = str(self.render_string('emails/booking', date=data['date'], type=sched.type, user=serialized_user, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p'), seat_number=str(book.seat_number)), 'UTF-8')
-                                            yield self.io.async_task(send_email_booking, user=serialized_user, content=content)
-                                        elif book_status == 'waitlisted':
-                                            content = str(self.render_string('emails/waitlist', date=data['date'], type=sched.type, user=serialized_user, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p')), 'UTF-8')
-                                            yield self.io.async_task(send_email, user=serialized_user, content=content, subject='WaitList Schedule')
-                                        break
+                                    serialized_user = (yield User.objects.get(user._id)).serialize()
+                                    if book_status == 'booked':
+                                        content = str(self.render_string('emails/booking', date=data['date'], type=sched.type, user=serialized_user, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p'), seat_number=str(book.seat_number)), 'UTF-8')
+                                        yield self.io.async_task(send_email_booking, user=serialized_user, content=content)
+                                    elif book_status == 'waitlisted':
+                                        content = str(self.render_string('emails/waitlist', date=data['date'], type=sched.type, user=serialized_user, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p')), 'UTF-8')
+                                        yield self.io.async_task(send_email, user=serialized_user, content=content, subject='WaitList Schedule')
+                                    break
 
-                                    if not has_valid_package:
-                                        self.set_status(403)
-                                        self.write('Unable to book a ride: Account doesnt have a valid package.');
+                                if not has_valid_package:
+                                    self.set_status(403)
+                                    self.write('Unable to book a ride: Account doesnt have a valid package.');
 
                 else:
                     self.set_status(403)
