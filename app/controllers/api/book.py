@@ -166,12 +166,23 @@ def update(self, id):
                 if user_package:
                     user_package.remaining_credits += 1
                     yield user_package.save()
-                yield self.io.async_task(
-                    send_email_cancel,
-                    user=user.to_dict(),
-                    content=str(self.render_string('emails/cancel', type=book.schedule.type, instructor=book.schedule.instructor, user=user.to_dict(), date=book.date.strftime('%Y-%m-%d'), seat_number=book.seat_number, time=book.schedule.start.strftime('%I:%M %p')), 'UTF-8')
-                    
-                )
+
+                if ref_book_status == 'waitlisted':
+                    content = str(self.render_string('emails/waitlist_removed', 
+                                                      date=book.date.strftime('%Y-%m-%d'), 
+                                                      user=user.to_dict(), 
+                                                      type=book.schedule.type,
+                                                      seat_number=book.seat_number, 
+                                                      instructor=book.schedule.instructor, 
+                                                      time=book.schedule.start.strftime('%I:%M %p')), 'UTF-8')
+                    yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Cancelled')
+                else:
+                    yield self.io.async_task(
+                        send_email_cancel,
+                        user=user.to_dict(),
+                        content=str(self.render_string('emails/cancel', type=book.schedule.type, instructor=book.schedule.instructor, user=user.to_dict(), date=book.date.strftime('%Y-%m-%d'), seat_number=book.seat_number, time=book.schedule.start.strftime('%I:%M %p')), 'UTF-8')
+                        
+                    )
             elif 'sched_id' in data and str(ref_sched_id) != str(data['sched_id']):
                 user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
                 user = yield User.objects.get(user_id)
