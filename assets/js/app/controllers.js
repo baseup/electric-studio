@@ -342,6 +342,14 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
       $scope.billing = JSON.parse($scope.account.billing);
     }
 
+    UserService.get(function (user) {
+      $scope.account = user;
+
+      if ($scope.account.birthdate) {
+        $scope.account.birthdate = $scope.account.birthdate.replace(' 00:00:00', '');;
+      }
+    });
+
     $scope.transactions = UserPackageService.query();
     $scope.transactions.$promise.then(function (data) {
       $scope.transactions = data;
@@ -559,7 +567,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, SharedService, BookService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleService, SharedService, BookService, UserService) {
   $scope.resched = SharedService.get('resched');
 
   $scope.cancelResched = function () {
@@ -568,6 +576,57 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   }
 
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  $scope.waitlistUser = function (sched) {
+
+    if (!$scope.loginUser) {
+      $.Alert('User is not logged In');
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+      angular.element('.login-toggle').click();
+      return;
+    }
+
+    $.Alert('Setting schedule as waitlist ...')
+
+    UserService.get(function (user) {
+
+      $scope.loginUser = user;
+
+      if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
+        $.Alert('Account is frozen, Please check your contact adminstrator');
+        return;
+      }
+
+      if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
+        $.Alert('User is Unverified, Please check your email');
+        return;
+      }
+
+      var book = {};
+      book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+      book.seats = [];
+      book.sched_id = sched.schedule._id;
+      book.status = 'waitlisted';
+
+      var waitlistSuccess = function () {
+
+        if ($scope.resched) {
+          SharedService.clear('resched');
+        }
+
+        $.Alert('You have beed added to waitlist');
+        $scope.reloadUser();
+        window.location = '/#/reserved'
+        window.location.reload();
+      }
+      var waitlistFail = function (error) {
+        $.Alert(error.data)
+        $route.reload();
+      }
+
+      BookService.book(book).$promise.then(waitlistSuccess, waitlistFail);
+    });
+  }
 
   $scope.setSchedule = function (schedule, date) {
 
@@ -610,8 +669,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
               if (+today >= +cutOffchkDate) {
                 $.Alert('Warning: Booking on this schedule will no longer be cancelled')
               }
-              SharedService.set('selectedSched', sched);
-              $location.path('/class');
+              $scope.waitlistUser(sched);
             });
           });
         } else {
@@ -625,8 +683,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
                   if (+today >= +cutOffchkDate) {
                     $.Alert('Warning: Booking on this schedule will no longer be cancelled')
                   }
-                  SharedService.set('selectedSched', sched);
-                  $location.path('/class');
+                  $scope.waitlistUser(sched);
                 });
               });
             } else {
@@ -797,6 +854,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
         $scope.forWaitlist = true;
       }
     });
+
 
   }
 
