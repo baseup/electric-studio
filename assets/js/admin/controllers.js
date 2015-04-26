@@ -186,10 +186,13 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
   }
 
   $scope.buyPackageModal = function (user) {
-    $scope.selectedAccount = user;
     chkSecurity(function () {
+      $scope.selectedAccount = user;
       if (!($scope.selectedAccount.billing instanceof Object)) {
         $scope.selectedAccount.billing = JSON.parse($scope.selectedAccount.billing);
+        if (!($scope.selectedAccount.billing instanceof Object)) {
+          $scope.selectedAccount.billing = {};
+        } 
       }
       angular.element('#buy-package-modal').Modal();
     });
@@ -703,7 +706,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       return;
     }
 
-    window.location = '/admin/export/download-bookings?date=' + $scope.newBook.date + '&time=' + $scope.newBook.time;
+    window.location = '/admin/export/download-bookings?sched_id=' + $scope.newBook.sched_id;
   }
    
 });

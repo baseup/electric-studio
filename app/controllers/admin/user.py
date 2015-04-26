@@ -11,7 +11,7 @@ import tornado
 import json
 
 def find(self):
-    users = yield User.objects.find_all()
+    users = yield User.objects.order_by('update_at',direction=DESCENDING).find_all()
     self.render_json(users)
 
 def find_one(self, id):
