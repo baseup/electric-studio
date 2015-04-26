@@ -54,6 +54,12 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     
   
   angular.element('.datepicker').pickadate({
+    labelMonthNext: 'Go to the next month',
+    labelMonthPrev: 'Go to the previous month',
+    labelMonthSelect: 'Pick a month from the dropdown',
+    labelYearSelect: 'Pick a year from the dropdown',
+    selectMonths: true,
+    selectYears: true,
     format: 'yyyy-mm-dd',
     formatSubmit: 'yyyy-mm-dd',
     today: false
@@ -644,6 +650,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
     var now = date? new Date(date) : new Date();
     now.setHours(0,0,0,0);
 
+    var pWeek = new Date(date);
+    pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 6);
+    if (Math.ceil((now - pWeek) / (24 * 60 * 60 * 1000)) < 7) {
+      now = pWeek;
+    }
+
     var mon = new Date(now);
     mon.setDate(mon.getDate() - mon.getDay() + 1);
     $scope.monD = mon.getDate();
@@ -702,19 +714,18 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   $scope.getWeek(new Date());
   $scope.nextWeek = function () {
     var now = new Date();
-    // var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
-    // if ($scope.nmonDate < nextMonth) {
+    var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
+    if ($scope.nmonDate < nextMonth) {
       $scope.getWeek($scope.nmonDate);
-    // }
+    }
   }
   $scope.prevWeek = function () {
     var pWeek = new Date($scope.monDate);
-    pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 1);
+    pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 6);
 
     var now = new Date();
-    now.setDate(now.getDate() - now.getDay() + 1);
 
-    if (pWeek > now) {
+    if (((now - pWeek) / (24 * 60 * 60 * 1000)) < 7) {
       $scope.getWeek(pWeek);
     }
   }
