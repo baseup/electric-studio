@@ -792,7 +792,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
 
   $scope.removeSchedule = function (sched) {
     if (sched.ridersCount > 0) {
-      $.Alert('Not allowed to remove schedules has reservations')
+      $.Alert('Not allowed to remove schedule, already in use')
       return;
     }
 
@@ -816,6 +816,16 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   }
 
   $scope.saveSchedule = function () {
+
+    if (!$scope.newSpecSched.date || 
+        !$scope.newSpecSched.type || 
+        !$scope.newSpecSched.instructor || 
+        !$scope.newSpecSched.start || 
+        !$scope.newSpecSched.end) {
+      $.Alert('Please complete schedule information');
+      return;
+    }
+
     if (!$scope.isPastDate($scope.newSpecSched)) {
       var newSched = angular.copy($scope.newSpecSched);
       newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
