@@ -645,19 +645,15 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       return;
     }
 
-    if (!$scope.isCompleted($scope.schedDetails)) {
-      if (!$scope.waitList || $scope.waitList.length <= 0) {
-        $.Notify({ content: 'No waitlist found to release' });
-        return;
-      }
-
-      $.Confirm('Are you sure on cancelling all waitlist for this schedule ?', function () {
-        $scope.waitList = [];
-        ClassService.delete({ scheduleId: 'None', sched_id: $scope.newBook.sched_id, waitlist: true });
-      });
-    } else {
-      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+    if (!$scope.waitList || $scope.waitList.length <= 0) {
+      $.Notify({ content: 'No waitlist found to release' });
+      return;
     }
+
+    $.Confirm('Are you sure on cancelling all waitlist for this schedule ?', function () {
+      $scope.waitList = [];
+      ClassService.delete({ scheduleId: 'None', sched_id: $scope.newBook.sched_id, waitlist: true });
+    });
   }
 
   $scope.printWaitlist = function () {
