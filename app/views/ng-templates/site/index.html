@@ -9,7 +9,7 @@
   <ul class="slider">
     <li ng-repeat="slider in sliders" class="slide loading">
       <span>{{ slider.text }}</span>
-      <img src="{{ slider.image }}" class="preloaded-img">
+      <img ng-src="{{ slider.image }}" class="preloaded-img">
     </li>
   </ul>
 </div>
