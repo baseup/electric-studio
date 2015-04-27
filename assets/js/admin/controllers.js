@@ -186,6 +186,13 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
   }
 
   $scope.buyPackageModal = function (user) {
+
+    var port = '';
+    if (window.location.port)
+      port = ':' + window.location.port;
+
+    $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/admin/buy';
+
     chkSecurity(function () {
       $scope.selectedAccount = user;
       if (!($scope.selectedAccount.billing instanceof Object)) {
@@ -240,6 +247,9 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
           $scope.selectedAccount.billing.province &&
           $scope.selectedAccount.billing.postalcode &&
           $scope.selectedAccount.billing.email &&
+          $scope.selectedAccount.billing.phone_a &&
+          $scope.selectedAccount.billing.phone_b &&
+          $scope.selectedAccount.billing.phone_c &&
           $scope.selectedAccount.billing.card_number  &&
           $scope.selectedAccount.billing.card_type &&
           $scope.selectedAccount.billing.card_expiration &&
@@ -247,7 +257,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
 
         var billingSuccess = function () {
         $.Alert('Successfully save billing information. Now were redirecting you to paypal');
-          window.location = '/admin/buy?pid=' + $scope.newPackage._id + '&uid=' + $scope.selectedAccount._id + '&success=True';
+          angular.element('#admin-pay-form').submit();
         }
 
         var billingFail = function (error) {
