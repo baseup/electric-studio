@@ -1428,6 +1428,24 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     }
   }
 
+  $scope.checkSeat = function (seat) {
+    if ($scope.selectedStat && $scope.selectedStat.books) { 
+      for (var b in $scope.selectedStat.books) {
+        if ($scope.selectedStat.books[b].seat_number == seat ||
+            seat > $scope.selectedStat.seats) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  $scope.viewBikeMap = function (stat) {
+    $scope.selectedStat = stat;
+    angular.element('#bike-map-modal').Modal();
+  }
+
   $scope.viewUserList = function (stat, sType) {
     $scope.selectedStat = stat;
     $scope.selectedType = sType;
