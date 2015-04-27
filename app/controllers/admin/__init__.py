@@ -42,25 +42,34 @@ def logout(self):
     self.redirect('/admin/')
 
 def buy(self):
-    # if self.request.method == 'GET':
-    #     self.redirect('/admin/#/accounts')
-    # else:
     success = self.get_argument('success')
     if success == 'True':
-        # data = {
-        #     'payment_type' : self.get_argument('payment_type'),
-        #     'payer_status' : self.get_argument('payer_status'),
-        #     'payer_id' : self.get_argument('payer_id'),
-        #     'payment_date' : self.get_argument('payment_date'),
-        #     'receiver_id' : self.get_argument('receiver_id'),
-        #     'verify_sign' : self.get_argument('verify_sign')
-        # }
+        pp_tx = self.get_query_argument('tx')
+        pp_st = self.get_query_argument('st')
+        pp_amt = self.get_query_argument('amt')
+        pp_cc = self.get_query_argument('cc')
+        pp_cm = self.get_query_argument('cm')
+        pp_item = self.get_query_argument('item_number')
 
-        # payment_exist = yield UserPackage.objects.get(trans_info=str(data));
-        # if payment_exist:
-        #     self.redirect('/admin/#/accounts')
-        #     return;
-        
+        if not pp_tx:
+            self.set_status(403)
+            self.redirect('admin/#/accounts?s=error')
+            return
+ 
+        data = {
+            'transaction' : pp_tx,
+            'status' : pp_st,
+            'amount' : pp_amt,
+            'curency' : pp_cc,
+            'cm' : pp_cm,
+            'item_number' : pp_item
+        }
+
+        payment_exist = yield UserPackage.objects.get(trans_info=str(data));
+        if payment_exist:
+            self.redirect('/admin/#/accounts?s=exists#packages')
+            return;
+     
         try: 
             pid = self.get_argument('pid');
             package = yield Package.objects.get(pid)
@@ -75,7 +84,7 @@ def buy(self):
                     transaction.credit_count = package.credits
                     transaction.remaining_credits = package.credits
                     transaction.expiration = package.expiration
-                    # transaction.trans_info = str(data)
+                    transaction.trans_info = str(data)
                     user.credits += package.credits
 
                     transaction = yield transaction.save()

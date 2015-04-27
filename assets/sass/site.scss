@@ -385,6 +385,36 @@ body {
   
 }
 
+.buy-ride-btn {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: left;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-right: 40px;
+  cursor: pointer;
+  color: purple;
+  
+  &:hover {
+    color: $color-text-light;
+  }
+  
+  @include breakpoint(md) {
+    position: absolute;
+    right: 20px;
+    bottom: 31px;
+    text-align: right;
+    margin-right: 0;
+    font-size: 22px
+  }
+  
+  @include breakpoint(lg) {
+    right: 296px;
+    font-size: 26px;
+  }
+}
+
 
 .book-ride-btn {
   font-size: 18px;

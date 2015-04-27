@@ -113,20 +113,28 @@ def buy(self):
     if not self.get_secure_cookie('loginUserID'):
         self.set_status(403)
         self.write('User not logged in')
-        self.finish()
+        self.redirect('/#/rates?s=error')
     else:
         if success == 'True':
-            payment_date = self.get_argument('payment_date')
-            if not payment_date and self.request.method == 'GET':
-                payment_date = datetime.now().strftime("%d/%m/%y %H:%M:%S")
+            pp_tx = self.get_query_argument('tx')
+            pp_st = self.get_query_argument('st')
+            pp_amt = self.get_query_argument('amt')
+            pp_cc = self.get_query_argument('cc')
+            pp_cm = self.get_query_argument('cm')
+            pp_item = self.get_query_argument('item_number')
+
+            if not pp_tx:
+                self.set_status(403)
+                self.redirect('/#/rates?s=error')
+                return
 
             data = {
-                'payment_type' : self.get_argument('payment_type'),
-                'payer_status' : self.get_argument('payer_status'),
-                'payer_id' : self.get_argument('payer_id'),
-                'payment_date' : payment_date,
-                'receiver_id' : self.get_argument('receiver_id'),
-                'verify_sign' : self.get_argument('verify_sign')
+                'transaction' : pp_tx,
+                'status' : pp_st,
+                'amount' : pp_amt,
+                'curency' : pp_cc,
+                'cm' : pp_cm,
+                'item_number' : pp_item
             }
 
             payment_exist = yield UserPackage.objects.get(trans_info=str(data));

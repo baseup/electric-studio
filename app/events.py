@@ -44,7 +44,6 @@ def schedule_watcher():
         for i, sched in enumerate(schedules):
             sched_date = datetime.combine(sched.date, sched.schedule.start.time())
             sched_date = sched_date.replace(tzinfo=gmt8)
-            print(sched_date)
             if sched_date < datetime.now(tz=gmt8):
                 if sched.status == 'booked':
                     sched.status = 'completed';
