@@ -32,7 +32,7 @@
             <tr ng-repeat="slider in sliders">
               <td>
                 <div align="center" class="image" ng-click="changeSliderImg(slider)">
-                  <img width="200" height="200" src="/{{ slider.image }}">
+                  <img width="200" height="200" ng-src="/{{ slider.image }}">
                 </div>  
               </td>
               <td>
