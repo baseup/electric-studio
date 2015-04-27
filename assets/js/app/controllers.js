@@ -836,6 +836,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() + ' ' + sched.date.getFullYear();
     $scope.daySched = days[sched.date.getDay()];
     $scope.timeSched = sched.schedule.start;
+    $scope.sched = sched.schedule;
     $scope.instructor = sched.schedule.instructor;
 
     var book_filter = {};
