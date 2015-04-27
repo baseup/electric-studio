@@ -668,7 +668,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleSe
       $scope.waitlist.$promise.then(function (waitlist_data) {
         $scope.waitlist = waitlist_data;
         if ($scope.waitlist.length > 0) {
-          $.Confirm('This schedule is full, would you like to join as waitlist ?', function() {
+          $.Confirm('This schedule is full, would you like to join the waitlist ?', function() {
             $scope.$apply(function () {
 
               if (+today >= +cutOffchkDate) {
@@ -683,7 +683,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleSe
           $scope.reserved.$promise.then(function (data) {
             $scope.reserved = data;
             if ($scope.reserved.length >= sched.schedule.seats) {
-              $.Confirm('This schedule is full, would you like to join as waitlist ?', function() {
+              $.Confirm('This schedule is full, would you like to join the waitlist ?', function() {
                 $scope.$apply(function () {
                   if (+today >= +cutOffchkDate) {
                     $.Alert('Warning: Booking on this schedule will no longer be cancelled')
@@ -936,10 +936,10 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
       book.seats = seats;
       book.sched_id = sched.schedule._id;
-      var confirm_message = 'Your about to book a ride on ' + 
+      var confirm_message = "You're about to book a ride on " + 
                             $scope.daySched + ', ' + $scope.dateSched + ' with seat'+ (seats.length > 1 ? 's' : '') +' number ' + seats;
       if ($scope.forWaitlist) {
-        confirm_message = 'Your about to join the waitlist for this schedule ' + $scope.daySched + ', ' + $scope.dateSched;
+        confirm_message = "You're about to join the waitlist for this schedule " + $scope.daySched + ', ' + $scope.dateSched;
         book.status = 'waitlisted';
       }
 
