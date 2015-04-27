@@ -95,7 +95,7 @@ app.filter('formatDate', function() {
       var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       var parts = date.split(/[^0-9]/);
       var date =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
-      return months[date.getMonth()] + ', ' + date.getDate() + ' ' + date.getFullYear();
+      return months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
     } else {
       return date;
     }
