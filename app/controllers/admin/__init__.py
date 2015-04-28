@@ -81,6 +81,8 @@ def buy(self):
                     transaction = UserPackage()
                     transaction.user_id = user._id
                     transaction.package_id = package._id
+                    transaction.package_name = package.name
+                    transaction.package_fee = package.fee
                     transaction.credit_count = package.credits
                     transaction.remaining_credits = package.credits
                     transaction.expiration = package.expiration
@@ -96,7 +98,7 @@ def buy(self):
                     content = str(self.render_string('emails/buy', user=user, site=site_url, package=package.name, expire_date=exp_date.strftime('%B. %d, %Y')), 'UTF-8')
                     yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
 
-                    self.redirect('/admin/#/accounts')
+                    self.redirect('/admin/#/accounts?pname=' + package.name + '&u=' + user['first_name'] + ' ' + user['last_name'] + '&s=success')
                 else:
                     self.set_status(403)
                     self.write('Invalid User Status')
