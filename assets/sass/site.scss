@@ -1755,14 +1755,14 @@ body {
 
   @include breakpoint(md) {
   tr:nth-child(even) td {
-    text-align: right;
+    //text-align: right;
   }
   }
 
   tr {
     display: inline;
     @include breakpoint(md) {
-      display: table-row;
+      //display: table-row;
     }
   }
 
@@ -1772,7 +1772,7 @@ body {
 
     @include breakpoint(md) {
       display: table-cell;
-      float: none;
+      //float: none;
     }
 
     width: 12.5%;
