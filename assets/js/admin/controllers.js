@@ -808,6 +808,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       angular.element('#add-no-seats')[0].selectize.setValue(37);
     }, 400);
     angular.element('#add-sched-modal').Modal();
+    angular.element('#add-sched-modal .modal__box').drags();
   }
 
   // $scope.addRegularSchedule = function () {
