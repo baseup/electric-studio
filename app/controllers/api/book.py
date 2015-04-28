@@ -175,7 +175,7 @@ def update(self, id):
                                                       seat_number=book.seat_number, 
                                                       instructor=book.schedule.instructor, 
                                                       time=book.schedule.start.strftime('%I:%M %p')), 'UTF-8')
-                    yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Cancelled')
+                    yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Canceled')
                 else:
                     yield self.io.async_task(
                         send_email_cancel,

@@ -570,7 +570,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
       var time = book.schedule.start.split(/[^0-9]/);
       var chkDate =  new Date(date[0], date[1]-1, date[2]-1, 17, 0, 0);
       if (+today >= +chkDate) {
-        $.Alert('Schedule met the cut-off limit, could not be cancelled anymore')
+        $.Alert('Schedule met the cut-off limit, could not be canceled anymore')
         return;
       }
 
@@ -692,7 +692,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleSe
             $scope.$apply(function () {
 
               if (+today >= +cutOffchkDate) {
-                $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+                $.Alert('Warning: Booking on this schedule will no longer be canceled')
               }
               $scope.waitlistUser(sched);
             });
@@ -706,14 +706,14 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleSe
               $.Confirm('This schedule is full, would you like to join the waitlist ?', function() {
                 $scope.$apply(function () {
                   if (+today >= +cutOffchkDate) {
-                    $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+                    $.Alert('Warning: Booking on this schedule will no longer be canceled')
                   }
                   $scope.waitlistUser(sched);
                 });
               });
             } else {
               if (+today >= +cutOffchkDate) {
-                $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+                $.Alert('Warning: Booking on this schedule will no longer be canceled')
               }
               SharedService.set('selectedSched', sched);
               $location.path('/class');
