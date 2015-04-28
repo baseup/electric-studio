@@ -144,7 +144,7 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
           var src = img.attr('src');
           
           intervals.push({
-            fn : 'qwww',
+            fn : '',
             tries : 0
           });
 
