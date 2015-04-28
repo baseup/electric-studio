@@ -1743,6 +1743,16 @@ body {
   max-width: 980px;
   margin: 0 auto;
 
+  tbody{
+    display: block;
+
+    &:after{
+      content: '';
+      display: block;
+      clear: both;
+    }
+  }
+
   @include breakpoint(md) {
   tr:nth-child(even) td {
     text-align: right;
