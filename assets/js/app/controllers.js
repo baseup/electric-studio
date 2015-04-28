@@ -189,12 +189,15 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
     $scope.signupError = null;
     if ($scope.user) {
       if (!$scope.user.email || $scope.user.email.length == 0) {
-        $scope.signupError = 'Email Field is required';
+        $scope.signupError = 'Email Address is required';
         return;
       }
 
       if ($scope.user.password != $scope.user.confirm_password) {
         $scope.signupError = "Password didn't match";
+        if($scope.user.password == ''){
+          $scope.signupError = "Password is required";
+        }
         return;
       }
 
@@ -212,10 +215,9 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
         $scope.registered = false;
 
         var errorMsg = error.data
-        if (errorMsg.trim().indexOf(' ') === -1) {
-          errorMsg = 'Field ' + errorMsg + ' is empty';
+        if(errorMsg.split(' ').length === 2){
+          errorMsg = errorMsg + ' is required';
         }
-
         $scope.signupError = errorMsg;
       }
 
@@ -228,7 +230,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
     $scope.verificationLink = null;
     var sendEmailSuccess = function () {
       $scope.sendingEmail = false;
-      $.Alert('Successfully sent email verification');
+      $.Alert('Please check your e-mail to verify your account and complete registration.');
     }
 
     var sendEmailFailed = function (error) {
