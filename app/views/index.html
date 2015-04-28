@@ -49,7 +49,11 @@
           <a class="signup-toggle">Sign up</a>
           <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
         {% else %}
-          <a href="javascript:void(0)" class="user-loggedin">Hi <strong>{{ loginUser }}</strong>! <i class="fa fa-caret-down"></i></a>
+          <a href="javascript:void(0)" class="user-loggedin">
+            Hi <strong>{{ loginUser }}</strong>! 
+            <span>{{! loginUser.credits }}</span>
+            <i class="fa fa-caret-down"></i>
+          </a>
         {% end %}            
         </div>
         {% if loginUser %}  
@@ -62,8 +66,12 @@
         </div>
         {% end %}  
       </div>  
-        
-      <a class="book-ride-btn" href="#/schedule">Book A Ride</a>
+      
+      <div>
+        <a class="buy-ride-btn float--left" href="#/rates-and-packages">Buy</a>
+        <a class="book-ride-btn float--right" href="#/schedule">/Book A Ride</a>  
+      </div>
+      
 
       <a class="menu-toggle"><i class="fa fa-bars"></i></a>
       
@@ -99,7 +107,7 @@
         <input class="input-box" placeholder="Last Name" ng-model="user.last_name">
         <input class="input-box" placeholder="Email Address" ng-model="user.email">
         <input class="input-box" placeholder="Mobile Number" ng-model="user.phone_number">
-        <input type="password" class="input-box" placeholder="Password" ng-model="user.password">
+        <input type="password" class="input-box" placeholder="Password (minimum 6 character)" ng-model="user.password">
         <input type="password" required compare-to="user.password" class="input-box" placeholder="Re-type Password" ng-model="user.confirm_password">
 
         <input type="button" value="Sign Up" class="button primary" ng-click="signUp()">
@@ -107,9 +115,8 @@
       <span class="close-btn">X</span>
     </div>
     <div class="wrapper" ng-show="registered">
-      <h2 class="h large light">Please check your email for confirmation</h2>
-      <button class="button" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
-      <!-- We didn't setup the mailchimp yet, go <a href="{{! verificationLink }}">here</a> to verify account.  -->
+      <h2 class="h medium light">Check your Email!</h2><br/><br/><br/>
+      <button class="h small btn" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
     </div>
   </div>
 
@@ -126,7 +133,7 @@
       
       <ul class="social-links">
         <li>
-          <a href="mailto:info@electricstudio.ph"><i class="fa fa-envelope"></i></a>
+          <a href="mailto:letsride@electricstudio.ph"><i class="fa fa-envelope"></i></a>
         </li>
         <li>
           <a href="https://www.facebook.com/teamelectricph"><i class="fa fa-facebook"></i></a>

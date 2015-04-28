@@ -13,6 +13,20 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
 
   $scope.loginUser = AuthService.getCurrentUser();
 
+  $scope.reloadUser = function (user) {
+    UserService.get(function (user) {
+      if ($scope.loginUser) {
+        angular.extend($scope.loginUser, user);
+      } else {
+        $scope.loginUser = user;
+      }
+    });
+  } 
+
+  if (!$scope.loginUser && window.localStorage.getItem('login-user')) {
+    $scope.reloadUser();
+  }
+
   $scope.isVerified = false;
   if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
     $scope.user = $scope.loginUser;
@@ -40,6 +54,12 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     
   
   angular.element('.datepicker').pickadate({
+    labelMonthNext: 'Go to the next month',
+    labelMonthPrev: 'Go to the previous month',
+    labelMonthSelect: 'Pick a month from the dropdown',
+    labelYearSelect: 'Pick a year from the dropdown',
+    selectMonths: true,
+    selectYears: 20,
     format: 'yyyy-mm-dd',
     formatSubmit: 'yyyy-mm-dd',
     today: false
@@ -53,7 +73,6 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     headerForm.removeClass('show');
   });
 
-
   loginToggle.off('click').on('click', function () {
     login.toggleClass('show');
     signup.add(book).removeClass('show');
@@ -66,14 +85,6 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
 
   menuToggle.off('click').click(function () {
     angular.element('.main-menu').toggleClass('show');
-  });
-
-
-  angular.element('.seats td').find('span').click(function () {
-    angular.element('.seats td').removeClass('selected');
-    if (!angular.element(this).parent('td').hasClass('unavailable')) {
-      angular.element(this).parent('td').toggleClass('selected');
-    }
   });
 
   $(window).resize(function () {
@@ -161,8 +172,14 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
         $scope.signupError = 'Email Field is required';
         return;
       }
+
       if ($scope.user.password != $scope.user.confirm_password) {
         $scope.signupError = "Password didn't match";
+        return;
+      }
+
+      if ($scope.user.password && $scope.user.password.length < 6) {
+        $scope.signupError = 'Password must be 6 characters';
         return;
       }
 
@@ -258,6 +275,11 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
 
     if ($scope.pass && $scope.pass.password && $scope.pass.password.length > 0) {
 
+      if ($scope.pass.password.length < 6) {
+        $.Alert('Password should be atleast 6 characters');
+        return;
+      }
+
       if ($scope.pass.password != $scope.pass.confirm_password) {
         $.Alert("Retype Password didn't match");
         return;
@@ -303,10 +325,19 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
 
 ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthService, UserPackageService) {
 
+  var qstring = $location.search();
+  if (qstring.s) {
+    if (qstring.s == 'success' && qstring.pname) {
+      $.Alert('Success! You have bought ' + qstring.pname);
+    } else if (qstring.s == 'exists') {
+      $.Alert('Transaction already exists');
+    }
+    $location.search({ s: null, pname: null });
+  }
 
  if (!$scope.loginUser) {
-    $location.path("/")
-    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+    $location.path('/');
+    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
     angular.element('.login-toggle').click();
   } else {
     $scope.account = $scope.loginUser;
@@ -315,6 +346,14 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
     if ($scope.account.billing && $scope.account.billing != 'null') { 
       $scope.billing = JSON.parse($scope.account.billing);
     }
+
+    UserService.get(function (user) {
+      $scope.account = user;
+
+      if ($scope.account.birthdate) {
+        $scope.account.birthdate = $scope.account.birthdate.replace(' 00:00:00', '');;
+      }
+    });
 
     $scope.transactions = UserPackageService.query();
     $scope.transactions.$promise.then(function (data) {
@@ -340,6 +379,10 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
         $.Alert(error.data);
       }
 
+      if ($scope.account.billing) {
+        delete $scope.account.billing;
+      }
+
       UserService.update({ userId: $scope.loginUser._id }, $scope.account).$promise.then(addSuccess, addFail);
     }
 
@@ -347,12 +390,17 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 
       if ($scope.pass && $scope.pass.current_password) {
 
+        if ($scope.pass.password && $scope.pass.password.length < 6) {
+          $.Alert('Password should be atleast more than 5 characters');
+          return;
+        }
+
         if ($scope.pass.password != $scope.pass.confirm_password) {
           $.Alert("Retype Password didn't match");
           return;
         }
         var addSuccess = function () {
-          $.Alert("Successfully updated your password")
+          $.Alert('Successfully updated your password');
           $scope.pass = null;
         }
         var addFail = function (error) {
@@ -368,20 +416,44 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 
     $scope.updateBilling = function () {
       if ($scope.billing) {
-        var billingSuccess = function () {
-          $.Alert("Successfully updated billing information");
-        }
 
-        var billingFail = function (error) {
-          $.Alert(error.data)
+        if ($scope.billing.first_name &&
+            $scope.billing.last_name &&
+            $scope.billing.address &&
+            $scope.billing.city &&
+            $scope.billing.province &&
+            $scope.billing.postalcode &&
+            $scope.billing.email &&
+            $scope.billing.card_number  &&
+            $scope.billing.card_type &&
+            $scope.billing.card_expiration &&
+            $scope.billing.csc) {
+          var billingSuccess = function () {
+            $.Alert('Successfully updated billing information');
+          }
+
+          var billingFail = function (error) {
+            $.Alert(error.data)
+          }
+          UserService.update({ userId: $scope.loginUser._id }, { billing: $scope.billing }).$promise.then(billingSuccess, billingFail);
+        } else {
+          $.Alert('Please complete billing info')
         }
-        UserService.update({ userId: $scope.loginUser._id }, { billing: $scope.billing }).$promise.then(billingSuccess, billingFail);
       }
     }
   }
 });
 
-ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageService) {
+ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, PackageService) {
+  
+  var scrollableView = angular.element('#rates-section').offset().top;
+  angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+
+  var qstring = $location.search();
+  if (qstring.s == 'error') {
+    $.Alert('Transaction failed');
+    $location.search('s', null);
+  }
 
   $scope.packages = PackageService.query();
   $scope.packages.$promise.then(function (data) {
@@ -394,19 +466,19 @@ ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageServi
 
   $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/buy';
 
-  $scope.buyPackage = function (event) {
-
+  $scope.buyPackage = function (event, index) {
 
     if (!$scope.loginUser) {
       $.Alert('User is not logged In');
-      angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
     }
 
     UserService.get(function (user) {
       
-      $scope.loginUser = user;
+      $scope.loginUser =  user;
+      $scope.reloadUser(user);
 
       if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
         $.Alert('Account is frozen, Please check your contact adminstrator');
@@ -418,11 +490,11 @@ ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageServi
         return;
       }
 
-      angular.element('#payForm').submit();
+      angular.element('#payForm-' + index).submit();
 
-    })
+    });
   }
-})
+});
 
 ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService) {
 
@@ -452,10 +524,10 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService
 ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, SharedService, UserService) {
 
   if (!$scope.loginUser) {
-    $location.path("/")
-    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+    $location.path('/');
+    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
     angular.element('.login-toggle').click();
-  }else{
+  } else {
 
     $scope.reservations = BookService.query();
     $scope.reservations.$promise.then(function (data) {
@@ -476,9 +548,9 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
       var today = new Date();
       var date = book.date.split(/[^0-9]/);
       var time = book.schedule.start.split(/[^0-9]/);
-      var chkDate =  new Date(date[0], date[1]-1, date[2], time[3] - 1, time[4], time[5]);
+      var chkDate =  new Date(date[0], date[1]-1, date[2]-1, 17, 0, 0);
       if (+today >= +chkDate) {
-        $.Alert('Schedule could not be cancelled anymore')
+        $.Alert('Schedule met the cut-off limit, could not be cancelled anymore')
         return;
       }
 
@@ -487,14 +559,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
         data.status = 'cancelled';
         
         var bookSuccess = function () {
-          $scope.reservations = BookService.query();
-          $scope.reservations.$promise.then(function (data) {
-            $scope.reservations = data;
-          });
-          $scope.user = UserService.get();
-          $scope.user.$promise.then(function (data) {
-            $scope.user = data;
-          });
+          window.location.reload();
         }
         var bookFail = function (error) {
           $.Alert(error.data)
@@ -507,13 +572,8 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, SharedService, BookService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleService, SharedService, BookService, UserService) {
   $scope.resched = SharedService.get('resched');
-
-  $scope.reserved = BookService.query();
-  $scope.reserved.$promise.then(function (data) {
-    $scope.reserved = data;
-  });
 
   $scope.cancelResched = function () {
     SharedService.clear('resched');
@@ -522,36 +582,138 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
 
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
+  $scope.waitlistUser = function (sched) {
+
+    if (!$scope.loginUser) {
+      $.Alert('User is not logged In');
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+      angular.element('.login-toggle').click();
+      return;
+    }
+
+    $.Alert('Setting schedule as waitlist ...')
+
+    UserService.get(function (user) {
+
+      $scope.loginUser = user;
+
+      if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
+        $.Alert('Account is frozen, Please check your contact adminstrator');
+        return;
+      }
+
+      if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
+        $.Alert('User is Unverified, Please check your email');
+        return;
+      }
+
+      var book = {};
+      book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+      book.seats = [];
+      book.sched_id = sched.schedule._id;
+      book.status = 'waitlisted';
+
+      var waitlistSuccess = function () {
+
+        if ($scope.resched) {
+          SharedService.clear('resched');
+        }
+
+        $.Alert('You have beed added to waitlist');
+        $scope.reloadUser();
+        window.location = '/#/reserved'
+        window.location.reload();
+      }
+      var waitlistFail = function (error) {
+        $.Alert(error.data)
+        $route.reload();
+      }
+
+      BookService.book(book).$promise.then(waitlistSuccess, waitlistFail);
+    });
+  }
+
   $scope.setSchedule = function (schedule, date) {
 
     if (!$scope.chkSched(date, schedule)) {
+
+      if ($scope.loginUser && $scope.loginUser.credits <= 0) {
+        $.Alert('Insufficient Credits');
+        return;
+      } 
+
+      var today = new Date();
+      var time = schedule.start.split(/[^0-9]/);
+      var chkDate = new Date(date);
+      chkDate.setHours(time[3] - 1, time[4], 0);
+      if (+today >= +chkDate) {
+        $.Alert('You can only book 1 hour before the class or contact studio to book this class')
+        return;
+      }
+
+      var cutOffchkDate = new Date(date);
+      cutOffchkDate.setDate(date.getDate() - 1);
+      cutOffchkDate.setHours(17, 0, 0);
+
       var sched = {};
       sched.date = date;
       sched.schedule = schedule;
-      SharedService.set('selectedSched', sched);
-      $location.path('/class');
+
+      var bfilter = {};
+      bfilter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+      bfilter.sched_id = sched.schedule._id;
+      bfilter.waitlist = true
+      
+      $scope.waitlist = BookService.query(bfilter);
+      $scope.waitlist.$promise.then(function (waitlist_data) {
+        $scope.waitlist = waitlist_data;
+        if ($scope.waitlist.length > 0) {
+          $.Confirm('This schedule is full, would you like to join the waitlist ?', function() {
+            $scope.$apply(function () {
+
+              if (+today >= +cutOffchkDate) {
+                $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+              }
+              $scope.waitlistUser(sched);
+            });
+          });
+        } else {
+          delete bfilter.waitlist;
+          $scope.reserved = BookService.query(bfilter);
+          $scope.reserved.$promise.then(function (data) {
+            $scope.reserved = data;
+            if ($scope.reserved.length >= sched.schedule.seats) {
+              $.Confirm('This schedule is full, would you like to join the waitlist ?', function() {
+                $scope.$apply(function () {
+                  if (+today >= +cutOffchkDate) {
+                    $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+                  }
+                  $scope.waitlistUser(sched);
+                });
+              });
+            } else {
+              if (+today >= +cutOffchkDate) {
+                $.Alert('Warning: Booking on this schedule will no longer be cancelled')
+              }
+              SharedService.set('selectedSched', sched);
+              $location.path('/class');
+            }
+          });
+          
+        }
+      });
+
     }
   }
 
   $scope.chkSched = function (date, sched) {
-
-  
-    if ($scope.reserved) {
-      for (var i in $scope.reserved) {
-        var rDate = new Date($scope.reserved[i].date);
-        if ($scope.loginUser && +date == +rDate) {
-          if (sched && $scope.reserved[i].schedule && sched._id == $scope.reserved[i].schedule._id)
-            return true;
-        }
-      }
-    }
 
     var now = new Date();
     var parts = sched.start.split(/[^0-9]/);
     var dTime =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
     var hours = dTime.getHours();
     var minutes = dTime.getMinutes();
-    date.setHours(hours - 1, minutes, 0, 0);
+    date.setHours(hours, minutes, 0, 0);
     if (date < now)
       return true;
 
@@ -566,6 +728,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
 
     var now = date? new Date(date) : new Date();
     now.setHours(0,0,0,0);
+
+    var pWeek = new Date(date);
+    pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 6);
+    if (Math.ceil((now - pWeek) / (24 * 60 * 60 * 1000)) < 7) {
+      now = pWeek;
+    }
 
     var mon = new Date(now);
     mon.setDate(mon.getDate() - mon.getDay() + 1);
@@ -620,43 +788,37 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
       $scope.schedules = data;
     });
 
-    $scope.reserved = BookService.query();
-    $scope.reserved.$promise.then(function (data) {
-      $scope.reserved = data;
-    });
-
   }
 
   $scope.getWeek(new Date());
   $scope.nextWeek = function () {
     var now = new Date();
-    // var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
-    // if ($scope.nmonDate < nextMonth) {
+    var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
+    if ($scope.nmonDate < nextMonth) {
       $scope.getWeek($scope.nmonDate);
-    // }
+    }
   }
   $scope.prevWeek = function () {
     var pWeek = new Date($scope.monDate);
-    pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 1);
+    pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 6);
 
     var now = new Date();
-    now.setDate(now.getDate() - now.getDay() + 1);
 
-    if (pWeek > now) {
+    if (((now - pWeek) / (24 * 60 * 60 * 1000)) < 7) {
       $scope.getWeek(pWeek);
     }
   }
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedService, BookService) {
+ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, ScheduleService, SharedService, BookService) {
   var sched = SharedService.get('selectedSched');
   if (!sched) {
     $location.path('/schedule')
   } else {
 
-    var seat = 0;
+    var seats = [];
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var days = ['Monday','Tuesday','Friday','Thursday','Friday','Saturday', 'Sunday'];
+    var days = ['Sunday','Monday','Tuesday','Friday','Thursday','Friday','Saturday'];
 
     $scope.resched = SharedService.get('resched');
     
@@ -665,9 +827,16 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
       $location.path('/reserved');
     }
 
+    ScheduleService.get({ scheduleId: sched.schedule._id }, function(schedule) {
+      sched.schedule = schedule;
+      $scope.timeSched = sched.schedule.start;
+      $scope.instructor = sched.schedule.instructor;
+    });
+
     $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() + ' ' + sched.date.getFullYear();
     $scope.daySched = days[sched.date.getDay()];
     $scope.timeSched = sched.schedule.start;
+    $scope.sched = sched.schedule;
     $scope.instructor = sched.schedule.instructor;
 
     var book_filter = {};
@@ -678,7 +847,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
     $scope.reserved = BookService.query(book_filter);
     $scope.reserved.$promise.then(function (data) {
       $scope.reserved = data;
-      if ($scope.reserved.length >= 37) {
+      if ($scope.reserved.length >= sched.schedule.seats) {
         $scope.forWaitlist = true;
       }
     });
@@ -692,6 +861,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
       }
     });
 
+
   }
 
   $scope.checkSeat = function (num) {
@@ -700,7 +870,8 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
     }
 
     for (var r in $scope.reserved) {
-      if ($scope.reserved[r].seat_number == num) {
+      if ($scope.reserved[r].seat_number == num ||
+          num > sched.schedule.seats) {
         return true;
       }
     }
@@ -708,11 +879,28 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
   }
 
   $scope.setSeatNumber = function (number, event) {
-
+    
+    var seat_index = -1;
+    for (var i = 0; i < seats.length; i++) {
+      if (seats[i] === number) {
+        seat_index = i;
+      }
+    }
     if (!$scope.checkSeat(number)) {
-      seat = number;
-    }else{
-      seat = 0;
+      if (seat_index == -1) {
+        if ($scope.loginUser && 
+            seats.length >= $scope.loginUser.credits){
+          $.Alert('Not enough credits');
+          return;
+        } else {
+          angular.element('#seat' + number).toggleClass('selected');
+          seats.push(number);
+        }
+      } else {
+        angular.element('#seat' + number).toggleClass('selected');
+        seats.splice(seat_index, 1);
+      }
+    } else {
       event.preventDefault();
     }
   }
@@ -721,12 +909,13 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
 
     if (!$scope.loginUser) {
       $.Alert('User is not logged In');
-      angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
     }
 
     UserService.get(function (user) {
+
       $scope.loginUser = user;
 
       if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
@@ -739,37 +928,49 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
         return;
       }
 
-      if (!$scope.forWaitlist && seat == 0) {
+      if (!$scope.forWaitlist && seats.length == 0) {
         $.Alert('Please pick a seat');
         return;
       }
 
       var book = {};
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
-      book.seat = seat;
+      book.seats = seats;
       book.sched_id = sched.schedule._id;
-      var confirm_message = 'Your about to book a ride on ' + 
-                            $scope.daySched + ', ' + $scope.dateSched + ' with seat number ' + seat;
+      var confirm_message = "You're about to book a ride on " + 
+                            $scope.daySched + ', ' + $scope.dateSched + ' with seat'+ (seats.length > 1 ? 's' : '') +' number ' + seats;
       if ($scope.forWaitlist) {
-        confirm_message = 'Your about to join the waitlist for this schedule ' + $scope.daySched + ', ' + $scope.dateSched;
+        confirm_message = "You're about to join the waitlist for this schedule " + $scope.daySched + ', ' + $scope.dateSched;
         book.status = 'waitlisted';
       }
 
       $.Confirm(confirm_message, function () {
 
         var bookSuccess = function () {
+
           if ($scope.resched) {
             SharedService.clear('resched');
           }
-          $location.path('/reserved')
+
+          if ($scope.forWaitlist) {
+            $.Alert('You have beed added to waitlist');
+          } else {  
+            $.Alert('You have successfully booked a ride');
+          }
+          UserService.get(function (user) {
+            $scope.reloadUser();
+            window.location = '/#/reserved'
+            window.location.reload();
+          });
         }
         var bookFail = function (error) {
           $.Alert(error.data)
+          $route.reload();
         }
 
         if ($scope.resched == undefined) {
           BookService.book(book).$promise.then(bookSuccess, bookFail);
-        }else{
+        } else {
           BookService.update({ bookId: $scope.resched._id }, book).$promise.then(bookSuccess, bookFail);
         }
       });
@@ -779,10 +980,10 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
 
 ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) {
   if (!$scope.loginUser) {
-    $location.path("/")
-    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+    $location.path('/');
+    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
     angular.element('.login-toggle').click();
-  }else{
+  } else {
 
     $('#history-tabs').Tab();
 
@@ -828,7 +1029,7 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
     }
 
     $scope.nextTrans = function (event) {
-      if ($scope.currentTrans > parseInt($scope.histories.transTotal)) {
+      if ($scope.currentTrans < parseInt($scope.histories.transTotal)) {
         $scope.currentTrans += 1;
         $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
         $scope.histories.$promise.then(function (data) {
@@ -837,7 +1038,6 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
       }        
       event.preventDefault();
     }
-
   }
 
 });

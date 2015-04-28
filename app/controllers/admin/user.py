@@ -11,7 +11,7 @@ import tornado
 import json
 
 def find(self):
-    users = yield User.objects.find_all()
+    users = yield User.objects.order_by('update_at',direction=DESCENDING).find_all()
     self.render_json(users)
 
 def find_one(self, id):
@@ -105,15 +105,16 @@ def update(self, id):
             user.first_name = data['first_name']
             # user.middle_name = data['middle_name']
             user.last_name = data['last_name']
-            user.email = data['email']
-            user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
-            user.phone_number = data['phone_number']
-            user.contact_person = data['contact_person']
-            user.emergency_contact = data['emergency_contact']
-            # user.address = data['address']
-            # user.status = data['status']
-            # user.profile_pic = data['profile_pic']
-            # user.credits = data['credits']
+            
+            if data['birthdate'] != None:
+                user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+            if data['phone_number'] != None:
+                user.phone_number = data['phone_number']
+            if data['contact_person'] != None:
+                user.contact_person = data['contact_person']
+            if data['emergency_contact'] != None:
+                user.emergency_contact = data['emergency_contact']
+
             user = yield user.save()
 
     except :

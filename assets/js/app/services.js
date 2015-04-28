@@ -138,6 +138,10 @@ services.factory('ScheduleService', function($resource) {
     query: {
       method: 'GET',
       isArray: false
+    },
+    get: {
+      method: 'GET',
+      isArray: false
     }
   });
 });

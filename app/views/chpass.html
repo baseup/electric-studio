@@ -17,7 +17,7 @@
     <div ng-controller="ForgotPasswordCtrl">
     {% if user %}
       <h1 class="page-title h--medium">Reset Password ({{ user.email }})</h1> <br/><br/>
-      <input class="text-input" type="password" ng-model="pass.password" placeholder="New Password"><br><br>
+      <input class="text-input" type="password" ng-model="pass.password" placeholder="New Password (min. 6 characters)"><br><br>
       <input class="text-input" type="password" ng-model="pass.confirm_password" placeholder="Retype Password"><br><br>
       <input type="submit" value="Reset"  ng-click="resetPassword('{{ user._id }}')" class="btn btn--medium btn--primary">
     {% else %}
@@ -39,7 +39,7 @@
       
       <ul class="social-links">
         <li>
-          <a href="mailto:info@electricstudio.ph"><i class="fa fa-envelope"></i></a>
+          <a href="mailto:letsride@electricstudio.ph"><i class="fa fa-envelope"></i></a>
         </li>
         <li>
           <a href="https://www.facebook.com/teamelectricph"><i class="fa fa-facebook"></i></a>

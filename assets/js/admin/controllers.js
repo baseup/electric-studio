@@ -79,21 +79,23 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 
   $scope.removePackage = function (pac) {
-    var addSuccess = function () {
-      PackageService.query().$promise.then(function (data) {
-        $scope.packages = data;
-      });
-    }
+    $.Confirm('Are you sure on deleting ' + pac.name + ' ?', function (){
+      var addSuccess = function () {
+        PackageService.query().$promise.then(function (data) {
+          $scope.packages = data;
+        });
+      }
 
-    var addFail = function (error) {
-      $.Alert(error.data);
-    }
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
 
-    PackageService.delete({packageId : pac._id}).$promise.then(addSuccess, addFail);
+      PackageService.delete({packageId : pac._id}).$promise.then(addSuccess, addFail);
+    });
   }
 });
 
-ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, PackageService, TransactionService, ClassService) {
+ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, PackageService, TransactionService, ClassService, SecurityService) {
 
   $scope.newCredits = {};
 
@@ -102,12 +104,42 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
   });
 
   var select = angular.element('#select-add-package')[0].selectize;
+  var selectBuy = angular.element('#select-buy-package')[0].selectize;
   PackageService.query(function (packages) {
     $scope.packages = packages;
     angular.forEach(packages, function (pack) {
       select.addOption({ value: pack._id, text: pack.name });
+      selectBuy.addOption({ value: pack._id, text: pack.name });
     });
   });
+
+  $scope.accountInfo = function (user) {
+    $scope.selectedInfo = user;
+
+    UserService.get({ userId : user._id }, function (userInfo) {
+      $scope.selectedInfo = userInfo;
+      if ($scope.selectedInfo.birthdate) {
+        $scope.selectedInfo.birthdate = $scope.selectedInfo.birthdate.replace(' 00:00:00', '');
+      }
+
+      angular.element('#account-info-modal').Modal();
+    });
+  }
+
+  $scope.updateAccountInfo = function () {
+    if ($scope.selectedInfo) {
+      var updateSuccess = function () {
+        $.Alert('Successfully updated account information.');
+      }
+
+      var updateFail = function (error) {
+        $.Alert(error.data)
+      }
+
+      delete $scope.selectedInfo.billing;
+      UserService.update({ userId: $scope.selectedInfo._id }, $scope.selectedInfo).$promise.then(updateSuccess, updateFail);
+    }
+  }
 
   $scope.verifyAccount = function (user) {
     var username = user.first_name + ' ' + user.last_name;
@@ -146,24 +178,61 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
   }
 
   $scope.accountAddClass = function (user) {
-    $scope.newCredits.user_id = user._id;
-    $scope.selectedAccount = user;
-    angular.element('#add-class-modal').Modal();
+    chkSecurity(function () {
+      $scope.newCredits.user_id = user._id;
+      $scope.selectedAccount = user;
+      angular.element('#add-class-modal').Modal();
+    });
   }
 
   $scope.buyPackageModal = function (user) {
-    $scope.selectedAccount = user;
-    if(!(user.billing instanceof Object)){
-      $scope.selectedAccount.billing = JSON.parse(user.billing);
-    }
-    angular.element('#buy-package-modal').Modal();
+
+    var port = '';
+    if (window.location.port)
+      port = ':' + window.location.port;
+
+    $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/admin/buy';
+
+    chkSecurity(function () {
+      $scope.selectedAccount = user;
+      if (!($scope.selectedAccount.billing instanceof Object)) {
+        $scope.selectedAccount.billing = JSON.parse($scope.selectedAccount.billing);
+        if (!($scope.selectedAccount.billing instanceof Object)) {
+          $scope.selectedAccount.billing = {};
+        } 
+      }
+      angular.element('#buy-package-modal').Modal();
+    });
+  }
+
+  var chkSecurity = function (securityCallback) {
+
+    $('#btn-security').off('click');
+    $('#btn-security').click(function () {
+      $scope.$apply(function () {
+        if ($scope.securityPass) {
+          SecurityService.check({ sudopass: $scope.securityPass }, function () {
+            securityCallback();
+            $scope.securityPass = null;
+          }, function (error) {
+            $.Alert(error.data);
+            $scope.securityPass = null;
+          });
+        } else {
+          $.Alert('Access Denied');
+          $scope.securityPass = null;
+        }
+      });
+    });
+
+    $('#security-check-modal').Modal();
   }
 
   $scope.confirmBilling = function () {
     if ($scope.newPackage) {
       angular.element('#billing-preview-modal').Modal();
     } else {
-      $.Alert("Please select a package");
+      $.Alert('Please select a package');
     }
   }
 
@@ -178,6 +247,9 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
           $scope.selectedAccount.billing.province &&
           $scope.selectedAccount.billing.postalcode &&
           $scope.selectedAccount.billing.email &&
+          $scope.selectedAccount.billing.phone_a &&
+          $scope.selectedAccount.billing.phone_b &&
+          $scope.selectedAccount.billing.phone_c &&
           $scope.selectedAccount.billing.card_number  &&
           $scope.selectedAccount.billing.card_type &&
           $scope.selectedAccount.billing.card_expiration &&
@@ -185,29 +257,26 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
 
         var billingSuccess = function () {
         $.Alert('Successfully save billing information. Now were redirecting you to paypal');
-          window.location = '/admin/buy?pid=' + $scope.newPackage._id + '&uid=' + $scope.selectedAccount._id + '&success=True';
+          angular.element('#admin-pay-form').submit();
         }
 
         var billingFail = function (error) {
           $.Alert(error.data)
         }
         UserService.update({ userId: $scope.selectedAccount._id }, { billing: $scope.selectedAccount.billing }).$promise.then(billingSuccess, billingFail);
-
         
       } else {
         $.Alert('Billing information is not complete to process the transaction');
-        $timeout(function() {
+        $timeout(function () {
           angular.element('#billing-preview-modal').Modal();
         }, 10);
       }
     } else {
       $.Alert('Please provide billing information');
-      $timeout(function() {
+      $timeout(function () {
         angular.element('#billing-preview-modal').Modal();
       }, 10);
     }
-
-
   }
   
   $scope.accountSummary = function (user) {
@@ -239,7 +308,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
   }
 
   // When something is selected, update the “from” and “to” limits.
-  from_picker.on('set', function(event) {
+  from_picker.on('set', function (event) {
     if ( event.select ) {
       to_picker.set('min', from_picker.get('select'));
     }
@@ -247,7 +316,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
       to_picker.set('min', false);
     }
   });
-  to_picker.on('set', function(event) {
+  to_picker.on('set', function (event) {
     if ( event.select ) {
       from_picker.set('max', to_picker.get('select'));
     }
@@ -361,6 +430,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   $scope.reloadDate = function () {
     angular.element('#select-class-time')[0].selectize.clearOptions();
+    $scope.newBook.sched_id = null;
+    $scope.newBook.time = null;
     $scope.reload();
   }
 
@@ -381,9 +452,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         if (!$scope.newBook.sched_id) {
           $timeout(function () {
             selectize.setValue(books.schedules[0].id);
-          }, 100);
+          }, 400);
         } 
-        
       }
     });
   }
@@ -394,8 +464,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var select = angular.element('#select-user-id')[0].selectize;
     var selectWaitlist = angular.element('#select-waitlist-user')[0].selectize;
     angular.forEach(users, function (user) {
-      select.addOption({ value: user._id, text: user.first_name + ' ' + user.last_name });
-      selectWaitlist.addOption({ value: user._id, text: user.first_name + ' ' + user.last_name });
+      select.addOption({ value: user._id, text: user.first_name + ' ' + user.last_name + ' - ' + user.email });
+      selectWaitlist.addOption({ value: user._id, text: user.first_name + ' ' + user.last_name + ' - ' + user.email });
     });
   });
 
@@ -417,9 +487,34 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     }
   }
 
+  $scope.isCompleted = function (sched) {
+
+    var now = new Date();
+    var dateParts = sched.date.split(/[^0-9]/);
+    var timeParts = sched.start.split(/[^0-9]/);
+    var date =  new Date(dateParts[0], dateParts[1]-1, dateParts[2], timeParts[3], timeParts[4], timeParts[5]);
+    if (date < now)
+      return true;
+
+    return false
+
+  }
+
   $scope.cancelBooking = function (booking, index) {
-    $scope.books.splice(index, 1);
-    ClassService.delete({ scheduleId: booking._id });
+    if (!$scope.isCompleted(booking.schedule)) {
+      $.Confirm('Are you sure on cancelling ' + booking.user_id.first_name + ' ride ?', function () {
+        $.Prompt('Notes on cancelling ' + booking.user_id.first_name + ' ride', function (notes) {
+          if (notes && notes.length > 0) {
+            $scope.books.splice(index, 1);
+            ClassService.delete({ scheduleId: booking._id, notes: notes });
+          } else {
+            $.Alert('Please provide a notes on cancelling schedules');
+          }
+        });
+      });
+    } else {
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+    }
   }
 
   $scope.sendNewBook = function () {
@@ -430,15 +525,15 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var hours = dTime.getHours();
     var minutes = dTime.getMinutes();
     var chkDate = new Date($scope.newBook.date);
-    chkDate.setHours(hours - 1, minutes, 0, 0);
-    if (chkDate < now){
-      $.Notify({ content: "Booking should be 1 hour before" });
+    chkDate.setHours(hours, minutes, 0, 0);
+    if (chkDate < now) {
+      $.Notify({ content: 'Booking is not allowed anymore' });
       return;
     }
 
     var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
     if (chkDate > nextMonth) {
-      $.Notify({ content: "Booking 1 month in advance is prohibited" });
+      $.Notify({ content: 'Booking 1 month in advance is prohibited' });
       return;
     }
 
@@ -457,8 +552,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var minutes = dTime.getMinutes();
     var chkDate = new Date($scope.newWaitlist.date);
     chkDate.setHours(hours, minutes, 0, 0);
-    if (chkDate < now){
-      $.Notify({ content: "This schedule is completed" });
+    if (chkDate < now) {
+      $.Notify({ content: 'This schedule is completed' });
       return;
     }
 
@@ -472,19 +567,23 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   
   $scope.bookRide = function () {
     if ($scope.newBook.sched_id) {
-      ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
-        if (seats.available.length) {
-          angular.element('#select-bike-number')[0].selectize.clearOptions();
-          var selectbike = angular.element('#select-bike-number')[0].selectize;
-          selectbike.settings.sortField = 'text';
-          angular.forEach(seats.available, function (seat) {
-            selectbike.addOption({ value: seat, text: seat });
-          }); 
-          angular.element('#book-ride-modal').Modal();
-        } else {
-          $.Alert('No available seats');
-        }
-      });
+      if (!$scope.isCompleted($scope.schedDetails)) {
+        ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+          if (seats.available.length) {
+            angular.element('#select-bike-number')[0].selectize.clearOptions();
+            var selectbike = angular.element('#select-bike-number')[0].selectize;
+            selectbike.settings.sortField = 'text';
+            angular.forEach(seats.available, function (seat) {
+              selectbike.addOption({ value: seat, text: seat });
+            }); 
+            angular.element('#book-ride-modal').Modal();
+          } else {
+            $.Alert('No available seats');
+          }
+        });
+      } else {
+        $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+      }
     } else {
       $.Alert('Please select schedule date and time');
     }
@@ -492,53 +591,103 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   $scope.addWaitlistModal = function () {
     if ($scope.newBook.sched_id) {
-      $scope.newWaitlist = {};
-      $scope.newWaitlist.sched_id = $scope.newBook.sched_id;
-      $scope.newWaitlist.date = $scope.newBook.date;
-      angular.element('#add-waitlist-modal').Modal();
+      if (!$scope.isCompleted($scope.schedDetails)) {
+        $scope.newWaitlist = {};
+        $scope.newWaitlist.sched_id = $scope.newBook.sched_id;
+        $scope.newWaitlist.date = $scope.newBook.date;
+        angular.element('#add-waitlist-modal').Modal();
+      } else {
+        $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+      }
     } else {
       $.Alert('Please select schedule date and time');
     }
   }
   
+  $scope.switchBikeModal = function (book) {
+    if (!$scope.isCompleted($scope.schedDetails)) {
+      ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+        $scope.selectedBook = book;
+        if (seats.available.length) {
+          var selectize = angular.element('#switch-seat')[0].selectize;
+          selectize.settings.sortField = 'text';
+          angular.forEach(seats.available, function (seat) {
+            selectize.addOption({ value: seat, text: seat });
+          });
+
+          angular.element('#switch-bike-modal').Modal();
+        } else{
+          $.Notify({ content: 'No seats available to switch' });    
+        }
+      });
+    } else {
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+    }
+  }
+
   $scope.switchBike = function () {
-    angular.element('#switch-bike-modal').Modal();
+    if ($scope.selectedBike) {
+      var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
+      $.Confirm(confirm_msg, function () {
+        ClassService.update({ scheduleId: $scope.selectedBook._id }, { move_to_seat : $scope.selectedBike }, function () {
+          $scope.reload();
+        }, function (error) {
+          $.Notify({ content: error.data });
+        });
+      });
+    } else {
+      $.Alert('Please select bike to switch')
+    }
   }
   
   $scope.moveToClass = function (wait) {
-    ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
-      $scope.selectedWaitList = wait;
-      if (seats.available.length) {
-        var selectize = angular.element('#select-seat')[0].selectize;
-        selectize.settings.sortField = 'text';
-        angular.forEach(seats.available, function (seat) {
-          selectize.addOption({ value: seat, text: seat });
-        });
-        
-        angular.element('#move-to-class-modal').Modal();
-      }else{
-        $.Notify({ content: 'No seats available' });    
-      }
-    });
-    
+    if (!$scope.isCompleted($scope.schedDetails)) {
+      ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
+        $scope.selectedWaitList = wait;
+        if (seats.available.length) {
+          var selectize = angular.element('#select-seat')[0].selectize;
+          selectize.settings.sortField = 'text';
+          angular.forEach(seats.available, function (seat) {
+            selectize.addOption({ value: seat, text: seat });
+          });
+          
+          angular.element('#move-to-class-modal').Modal();
+        } else {
+          $.Notify({ content: 'No seats available' });    
+        }
+      });
+    } else {
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+    }
   }
 
-  $scope.bookWaitList = function(){
-    ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number }, function(){
+  $scope.bookWaitList = function () {
+    ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number, waitlist: true }, function () {
       $scope.reload();
-    }, function(error){
+    }, function (error) {
       $.Notify({ content: error.data });
     });
   }
   
   $scope.removeFromWaitlist = function (wait, index) {
-    $scope.waitList.splice(index, 1);
-    ClassService.delete({ scheduleId: wait._id });
+    if (!$scope.isCompleted(wait.schedule)) {
+      $.Confirm('Are you sure on cancelling ' + wait.user_id.first_name + ' waitlist ?', function () {
+        $scope.waitList.splice(index, 1);
+        ClassService.delete({ scheduleId: wait._id });
+      });
+    } else {
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+    }
   }
 
   $scope.releaseWaitlist = function () {
     if (!$scope.newBook.sched_id) {
       $.Alert('Please select a valid schedule');
+      return;
+    }
+
+    if (!$scope.waitList || $scope.waitList.length <= 0) {
+      $.Notify({ content: 'No waitlist found to release' });
       return;
     }
 
@@ -562,13 +711,18 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
 
   $scope.downloadBookingList = function () {
-    window.location = '/admin/export/download-bookings?date=' + $scope.newBook.date + '&time=' + $scope.newBook.time;
+    if (!$scope.newBook.sched_id) {
+      $.Alert('Please select a valid schedule');
+      return;
+    }
+
+    window.location = '/admin/export/download-bookings?sched_id=' + $scope.newBook.sched_id;
   }
    
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, InstructorService) {
   
   var calendar = angular.element('.calendar');
   calendar.fullCalendar({
@@ -576,7 +730,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
     allDaySlot: false,
     allDay: false,
     minTime: '05:00:00',
-    maxTime: '20:00:00',
+    maxTime: '23:00:00',
     events: function (start, end, timezone, callback) {
       var events = [];
       ScheduleService.query({ start: start.unix(), end: end.unix() }, function (scheds) {
@@ -605,6 +759,19 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
     // }
   });
 
+  var addSeats = angular.element('#add-no-seats')[0].selectize;
+  var editSeats = angular.element('#edit-no-seats')[0].selectize;
+  addSeats.settings.sortField = 'text';
+  addSeats.settings.sortDirection = 'desc';
+  editSeats.settings.sortField = 'text';
+  editSeats.settings.sortDirection = 'desc';
+  for (var x = 37; x > 0; x--){
+    addSeats.addOption({ value: x, text: x });
+    editSeats.addOption({ value: x, text: x });
+  }
+  addSeats.setValue(37);
+
+
   // $scope.updateRegularSchedule = function () {
   //   var updatedSched = angular.copy($scope.editRegSched);
   //   updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
@@ -622,6 +789,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
   // }
   
   $scope.addSchedule = function () {
+    $timeout(function () {
+      angular.element('#add-select-schedule-type')[0].selectize.setValue('');
+      angular.element('#add-class-instructor')[0].selectize.setValue('');
+      angular.element('#add-no-seats')[0].selectize.setValue(37);
+    }, 400);
     angular.element('#add-sched-modal').Modal();
   }
 
@@ -642,42 +814,94 @@ ctrls.controller('ScheduleCtrl', function ($scope, ScheduleService, InstructorSe
   //   });
   // }
 
+  $scope.isPastDate = function (sched) {
+    var now = new Date();
+    var date = sched.date;
+    if (date instanceof Date) {
+      date.setHours(sched.start.getHours(), date.start.getMinutes(), 0, 0);
+    } else {
+      var dateParts = sched.date.split(/[^0-9]/);
+      date =  new Date(dateParts[0], dateParts[1]-1, dateParts[2], sched.start.getHours(), sched.start.getMinutes());
+    }
+
+    if (date < now) {
+      return true;
+    }
+
+    return false
+  }
+
   $scope.removeSchedule = function (sched) {
-    ScheduleService.delete({ scheduleId: sched.id });
-    calendar.fullCalendar('removeEvents', sched.id);
+    if (sched.ridersCount > 0) {
+      $.Alert('Not allowed to remove schedules has reservations')
+      return;
+    }
+
+    if (!$scope.isPastDate($scope.editSched)) {
+      $.Confirm('Are you sure on deleting schedule ?', function () {
+        ScheduleService.delete({ scheduleId: sched.id });
+        calendar.fullCalendar('removeEvents', sched.id);
+      });
+    } else {
+      $.Alert('Not allowed remove schedule on past dates');
+    }
   }
 
   $scope.editSchedule = function (sched) {
+    $timeout(function () {
+      angular.element('#edit-select-schedule-type')[0].selectize.setValue(sched.type);
+      angular.element('#edit-class-instructor')[0].selectize.setValue(sched.instructor._id);
+      angular.element('#edit-no-seats')[0].selectize.setValue(sched.seats);
+    }, 400);
     angular.element('#edit-sched-modal').Modal();
   }
 
   $scope.saveSchedule = function () {
-    var newSched = angular.copy($scope.newSpecSched);
-    newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
-    newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
-    ScheduleService.save(newSched, function (response) {
-      calendar.fullCalendar('refetchEvents');
+
+    if (!$scope.newSpecSched.date || 
+        !$scope.newSpecSched.type || 
+        !$scope.newSpecSched.instructor || 
+        !$scope.newSpecSched.start || 
+        !$scope.newSpecSched.end) {
+      $.Alert('Please complete schedule information');
+      return;
+    }
+
+    if (!$scope.isPastDate($scope.newSpecSched)) {
+      var newSched = angular.copy($scope.newSpecSched);
+      newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
+      newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
+      ScheduleService.save(newSched, function (response) {
+        calendar.fullCalendar('refetchEvents');
+        $scope.newSpecSched = {};
+      }, function (error) {
+        $.Notify({ content: error.data });
+        $scope.newSpecSched = {};
+      });
+    } else {
+      $.Alert('Not allowed to schedule past dates');
       $scope.newSpecSched = {};
-    }, function (error) {
-      $.Notify({ content: error.data });
-      $scope.newSpecSched = {};
-    });
+    }
   }
 
   $scope.updateSchedule = function () {
-    var updatedSched = angular.copy($scope.editSched);
-    updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
-    updatedSched.end = updatedSched.end.getHours() + ':' + updatedSched.end.getMinutes();
-    ScheduleService.update(
-      { scheduleId: updatedSched.id },
-      updatedSched,
-      function (response) {
-        calendar.fullCalendar('refetchEvents');
-      },
-      function (error) {
-        $.Notify({ content: error.data });
-      }
-    );
+    if (!$scope.isPastDate($scope.editSched)) {
+      var updatedSched = angular.copy($scope.editSched);
+      updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
+      updatedSched.end = updatedSched.end.getHours() + ':' + updatedSched.end.getMinutes();
+      ScheduleService.update(
+        { scheduleId: updatedSched.id },
+        updatedSched,
+        function (response) {
+          calendar.fullCalendar('refetchEvents');
+        },
+        function (error) {
+          $.Notify({ content: error.data });
+        }
+      );
+    } else {
+      $.Alert('Not allowed to modify/set schedule on past dates');
+    }
   }
 
   InstructorService.query(function (instructors) {
@@ -706,8 +930,8 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
     angular.element('#add-slide-modal').Modal();
   }
 
-  $scope.uploadImage = function(files, type){
-    if(files && files[0]){
+  $scope.uploadImage = function (files, type) {
+    if (files && files[0]) {
       var file = files[0];
       if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
         $.Alert('Invalid file type');
@@ -724,7 +948,7 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         file: file
       }).then(
         function (e) {
-          $("#" + type).attr("src", $("#" + type).attr("src")+"?timestamp=" + new Date().getTime());
+          $('#' + type).attr('src', $('#' + type).attr('src') + '?timestamp=' + new Date().getTime());
         },
         function (e) {
           $scope.uploading = false;
@@ -732,15 +956,15 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         },
         function (e) {
           var progress = parseInt(100.0 * e.loaded / e.total);
-          if(progress < 100)
+          if (progress < 100)
           $.Notify({ content: 'Uploading (' + progress + '%)' });
         }
       );
     }
   }
 
-  $scope.uploadSlider = function(files){
-    if(files && files[0]){
+  $scope.uploadSlider = function (files) {
+    if (files && files[0]) {
       var file = files[0];
       if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
         $.Alert('Invalid file type');
@@ -750,14 +974,14 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         return;
       }
       $scope.toUploadFile = file;
-    }else{
+    } else {
       $scope.toUploadFile = null;
     }
   }
 
-  $scope.saveSlider = function(){
-    if($scope.toUploadFile &&
-       $scope.newSlider && $scope.newSlider.text){
+  $scope.saveSlider = function () {
+    if ($scope.toUploadFile &&
+       $scope.newSlider && $scope.newSlider.text) {
       $scope.uploading = true;
       $upload.upload({
         url: '/admin/slider',
@@ -779,7 +1003,7 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         },
         function (e) {
           var progress = parseInt(100.0 * e.loaded / e.total);
-          if(progress < 100)
+          if (progress < 100)
           $.Notify({ content: 'Uploading (' + progress + '%)' });
         }
       );
@@ -789,26 +1013,26 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
   }
 
   $scope.updateSliderImg = null;
-  $scope.changeSliderImg = function(slider){
-    if(!$scope.uploading){
+  $scope.changeSliderImg = function (slider) {
+    if (!$scope.uploading) {
       $scope.updateSliderImg = slider;
     }
   }
 
-  $scope.chkChangeImg = function(id){
-    if($scope.updateSliderImg && $scope.updateSliderImg._id == id){
+  $scope.chkChangeImg = function (id) {
+    if ($scope.updateSliderImg && $scope.updateSliderImg._id == id) {
       return true;
     }
     return false;
   }
 
-  $scope.cancelChangeImg = function(){
+  $scope.cancelChangeImg = function () {
     $scope.updateSliderImg = null;
   }
 
-  $scope.updateSlider = function(){
-    if($scope.toUploadFile ||
-       ($scope.updateSliderImg && $scope.updateSliderImg.text)){
+  $scope.updateSlider = function () {
+    if ($scope.toUploadFile ||
+       ($scope.updateSliderImg && $scope.updateSliderImg.text)) {
       $scope.uploading = true;
       $upload.upload({
         url: '/admin/slider/' + $scope.updateSliderImg._id,
@@ -830,14 +1054,14 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         },
         function (e) {
           var progress = parseInt(100.0 * e.loaded / e.total);
-          if(progress < 100)
+          if (progress < 100)
           $.Notify({ content: 'Uploading (' + progress + '%)' });
         }
       );
     }
   }
 
-  $scope.removeSlider = function(slider){
+  $scope.removeSlider = function (slider) {
     SliderService.delete({ sliderId: slider._id });
     $scope.sliders = SliderService.query();
     $scope.sliders.$promise.then(function (data) {
@@ -959,22 +1183,22 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
     
     if ($scope.newInstructor) {
       if (!$scope.newInstructor.first_name) {
-        $.Alert('Package must have first name')
+        $.Alert('Instructor must have first name')
         return;
       }
 
       if (!$scope.newInstructor.last_name) {
-        $.Alert('Package must have last name')
+        $.Alert('Instructor must have last name')
         return;
       }      
       
       if (!$scope.newInstructor.email) {
-        $.Alert('Package must have email')
+        $.Alert('Instructor must have email')
         return;
       }
       
       if (!$scope.newInstructor.contact_number) {
-        $.Alert('Package must have number of contact_number')
+        $.Alert('Instructor must have number of contact_number')
         return;
       }
 
@@ -982,6 +1206,9 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
         $scope.newInstructor.gender = 'male';
 
       var addSuccess = function (data) {
+        $scope.picInstructor = data;
+        $scope.uploadInsPic($scope.files);
+
         InstructorService.query().$promise.then(function (data) {
           $scope.instructors = data;
         });
@@ -997,27 +1224,32 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
   }
 
   $scope.picInstructor = null;
-  $scope.changeInsPic = function(ins){
-    if(!$scope.uploading){
+  $scope.changeInsPic = function (ins) {
+    if (!$scope.uploading) {
       $scope.picInstructor = ins;
     }
   }
 
-  $scope.chkChangePic = function(id){
-    if($scope.picInstructor && $scope.picInstructor._id == id){
+  $scope.chkChangePic = function (id) {
+    if ($scope.picInstructor && $scope.picInstructor._id == id) {
       return true;
     }
     return false;
   }
 
-  $scope.cancelChangePic = function(){
+  $scope.cancelChangePic = function () {
     $scope.picInstructor = null;
   }
 
   $scope.uploading = false;
-  $scope.uploadInsPic = function(files){
+  $scope.uploadInsPic = function (files) {
 
-    if(files && files[0]){
+    if (!$scope.picInstructor) {
+      $scope.files = files;
+      return;
+    }
+
+    if (files && files[0]) {
       var file = files[0];
       if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
         $.Alert('Invalid file type');
@@ -1061,9 +1293,9 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
     $scope.updateInstructor._id = ins._id;
     $scope.updateInstructor.gender = ins.gender;
     $scope.updateInstructor.motto = ins.motto;
-    if(ins.birthdate){
+    if (ins.birthdate) {
       $scope.updateInstructor.birthdate = ins.birthdate.replace(' 00:00:00', '');
-    }else{
+    } else {
       $scope.updateInstructor.birthdate = '';
     }
   }
@@ -1092,17 +1324,19 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
   }
 
   $scope.removeInstructor = function (ins) {
-    var addSuccess = function (data) {
-      InstructorService.query().$promise.then(function (data) {
-        $scope.instructors = data;
-      });
-    }
+    $.Confirm('Are you sure on deleting ' + ins.admin.first_name + ' ' + ins.admin.last_name + ' ?', function(){
+      var addSuccess = function (data) {
+        InstructorService.query().$promise.then(function (data) {
+          $scope.instructors = data;
+        });
+      }
 
-    var addFail = function (error) {
-      $.Alert(error.data);
-    }
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
 
-    InstructorService.delete({instructorId : ins._id}).$promise.then(addSuccess, addFail);
+      InstructorService.delete({instructorId : ins._id}).$promise.then(addSuccess, addFail);
+    });
   }
 
 });
@@ -1118,7 +1352,7 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
     var select = angular.element('#search-trans-package')[0].selectize;
 
     angular.forEach(packages, function (pack) {
-      if(pack) select.addOption({ value: pack._id, text: pack.name });
+      if (pack) select.addOption({ value: pack._id, text: pack.name });
     });
   });
 });
@@ -1160,7 +1394,7 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
   }
 
   // When something is selected, update the “from” and “to” limits.
-  from_picker.on('set', function(event) {
+  from_picker.on('set', function (event) {
     if ( event.select ) {
       to_picker.set('min', from_picker.get('select'));
     }
@@ -1168,7 +1402,7 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
       to_picker.set('min', false);
     }
   });
-  to_picker.on('set', function(event) {
+  to_picker.on('set', function (event) {
     if ( event.select ) {
       from_picker.set('max', to_picker.get('select'));
     }
@@ -1204,6 +1438,24 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     }
   }
 
+  $scope.checkSeat = function (seat) {
+    if ($scope.selectedStat && $scope.selectedStat.books) { 
+      for (var b in $scope.selectedStat.books) {
+        if ($scope.selectedStat.books[b].seat_number == seat ||
+            seat > $scope.selectedStat.seats) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  $scope.viewBikeMap = function (stat) {
+    $scope.selectedStat = stat;
+    angular.element('#bike-map-modal').Modal();
+  }
+
   $scope.viewUserList = function (stat, sType) {
     $scope.selectedStat = stat;
     $scope.selectedType = sType;
@@ -1214,14 +1466,14 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     var select = angular.element('#search-instructor')[0].selectize;
 
     angular.forEach(instructors, function (ins) {
-      if(ins) select.addOption({ value: ins._id, text: ins.admin.first_name + ' ' + ins.admin.last_name });
+      if (ins) select.addOption({ value: ins._id, text: ins.admin.first_name + ' ' + ins.admin.last_name });
     });
   });
 
-  $scope.withAvailableSeats = function(stat){
+  $scope.withAvailableSeats = function (stat) {
     if ($scope.selectedOption && $scope.selectedOption != 'all') {
       if ($scope.selectedOption == 'withAvailable') {
-        return stat.books.length < 37;  
+        return stat.books.length < stat.seats;  
       } else if ($scope.selectedOption == 'withWaitlisted') {
         return stat.waitlist.length > 0;
       }

@@ -3,7 +3,7 @@ from app.models.packages import *
 from datetime import datetime
 from bson.objectid import ObjectId
 from motorengine import DESCENDING, ASCENDING
-from app.helper import send_email, send_email_cancel, send_email_booking
+from app.helper import send_email, send_email_cancel, send_email_booking, send_email_move
 
 import tornado.escape
 
@@ -20,7 +20,7 @@ def find(self):
         ins_sched = yield InstructorSchedule.objects.get(sched_id)
         scheds = yield BookedSchedule.objects.filter(status='booked', date=date, schedule=ins_sched._id).find_all()
         available_seats = []
-        for seat in range(1, 38):
+        for seat in range(1, ins_sched.seats + 1):
             seat_exists = yield BookedSchedule.objects.get(seat_number=str(seat),
                                                            status='booked', date=date, schedule=ins_sched._id)
             if not seat_exists:
@@ -56,6 +56,13 @@ def find(self):
                 'schedule': ins_sched,
                 'schedules': list_scheds
             })
+        else:
+            self.render_json({
+                'bookings': [],
+                'waitlist': [],
+                'schedule': {},
+                'schedules': []
+            })
 
 def create(self):
     data = tornado.escape.json_decode(self.request.body)
@@ -67,10 +74,10 @@ def create(self):
         self.finish()
 
     obj_user_id = ObjectId(data['user_id'])
-    ins_sched = ObjectId(data['sched_id'])
+    ins_sched = yield InstructorSchedule.objects.get(ObjectId(data['sched_id']))
     if not 'status' in data or data['status'] == 'booked':
-        total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched).count()
-        if total_booked >= 37:
+        total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched._id).count()
+        if total_booked >= ins_sched.seats:
             self.set_status(400)
             self.write('No available slots')
             self.finish()
@@ -81,16 +88,9 @@ def create(self):
             self.write('Please select a bike')
             self.finish()
 
-        booked_sched = yield BookedSchedule.objects.get(status='booked', date=special_date, schedule=ins_sched, user_id=obj_user_id)
-        if booked_sched:
-            self.set_status(400)
-            self.write('Already booked on the same schedule')
-            self.finish()
-            return
-
     user_package = yield UserPackage.objects \
-        .filter(user_id=obj_user_id, remaining_credits__gt=0) \
-        .order_by('create_at', DESCENDING) \
+        .filter(user_id=obj_user_id, remaining_credits__gt=0, status__ne='Expired') \
+        .order_by('expire_date', ASCENDING) \
         .find_all()
 
     user = yield User.objects.get(obj_user_id)
@@ -112,7 +112,7 @@ def create(self):
 
     sched = BookedSchedule()
     sched.date = datetime.strptime(data['date'], '%Y-%m-%d')
-    sched.schedule = ins_sched
+    sched.schedule = ins_sched._id
     sched.user_package = user_package[0]._id
     sched.user_id = ObjectId(data['user_id'])
     sched.status = sched_status
@@ -123,12 +123,11 @@ def create(self):
     sched = yield sched.save()
 
     user = (yield User.objects.get(user._id)).serialize()
-    ins_sched = yield InstructorSchedule.objects.get(ins_sched)
     if sched_status == 'booked':
-        content = str(self.render_string('emails/booking', date=data['date'], user=user, instructor=ins_sched.instructor, time=ins_sched.start.strftime('%I:%M %p'), seat_number=str(sched.seat_number)), 'UTF-8')
+        content = str(self.render_string('emails/booking', date=data['date'], type=ins_sched.type, user=user, instructor=ins_sched.instructor, time=ins_sched.start.strftime('%I:%M %p'), seat_number=str(sched.seat_number)), 'UTF-8')
         yield self.io.async_task(send_email_booking, user=user, content=content)
     elif sched_status == 'waitlisted':
-        content = str(self.render_string('emails/waitlist', date=data['date'], user=user, instructor=ins_sched.instructor, time=ins_sched.start.strftime('%I:%M %p')), 'UTF-8')
+        content = str(self.render_string('emails/waitlist', date=data['date'], type=ins_sched.type, user=user, instructor=ins_sched.instructor, time=ins_sched.start.strftime('%I:%M %p')), 'UTF-8')
         yield self.io.async_task(send_email, user=user, content=content, subject='WaitListed Schedule')
 
     self.render_json(sched)
@@ -147,13 +146,34 @@ def update(self, id):
     if 'move_to_seat' in data:
         sched = yield InstructorSchedule.objects.get(booked_schedule.schedule._id)
 
-        booked_schedule.status = 'booked'
+        if 'waitlist' in data:
+            booked_schedule.status = 'booked'
+
         booked_schedule.seat_number = data['move_to_seat']
         booked_schedule = yield booked_schedule.save()
 
         user = (yield User.objects.get(booked_schedule.user_id._id)).serialize()
-        content = str(self.render_string('emails/waitlist_approved', date=booked_schedule.date.strftime('%Y-%m-%d'), user=user, seat_number=booked_schedule.seat_number, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p')), 'UTF-8')
-        yield self.io.async_task(send_email, user=user, content=content, subject='Waitlist moved to class')
+        if 'waitlist' in data:
+            content = str(self.render_string('emails/booking', 
+                          date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                          user=user, 
+                          type=sched.type,
+                          seat_number=str(booked_schedule.seat_number), 
+                          instructor=sched.instructor, 
+                          time=sched.start.strftime('%I:%M %p')), 'UTF-8')
+            yield self.io.async_task(send_email, user=user, content=content, subject='Waitlist moved to class')
+        else:
+            yield self.io.async_task(send_email_move,
+                content=str(self.render_string('emails/moved', 
+                            user=user, 
+                            type=sched.type,
+                            instructor=sched.instructor, 
+                            date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                            seat_number=booked_schedule.seat_number, 
+                            time=sched.start.strftime('%I:%M %p')), 'UTF-8'),
+                user=user
+            )
+
     else: 
         special_date = datetime.strptime(data['date'], '%Y-%m-%d')
         time = datetime.strptime(data['time'], '%I:%M %p')
@@ -162,7 +182,7 @@ def update(self, id):
             ins_sched = yield InstructorSchedule.objects.get(day=special_date.strftime('%a').lower(), start=time)
 
         total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched).count()
-        if total_booked >= 37:
+        if total_booked >= ins_sched.seats:
             self.set_status(400)
             self.write('Not available slots')
             self.finish()
@@ -176,8 +196,12 @@ def update(self, id):
 
 def destroy(self, id):
     if id != 'None':
+        notes = self.get_query_argument('notes')
         booked_schedule = yield BookedSchedule.objects.get(id)
+        ref_status = booked_schedule.status
         booked_schedule.status = 'cancelled'
+        if notes:
+            booked_schedule.notes = notes
         if booked_schedule.user_package:
             booked_schedule.user_package.remaining_credits += 1
             yield booked_schedule.user_package.save()
@@ -187,17 +211,29 @@ def destroy(self, id):
         yield user.save()
 
         yield booked_schedule.save()
-        yield self.io.async_task(
-            send_email_cancel,
-            user=user.to_dict(),
-            content=str(self.render_string(
-                            'emails/cancel', 
-                            instructor=booked_schedule.schedule.instructor, 
-                            user=user.to_dict(), 
-                            date=booked_schedule.date.strftime('%Y-%m-%d'), 
-                            seat_number=booked_schedule.seat_number, 
-                            time=booked_schedule.schedule.start.strftime('%I:%M %p')
-                        ), 'UTF-8'))
+
+        if ref_status == 'waitlisted':
+            content = str(self.render_string('emails/waitlist_removed', 
+                                              date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                                              user=user.to_dict(), 
+                                              type=booked_schedule.schedule.type,
+                                              seat_number=booked_schedule.seat_number, 
+                                              instructor=booked_schedule.schedule.instructor, 
+                                              time=booked_schedule.schedule.start.strftime('%I:%M %p')), 'UTF-8')
+            yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Cancelled')
+        else:
+            yield self.io.async_task(
+                send_email_cancel,
+                user=user.to_dict(),
+                content=str(self.render_string(
+                                'emails/cancel', 
+                                instructor=booked_schedule.schedule.instructor, 
+                                user=user.to_dict(),
+                                type=booked_schedule.schedule.type, 
+                                date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                                seat_number=booked_schedule.seat_number, 
+                                time=booked_schedule.schedule.start.strftime('%I:%M %p')
+                            ), 'UTF-8'))
 
         self.render_json(booked_schedule)
     else:
@@ -218,15 +254,12 @@ def destroy(self, id):
                 user.credits += 1
                 yield user.save()
                 yield wait.save()
-                self.io.async_task(
-                    send_email_cancel,
-                    user=user.to_dict(),
-                    content=str(self.render_string(
-                                    'emails/cancel', 
-                                    instructor=wait.schedule.instructor, 
-                                    user=user.to_dict(), 
-                                    date=wait.date.strftime('%Y-%m-%d'), 
-                                    seat_number=wait.seat_number, 
-                                    time=wait.schedule.start.strftime('%I:%M %p')
-                                ), 'UTF-8'))
+                content = str(self.render_string('emails/waitlist_removed', 
+                                              date=wait.date.strftime('%Y-%m-%d'), 
+                                              user=user.to_dict(), 
+                                              type=wait.schedule.type,
+                                              seat_number=wait.seat_number, 
+                                              instructor=wait.schedule.instructor, 
+                                              time=wait.schedule.start.strftime('%I:%M %p')), 'UTF-8')
+                yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Cancelled')
         self.finish()

@@ -44,6 +44,7 @@
             <thead>
               <tr>
                 <th>Schedule</th>
+                <th>Type</th>
                 <th>Instructor</th>
                 <th>Status</th>
                 <th>Seats</th>
@@ -55,15 +56,16 @@
             <tbody>
               <tr ng-repeat="stat in stats | search:'instructor._id':searchIns | filter:withAvailableSeats">
                 <td>{{ stat.date | formatDate }} {{ stat.start | formatTime }}</td>
+                <td>{{ stat.type }}</td>
                 <td>{{ stat.instructor.admin.first_name }} {{ stat.instructor.admin.last_name }}</td>
                 <td>
                   <span ng-if="isCompleted(stat)">Completed</span>
                   <span ng-if="!isCompleted(stat)">Available</span>
                 </td>
-                <td>37</td>
+                <td><a ng-click="viewBikeMap(stat)">{{ stat.seats }}</a></td>
                 <td>
-                  <span ng-if="stat.books.length <= 37">{{ 37 - stat.books.length }}</span>
-                  <span ng-if="stat.books.length > 37">0</span>
+                  <span ng-if="stat.books.length <= stat.seats">{{ stat.seats - stat.books.length }}</span>
+                  <span ng-if="stat.books.length > stat.seats">0</span>
                 </td>
                 <td>
                   <a ng-if="stat.books.length > 0" ng-click="viewUserList(stat,'book')">{{ stat.books.length }}</a>
@@ -76,6 +78,79 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="bike-map" id="bike-map-modal">
+    <div class="modal__box pad" style="max-width: 80%">
+      <span class="close-btn modal-close">X</span>
+
+      <div class="space--bottom pad--bottom">
+        <span class="label">Schedule</span>
+        <h4 class="h-small">{{ selectedStat.date | formatDate }} {{ selectedStat.start | formatTime }}</h4>
+      </div>
+
+      <div class="class">
+        <table class="seats">
+          <tr>
+            <td ng-class="{ unavailable: checkSeat(1), hidden: 1 > selectedStat.seats }"><span>1</span></td>
+            <td ng-class="{ unavailable: checkSeat(2), hidden: 2 > selectedStat.seats }"><span>2</span></td>
+            <td ng-class="{ unavailable: checkSeat(3), hidden: 3 > selectedStat.seats }"><span>3</span></td>
+            <td ng-class="{ unavailable: checkSeat(4), hidden: 4 > selectedStat.seats }"><span>4</span></td>
+            <td ng-class="{ unavailable: checkSeat(5), hidden: 5 > selectedStat.seats }"><span>5</span></td>
+            <td ng-class="{ unavailable: checkSeat(6), hidden: 6 > selectedStat.seats }"><span>6</span></td>
+            <td ng-class="{ unavailable: checkSeat(7), hidden: 7 > selectedStat.seats }"><span>7</span></td>
+            <td ng-class="{ unavailable: checkSeat(8), hidden: 8 > selectedStat.seats }"><span>8</span></td>
+          </tr>
+          <tr>
+            <td ng-class="{ unavailable: checkSeat(9), hidden: 9 > selectedStat.seats }"><span>9</span></td>
+            <td ng-class="{ unavailable: checkSeat(10), hidden: 10 > selectedStat.seats }"><span>10</span></td>
+            <td ng-class="{ unavailable: checkSeat(11), hidden: 11 > selectedStat.seats }"><span>11</span></td>
+            <td ng-class="{ unavailable: checkSeat(12), hidden: 12 > selectedStat.seats }"><span>12</span></td>
+            <td ng-class="{ unavailable: checkSeat(13), hidden: 13 > selectedStat.seats }"><span>13</span></td>
+            <td ng-class="{ unavailable: checkSeat(14), hidden: 14 > selectedStat.seats }"><span>14</span></td>
+            <td ng-class="{ unavailable: checkSeat(15), hidden: 15 > selectedStat.seats }"><span>15</span></td>
+            <td ng-class="{ unavailable: checkSeat(16), hidden: 16 > selectedStat.seats }"><span>16</span></td>
+          </tr>
+          <tr>
+            <td ng-class="{ unavailable: checkSeat(17), hidden: 17 > selectedStat.seats }"><span>17</span></td>
+            <td ng-class="{ unavailable: checkSeat(18), hidden: 18 > selectedStat.seats }"><span>18</span></td>
+            <td ng-class="{ unavailable: checkSeat(19), hidden: 19 > selectedStat.seats }"><span>19</span></td>
+            <td ng-class="{ unavailable: checkSeat(20), hidden: 20 > selectedStat.seats }"><span>20</span></td>
+            <td ng-class="{ unavailable: checkSeat(21), hidden: 21 > selectedStat.seats }"><span>21</span></td>
+            <td ng-class="{ unavailable: checkSeat(22), hidden: 22 > selectedStat.seats }"><span>22</span></td>
+            <td ng-class="{ unavailable: checkSeat(23), hidden: 23 > selectedStat.seats }"><span>23</span></td>
+            <td ng-class="{ unavailable: checkSeat(24), hidden: 24 > selectedStat.seats }"><span>24</span></td>
+          </tr>
+          <tr>
+            <td ng-class="{ unavailable: checkSeat(25), hidden: 25 > selectedStat.seats }"><span>25</span></td>
+            <td ng-class="{ unavailable: checkSeat(26), hidden: 26 > selectedStat.seats }"><span>26</span></td>
+            <td ng-class="{ unavailable: checkSeat(27), hidden: 27 > selectedStat.seats }"><span>27</span></td>
+            <td class="hidden"><span></span></td>
+            <td ng-class="{ unavailable: checkSeat(28), hidden: 28 > selectedStat.seats }"><span>28</span></td>
+            <td ng-class="{ unavailable: checkSeat(29), hidden: 29 > selectedStat.seats }"><span>29</span></td>
+            <td ng-class="{ unavailable: checkSeat(30), hidden: 30 > selectedStat.seats }"><span>30</span></td>
+            <td ng-class="{ unavailable: checkSeat(31), hidden: 31 > selectedStat.seats }"><span>31</span></td>
+          </tr>
+          <tr>
+            <td ng-class="{ unavailable: checkSeat(32), hidden: 32 > selectedStat.seats }"><span>32</span></td>
+            <td ng-class="{ unavailable: checkSeat(33), hidden: 33 > selectedStat.seats }"><span>33</span></td>
+            <td ng-class="{ unavailable: checkSeat(34), hidden: 34 > selectedStat.seats }"><span>34</span></td>
+            <td class="hidden"><span></span></td>
+            <td class="hidden"><span></span></td>
+            <td ng-class="{ unavailable: checkSeat(35), hidden: 35 > selectedStat.seats }"><span>35</span></td>
+            <td ng-class="{ unavailable: checkSeat(36), hidden: 36 > selectedStat.seats }"><span>36</span></td>
+            <td ng-class="{ unavailable: checkSeat(37), hidden: 37 > selectedStat.seats }"><span>37</span></td>
+          </tr>
+        </table>
+        
+        <div class="class-instructor">
+          <div class="image">
+            <img src="{{ selectedStat.instructor.image ? '/assets/' + selectedStat.instructor.image : 'http://placehold.it/350x150' }}">
+          </div>
+          <h3 class="h small center primary">{{ selectedStat.instructor.admin.first_name }}</h3>
         </div>
       </div>
     </div>

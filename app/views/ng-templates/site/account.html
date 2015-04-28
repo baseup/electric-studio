@@ -20,20 +20,21 @@
             <input class="input" placeholder="Last Name" ng-model="account.last_name">
             <input class="input" placeholder="Email Address" ng-model="account.email">
             <input class="input" placeholder="Mobile Number" ng-model="account.phone_number">
-          </div>  
-          <div class="col-2">
-            <h4 class="h small">Emergency Contact</h4>
-            <input class="input" placeholder="Contact Number" ng-model="account.emergency_contact">
-            <input class="input" placeholder="Contact Full Name" ng-model="account.contact_person"/>
-            <h4 class="h small"><br/>Birthday</h4>
-            <input class="input datepicker" placeholder="yyyy-mm-dd" ng-model="account.birthdate">
           </div>
+
+          <h4 class="h small">Birthday</h4>
+          <input class="input datepicker" placeholder="yyyy-mm-dd" ng-model="account.birthdate">
+        </section>
+        <section>
+            <h4 class="h small">Emergency Contact</h4>
+            <input class="input" placeholder="Contact Full Name" ng-model="account.contact_person">
+            <input class="input" placeholder="Contact Number" ng-model="account.emergency_contact">
         </section>
         <a class="button small pads primary" ng-click="updateAccount()" >Save</a> 
         <section>
           <h3 class="h medium gray">Change Password</h3>
           <input class="input" type="password" ng-model="pass.current_password" placeholder="Current Password">
-          <input class="input" type="password" ng-model="pass.password" placeholder="New Password">
+          <input class="input" type="password" ng-model="pass.password" placeholder="New Password (min. 6 character)">
           <input class="input" type="password" ng-model="pass.confirm_password" placeholder="Retype New Password">
           <a class="button small pads primary" ng-click="changePassword()">Update Password</a> 
         </section>
@@ -56,7 +57,7 @@
             <option vaule="mastercard">Mastercard</option>
           </select>
           <input class="input" ng-model="billing.card_expiration" placeholder="Expiration date (MM/YY)" >
-          <input class="input" ng-model="billing.csc" placeholder="CSC" >
+          <input class="input" type="password" ng-model="billing.csc" placeholder="CSC" >
           <a class="button small pads primary" ng-click="updateBilling()">Save Billing Info</a> 
         </section>
         
@@ -66,11 +67,12 @@
             <div ng-repeat="trans in transactions" class="grid__item bp-md-one-half bp-lg-one-third">
               <div class="account__item box--bordered box--white space--bottom cf">
                 <div class="pad">
-                  <b ng-if="trans.package_id.name" class="h--small">{{ trans.package_id.name }}</b>
-                  <b ng-if="!trans.package_id.name" class="h--small">FREE</b>
+                  <b ng-if="trans.package_name" class="h--small">{{ trans.package_name }}</b>
+                  <b ng-if="!trans.package_name" class="h--small">FREE</b>
                   <br/><br/>
-                  <span class="h small ">{{ trans.remaining_credits }} Classes Left</span>
-                  <span class="h small ">Expires on {{ trans.create_at | addDay:trans.expiration | formatDate }}</span>
+                  <span class="h small ">{{ trans.remaining_credits }} Class<span ng-if="trans.remaining_credits > 1">es</span> Left</span>
+                  <br/><span class="h small ">Expires on {{ trans.create_at | addDay:trans.expiration | formatDate }}</span>
+                  <span ng-if="trans.notes"><br/><span class="label inline">Notes:</span> {{ trans.notes }}</span>
                 </div>
               </div>
             </div>

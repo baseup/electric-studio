@@ -22,9 +22,13 @@ class UserPackage(Model):
     __lazy__ = False
     user_id = ReferenceField(reference_document_type=User)
     package_id = ReferenceField(reference_document_type=Package, required=False)
+    package_name = StringField(required=False)
+    package_fee = DecimalField(required=False, default='0.00')
     credit_count = IntField(required=True)
     expiration = IntField(required=True)
+    expire_date = DateTimeField(required=False)
     remaining_credits = IntField(required=True)
+    status = StringField(default='Active')
     notes = StringField()
     is_free = BooleanField(default=False)
     trans_info = StringField(default=None)

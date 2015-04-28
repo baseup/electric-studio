@@ -13,7 +13,7 @@ def find(self):
         self.finish()
     else:
         user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-        transactions = yield UserPackage.objects.filter(user_id=ObjectId(user_id), remaining_credits__gt=0).find_all()
+        transactions = yield UserPackage.objects.filter(user_id=ObjectId(user_id), remaining_credits__gt=0, status__ne='Expired').find_all()
         self.render_json(transactions)
 
 def find_one(self, id):
@@ -30,6 +30,8 @@ def create(self):
         if 'package_id' in data:
             package = yield Package.objects.get(data['package_id'])
             transaction.package_id = data['package_id']
+            transaction.package_name = package.name
+            transaction.package_fee = package.fee
             transaction.credit_count = package.credits
             transaction.remaining_credits = package.credits
             transaction.expiration = package.expiration
