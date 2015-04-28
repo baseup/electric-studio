@@ -95,7 +95,20 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 });
 
-ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, PackageService, TransactionService, ClassService, SecurityService) {
+ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserService, PackageService, TransactionService, ClassService, SecurityService) {
+
+  
+  var qstring = $location.search();
+  if (qstring.s) {
+    if (qstring.s == 'success' && qstring.pname) {
+      $.Alert('Success! You have bought ' + qstring.pname + ' package for ' + qstring.u);
+    } else if (qstring.s == 'exists') {
+      $.Alert('Transaction already exists');
+    } else if (qstring.s == 'error') {
+      $.Alert('Transaction failed');
+    }
+    $location.search({ s: null, pname: null });
+  }
 
   $scope.newCredits = {};
 
