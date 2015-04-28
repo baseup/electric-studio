@@ -328,7 +328,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, UserService, Package
   $scope.cancelWaitlist = function (index, sched) {
     ClassService.delete({ scheduleId: sched._id }, function () {
       $scope.filterSchedDate($scope.selectedAccount);
-      $.Alert('Successfully cancelled waitlisted schedule');
+      $.Alert('Successfully canceled waitlisted schedule');
     });
 
   }

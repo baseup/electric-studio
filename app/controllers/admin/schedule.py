@@ -220,7 +220,7 @@ def destroy(self, id):
                                               seat_number=booked_schedule.seat_number, 
                                               instructor=booked_schedule.schedule.instructor, 
                                               time=booked_schedule.schedule.start.strftime('%I:%M %p')), 'UTF-8')
-            yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Cancelled')
+            yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Canceled')
         else:
             yield self.io.async_task(
                 send_email_cancel,
@@ -261,5 +261,5 @@ def destroy(self, id):
                                               seat_number=wait.seat_number, 
                                               instructor=wait.schedule.instructor, 
                                               time=wait.schedule.start.strftime('%I:%M %p')), 'UTF-8')
-                yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Cancelled')
+                yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Canceled')
         self.finish()
