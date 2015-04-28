@@ -1755,7 +1755,7 @@ body {
 
   @include breakpoint(md) {
   tr:nth-child(even) td {
-    //text-align: right;
+    text-align: right;
   }
   }
 
