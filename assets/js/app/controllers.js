@@ -135,14 +135,34 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
 
       //preload images
       $timeout(function () {
+        var maxTries = 60;
+        var intervals = [];
+        var counter = 0;
+
         angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
           var img = angular.element(value);
           var src = img.attr('src');
           
-          if (img[0].complete) {
-            img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
-            img.remove();
-          }
+          intervals.push({
+            fn : 'qwww',
+            tries : 0
+          });
+
+          var thsObj = intervals[counter];
+
+          thsObj.fn = setInterval(function () {
+            if (thsObj.tries > maxTries) {
+              clearInterval(thsObj.fn);
+            }
+            if (img[0].complete) {
+              img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
+              img.remove();
+              clearInterval(thsObj.fn);
+            }
+
+            thsObj.tries++;
+          }, 50)
+          counter++;;
         });
       }, 800);
 
