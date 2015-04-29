@@ -27,26 +27,29 @@ def create(self):
     if 'password' in data:
         password = bcrypt.encrypt(data['password'])
 
-    try :
-        user = User(first_name=data['first_name'], 
-                    # middle_name=data['middle_name'],
-                    last_name=data['last_name'],
-                    email=data['email'].lower(),
-                    password=password,
-                    status='Unverified',
-                    credits=0)
+    isExist = (yield User.objects.filter(email=data['email'], status__ne='Deleted').count())
+    if isExist > 0:
+        self.set_status(400)
+        self.write('Email already in used')
+    else:
+        try :
+            user = User(first_name=data['first_name'], 
+                        # middle_name=data['middle_name'],
+                        last_name=data['last_name'],
+                        email=data['email'].lower(),
+                        password=password,
+                        status='Unverified',
+                        credits=0)
 
-        if 'phone_number' in data:
-            user.phone_number = data['phone_number']
+            if 'phone_number' in data:
+                user.phone_number = data['phone_number']
 
-        user = yield user.save()
-    except :
-        value = sys.exc_info()[1]
-        self.set_status(403)
-        str_value = str(value)
-        if 'The index' in str_value and 'was violated when trying to save' in str_value:
-            str_value = 'Email already in used'
-        self.write(str_value)
+            user = yield user.save()
+        except :
+            value = sys.exc_info()[1]
+            self.set_status(403)
+            str_value = str(value)
+            self.write(str_value)
     self.finish()
 
 def update(self, id):

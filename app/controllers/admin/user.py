@@ -11,7 +11,7 @@ import tornado
 import json
 
 def find(self):
-    users = yield User.objects.order_by('update_at',direction=DESCENDING).find_all()
+    users = yield User.objects.filter(status__ne='Deleted').order_by('update_at',direction=DESCENDING).find_all()
     self.render_json(users)
 
 def find_one(self, id):
@@ -43,30 +43,30 @@ def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
 
-    passWord = None
+    password = None
     if 'password' in data:
-        passWord = bcrypt.encrypt(data['password'])
-    try :
-        user = User(first_name=data['first_name'], 
-                    # middle_name=data['middle_name'],
-                    last_name=data['last_name'],
-                    email=data['email'],
-                    password=passWord,
-                    # birthdate=datetime.strptime(data['birthdate'],'%Y-%m-%d'),
-                    phone_number=data['phone_number'],
-                    # emergency_contact=data['emergency_contact'],
-                    # address=data['address'],
-                    status='Unverified',
-                    # profile_pic=data['profile_pic'],
-                    credits=0)
-        user = yield user.save()
-    except :
-        value = sys.exc_info()[1]
-        self.set_status(403)
-        str_value = str(value)
-        if 'The index "caused" was violated ' in str_value:
-            str_value = 'Email already in used'
-        self.write(str_value)
+        password = bcrypt.encrypt(data['password'])
+
+    isExist = (yield User.objects.filter(email=data['email'], status__ne='Deleted').count())
+    if isExist > 0:
+        self.set_status(400)
+        self.write('Email already in used')
+    else:
+        try :
+            user = User(first_name=data['first_name'], 
+                        # middle_name=data['middle_name'],
+                        last_name=data['last_name'],
+                        email=data['email'],
+                        password=password,
+                        status='Unverified',
+                        credits=0)
+
+            user = yield user.save()
+        except :
+            value = sys.exc_info()[1]
+            self.set_status(403)
+            str_value = str(value)
+            self.write(str_value)
     self.finish()
 
 def update(self, id):
@@ -126,5 +126,25 @@ def update(self, id):
 
 def destroy(self, id):
     user = yield User.objects.get(id)
-    user.delete()
+
+    scheds = yield BookedSchedule.objects.filter(user_id=user._id, status__ne='completed') \
+                                  .filter(status__ne='cancelled') \
+                                  .filter(status__ne='missed').find_all()
+    if scheds:
+        for i, sched in enumerate(scheds):
+
+            if sched.user_package:
+                sched.user_package.remaining_credits += 1
+                yield sched.user_package.save()
+
+            if sched.status == 'waitlisted':
+                user.credits += 1
+
+            sched.status = 'cancelled'
+            yield sched.save()
+
+    user.status = 'Deleted'
+    user = yield user.save()
     self.finish()
+
+
