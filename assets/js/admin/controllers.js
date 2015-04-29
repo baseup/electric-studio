@@ -429,6 +429,14 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
       UserService.update({ userId: user._id }, { unfroze: true }, unFrozeSuccess, unFrozeFailed);
     });
   }
+
+  $scope.downloadUserAccounts = function () {
+    var emailFilter = $scope.searchText;
+    if(!emailFilter){
+      emailFilter = '';
+    }
+    window.location = '/admin/export/download-user-accounts?email=' + emailFilter
+  }
   
 });
 
@@ -728,7 +736,6 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       $.Alert('Please select a valid schedule');
       return;
     }
-
     window.location = '/admin/export/download-bookings?sched_id=' + $scope.newBook.sched_id;
   }
    
