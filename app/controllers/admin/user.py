@@ -29,7 +29,8 @@ def find_one(self, id):
         if endDate: 
             toDate = datetime.strptime(endDate, '%Y-%m-%d')
 
-        books = yield BookedSchedule.objects.filter(user_id=user._id, date__gte=fromDate, date__lte=toDate).order_by('date',direction=DESCENDING).find_all()
+        books = yield BookedSchedule.objects.filter(user_id=user._id, date__gte=fromDate, date__lte=toDate) \
+                                            .order_by('date',direction=DESCENDING).find_all()
         json_user['books'] = to_json_serializable(books)
     else:
         packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
