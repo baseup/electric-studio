@@ -32,7 +32,9 @@ def find(self):
             user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
             user = yield User.objects.get(user_id)
             if user:
-                books = yield BookedSchedule.objects.filter(user_id=user._id, status__ne='cancelled').filter(status__ne='completed').find_all()
+                books = yield BookedSchedule.objects.filter(user_id=user._id, status__ne='cancelled') \
+                                                    .filter(status__ne='missed') \
+                                                    .filter(status__ne='completed').find_all()
                 self.render_json(books)
             else:
                 self.finish()

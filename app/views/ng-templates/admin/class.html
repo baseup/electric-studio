@@ -62,14 +62,22 @@
 
             <div class=" box__header">
               <ul class=" booking__actions nav">
+
                 <li>
-                  <a style='margin: 0px 0 !important' class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBikeModal(book)">
+                  <a title="Switch Bike" class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBikeModal(book)">
                     <i class="fa fa-exchange"></i>
                     <span class="bike-number">{{ book.seat_number }}</span>
                   </a>
                 </li>
                 <li>
-                  <a style='line-height: 30px !important' ng-click="cancelBooking(book, $index)" class="cancel-booking"><i class="fa fa-times"></i></a>
+                  <a title="Mark as Missed" ng-click="missedBooking(book, $index)" class="option-booking">
+                    <i class="fa fa-clock-o"></i>
+                  </a>
+                </li>
+                <li>
+                  <a title="Cancel Book" ng-click="cancelBooking(book, $index)" class="option-booking">
+                    <i class="fa fa-times"></i>
+                  </a>
                 </li>
               </ul>
 

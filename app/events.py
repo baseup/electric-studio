@@ -39,7 +39,10 @@ def schedule_watcher():
                 user.save()
                 user_pack.save()
 
-    schedules = yield BookedSchedule.objects.filter(date__lte=now, status__ne='completed').filter(status__ne='cancelled').find_all()
+    schedules = yield BookedSchedule.objects.filter(date__lte=now, status__ne='completed') \
+                                            .filter(status__ne='cancelled') \
+                                            .filter(status__ne='missed') \
+                                            .find_all()
     if schedules:
         for i, sched in enumerate(schedules):
             sched_date = datetime.combine(sched.date, sched.schedule.start.time())

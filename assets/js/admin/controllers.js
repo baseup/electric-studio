@@ -513,9 +513,20 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   }
 
+  $scope.missedBooking = function (booking, index) {
+    if (!$scope.isCompleted(booking.schedule)) {
+      $.Confirm('Are you sure on marking ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride as MISSED ? (THIS CANNOT BE UNDONE)', function () {
+        $scope.books.splice(index, 1);
+        ClassService.delete({ scheduleId: booking._id, missed: true });
+      });
+    } else {
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+    }
+  }
+
   $scope.cancelBooking = function (booking, index) {
     if (!$scope.isCompleted(booking.schedule)) {
-      $.Confirm('Are you sure on cancelling ' + booking.user_id.first_name + ' ride ?', function () {
+      $.Confirm('Are you sure on cancelling ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride ?', function () {
         $.Prompt('Notes on cancelling ' + booking.user_id.first_name + ' ride', function (notes) {
           if (notes && notes.length > 0) {
             $scope.books.splice(index, 1);
