@@ -22,6 +22,8 @@ routes.get('/test_waitlist', 'home.test_waitlist')
 routes.get('/remove_test_waitlist', 'home.remove_test_waitlist')
 routes.get('/package_migrate', 'home.package_migrate')
 routes.get('/schedule_migrate', 'home.schedule_migrate')
+routes.get('/add_branch', 'home.add_branch')
+# routes.get('/404', '')
 
 routes.prefix('/admin', [
 
@@ -53,7 +55,13 @@ routes.prefix('/api', [
     ('resource', '/transaction', 'api.transaction'),
     ('resource', '/schedule', 'api.schedules'),
     ('resource', '/book', 'api.book'),
-    ('resource', '/history', 'api.history')
+    ('resource', '/history', 'api.history'),
+    ('resource', '/users', 'pos.users'),
+    ('resource', '/packages', 'pos.packages'),
+    ('resource', '/products', 'pos.products'),
+    ('resource', '/transactions', 'pos.transactions'),
+    ('post', '/buy', 'pos.buy'),
+    ('get', '/request_token', 'pos.request_token')
 ])
 
 routes.subdomain('api.electric-studio.dev', [

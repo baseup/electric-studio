@@ -37,3 +37,31 @@ class UserPackage(Model):
 
     def to_dict(self):
        return mongo_to_dict(self)
+
+class Product(Model):
+    __collection__ = 'products'
+    name = StringField(required=True)
+    amount = DecimalField()
+    stock = IntField(required=True)
+    product_desc = StringField(default=None)
+    create_at = DateTimeField(auto_now_on_insert=True)
+    update_at = DateTimeField(auto_now_on_update=True)
+
+    def to_dict(self):
+       return mongo_to_dict(self)   
+
+class UserProduct(Model):
+    __collection__ = 'user_products'
+    __lazy__ = False
+    user_id = ReferenceField(reference_document_type=User)
+    product_id = ReferenceField(reference_document_type=Product, required=False)
+    product_name = StringField(required=False)
+    product_amout = DecimalField(required=False, default='0.00')
+    notes = StringField()
+    is_free = BooleanField(default=False)
+    trans_info = StringField(default=None)
+    create_at = DateTimeField(auto_now_on_insert=True)
+    update_at = DateTimeField(auto_now_on_update=True)
+
+    def to_dict(self):
+       return mongo_to_dict(self)
