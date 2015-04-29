@@ -74,6 +74,8 @@ def update(self, id):
 
             if data['birthdate'] != None:
                 user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+            if data['address'] != None:
+                user.address = data['address']
             if data['phone_number'] != None:
                 user.phone_number = data['phone_number']
             if data['contact_person'] != None:
