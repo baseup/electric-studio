@@ -200,7 +200,7 @@
   <div class="modal" data-modal="account-summary" id="account-summary-modal">
     <div class="modal__box pad" style="max-width: 50%">
       <span class="close-btn modal-close">X</span>
-      <h3 class="h--medium brand-color space--bottom">Summary of Classes and Packages</h3>
+      <h3 class="h--medium brand-color space--bottom">Summary of Rides and Packages</h3>
 
       <div class="space--bottom pad--bottom">
         <span class="label">Rider</span>
@@ -212,8 +212,8 @@
         <table class="data-table account-summary-table">
           <tr>
             <th>Package Type</th>
-            <th>Classes Used</th>
-            <th>Classes Left</th>
+            <th>Rides Used</th>
+            <th>Rides Left</th>
             <th>Expiration Date</th>
             <th>Notes</th>
           </tr>
@@ -251,7 +251,7 @@
                 <b class="h--small">{{ newPackage.name }}</b>
                 <br/><br/>
                 <span class="h small ">Price: {{ newPackage.fee }} Php</span><br>
-                <span class="h small ">Classes: {{ newPackage.credits }} </span><br>
+                <span class="h small ">No. of Rides: {{ newPackage.credits }} </span><br>
                 <span class="h small ">Expiration: {{ newPackage.expiration }} days</span><br>
               </div>
             </div>

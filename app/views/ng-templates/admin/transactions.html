@@ -40,8 +40,8 @@
                 <span ng-if="transaction.package_name && transaction.is_free">Free - </span>
                 {{ transaction.package_name || 'Free' }}
               </td>
-              <td>{{ transaction.credit_count }} Class<span ng-if="transaction.credit_count > 1">es<span></td>
-              <td>{{ transaction.remaining_credits }} Class<span ng-if="transaction.remaining_credits > 1">es</span></td>
+              <td>{{ transaction.credit_count }} Ride<span ng-if="transaction.credit_count > 1">s<span></td>
+              <td>{{ transaction.remaining_credits }} Ride<span ng-if="transaction.remaining_credits > 1">s</span></td>
               <td>
                 <small>PHP</small>
                 <span ng-if="transaction.is_free">0.00</span> 
