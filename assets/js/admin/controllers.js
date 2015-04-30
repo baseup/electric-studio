@@ -663,6 +663,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
     ClassService.save($scope.newBook, function (savedBook) {
       $scope.reload();
+      angular.element('#select-user-id')[0].selectize.setValue('');
     }, function (error) {
       $.Notify({ content: error.data });
     });
@@ -684,6 +685,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     $scope.newWaitlist.status = 'waitlisted';
     ClassService.save($scope.newWaitlist, function (savedBook) {
       $scope.reload();
+      angular.element('#select-waitlist-user')[0].selectize.setValue('');
     }, function (error) {
       $.Notify({ content: error.data });
     });
