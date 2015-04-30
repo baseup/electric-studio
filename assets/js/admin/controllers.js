@@ -1553,7 +1553,7 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
 
   $scope.viewBikeMap = function (stat) {
     $scope.selectedStat = stat;
-    SettingService.get_blocked_bikes(function (bikes) {
+    SettingService.getBlockedBikes(function (bikes) {
       $scope.blockedBikes = bikes;
     });
 
@@ -1594,7 +1594,7 @@ ctrls.controller('SettingCtrl', function ($scope, SettingService) {
 
   $scope.blockedBikes = {};
   var reloadBlockBikes = function () {
-    SettingService.get_blocked_bikes(function (bikes) {
+    SettingService.getBlockedBikes(function (bikes) {
       $scope.blockedBikes = bikes;
       selectBlock.settings.sortField = 'text';
       selectBlock.clearOptions();
@@ -1621,7 +1621,7 @@ ctrls.controller('SettingCtrl', function ($scope, SettingService) {
         return;
       }
 
-      SettingService.set_blocked_bikes({ key: 'blocked_bikes' }, $scope.newBlock, function () {
+      SettingService.setBlockedBikes({ key: 'blocked_bikes' }, $scope.newBlock, function () {
         reloadBlockBikes();
         $scope.newBlock = {};
       }, function (error) { $.Alert(error.data); $scope.newBlock = {}; });
@@ -1629,7 +1629,7 @@ ctrls.controller('SettingCtrl', function ($scope, SettingService) {
   }
 
   $scope.unBlockedBike = function (bike) {
-    SettingService.del_blocked_bikes({ key: 'blocked_bikes', bike: bike }, function () {
+    SettingService.delBlockedBikes({ key: 'blocked_bikes', bike: bike }, function () {
       reloadBlockBikes();
     });
   }

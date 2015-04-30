@@ -884,7 +884,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     });
 
     $scope.blockedBikes = {};
-    SettingService.get_blocked_bikes(function (bikes) {
+    SettingService.getBlockedBikes(function (bikes) {
       $scope.blockedBikes = bikes;
     });
 

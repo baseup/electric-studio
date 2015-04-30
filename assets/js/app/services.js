@@ -174,7 +174,7 @@ services.factory('HistoryService', function($resource) {
 
 services.factory('SettingService', function ($resource) {
   return $resource('/admin/setting/:key', {}, {
-    get_blocked_bikes: {
+    getBlockedBikes: {
       method: 'GET',
       isArray: false,
       params: {

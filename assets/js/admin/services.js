@@ -183,17 +183,17 @@ services.factory('SliderService', function ($resource) {
 
 services.factory('SettingService', function ($resource) {
   return $resource('/admin/setting/:key', {}, {
-    get_blocked_bikes: {
+    getBlockedBikes: {
       method: 'GET',
       isArray: false,
       params: {
         key: 'blocked_bikes'
       }
     },
-    set_blocked_bikes: {
+    setBlockedBikes: {
       method: 'PUT'
     },
-    del_blocked_bikes: {
+    delBlockedBikes: {
       method: 'DELETE'
     }
   })
