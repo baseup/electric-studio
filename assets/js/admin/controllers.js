@@ -533,7 +533,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 });
 
 
-ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserService) {
+ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserService, SettingService) {
   
   $scope.newBook = {};
   var dateToday = new Date();
@@ -842,6 +842,13 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     window.location = '/admin/export/download-bookings?sched_id=' + $scope.newBook.sched_id;
   }
 
+  $scope.isBlocked = function (seat) {
+    if ($scope.blockedBikes && $scope.blockedBikes[seat]) {
+      return true;
+    }
+    return false;
+  }
+
   $scope.checkSeat = function (seat) {
     if ($scope.schedDetails && $scope.books) { 
       for (var b in $scope.books) {
@@ -862,6 +869,9 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     }
     
     if (!$scope.isCompleted($scope.schedDetails)) {
+      SettingService.getBlockedBikes(function (bikes) {
+        $scope.blockedBikes = bikes;
+      });
       angular.element('#bike-map-modal').Modal();
     } else {
       $.Notify({ content: 'This schedule is completed' });
