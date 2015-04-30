@@ -533,7 +533,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 });
 
 
-ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserService) {
+ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserService, SettingService) {
   
   $scope.newBook = {};
   var dateToday = new Date();
@@ -840,6 +840,42 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       return;
     }
     window.location = '/admin/export/download-bookings?sched_id=' + $scope.newBook.sched_id;
+  }
+
+  $scope.isBlocked = function (seat) {
+    if ($scope.blockedBikes && $scope.blockedBikes[seat]) {
+      return true;
+    }
+    return false;
+  }
+
+  $scope.checkSeat = function (seat) {
+    if ($scope.schedDetails && $scope.books) { 
+      for (var b in $scope.books) {
+        if ($scope.books[b].seat_number == seat ||
+            seat > $scope.schedDetails.seats) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  $scope.viewBikeMap = function () {
+    if (!$scope.newBook.sched_id) {
+      $.Alert('Please select a valid schedule');
+      return;
+    }
+    
+    if (!$scope.isCompleted($scope.schedDetails)) {
+      SettingService.getBlockedBikes(function (bikes) {
+        $scope.blockedBikes = bikes;
+      });
+      angular.element('#bike-map-modal').Modal();
+    } else {
+      $.Notify({ content: 'This schedule is completed' });
+    }
   }
    
 });
