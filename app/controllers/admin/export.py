@@ -1,11 +1,11 @@
-from motorengine import DESCENDING
+from motorengine import DESCENDING, ASCENDING
 from app.models.schedules import BookedSchedule, InstructorSchedule
+from app.models.users import User
 from datetime import datetime
 from bson.objectid import ObjectId
 import csv
 
 def download_bookings(self):
-
     sched_id = self.get_query_argument('sched_id')
     if sched_id:
         sched = yield InstructorSchedule.objects.get(self.get_argument('sched_id')); 
@@ -39,9 +39,36 @@ def download_bookings(self):
                 self.write(data)
         self.finish()
     else:
-        redirect('/admin/#/classes')
+        self.redirect('/admin/#/classes')
 
-    
+def download_user_accounts(self):
+    email = self.get_query_argument('email')
+    accounts = yield User.objects.order_by('last_name', direction=ASCENDING).find_all()
+    filename = 'user-accounts-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
+    with open(filename, 'w') as csvfile:
+        fieldnames = ['Last Name', 'First Name', 'Email Address']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for a in accounts:
+            if email in a.email:
+                writer.writerow({
+                    'Last Name': a.last_name,
+                    'First Name': a.first_name,
+                    'Email Address': a.email
+                })
+
+    buf_size = 4096
+    self.set_header('Content-Type', 'application/octet-stream')
+    self.set_header('Content-Disposition', 'attachment; filename=' + filename)
+    with open(filename, 'r') as f:
+        while True:
+            data = f.read(buf_size)
+            if not data:
+                break
+            self.write(data)
+    self.finish()
+    # self.redirect('/admin/#/accounts')
+
 
 def waitlist(self):
     

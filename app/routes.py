@@ -42,7 +42,8 @@ routes.prefix('/admin', [
     ('resource', '/slider', 'admin.slider'),
 
     ('get', '/export/download-bookings', 'admin.export.download_bookings'),
-    ('get', '/export/waitlist', 'admin.export.waitlist')
+    ('get', '/export/waitlist', 'admin.export.waitlist'),
+    ('get', '/export/download-user-accounts', 'admin.export.download_user_accounts')
 ])
 
 routes.prefix('/api', [
