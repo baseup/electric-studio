@@ -661,7 +661,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleSe
 
       if ($scope.loginUser && $scope.loginUser.credits <= 0) {
         $.Alert('Insufficient Credits');
-        return;
       } 
 
       var today = new Date();
@@ -812,6 +811,13 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleSe
 
   }
 
+  $scope.isFull = function (sched) {
+    if ($scope.schedules.counts[sched._id].books >= sched.seats || $scope.schedules.counts[sched._id].waitlist > 0) {
+      return true;
+    }
+    return false;
+  }
+
   $scope.getWeek(new Date());
   $scope.nextWeek = function () {
     var now = new Date();
@@ -849,7 +855,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       $location.path('/reserved');
     }
 
-    ScheduleService.get({ scheduleId: sched.schedule._id }, function(schedule) {
+    ScheduleService.get({ scheduleId: sched.schedule._id }, function (schedule) {
       sched.schedule = schedule;
       $scope.timeSched = sched.schedule.start;
       $scope.instructor = sched.schedule.instructor;
