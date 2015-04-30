@@ -224,11 +224,43 @@
               <td>{{ sched.status }}</td>
               <td>{{ sched.seat_number }}</td>
               <td>{{ sched.create_at | formatDate }} {{ sched.create_at | formatTime }} </td>
-              <td><button ng-if="sched.status == 'waitlisted'" class="btn btn--small btn--primary" ng-click="cancelWaitlist($index, sched)">Cancel</button></td>
+              <td>
+                <button ng-if="sched.status == 'waitlisted'" class="btn btn--small btn--primary" ng-click="cancelWaitlist($index, sched)">
+                  Cancel
+                </button>
+                <button class="btn btn--small btn--primary" ng-if="sched.status == 'booked'" ng-click="moveBikeModal(sched)">Move Bike</button>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <div id="switch-bike-modal" class="modal" data-modal="switch" >
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Switch Bike</h3>
+
+      <div class="user-select space--bottom">
+        <span class="label">Rider</span>
+        <h4 class="h-small">{{ selectedBook.user_id.first_name }} {{ selectedBook.user_id.last_name }}</h4>
+      </div>
+
+       <div class="cf">   
+        <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
+          <span class="label">Current Bike</span>
+          <h4 class="h-small">{{ selectedBook.seat_number  }}</h4>
+        </div>
+        <div class="space--bottom bp-md-one-third float--left">
+          <span class="label">Switch to</span>
+          <select class="select" id="switch-seat" ng-model="selectedBike">
+            <option value="">Select Seat</option>
+          </select>
+        </div>    
+      </div>
+
+      <button class="btn btn--primary btn--medium space--top modal-close" ng-click="moveBike()">Switch</button>
     </div>
   </div>
 
