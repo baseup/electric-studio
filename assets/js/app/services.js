@@ -172,6 +172,18 @@ services.factory('HistoryService', function($resource) {
   });
 });
 
+services.factory('SettingService', function ($resource) {
+  return $resource('/admin/setting/:key', {}, {
+    getBlockedBikes: {
+      method: 'GET',
+      isArray: false,
+      params: {
+        key: 'blocked_bikes'
+      }
+    }
+  });
+});
+
 services.factory('SharedService', function(){
   var records = {};
   return {

@@ -180,3 +180,22 @@ services.factory('SliderService', function ($resource) {
     }
   });
 });
+
+services.factory('SettingService', function ($resource) {
+  return $resource('/admin/setting/:key', {}, {
+    getBlockedBikes: {
+      method: 'GET',
+      isArray: false,
+      params: {
+        key: 'blocked_bikes'
+      }
+    },
+    setBlockedBikes: {
+      method: 'PUT'
+    },
+    delBlockedBikes: {
+      method: 'DELETE'
+    }
+  });
+});
+
