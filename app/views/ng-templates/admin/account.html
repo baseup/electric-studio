@@ -13,7 +13,7 @@
 
     <div class="account-list grid">
 
-      <div ng-repeat="user in users | search:'first_name,email':searchText" class="grid__item bp-md-one-half bp-lg-one-third">
+      <div ng-repeat="user in users | search:'first_name,last_name,email':searchText" class="grid__item bp-md-one-half bp-lg-one-third">
           
         <div class="account__item box--bordered box--white space--bottom cf">
           <div class="pad">
@@ -153,9 +153,9 @@
         <span class="label">Birthday</span>
         <input ng-model="selectedInfo.birthdate" class="text-input datepicker">
       </div>
-      <div class="float--right space--bottom">
-        <span class="label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <br/><br/> 
+      <div class="bp-md-one-half float--left space--bottom">
+        <span class="label">Address</span>
+        <input ng-model="selectedInfo.address" class="text-input">
       </div>
       <div class="float--left space--bottom">
         <span class="label">Contact Person</span>
