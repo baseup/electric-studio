@@ -1,5 +1,6 @@
 from app.models.schedules import *
 from app.models.packages import *
+from app.models.admins import Setting
 from datetime import datetime
 from bson.objectid import ObjectId
 from motorengine import DESCENDING, ASCENDING
@@ -19,8 +20,17 @@ def find(self):
     if self.get_query_argument('seats'):
         ins_sched = yield InstructorSchedule.objects.get(sched_id)
         scheds = yield BookedSchedule.objects.filter(status='booked', date=date, schedule=ins_sched._id).find_all()
+
+        blocked_bikes = {}
+        blocked_bikes_db = yield Setting.objects.get(key='blocked_bikes');
+        if blocked_bikes_db:
+            blocked_bikes = tornado.escape.json_decode(blocked_bikes_db.value)
+
         available_seats = []
         for seat in range(1, ins_sched.seats + 1):
+            if str(seat) in blocked_bikes:
+                continue;
+
             seat_exists = yield BookedSchedule.objects.get(seat_number=str(seat),
                                                            status='booked', date=date, schedule=ins_sched._id)
             if not seat_exists:

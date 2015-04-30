@@ -118,6 +118,15 @@
       }
     }
 
+    &.blocked {
+
+      span {
+        background: #a00;
+        cursor: default;
+        box-shadow: none;
+      }
+    }
+
     &.selected {
       span {
         background: $brand-color-primary;

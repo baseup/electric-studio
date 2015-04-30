@@ -50,6 +50,10 @@ app.config(function ($routeProvider, $httpProvider) {
     '/statistics': {
       templateUrl: '/admin/statistics',
       controller: 'AdminCtrl'
+    },
+    '/settings': {
+      templateUrl: '/admin/settings',
+      controller: 'AdminCtrl'
     }
   };
 

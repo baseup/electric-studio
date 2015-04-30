@@ -832,7 +832,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleSe
   }
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, ScheduleService, SharedService, BookService) {
+ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, ScheduleService, SharedService, BookService, SettingService) {
   var sched = SharedService.get('selectedSched');
   if (!sched) {
     $location.path('/schedule')
@@ -883,11 +883,19 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       }
     });
 
+    $scope.blockedBikes = {};
+    SettingService.get_blocked_bikes(function (bikes) {
+      $scope.blockedBikes = bikes;
+    });
 
   }
 
   $scope.checkSeat = function (num) {
     if ($scope.forWaitlist) {
+      return true;
+    }
+
+    if ($scope.blockedBikes[num]) {
       return true;
     }
 

@@ -1449,7 +1449,7 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
   });
 });
 
-ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService) {
+ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService ) {
 
   $scope.stats = StatisticService.query();
   $scope.stats.$promise.then(function (data) {
@@ -1530,7 +1530,15 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     }
   }
 
+  $scope.isBlocked = function (seat) {
+    if ( $scope.blockedBikes && $scope.blockedBikes[seat]){
+      return true;
+    }
+    return false;
+  }
+
   $scope.checkSeat = function (seat) {
+
     if ($scope.selectedStat && $scope.selectedStat.books) { 
       for (var b in $scope.selectedStat.books) {
         if ($scope.selectedStat.books[b].seat_number == seat ||
@@ -1545,6 +1553,10 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
 
   $scope.viewBikeMap = function (stat) {
     $scope.selectedStat = stat;
+    SettingService.get_blocked_bikes(function (bikes) {
+      $scope.blockedBikes = bikes;
+    });
+
     angular.element('#bike-map-modal').Modal();
   }
 
@@ -1572,6 +1584,54 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     }
 
     return true;
+  }
+
+});
+
+ctrls.controller('SettingCtrl', function ($scope, SettingService) {
+
+  var selectBlock = angular.element('#select-blocked-bikes')[0].selectize;
+
+  $scope.blockedBikes = {};
+  var reloadBlockBikes = function () {
+    SettingService.get_blocked_bikes(function (bikes) {
+      $scope.blockedBikes = bikes;
+      selectBlock.settings.sortField = 'text';
+      selectBlock.clearOptions();
+      for (var x = 37; x > 0; x--){
+        if (!bikes[x])
+          selectBlock.addOption({ value: x, text: x });
+      }
+    });
+  }
+  reloadBlockBikes();
+
+  for (var x = 37; x > 0; x--){
+    selectBlock.addOption({ value: x, text: x });
+  }
+
+  $scope.blockedBike = function () {
+    if ($scope.newBlock) {
+      if (!$scope.newBlock.bike || $scope.newBlock.bike.length == 0) {
+        $.Alert('Please select bike to blocked')
+        return;
+      } 
+      if (!$scope.newBlock.reason || $scope.newBlock.reason.length == 0) {
+        $.Alert('Please provide a reason on blocking the bike')
+        return;
+      }
+
+      SettingService.set_blocked_bikes({ key: 'blocked_bikes' }, $scope.newBlock, function () {
+        reloadBlockBikes();
+        $scope.newBlock = {};
+      }, function (error) { $.Alert(error.data); $scope.newBlock = {}; });
+    }
+  }
+
+  $scope.unBlockedBike = function (bike) {
+    SettingService.del_blocked_bikes({ key: 'blocked_bikes', bike: bike }, function () {
+      reloadBlockBikes();
+    });
   }
 
 });
