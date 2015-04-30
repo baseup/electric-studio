@@ -1656,10 +1656,39 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
 
 });
 
-ctrls.controller('SettingCtrl', function ($scope, SettingService) {
+ctrls.controller('SettingCtrl', function ($scope, $timeout, SettingService) {
+
+  SettingService.get({ key: 'week_release' }, function (data) {
+    if (data) {
+
+      if (data.time) {
+        var date = new Date()
+        var time_split = data.time.split(':')
+        date.setHours(time_split[0], time_split[1], 0 , 0);
+        data.time = date;
+      }
+      $scope.weekRelease = {}
+      $scope.weekRelease.time = data.time;
+      $timeout(function () {
+        angular.element('#week-release-day')[0].selectize.setValue(data.day)
+      }, 400);
+      
+    }
+  })
+
+  $scope.setWeekRelease = function(){
+    if ($scope.weekRelease && $scope.weekRelease.day && $scope.weekRelease.time) {
+      var wr = angular.copy($scope.weekRelease);
+      wr.time = wr.time.getHours() + ':' + wr.time.getMinutes();
+      SettingService.update({ key: 'week_release' }, wr,  function () {
+        $.Alert('Successfully update schedule week release settings');
+      }, function (error) { $.Alert(error.data); });
+    } else {
+      $.Alert('Please provide date and time for week release settings');
+    }
+  }
 
   var selectBlock = angular.element('#select-blocked-bikes')[0].selectize;
-
   $scope.blockedBikes = {};
   var reloadBlockBikes = function () {
     SettingService.getBlockedBikes(function (bikes) {
@@ -1689,7 +1718,7 @@ ctrls.controller('SettingCtrl', function ($scope, SettingService) {
         return;
       }
 
-      SettingService.setBlockedBikes({ key: 'blocked_bikes' }, $scope.newBlock, function () {
+      SettingService.update({ key: 'blocked_bikes' }, $scope.newBlock, function () {
         reloadBlockBikes();
         $scope.newBlock = {};
       }, function (error) { $.Alert(error.data); $scope.newBlock = {}; });

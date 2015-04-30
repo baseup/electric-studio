@@ -190,9 +190,10 @@ services.factory('SettingService', function ($resource) {
         key: 'blocked_bikes'
       }
     },
-    setBlockedBikes: {
+    update: {
       method: 'PUT'
     },
+
     delBlockedBikes: {
       method: 'DELETE'
     }

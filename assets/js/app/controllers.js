@@ -594,8 +594,20 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleService, SharedService, BookService, UserService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService) {
   $scope.resched = SharedService.get('resched');
+
+  var days = { 'mon' : 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6, 'sun': 7 };
+  $scope.weekRelease = null;
+  SettingService.getWeekRelease(function(data){
+    if (data && data.time && data.day){
+      var date = new Date()
+      date.setDate(date.getDate() - date.getDay() + days[data.day]) 
+      var time = data.time.split(':')
+      date.setHours(time[0], time[1], 0 , 0);
+      $scope.weekRelease = date;
+    }
+  });
 
   $scope.cancelResched = function () {
     SharedService.clear('resched');
@@ -603,6 +615,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleSe
   }
 
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var week_days = ['Sunday','Monday','Tuesday','Friday','Thursday','Friday','Saturday'];
 
   $scope.waitlistUser = function (sched) {
 
@@ -673,6 +686,17 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleSe
         return;
       }
 
+      if ($scope.weekRelease) {
+        if (today < $scope.weekRelease){
+          var d = $scope.weekRelease;
+          var strDate = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() + ' ' + 
+                        d.getHours() + ':' + d.getMinutes() +':' +d.getSeconds();
+          var tryDate = week_days[$scope.weekRelease.getDay()] + ' ' + $filter('formatTime')(strDate);
+          $.Alert('Booking is not yet available, Please try again on ' + tryDate);
+          return;
+        }
+      }
+
       var cutOffchkDate = new Date(date);
       cutOffchkDate.setDate(date.getDate() - 1);
       cutOffchkDate.setHours(17, 0, 0);
@@ -739,8 +763,9 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleSe
     if (date < now)
       return true;
 
-    var next7Days = new Date(now.getFullYear(), now.getMonth(), now.getDate()+8);
-    if (date > next7Days) 
+    var nextMonday = new Date(now);
+    nextMonday.setDate(nextMonday.getDate() - nextMonday.getDay() + 8);
+    if (date > nextMonday) 
       return true;
 
     return false;
