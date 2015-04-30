@@ -599,8 +599,8 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
   var days = { 'mon' : 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6, 'sun': 7 };
   $scope.weekRelease = null;
-  SettingService.getWeekRelease(function(data){
-    if (data && data.time && data.day){
+  SettingService.getWeekRelease(function (data) {
+    if (data && data.time && data.day) {
       var date = new Date()
       date.setDate(date.getDate() - date.getDay() + days[data.day]) 
       var time = data.time.split(':')
@@ -687,7 +687,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       }
 
       if ($scope.weekRelease) {
-        if (today < $scope.weekRelease){
+        if (today < $scope.weekRelease) {
           var d = $scope.weekRelease;
           var strDate = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() + ' ' + 
                         d.getHours() + ':' + d.getMinutes() +':' +d.getSeconds();
@@ -874,7 +874,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       $location.path('/reserved');
     }
 
-    ScheduleService.get({ scheduleId: sched.schedule._id }, function(schedule) {
+    ScheduleService.get({ scheduleId: sched.schedule._id }, function (schedule) {
       sched.schedule = schedule;
       $scope.timeSched = sched.schedule.start;
       $scope.instructor = sched.schedule.instructor;

@@ -1674,9 +1674,9 @@ ctrls.controller('SettingCtrl', function ($scope, $timeout, SettingService) {
       }, 400);
       
     }
-  })
+  });
 
-  $scope.setWeekRelease = function(){
+  $scope.setWeekRelease = function () {
     if ($scope.weekRelease && $scope.weekRelease.day && $scope.weekRelease.time) {
       var wr = angular.copy($scope.weekRelease);
       wr.time = wr.time.getHours() + ':' + wr.time.getMinutes();
