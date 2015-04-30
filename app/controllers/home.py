@@ -34,7 +34,7 @@ def login(self):
             self.write('Invalid Password')
     else:
         self.set_status(403)
-        self.write('Invalid Email Address')
+        self.write('Account doesn\'t exist')
     self.finish()
 
 def logout(self):

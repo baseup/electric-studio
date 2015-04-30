@@ -83,6 +83,10 @@ select, .select {
   display: inline!important;
 }
 
+.hidden {
+  display: none;
+}
+
 @include headings() {
   text-transform: uppercase;
 }
