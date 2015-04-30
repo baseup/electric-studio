@@ -112,10 +112,21 @@ def create(self):
 
                                     serialized_user = (yield User.objects.get(user._id)).serialize()
                                     if book_status == 'booked':
-                                        content = str(self.render_string('emails/booking', date=data['date'], type=sched.type, user=serialized_user, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p'), seat_number=str(book.seat_number)), 'UTF-8')
+                                        content = str(self.render_string('emails/booking', 
+                                                                         date=sched.date.strftime('%A, %B %d, %Y'), 
+                                                                         type=sched.type, 
+                                                                         user=serialized_user, 
+                                                                         instructor=sched.instructor, 
+                                                                         time=sched.start.strftime('%I:%M %p'), 
+                                                                         seat_number=str(book.seat_number)), 'UTF-8')
                                         yield self.io.async_task(send_email_booking, user=serialized_user, content=content)
                                     elif book_status == 'waitlisted':
-                                        content = str(self.render_string('emails/waitlist', date=data['date'], type=sched.type, user=serialized_user, instructor=sched.instructor, time=sched.start.strftime('%I:%M %p')), 'UTF-8')
+                                        content = str(self.render_string('emails/waitlist', 
+                                                                         date=sched.date.strftime('%A, %B %d, %Y'), 
+                                                                         type=sched.type, 
+                                                                         user=serialized_user, 
+                                                                         instructor=sched.instructor, 
+                                                                         time=sched.start.strftime('%I:%M %p')), 'UTF-8')
                                         yield self.io.async_task(send_email, user=serialized_user, content=content, subject='WaitList Schedule')
                                     break
 
@@ -171,7 +182,7 @@ def update(self, id):
 
                 if ref_book_status == 'waitlisted':
                     content = str(self.render_string('emails/waitlist_removed', 
-                                                      date=book.date.strftime('%Y-%m-%d'), 
+                                                      date=book.date.strftime('%A, %B %d, %Y'), 
                                                       user=user.to_dict(), 
                                                       type=book.schedule.type,
                                                       seat_number=book.seat_number, 
@@ -182,7 +193,13 @@ def update(self, id):
                     yield self.io.async_task(
                         send_email_cancel,
                         user=user.to_dict(),
-                        content=str(self.render_string('emails/cancel', type=book.schedule.type, instructor=book.schedule.instructor, user=user.to_dict(), date=book.date.strftime('%Y-%m-%d'), seat_number=book.seat_number, time=book.schedule.start.strftime('%I:%M %p')), 'UTF-8')
+                        content=str(self.render_string('emails/cancel', 
+                                                       type=book.schedule.type, 
+                                                       instructor=book.schedule.instructor, 
+                                                       user=user.to_dict(), 
+                                                       date=book.date.strftime('%A, %B %d, %Y'), 
+                                                       seat_number=book.seat_number, 
+                                                       time=book.schedule.start.strftime('%I:%M %p')), 'UTF-8')
                         
                     )
             elif 'sched_id' in data and str(ref_sched_id) != str(data['sched_id']):
@@ -190,7 +207,13 @@ def update(self, id):
                 user = yield User.objects.get(user_id)
                 yield self.io.async_task(
                     send_email_move,
-                    content=str(self.render_string('emails/moved', type=sched.type, user=user.to_dict(), instructor=sched.instructor, date=book.date.strftime('%Y-%m-%d'), seat_number=book.seat_number, time=sched.start.strftime('%I:%M %p')), 'UTF-8'),
+                    content=str(self.render_string('emails/moved', 
+                                                   type=sched.type, 
+                                                   user=user.to_dict(), 
+                                                   instructor=sched.instructor, 
+                                                   date=book.date.strftime('%A, %B %d, %Y'), 
+                                                   seat_number=book.seat_number, 
+                                                   time=sched.start.strftime('%I:%M %p')), 'UTF-8'),
                     user=user.to_dict()
                 )
         except:
