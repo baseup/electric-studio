@@ -47,8 +47,8 @@ def create(self):
     if 'password' in data:
         password = bcrypt.encrypt(data['password'])
 
-    isExist = (yield User.objects.filter(email=data['email'], status__ne='Deleted').count())
-    if isExist > 0:
+    is_exist = (yield User.objects.filter(email=data['email'], status__ne='Deleted').count())
+    if is_exist > 0:
         self.set_status(400)
         self.write('Email already in used')
     else:
