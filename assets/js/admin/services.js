@@ -196,6 +196,6 @@ services.factory('SettingService', function ($resource) {
     delBlockedBikes: {
       method: 'DELETE'
     }
-  })
+  });
 });
 

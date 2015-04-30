@@ -181,7 +181,7 @@ services.factory('SettingService', function ($resource) {
         key: 'blocked_bikes'
       }
     }
-  })
+  });
 });
 
 services.factory('SharedService', function(){
