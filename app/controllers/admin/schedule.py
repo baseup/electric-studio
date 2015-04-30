@@ -197,43 +197,51 @@ def update(self, id):
 def destroy(self, id):
     if id != 'None':
         notes = self.get_query_argument('notes')
+        missed = self.get_query_argument('missed')
         booked_schedule = yield BookedSchedule.objects.get(id)
         ref_status = booked_schedule.status
+
         booked_schedule.status = 'cancelled'
+        if missed:
+            booked_schedule.status = 'missed'
+
         if notes:
             booked_schedule.notes = notes
+            
         if booked_schedule.user_package:
             booked_schedule.user_package.remaining_credits += 1
             yield booked_schedule.user_package.save()
 
-        user = yield User.objects.get(booked_schedule.user_id._id)
-        user.credits += 1
-        yield user.save()
+        if not missed:
+            user = yield User.objects.get(booked_schedule.user_id._id)
+            user.credits += 1
+            yield user.save()
 
         yield booked_schedule.save()
 
-        if ref_status == 'waitlisted':
-            content = str(self.render_string('emails/waitlist_removed', 
-                                              date=booked_schedule.date.strftime('%Y-%m-%d'), 
-                                              user=user.to_dict(), 
-                                              type=booked_schedule.schedule.type,
-                                              seat_number=booked_schedule.seat_number, 
-                                              instructor=booked_schedule.schedule.instructor, 
-                                              time=booked_schedule.schedule.start.strftime('%I:%M %p')), 'UTF-8')
-            yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Canceled')
-        else:
-            yield self.io.async_task(
-                send_email_cancel,
-                user=user.to_dict(),
-                content=str(self.render_string(
-                                'emails/cancel', 
-                                instructor=booked_schedule.schedule.instructor, 
-                                user=user.to_dict(),
-                                type=booked_schedule.schedule.type, 
-                                date=booked_schedule.date.strftime('%Y-%m-%d'), 
-                                seat_number=booked_schedule.seat_number, 
-                                time=booked_schedule.schedule.start.strftime('%I:%M %p')
-                            ), 'UTF-8'))
+        if not missed:
+            if ref_status == 'waitlisted':
+                content = str(self.render_string('emails/waitlist_removed', 
+                                                  date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                                                  user=user.to_dict(), 
+                                                  type=booked_schedule.schedule.type,
+                                                  seat_number=booked_schedule.seat_number, 
+                                                  instructor=booked_schedule.schedule.instructor, 
+                                                  time=booked_schedule.schedule.start.strftime('%I:%M %p')), 'UTF-8')
+                yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Waitlist Canceled')
+            else:
+                yield self.io.async_task(
+                    send_email_cancel,
+                    user=user.to_dict(),
+                    content=str(self.render_string(
+                                    'emails/cancel', 
+                                    instructor=booked_schedule.schedule.instructor, 
+                                    user=user.to_dict(),
+                                    type=booked_schedule.schedule.type, 
+                                    date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                                    seat_number=booked_schedule.seat_number, 
+                                    time=booked_schedule.schedule.start.strftime('%I:%M %p')
+                                ), 'UTF-8'))
 
         self.render_json(booked_schedule)
     else:

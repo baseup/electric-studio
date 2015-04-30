@@ -184,7 +184,7 @@
           </tr>
           <tr ng-repeat="wait in selectedStat.waitlist">
             <td>{{ wait.user_id.first_name }} {{ wait.user_id.last_name }}</td>
-            <td>{{ wait.create_at | formatDate }}</td>
+            <td>{{ wait.create_at | formatDate }} {{ wait.create_at | formatTime }}</td>
           </tr>
         </table>
       </div>

@@ -126,6 +126,57 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     });
   });
 
+  $scope.showAddAccount = function () {
+    angular.element('#add-account-modal').Modal();
+  }
+
+  $scope.addAccount = function () {
+    if ($scope.newAccount) {
+      if (!$scope.newAccount.email || $scope.newAccount.email.length == 0) {
+        $.Alert('Email Address is required');
+        return;
+      }
+
+      if (!$scope.newAccount.password || $scope.newAccount.password.length == 0) {
+        $.Alert('Password is required');
+        return;
+      }
+
+      if ($scope.newAccount.password && $scope.newAccount.password.length < 6) {
+        $.Alert('Password must be 6 characters');
+        return;
+      }
+
+      if ($scope.newAccount.password != $scope.newAccount.confirm_password) {
+        $.Alert("Password didn't match");
+        return;
+      }
+
+      var registerSuccess = function () {
+        $.Alert('Successfully added new account')
+        UserService.query(function (users) {
+          $scope.users = users;
+        });
+        angular.element('#close-add-account').click();
+      }
+
+      var registerFail = function (error) {
+        $scope.registered = false;
+
+        var errorMsg = error.data
+        if(errorMsg.split(' ').length === 2){
+          errorMsg = errorMsg + ' is required';
+        }
+
+        $.Alert(errorMsg);
+      }
+
+      UserService.create($scope.newAccount).$promise.then(registerSuccess, registerFail);
+    } else {
+      $.Alert('Please fill form to add account')
+    }
+  }
+
   $scope.accountInfo = function (user) {
     $scope.selectedInfo = user;
 
@@ -169,6 +220,15 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
         $.Alert(error.data);
       }
       UserService.update({ userId: user._id }, { verify: true }, verifySuccess, verifyFailed);
+    });
+  }
+
+  $scope.deleteAccount = function (user, index) {
+    $.Confirm('Are you sure you want to delete ' + user.first_name + ' ' + user.last_name + ' account?<br/>(THIS ACTION CANNOT BE UNDONE)' , function () {
+      chkSecurity(function () {
+        $scope.users.splice(index, 1);
+        UserService.delete({ userId: user._id });
+      });
     });
   }
 
@@ -513,9 +573,20 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   }
 
+  $scope.missedBooking = function (booking, index) {
+    if (!$scope.isCompleted(booking.schedule)) {
+      $.Confirm('Are you sure on marking ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride as MISSED ? (THIS CANNOT BE UNDONE)', function () {
+        $scope.books.splice(index, 1);
+        ClassService.delete({ scheduleId: booking._id, missed: true });
+      });
+    } else {
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+    }
+  }
+
   $scope.cancelBooking = function (booking, index) {
     if (!$scope.isCompleted(booking.schedule)) {
-      $.Confirm('Are you sure on cancelling ' + booking.user_id.first_name + ' ride ?', function () {
+      $.Confirm('Are you sure on cancelling ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride ?', function () {
         $.Prompt('Notes on cancelling ' + booking.user_id.first_name + ' ride', function (notes) {
           if (notes && notes.length > 0) {
             $scope.books.splice(index, 1);

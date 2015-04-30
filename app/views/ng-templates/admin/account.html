@@ -3,8 +3,8 @@
     <div class="content-filter__item space--right">
       <span class="label">Search Account</span>
       <input class="text-input" placeholder="Enter Name or Email" ng-model="searchText">
+      <button ng-click="showAddAccount()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-account">Add Account</
     </div>
-
   </div>
 
 
@@ -36,7 +36,7 @@
 
               <dl>
               <dt>Class Package</dt>
-              <a class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
+              <a title="Buy Package" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
               <dd class="">{{ user.credits }} Classes Left</dd>
               <!-- <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd> -->
               </dl>
@@ -46,7 +46,9 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">Add Class</a>
+            <a title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
+              <i class="fa fa-plus"></i> Class
+            </a>
             <ul class="nav float--right">
               <li>
                 <a href="" title="Account Info" ng-click="accountInfo(user)"><i class="fa fa-info-circle"></i></a>
@@ -61,9 +63,9 @@
                 <a title="Froze Account" ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
                 <a title="Unfroze Account" ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
               </li>
-              <!-- <li>
-                <a href="" class="pad--off-right"><i class="fa fa-share"></i></a>
-              </li> -->
+              <li>
+                <a title="Remove Account" class="pad--off-right" ng-click="deleteAccount(user, $index)"><i class="fa fa-times"></i></a>
+              </li>
             </ul>
           </div>
         </div>
@@ -98,27 +100,56 @@
     </div>
   </div>
 
+  <div class="modal" data-modal="add-account" id="add-account-modal">
+    <div class="modal__box pad">
+      <span id="close-add-account" class="close-btn modal-close">X</span>
+      <h3 class="h medium gray">Add Account</h3>
+      
+      <div class="float--left space--bottom">
+        <span class="label">First Name</span>
+        <input ng-model="newAccount.first_name" class="text-input">
+      </div>
+      <div class="float--right space--bottom">
+        <span class="label">Last Name</span>
+        <input ng-model="newAccount.last_name" class="text-input">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Email</span>
+        <input ng-model="newAccount.email" class="text-input">
+      </div>
+      <div class="float--left space--bottom">
+        <span class="label">Password</span>
+        <input type="password" ng-model="newAccount.password" class="text-input">
+      </div>
+      <div class="float--right space--bottom">
+        <span class="label">Confirm Password</span>
+        <input type="password" ng-model="newAccount.confirm_password" class="text-input">
+      </div>
+      <button type="button" ng-click="addAccount()" class="btn btn--primary btn--medium float--right space--top">Add</button>
+    </div>
+  </div>
+
   <div class="modal" data-modal="account-info" id="account-info-modal">
-    <div class="modal__box pad" style="max-width: 60%">
+    <div class="modal__box pad" >
       <span class="close-btn modal-close">X</span>
       <h3 class="h medium gray">Personal Info</h3>
-      <div class="bp-md-one-half float--left space--bottom">
+      <div class="float--left space--bottom">
         <span class="label">First Name</span>
         <input ng-model="selectedInfo.first_name" class="text-input">
       </div>
-      <div class="bp-md-one-half float--right space--bottom">
+      <div class="float--right space--bottom">
         <span class="label">Last Name</span>
         <input ng-model="selectedInfo.last_name" class="text-input">
       </div>
-      <div class="bp-md-one-half float--left space--bottom">
+      <div class="float--left space--bottom">
         <span class="label">Email</span>
         <input ng-model="selectedInfo.email" disabled class="text-input">
       </div>
-      <div class="bp-md-one-half float--right space--bottom">
+      <div class="bd float--right space--bottom">
         <span class="label">Mobile Number</span>
         <input ng-model="selectedInfo.phone_number" class="text-input">
       </div>
-      <div class="bp-md-one-half float--left space--bottom">
+      <div class="float--left space--bottom">
         <span class="label">Birthday</span>
         <input ng-model="selectedInfo.birthdate" class="text-input datepicker">
       </div>
@@ -126,12 +157,12 @@
         <span class="label">Address</span>
         <input ng-model="selectedInfo.address" class="text-input">
       </div>
-      <div class="bp-md-one-half float--left space--bottom">
-        <span class="label">Emargecy Contact Person</span>
+      <div class="float--left space--bottom">
+        <span class="label">Contact Person</span>
         <input ng-model="selectedInfo.contact_person" class="text-input">
       </div>
-      <div class="bp-md-one-half float--right space--bottom">
-        <span class="label">Emergecy Contact Number</span>
+      <div class="float--right space--bottom">
+        <span class="label">Contact Number</span>
         <input ng-model="selectedInfo.emergency_contact" class="text-input">
       </div>
       <button type="button" ng-click="updateAccountInfo()" class="btn btn--primary btn--medium float--right space--top modal-close">Save</button>
@@ -161,6 +192,7 @@
           <select class="select" ng-change="changeStatus()" ng-model="statusFilter"> 
             <option value="">Select Status</option>
             <option value="booked">Booked</option>
+            <option value="missed">Missed</option>
             <option value="waitlisted">Waitlisted</option>
             <option value="cancelled">Cancelled</option>
             <option value="completed">Completed</option>
@@ -201,7 +233,7 @@
   <div class="modal" data-modal="account-summary" id="account-summary-modal">
     <div class="modal__box pad" style="max-width: 50%">
       <span class="close-btn modal-close">X</span>
-      <h3 class="h--medium brand-color space--bottom">Summary of Classes and Packages</h3>
+      <h3 class="h--medium brand-color space--bottom">Summary of Rides and Packages</h3>
 
       <div class="space--bottom pad--bottom">
         <span class="label">Rider</span>
@@ -213,8 +245,8 @@
         <table class="data-table account-summary-table">
           <tr>
             <th>Package Type</th>
-            <th>Classes Used</th>
-            <th>Classes Left</th>
+            <th>Rides Used</th>
+            <th>Rides Left</th>
             <th>Expiration Date</th>
             <th>Notes</th>
           </tr>
@@ -252,7 +284,7 @@
                 <b class="h--small">{{ newPackage.name }}</b>
                 <br/><br/>
                 <span class="h small ">Price: {{ newPackage.fee }} Php</span><br>
-                <span class="h small ">Classes: {{ newPackage.credits }} </span><br>
+                <span class="h small ">No. of Rides: {{ newPackage.credits }} </span><br>
                 <span class="h small ">Expiration: {{ newPackage.expiration }} days</span><br>
               </div>
             </div>

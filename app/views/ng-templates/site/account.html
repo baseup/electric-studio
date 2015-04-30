@@ -68,12 +68,16 @@
             <div ng-repeat="trans in transactions" class="grid__item bp-md-one-half bp-lg-one-third">
               <div class="account__item box--bordered box--white space--bottom cf">
                 <div class="pad">
-                  <b ng-if="trans.package_name" class="h--small">{{ trans.package_name }}</b>
-                  <b ng-if="!trans.package_name" class="h--small">FREE</b>
+                  <b class="h--small">
+                    {{ trans.remaining_credits }} Ride<span ng-if="trans.remaining_credits > 1">s</span> Left
+                  </b>
                   <br/><br/>
-                  <span class="h small ">{{ trans.remaining_credits }} Class<span ng-if="trans.remaining_credits > 1">es</span> Left</span>
+                  <span ng-if="trans.package_name" class="h small ">
+                    Package: {{ trans.package_name }}
+                  </span>
                   <br/><span class="h small ">Expires on {{ trans.create_at | addDay:trans.expiration | formatDate }}</span>
-                  <span ng-if="trans.notes"><br/><span class="label inline">Notes:</span> {{ trans.notes }}</span>
+                  <br/>
+                  <span><br/><span ng-if="trans.notes" class="label inline">Notes:</span> {{ trans.notes || '&nbsp;' }}</span>
                 </div>
               </div>
             </div>

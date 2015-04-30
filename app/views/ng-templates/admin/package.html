@@ -19,7 +19,7 @@
               <input class="text-input" ng-model="updatePackage.description">
             </div>
             <div class="space--bottom float--left space--right">
-              <span class="label">Number of Classes</span>
+              <span class="label">Number of Rides</span>
               <input class="text-input" ng-model="updatePackage.credits">
             </div>
             <div class="space--bottom float--left">
@@ -40,7 +40,7 @@
           <thead>
             <tr>
               <th>Name</th>
-              <th>Number of Classes</th>
+              <th>Number of Rides</th>
               <th>Price</th>
               <th>Expiration</th>
               <th>&nbsp;</th>
@@ -49,7 +49,7 @@
           <tbody>
             <tr ng-repeat="package in packages">
               <td>{{ package.name }}</td>
-              <td>{{ package.credits }} Classes</td>
+              <td>{{ package.credits }} Ride<span ng-if="package.credits > 1">s</span></td>
               <td><small>PHP</small> {{ package.fee }}</td>
               <td>{{ package.expiration }} days</td>
               <td>
@@ -83,7 +83,7 @@
           <input class="text-input" ng-model="newPackage.description">
         </div>
         <div class="space--bottom float--left space--right">
-          <span class="label">Number of Classes</span>
+          <span class="label">Number of Rides</span>
           <input class="text-input" ng-model="newPackage.credits">
         </div>
         <div class="space--bottom float--left">
