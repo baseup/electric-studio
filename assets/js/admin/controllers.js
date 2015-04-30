@@ -79,7 +79,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 
   $scope.removePackage = function (pac) {
-    $.Confirm('Are you sure on deleting ' + pac.name + ' ?', function (){
+    $.Confirm('Are you sure on deleting ' + pac.name + ' ?', function () {
       var addSuccess = function () {
         PackageService.query().$promise.then(function (data) {
           $scope.packages = data;
@@ -164,7 +164,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
         $scope.registered = false;
 
         var errorMsg = error.data
-        if(errorMsg.split(' ').length === 2){
+        if (errorMsg.split(' ').length === 2) {
           errorMsg = errorMsg + ' is required';
         }
 
@@ -373,30 +373,62 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     }), to_picker = to_input.pickadate('picker')
 
   // Check if there’s a “from” or “to” date to start with.
-  if ( from_picker.get('value') ) {
+  if (from_picker.get('value')) {
     to_picker.set('min', from_picker.get('select'));
   }
-  if ( to_picker.get('value') ) {
+  if (to_picker.get('value')) {
     from_picker.set('max', to_picker.get('select'));
   }
 
   // When something is selected, update the “from” and “to” limits.
   from_picker.on('set', function (event) {
-    if ( event.select ) {
+    if (event.select) {
       to_picker.set('min', from_picker.get('select'));
     }
-    else if ( 'clear' in event ) {
+    else if ('clear' in event) {
       to_picker.set('min', false);
     }
   });
   to_picker.on('set', function (event) {
-    if ( event.select ) {
+    if (event.select) {
       from_picker.set('max', to_picker.get('select'));
     }
-    else if ( 'clear' in event ) {
+    else if ('clear' in event) {
       from_picker.set('max', false);
     }
   });  
+
+  $scope.moveBikeModal = function (book) {
+    ClassService.query({ date: book.date.replace(' 00:00:00',''), sched_id: book.schedule._id, seats: true }, function (seats) {
+      $scope.selectedBook = book;
+      if (seats.available.length) {
+        var selectize = angular.element('#switch-seat')[0].selectize;
+        selectize.settings.sortField = 'text';
+        angular.forEach(seats.available, function (seat) {
+          selectize.addOption({ value: seat, text: seat });
+        });
+
+        angular.element('#switch-bike-modal').Modal();
+      } else {
+        $.Notify({ content: 'No seats available to switch' });    
+      }
+    });
+  }
+
+  $scope.moveBike = function () {
+    if ($scope.selectedBike) {
+      var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
+      $.Confirm(confirm_msg, function () {
+        ClassService.update({ scheduleId: $scope.selectedBook._id }, { move_to_seat : $scope.selectedBike }, function () {
+          $scope.filterSchedDate($scope.selectedAccount);
+        }, function (error) {
+          $.Notify({ content: error.data });
+        });
+      });
+    } else {
+      $.Alert('Please select bike to switch')
+    }
+  }
 
   $scope.cancelWaitlist = function (index, sched) {
     ClassService.delete({ scheduleId: sched._id }, function () {
@@ -492,7 +524,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
   $scope.downloadUserAccounts = function () {
     var emailFilter = $scope.searchText;
-    if(!emailFilter){
+    if (!emailFilter) {
       emailFilter = '';
     }
     window.location = '/admin/export/download-user-accounts?email=' + emailFilter
@@ -708,7 +740,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
           });
 
           angular.element('#switch-bike-modal').Modal();
-        } else{
+        } else {
           $.Notify({ content: 'No seats available to switch' });    
         }
       });
@@ -856,7 +888,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   addSeats.settings.sortDirection = 'desc';
   editSeats.settings.sortField = 'text';
   editSeats.settings.sortDirection = 'desc';
-  for (var x = 37; x > 0; x--){
+  for (var x = 37; x > 0; x--) {
     addSeats.addOption({ value: x, text: x });
     editSeats.addOption({ value: x, text: x });
   }
@@ -1416,7 +1448,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
   }
 
   $scope.removeInstructor = function (ins) {
-    $.Confirm('Are you sure on deleting ' + ins.admin.first_name + ' ' + ins.admin.last_name + ' ?', function(){
+    $.Confirm('Are you sure on deleting ' + ins.admin.first_name + ' ' + ins.admin.last_name + ' ?', function () {
       var addSuccess = function (data) {
         InstructorService.query().$promise.then(function (data) {
           $scope.instructors = data;
@@ -1449,7 +1481,7 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
   });
 });
 
-ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService ) {
+ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService) {
 
   $scope.stats = StatisticService.query();
   $scope.stats.$promise.then(function (data) {
@@ -1478,27 +1510,27 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
   $scope.statFilter.toDate = to_picker.get('value');
 
   // Check if there’s a “from” or “to” date to start with.
-  if ( from_picker.get('value') ) {
+  if (from_picker.get('value')) {
     to_picker.set('min', from_picker.get('select'));
   }
-  if ( to_picker.get('value') ) {
+  if (to_picker.get('value')) {
     from_picker.set('max', to_picker.get('select'));
   }
 
   // When something is selected, update the “from” and “to” limits.
   from_picker.on('set', function (event) {
-    if ( event.select ) {
+    if (event.select) {
       to_picker.set('min', from_picker.get('select'));
     }
-    else if ( 'clear' in event ) {
+    else if ('clear' in event) {
       to_picker.set('min', false);
     }
   });
   to_picker.on('set', function (event) {
-    if ( event.select ) {
+    if (event.select) {
       from_picker.set('max', to_picker.get('select'));
     }
-    else if ( 'clear' in event ) {
+    else if ('clear' in event) {
       from_picker.set('max', false);
     }
   });
@@ -1531,7 +1563,7 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
   }
 
   $scope.isBlocked = function (seat) {
-    if ( $scope.blockedBikes && $scope.blockedBikes[seat]){
+    if ($scope.blockedBikes && $scope.blockedBikes[seat]) {
       return true;
     }
     return false;
@@ -1598,7 +1630,7 @@ ctrls.controller('SettingCtrl', function ($scope, SettingService) {
       $scope.blockedBikes = bikes;
       selectBlock.settings.sortField = 'text';
       selectBlock.clearOptions();
-      for (var x = 37; x > 0; x--){
+      for (var x = 37; x > 0; x--) {
         if (!bikes[x])
           selectBlock.addOption({ value: x, text: x });
       }
@@ -1606,7 +1638,7 @@ ctrls.controller('SettingCtrl', function ($scope, SettingService) {
   }
   reloadBlockBikes();
 
-  for (var x = 37; x > 0; x--){
+  for (var x = 37; x > 0; x--) {
     selectBlock.addOption({ value: x, text: x });
   }
 
