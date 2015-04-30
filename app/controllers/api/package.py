@@ -1,16 +1,13 @@
 import sys
+from motorengine import ASCENDING
 from motorengine.errors import InvalidDocumentError
 from app.models.packages import Package
 import tornado
 import json
     
 def find(self):
-    packages = yield Package.objects.find_all()
-    pacs = {}
-    for i, package in enumerate(packages):
-        pacs[i] = package.to_dict()
-    self.write(json.dumps(pacs))
-    self.finish()
+    packages = yield Package.objects.order_by('credits', direction=ASCENDING).find_all()
+    self.render_json(packages)
 
 def find_one(self, id):
     package = yield Package.objects.get(id)

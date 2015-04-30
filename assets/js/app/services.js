@@ -86,7 +86,7 @@ services.factory('PackageService', function($resource) {
   return $resource('/api/package/:packageId', {}, {
     query: {
       method: 'GET',
-      isArray: false
+      isArray: true
     },
     update: {
       method: 'PUT',

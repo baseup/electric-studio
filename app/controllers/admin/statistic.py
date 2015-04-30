@@ -20,7 +20,10 @@ def find(self):
     stats = yield InstructorSchedule.objects.filter(date__gte=fromDate, date__lte=toDate).find_all()
     json_stats = to_json_serializable(stats)
     for i, stat in enumerate(json_stats): 
-        books = yield BookedSchedule.objects.filter(schedule=ObjectId(stat['_id']), status__ne='cancelled').order_by('seat_number', direction=ASCENDING).filter(status__ne='waitlisted').find_all()
+        books = yield BookedSchedule.objects.filter(schedule=ObjectId(stat['_id']), status__ne='cancelled') \
+                                            .filter(status__ne='waitlisted') \
+                                            .filter(status__ne='missed') \
+                                            .order_by('seat_number', direction=ASCENDING).find_all()
         waitlist = yield BookedSchedule.objects.filter(schedule=ObjectId(stat['_id']), status='waitlisted').find_all()
         json_stats[i]['books'] = to_json_serializable(books)
         json_stats[i]['waitlist'] = to_json_serializable(waitlist)

@@ -57,10 +57,10 @@
       <section class="col-2">
         <div class="block" ng-repeat="package in histories.transactions">
           <h3 class="h small primary space--off pad--half-bottom">{{ package.package_name || 'Free' }}</h3>
-          <span>{{ package.credit_count }} Classes</span><br>
+          <span>{{ package.credit_count }} Ride<span ng-if="package.credit_count > 1">s</span></span><br>
           <span><span class="label inline">Purchased On:</span> {{ package.create_at | formatDate }}</span><br>
           <span><span class="label inline">Cost:</span> {{ package.package_fee | currency:"" }}</span><br>
-          <span><span class="label inline">Classes Left:</span> {{ package.remaining_credits || 0 }}</span><br>
+          <span><span class="label inline">Rides Left:</span> {{ package.remaining_credits || 0 }}</span><br>
           <span ng-if="package.notes"><span class="label inline">Notes:</span> {{ package.notes }}<br></span>
           <span>
             <span ng-if="package.status != 'Expired'" class="label inline">Expires On:</span> 
