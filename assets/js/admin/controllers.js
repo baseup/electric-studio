@@ -79,7 +79,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 
   $scope.removePackage = function (pac) {
-    $.Confirm('Are you sure on deleting ' + pac.name + ' ?', function (){
+    $.Confirm('Are you sure on deleting ' + pac.name + ' ?', function () {
       var addSuccess = function () {
         PackageService.query().$promise.then(function (data) {
           $scope.packages = data;
@@ -164,7 +164,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
         $scope.registered = false;
 
         var errorMsg = error.data
-        if(errorMsg.split(' ').length === 2){
+        if (errorMsg.split(' ').length === 2) {
           errorMsg = errorMsg + ' is required';
         }
 
@@ -409,7 +409,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
         });
 
         angular.element('#switch-bike-modal').Modal();
-      } else{
+      } else {
         $.Notify({ content: 'No seats available to switch' });    
       }
     });
@@ -524,7 +524,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
   $scope.downloadUserAccounts = function () {
     var emailFilter = $scope.searchText;
-    if(!emailFilter){
+    if (!emailFilter) {
       emailFilter = '';
     }
     window.location = '/admin/export/download-user-accounts?email=' + emailFilter
@@ -740,7 +740,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
           });
 
           angular.element('#switch-bike-modal').Modal();
-        } else{
+        } else {
           $.Notify({ content: 'No seats available to switch' });    
         }
       });
@@ -888,7 +888,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   addSeats.settings.sortDirection = 'desc';
   editSeats.settings.sortField = 'text';
   editSeats.settings.sortDirection = 'desc';
-  for (var x = 37; x > 0; x--){
+  for (var x = 37; x > 0; x--) {
     addSeats.addOption({ value: x, text: x });
     editSeats.addOption({ value: x, text: x });
   }
@@ -1448,7 +1448,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
   }
 
   $scope.removeInstructor = function (ins) {
-    $.Confirm('Are you sure on deleting ' + ins.admin.first_name + ' ' + ins.admin.last_name + ' ?', function(){
+    $.Confirm('Are you sure on deleting ' + ins.admin.first_name + ' ' + ins.admin.last_name + ' ?', function () {
       var addSuccess = function (data) {
         InstructorService.query().$promise.then(function (data) {
           $scope.instructors = data;
