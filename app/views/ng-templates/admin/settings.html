@@ -2,15 +2,43 @@
 
   <div class="grid content pad">
     <div class="grid__item">
-      <div class="packages box--white box--bordered">
+      <div>
         <div class="box__header align--middle cf pad">
-          <h4>Settings</h4> 
+          <h4 class="label">Settings</h4> 
+        </div>
+        <div class="pad box--bordered box--white space--bottom">
+          <div>
+            
+            <h3 class="label">Schedule Week Release</h3>
+          </div>
+          <div class="bp-md-one-eight float--left space--right space--bottom">
+              <span class="label">Day</span>
+              <select class="select" id="week-release-day" ng-model="weekRelease.day">
+                <option value="">Select Day</option>
+                <option value="mon">Monday</option>
+                <option value="tue">Tuesday</option>
+                <option value="wed">Wednesday</option>
+                <option value="thu">Thursday</option>
+                <option value="fri">Friday</option>
+                <option value="sat">Saturday</option>
+                <option value="sun">Sunday</option>
+              </select>
+          </div>
+          <div class="bp-md-one-eight float--left space--bottom space--right">
+            <span class="label">Time</span>
+            <input type="time" class="text-input" ng-model="weekRelease.time" placeholder="Time">
+          </div> 
+          <div class="bp-md-one-eight float--left space--bottom space--right">
+            <span class="label">&nbsp;</span>
+            <button class="btn btn--small btn--primary" ng-click="setWeekRelease()">Set</button>
+          </div> 
+          <br/><br/><br/>
         </div>
 
-        <div class="pad">
-          <h3 class="h small">Blocked Bikes</h3>
-          <div>
-            <div class="bp-md-one-twelfth float--left space--right space--bottom">
+        <div class="pad box--white box--bordered">
+          <h3 class="label">Blocked Bikes</h3>
+          <div class="float--right">
+            <div class="bp-md-one-eight float--left space--right space--bottom">
               <select class="select" id="select-blocked-bikes" ng-model="newBlock.bike">
                 <option value="">Bike</option>
               </select>

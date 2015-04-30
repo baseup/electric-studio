@@ -180,6 +180,13 @@ services.factory('SettingService', function ($resource) {
       params: {
         key: 'blocked_bikes'
       }
+    },
+    getWeekRelease: {
+      method: 'GET',
+      isArray: false,
+      params: {
+        key: 'week_release'
+      } 
     }
   });
 });
