@@ -134,10 +134,20 @@ def create(self):
 
     user = (yield User.objects.get(user._id)).serialize()
     if sched_status == 'booked':
-        content = str(self.render_string('emails/booking', date=data['date'], type=ins_sched.type, user=user, instructor=ins_sched.instructor, time=ins_sched.start.strftime('%I:%M %p'), seat_number=str(sched.seat_number)), 'UTF-8')
+        content = str(self.render_string('emails/booking', 
+                                         date=ins_sched.date.strftime('%A, %B %d, %Y'), 
+                                         type=ins_sched.type, 
+                                         user=user, 
+                                         instructor=ins_sched.instructor, 
+                                         time=ins_sched.start.strftime('%I:%M %p'), 
+                                         seat_number=str(sched.seat_number)), 'UTF-8')
         yield self.io.async_task(send_email_booking, user=user, content=content)
     elif sched_status == 'waitlisted':
-        content = str(self.render_string('emails/waitlist', date=data['date'], type=ins_sched.type, user=user, instructor=ins_sched.instructor, time=ins_sched.start.strftime('%I:%M %p')), 'UTF-8')
+        content = str(self.render_string('emails/waitlist', 
+                                         date=ins_sched.date.strftime('%A, %B %d, %Y'), 
+                                         type=ins_sched.type, user=user, 
+                                         instructor=ins_sched.instructor, 
+                                         time=ins_sched.start.strftime('%I:%M %p')), 'UTF-8')
         yield self.io.async_task(send_email, user=user, content=content, subject='WaitListed Schedule')
 
     self.render_json(sched)
@@ -165,7 +175,7 @@ def update(self, id):
         user = (yield User.objects.get(booked_schedule.user_id._id)).serialize()
         if 'waitlist' in data:
             content = str(self.render_string('emails/booking', 
-                          date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                          date=booked_schedule.date.strftime('%A, %B %d, %Y'), 
                           user=user, 
                           type=sched.type,
                           seat_number=str(booked_schedule.seat_number), 
@@ -178,7 +188,7 @@ def update(self, id):
                             user=user, 
                             type=sched.type,
                             instructor=sched.instructor, 
-                            date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                            date=booked_schedule.date.strftime('%A, %B %d, %Y'), 
                             seat_number=booked_schedule.seat_number, 
                             time=sched.start.strftime('%I:%M %p')), 'UTF-8'),
                 user=user
@@ -232,7 +242,7 @@ def destroy(self, id):
         if not missed:
             if ref_status == 'waitlisted':
                 content = str(self.render_string('emails/waitlist_removed', 
-                                                  date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                                                  date=booked_schedule.date.strftime('%A, %B %d, %Y'), 
                                                   user=user.to_dict(), 
                                                   type=booked_schedule.schedule.type,
                                                   seat_number=booked_schedule.seat_number, 
@@ -248,7 +258,7 @@ def destroy(self, id):
                                     instructor=booked_schedule.schedule.instructor, 
                                     user=user.to_dict(),
                                     type=booked_schedule.schedule.type, 
-                                    date=booked_schedule.date.strftime('%Y-%m-%d'), 
+                                    date=booked_schedule.date.strftime('%A, %B %d, %Y'), 
                                     seat_number=booked_schedule.seat_number, 
                                     time=booked_schedule.schedule.start.strftime('%I:%M %p')
                                 ), 'UTF-8'))
@@ -273,7 +283,7 @@ def destroy(self, id):
                 yield user.save()
                 yield wait.save()
                 content = str(self.render_string('emails/waitlist_removed', 
-                                              date=wait.date.strftime('%Y-%m-%d'), 
+                                              date=wait.date.strftime('%A, %B %d, %Y'), 
                                               user=user.to_dict(), 
                                               type=wait.schedule.type,
                                               seat_number=wait.seat_number, 
