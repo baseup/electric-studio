@@ -661,7 +661,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleSe
 
       if ($scope.loginUser && $scope.loginUser.credits <= 0) {
         $.Alert('Insufficient Credits');
-        return;
       } 
 
       var today = new Date();
@@ -810,6 +809,13 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, ScheduleSe
       $scope.schedules = data;
     });
 
+  }
+
+  $scope.isFull = function(sched) {
+    if ($scope.schedules.counts[sched._id].books >= sched.seats || $scope.schedules.counts[sched._id].waitlist > 0) {
+      return true;
+    }
+    return false;
   }
 
   $scope.getWeek(new Date());
