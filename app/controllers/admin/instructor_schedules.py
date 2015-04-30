@@ -64,7 +64,7 @@ def create(self):
         new_sched.type = data['type']
     if 'seats' in data:
         new_sched.seats = data['seats']
-    if new_sched.start > new_sched.end:
+    if new_sched.start >= new_sched.end:
         self.set_status(400)
         self.write('Invalid start and end time')
         self.finish()
@@ -95,7 +95,7 @@ def update(self, id):
         sched.seats = data['seats']
     sched.start = parser.parse(data['start'], default=DEFAULT_TIME)
     sched.end = parser.parse(data['end'], default=DEFAULT_TIME)
-    if sched.start > sched.end:
+    if sched.start >= sched.end:
         self.set_status(400)
         self.write('Invalid start and end time')
         self.finish()
