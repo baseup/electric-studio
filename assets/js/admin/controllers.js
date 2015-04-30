@@ -373,27 +373,27 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     }), to_picker = to_input.pickadate('picker')
 
   // Check if there’s a “from” or “to” date to start with.
-  if ( from_picker.get('value') ) {
+  if (from_picker.get('value')) {
     to_picker.set('min', from_picker.get('select'));
   }
-  if ( to_picker.get('value') ) {
+  if (to_picker.get('value')) {
     from_picker.set('max', to_picker.get('select'));
   }
 
   // When something is selected, update the “from” and “to” limits.
   from_picker.on('set', function (event) {
-    if ( event.select ) {
+    if (event.select) {
       to_picker.set('min', from_picker.get('select'));
     }
-    else if ( 'clear' in event ) {
+    else if ('clear' in event) {
       to_picker.set('min', false);
     }
   });
   to_picker.on('set', function (event) {
-    if ( event.select ) {
+    if (event.select) {
       from_picker.set('max', to_picker.get('select'));
     }
-    else if ( 'clear' in event ) {
+    else if ('clear' in event) {
       from_picker.set('max', false);
     }
   });  
@@ -1481,7 +1481,7 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
   });
 });
 
-ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService ) {
+ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService) {
 
   $scope.stats = StatisticService.query();
   $scope.stats.$promise.then(function (data) {
@@ -1510,27 +1510,27 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
   $scope.statFilter.toDate = to_picker.get('value');
 
   // Check if there’s a “from” or “to” date to start with.
-  if ( from_picker.get('value') ) {
+  if (from_picker.get('value')) {
     to_picker.set('min', from_picker.get('select'));
   }
-  if ( to_picker.get('value') ) {
+  if (to_picker.get('value')) {
     from_picker.set('max', to_picker.get('select'));
   }
 
   // When something is selected, update the “from” and “to” limits.
   from_picker.on('set', function (event) {
-    if ( event.select ) {
+    if (event.select) {
       to_picker.set('min', from_picker.get('select'));
     }
-    else if ( 'clear' in event ) {
+    else if ('clear' in event) {
       to_picker.set('min', false);
     }
   });
   to_picker.on('set', function (event) {
-    if ( event.select ) {
+    if (event.select) {
       from_picker.set('max', to_picker.get('select'));
     }
-    else if ( 'clear' in event ) {
+    else if ('clear' in event) {
       from_picker.set('max', false);
     }
   });
@@ -1563,7 +1563,7 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
   }
 
   $scope.isBlocked = function (seat) {
-    if ( $scope.blockedBikes && $scope.blockedBikes[seat]){
+    if ($scope.blockedBikes && $scope.blockedBikes[seat]) {
       return true;
     }
     return false;
@@ -1630,7 +1630,7 @@ ctrls.controller('SettingCtrl', function ($scope, SettingService) {
       $scope.blockedBikes = bikes;
       selectBlock.settings.sortField = 'text';
       selectBlock.clearOptions();
-      for (var x = 37; x > 0; x--){
+      for (var x = 37; x > 0; x--) {
         if (!bikes[x])
           selectBlock.addOption({ value: x, text: x });
       }
@@ -1638,7 +1638,7 @@ ctrls.controller('SettingCtrl', function ($scope, SettingService) {
   }
   reloadBlockBikes();
 
-  for (var x = 37; x > 0; x--){
+  for (var x = 37; x > 0; x--) {
     selectBlock.addOption({ value: x, text: x });
   }
 
