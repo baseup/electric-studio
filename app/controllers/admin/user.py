@@ -18,18 +18,19 @@ def find_one(self, id):
     user = yield User.objects.get(id)
     json_user = to_json_serializable(user)
 
-    withBooks = self.get_query_argument('books')
-    if withBooks:
-        startDate = self.get_query_argument('fromDate')
-        endDate = self.get_query_argument('toDate')
-        fromDate = datetime.now()
-        if startDate:
-            fromDate = datetime.strptime(startDate, '%Y-%m-%d')
-        toDate = datetime.now() + timedelta(days=7)
-        if endDate: 
-            toDate = datetime.strptime(endDate, '%Y-%m-%d')
+    with_books = self.get_query_argument('books')
+    if with_books:
+        start_date = self.get_query_argument('fromDate')
+        end_date = self.get_query_argument('toDate')
+        now = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
+        from_date = now
+        if start_date:
+            from_date = datetime.strptime(startDate, '%Y-%m-%d')
+        to_date = now + timedelta(days=7)
+        if end_date: 
+            to_date = datetime.strptime(end_date, '%Y-%m-%d')
 
-        books = yield BookedSchedule.objects.filter(user_id=user._id, date__gte=fromDate, date__lte=toDate) \
+        books = yield BookedSchedule.objects.filter(user_id=user._id, date__gte=from_date, date__lte=to_date) \
                                             .order_by('date',direction=DESCENDING).find_all()
         json_user['books'] = to_json_serializable(books)
     else:
