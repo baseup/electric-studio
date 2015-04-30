@@ -107,7 +107,7 @@ def buy(self):
                 self.set_status(403)
                 self.write('Package not found')
                 self.finish()
-        except :
+        except:
             value = sys.exc_info()[1]
             self.set_status(403)
             self.write(str(value))  

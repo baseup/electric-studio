@@ -24,7 +24,7 @@ def find_one(self, id):
 def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
-    try :
+    try:
         user = yield User.objects.get(data['user_id']);
         transaction = UserPackage(user_id=data['user_id'])
         if 'package_id' in data:
@@ -51,7 +51,7 @@ def create(self):
         transaction = yield transaction.save()
         if transaction:
             user = yield user.save();
-    except :
+    except:
         value = sys.exc_info()[1]
         self.set_status(403)
         self.write(str(value))
@@ -59,13 +59,13 @@ def create(self):
 
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
-    try :
+    try:
         transaction = yield UserPackage.objects.get(id)
         transaction.expiration = data['expiration']
         if 'notes' in data:
             transaction.notes = data['notes']
         transaction = yield package.save()
-    except :
+    except:
         value = sys.exc_info()[1]
         self.set_status(403)
         self.write(str(value))

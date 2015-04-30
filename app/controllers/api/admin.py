@@ -19,7 +19,7 @@ def find_one(self, id):
 # def create(self):
 
 #     data = tornado.escape.json_decode(self.request.body)
-#     try :
+#     try:
 #         admin = Admin(username=data['username'], 
 #                           password=data['password'],
 #                           name=data['name'],
@@ -34,7 +34,7 @@ def find_one(self, id):
 
 # def update(self, id):
 #     data = tornado.escape.json_decode(self.request.body)
-#     try :
+#     try:
 #         package = yield Package.objects.get(id)
 #         package.name = data['name']
 #         package.fee = data['fee']

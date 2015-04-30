@@ -30,7 +30,7 @@ def find_one(self, id):
 def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
-    try :
+    try:
         admin = Admin(username=data['username'],
                       password=bcrypt.encrypt(data['password']),
                       first_name=data['first_name'],
@@ -47,7 +47,7 @@ def create(self):
             instructor.motto = data['motto']
         instructor = yield instructor.save()
         self.render_json(instructor)
-    except :
+    except:
         if admin: admin.delete()
         value = sys.exc_info()[1]
         self.set_status(403)
@@ -58,7 +58,7 @@ def create(self):
 
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
-    try :
+    try:
         instructor = yield Instructor.objects.get(id)
         if instructor:
             admin = yield Admin.objects.get(instructor.admin._id)
@@ -76,7 +76,7 @@ def update(self, id):
             if 'motto' in data:
                 instructor.motto = data['motto']
             instructor = yield instructor.save()
-    except :
+    except:
         value = sys.exc_info()[1]
         self.set_status(403)
         self.write(str(value))

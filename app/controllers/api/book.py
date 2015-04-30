@@ -52,7 +52,7 @@ def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
     if self.get_secure_cookie('loginUserID'):
-        try :
+        try:
             user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
             user = yield User.objects.get(user_id)
             if user.status != 'Frozen' and user.status != 'Unverified':
@@ -129,7 +129,7 @@ def create(self):
             else:
                 self.set_status(403)
                 self.write('Invalid User Status');
-        except :
+        except:
             value = sys.exc_info()[1]
             self.set_status(403)
             self.write(str(value))
@@ -141,7 +141,7 @@ def create(self):
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
     if data and self.get_secure_cookie('loginUserID'):
-        try :
+        try:
             book = yield BookedSchedule.objects.get(id)
             ref_book_date = book.date
             ref_book_time = datetime.strptime('0:00','%H:%M')

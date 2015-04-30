@@ -24,7 +24,7 @@ def instructor(self):
 
                 instructor.image = 'uploads/' + new_name;
                 yield instructor.save()
-        except :
+        except:
             value = sys.exc_info()[1]
             self.set_status(403)
             self.write(str(value))
@@ -60,7 +60,7 @@ def images(self):
                     new_file.write(upload_file['body'])
                 else:
                     self.set_status('403')
-        except :
+        except:
             value = sys.exc_info()[1]
             self.set_status(403)
             self.write(str(value))

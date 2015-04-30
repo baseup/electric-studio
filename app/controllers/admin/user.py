@@ -52,7 +52,7 @@ def create(self):
         self.set_status(400)
         self.write('Email already in used')
     else:
-        try :
+        try:
             user = User(first_name=data['first_name'], 
                         # middle_name=data['middle_name'],
                         last_name=data['last_name'],
@@ -62,7 +62,7 @@ def create(self):
                         credits=0)
 
             user = yield user.save()
-        except :
+        except:
             value = sys.exc_info()[1]
             self.set_status(403)
             str_value = str(value)
@@ -71,7 +71,7 @@ def create(self):
 
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
-    try :
+    try:
         user = yield User.objects.get(id)
 
         if 'current_password' in data:
@@ -120,7 +120,7 @@ def update(self, id):
 
             user = yield user.save()
 
-    except :
+    except:
         value = sys.exc_info()[1]
         self.set_status(403)
         self.write(str(value))

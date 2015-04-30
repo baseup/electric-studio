@@ -32,7 +32,7 @@ def create(self):
         self.set_status(400)
         self.write('Email already in used')
     else:
-        try :
+        try:
             user = User(first_name=data['first_name'], 
                         # middle_name=data['middle_name'],
                         last_name=data['last_name'],
@@ -45,20 +45,16 @@ def create(self):
                 user.phone_number = data['phone_number']
 
             user = yield user.save()
-        except :
+        except:
             value = sys.exc_info()[1]
             self.set_status(403)
             str_value = str(value)
-            if 'The index' in str_value and 'was violated when trying to save' in str_value:
-                str_value = 'Email already in used'
-            else:
-                str_value = ' '.join(str_value.split('_')).title()
             self.write(str_value)
     self.finish()
 
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
-    try :
+    try:
         user = yield User.objects.get(id)
 
         if 'current_password' in data:
@@ -91,7 +87,7 @@ def update(self, id):
                 user.emergency_contact = data['emergency_contact']
 
             user = yield user.save()
-    except :
+    except:
         value = sys.exc_info()[1]
         self.set_status(403)
         self.write(str(value))
