@@ -615,6 +615,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     }
   });
 
+  $scope.blockedBikes = {};
+  SettingService.getBlockedBikes(function (bikes) {
+    $scope.blockedBikes = bikes;
+  });
+
   $scope.cancelResched = function () {
     SharedService.clear('resched');
     $location.path('/reserved');
@@ -733,7 +738,14 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
           $scope.reserved = BookService.query(bfilter);
           $scope.reserved.$promise.then(function (data) {
             $scope.reserved = data;
-            if ($scope.reserved.length >= sched.schedule.seats) {
+            var seats = sched.schedule.seats;
+            for (var k in $scope.blockedBikes) {
+              var key = parseInt(k)
+              if (key && key <= sched.schedule.seats) {
+                seats -= 1;
+              }
+            }
+            if ($scope.reserved.length >= seats) {
               $.Confirm('This schedule is full, would you like to join the waitlist ?', function () {
                 $scope.$apply(function () {
                   if (+today >= +cutOffchkDate) {
@@ -842,7 +854,14 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   }
 
   $scope.isFull = function (sched) {
-    if ($scope.schedules.counts[sched._id].books >= sched.seats || $scope.schedules.counts[sched._id].waitlist > 0) {
+    var seats = sched.seats;
+    for (var k in $scope.blockedBikes) {
+      var key = parseInt(k)
+      if (key && key <= sched.seats) {
+        seats -= 1;
+      }
+    }
+    if ($scope.schedules.counts[sched._id].books >= seats || $scope.schedules.counts[sched._id].waitlist > 0) {
       return true;
     }
     return false;
