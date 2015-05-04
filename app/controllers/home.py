@@ -68,7 +68,7 @@ def verify(self):
     else:
         data = tornado.escape.json_decode(self.request.body)
         if 'email' in data:
-            user = (yield User.objects.get(email=data['email'])).serialize()
+            user = (yield User.objects.get(email=data['email'], status__ne='Deleted')).serialize()
             url = self.request.protocol + '://' + self.request.host + '/verify?ticket=%s' % user['_id']
             yield self.io.async_task(
                 send_email_verification,
