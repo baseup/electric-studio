@@ -303,54 +303,56 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
   $scope.confirmBilling = function () {
     if ($scope.newPackage) {
-      angular.element('#billing-preview-modal').Modal();
+      // angular.element('#billing-preview-modal').Modal();
+      $.Alert('redirecting to paypal ... ');
+      angular.element('#admin-pay-form').submit();
     } else {
       $.Alert('Please select a package');
     }
   }
 
-  $scope.buyPackage = function () {
+  // $scope.buyPackage = function () {
 
-    if ($scope.selectedAccount.billing && 
-        $scope.selectedAccount.billing != 'null') {
-      if ($scope.selectedAccount.billing.first_name &&
-          $scope.selectedAccount.billing.last_name &&
-          $scope.selectedAccount.billing.address &&
-          $scope.selectedAccount.billing.city &&
-          $scope.selectedAccount.billing.province &&
-          $scope.selectedAccount.billing.postalcode &&
-          $scope.selectedAccount.billing.email &&
-          $scope.selectedAccount.billing.phone_a &&
-          $scope.selectedAccount.billing.phone_b &&
-          $scope.selectedAccount.billing.phone_c &&
-          $scope.selectedAccount.billing.card_number  &&
-          $scope.selectedAccount.billing.card_type &&
-          $scope.selectedAccount.billing.card_expiration &&
-          $scope.selectedAccount.billing.csc) {
+  //   if ($scope.selectedAccount.billing && 
+  //       $scope.selectedAccount.billing != 'null') {
+  //     if ($scope.selectedAccount.billing.first_name &&
+  //         $scope.selectedAccount.billing.last_name &&
+  //         $scope.selectedAccount.billing.address &&
+  //         $scope.selectedAccount.billing.city &&
+  //         $scope.selectedAccount.billing.province &&
+  //         $scope.selectedAccount.billing.postalcode &&
+  //         $scope.selectedAccount.billing.email &&
+  //         $scope.selectedAccount.billing.phone_a &&
+  //         $scope.selectedAccount.billing.phone_b &&
+  //         $scope.selectedAccount.billing.phone_c &&
+  //         $scope.selectedAccount.billing.card_number  &&
+  //         $scope.selectedAccount.billing.card_type &&
+  //         $scope.selectedAccount.billing.card_expiration &&
+  //         $scope.selectedAccount.billing.csc) {
 
-        var billingSuccess = function () {
-        $.Alert('Successfully save billing information. Now were redirecting you to paypal');
-          angular.element('#admin-pay-form').submit();
-        }
+  //       var billingSuccess = function () {
+  //         $.Alert('Successfully save billing information. Now were redirecting you to paypal');
+  //         angular.element('#admin-pay-form').submit();
+  //       }
 
-        var billingFail = function (error) {
-          $.Alert(error.data)
-        }
-        UserService.update({ userId: $scope.selectedAccount._id }, { billing: $scope.selectedAccount.billing }).$promise.then(billingSuccess, billingFail);
+  //       var billingFail = function (error) {
+  //         $.Alert(error.data)
+  //       }
+  //       UserService.update({ userId: $scope.selectedAccount._id }, { billing: $scope.selectedAccount.billing }).$promise.then(billingSuccess, billingFail);
         
-      } else {
-        $.Alert('Billing information is not complete to process the transaction');
-        $timeout(function () {
-          angular.element('#billing-preview-modal').Modal();
-        }, 10);
-      }
-    } else {
-      $.Alert('Please provide billing information');
-      $timeout(function () {
-        angular.element('#billing-preview-modal').Modal();
-      }, 10);
-    }
-  }
+  //     } else {
+  //       $.Alert('Billing information is not complete to process the transaction');
+  //       $timeout(function () {
+  //         angular.element('#billing-preview-modal').Modal();
+  //       }, 10);
+  //     }
+  //   } else {
+  //     $.Alert('Please provide billing information');
+  //     $timeout(function () {
+  //       angular.element('#billing-preview-modal').Modal();
+  //     }, 10);
+  //   }
+  // }
   
   $scope.accountSummary = function (user) {
     $scope.selectedAccount = user;
