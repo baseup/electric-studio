@@ -25,7 +25,7 @@ def find_one(self, id):
         now = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
         from_date = now
         if start_date:
-            from_date = datetime.strptime(startDate, '%Y-%m-%d')
+            from_date = datetime.strptime(start_date, '%Y-%m-%d')
         to_date = now + timedelta(days=7)
         if end_date: 
             to_date = datetime.strptime(end_date, '%Y-%m-%d')
