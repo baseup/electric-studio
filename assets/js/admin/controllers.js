@@ -1557,7 +1557,6 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
       }
     }
     $scope.blockedBikes.length = count;
-    console.log($scope.blockedBikes)
   });
 
   var from_input = angular.element('#input_from').pickadate({
