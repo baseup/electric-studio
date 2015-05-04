@@ -184,7 +184,7 @@ body {
     margin: 0;
   }
   
-  li {
+  & > li {
     display: block;
     
     @include breakpoint(md) {
@@ -197,7 +197,7 @@ body {
     }
   }
   
-  a {
+  a,span {
     display: block;
     padding: 6px 0;
     text-transform: uppercase;
@@ -206,7 +206,7 @@ body {
     font-weight: bold;
     
     @include breakpoint(md) {
-      padding: 10px 0 0 0;
+      padding: 0;
     }
     
     &:hover, &.active { 
@@ -341,7 +341,7 @@ body {
     
     @include breakpoint(md) {
       position: absolute;
-      top: 20px;
+      top: 10px;
       left: -55px;
       right: auto;
       width: 220px;
@@ -352,35 +352,65 @@ body {
   
   .class-menu__holder { 
     padding-left: 20px;
+    list-style: none;
     
     @include breakpoint(md) {
       
       background: $brand-color-quaternary;
       box-shadow: 0 1px 2px rgba($brand-color-secondary, .6);
-      padding: 15px;
+      padding: 15px 0;
       text-align: center;
 
-      a {
+       li {
         display: block;
         border-bottom: 2px solid #fff;
-        color: inherit;
         text-transform: uppercase;
-        padding: 10px 0;
-        color: $color-text-light;
-        font-size: 14px;
-        font-weight: normal;
+        padding: 0;
+        position: relative;
+
+        a,span{
+          display: block;
+          color: $color-text-light;
+          font-size: 14px;
+          font-weight: normal;
+          padding: 10px;
+        
+          &:hover{
+            color: $brand-color-primary!important;
+          }
+        }
 
         &:last-child {
           border: none;
         }
-
-        &:hover {
-          color: $brand-color-primary!important;
-        }
       }
-      
     }
-    
+
+  li:hover .sub-menu-holder{
+    display: block;
+  }
+
+  .sub-menu-holder{
+    display: none;
+    padding-left: 30px;
+
+    ul.submenu{
+        list-style: none;
+    }
+
+    @include breakpoint(md) {
+      left: 100%;
+      position: absolute;
+      top: 0;
+      padding-left: 0;
+
+      ul.submenu{
+        padding: 0 15px;
+        width: 220px;
+        background: $brand-color-quaternary;
+      }
+    }
+  }  
   }
   
 }
@@ -392,9 +422,9 @@ body {
   color: #fff;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-right: 40px;
   cursor: pointer;
   color: purple;
+  display: inline-block;
   
   &:hover {
     color: $color-text-light;
@@ -423,9 +453,51 @@ body {
   color: #fff;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-right: 40px;
+  display: inline-block;
   cursor: pointer;
   color: purple;
+
+  span{
+    display: block;
+  }
+
+  div.dropdown-holder{
+    position: absolute;
+    display: none;
+
+    ul.dropdown{
+      display: block;
+      padding: 0;
+      list-style: none;
+      background-color: #ccc;
+      margin-top: 18px;
+      width: 220px;
+
+      li{
+        text-align: center;
+        display: block;
+      }
+
+      a{
+        display: block;
+        color: $color-text-light;
+        font-weight: normal;
+        font-size: 20px;
+        padding: 10px 0;
+      }
+
+      @include breakpoint(md) {
+        margin-top: 30px;
+      }
+    }
+  }
+
+  &:hover{
+    div.dropdown-holder{
+      display: block;
+    }
+  }
+
   
   &:hover {
     color: $color-text-light;

@@ -30,11 +30,18 @@
         <li class="class-menu">
           <a>Classes <i class="fa fa-caret-down"></i></a>
           <div class="class-menu__list">
-            <div class="class-menu__holder">
-              <a href="#/workouts">The Workouts</a>
-              <a href="#/rates-and-packages">Rates &amp; Packages</a>
-              <a href="#/schedule">Schedule</a>
-            </div>  
+            <ul class="class-menu__holder">
+              <li><a href="#/workouts">The Workouts</a></li>
+              <li><a href="#/rates-and-packages">Rates &amp; Packages</a></li>
+              <li>
+                <span>Schedule</span>
+                <div class="sub-menu-holder">
+                  <ul class="submenu">
+                    <li><a href="#/schedule">BGC Studio</a></li>
+                  </ul>
+                </div>
+              </li>
+            </ul>  
           </div>  
         </li>
         <li>
@@ -68,8 +75,15 @@
       </div>  
       
       <div>
-        <a class="buy-ride-btn float--left" href="#/rates-and-packages">Buy</a>
-        <a class="book-ride-btn float--right" href="#/schedule">/Book A Ride</a>  
+        <a class="buy-ride-btn" href="#/rates-and-packages">Buy</a>
+        <span class="book-ride-btn" href="#/schedule">
+          <span>/Book A Ride</span>
+          <div class="dropdown-holder">
+            <ul class="dropdown">
+              <li><a href="#/schedule">BGC Studio</a></li>
+            </ul>
+          </div>
+        </span>  
       </div>
       
 
