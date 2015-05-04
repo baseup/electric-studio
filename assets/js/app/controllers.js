@@ -696,16 +696,16 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
         return;
       }
 
-      if ($scope.weekRelease) {
-        if ($scope.weekRelease.updateAt < today && today < $scope.weekRelease.date) {
-          var d = $scope.weekRelease;
-          var strDate = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() + ' ' + 
-                        d.getHours() + ':' + d.getMinutes() +':' +d.getSeconds();
-          var tryDate = week_days[$scope.weekRelease.getDay()] + ' ' + $filter('formatTime')(strDate);
-          $.Alert('Booking is not yet available, Please try again on ' + tryDate);
-          return;
-        }
-      }
+      // if ($scope.weekRelease) {
+      //   if (today < $scope.weekRelease.date) {
+      //     var d = $scope.weekRelease;
+      //     var strDate = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() + ' ' + 
+      //                   d.getHours() + ':' + d.getMinutes() +':' +d.getSeconds();
+      //     var tryDate = week_days[$scope.weekRelease.getDay()] + ' ' + $filter('formatTime')(strDate);
+      //     $.Alert('Booking is not yet available, Please try again on ' + tryDate);
+      //     return;
+      //   }
+      // }
 
       var cutOffchkDate = new Date(date);
       cutOffchkDate.setDate(date.getDate() - 1);
@@ -783,6 +783,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     nextMonday.setDate(nextMonday.getDate() - nextMonday.getDay() + 8);
     if (date > nextMonday) 
       return true;
+
+    if ($scope.weekRelease && now < $scope.weekRelease.date) 
+      return true;
+
 
     return false;
   }
