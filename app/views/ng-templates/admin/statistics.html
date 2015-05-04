@@ -62,9 +62,9 @@
                   <span ng-if="isCompleted(stat)">Completed</span>
                   <span ng-if="!isCompleted(stat)">Available</span>
                 </td>
-                <td><a ng-click="viewBikeMap(stat)">{{ stat.seats }}</a></td>
+                <td><a ng-click="viewBikeMap(stat)">{{ stat.seats - blockedBikes.length }}</a></td>
                 <td>
-                  <span ng-if="stat.books.length <= stat.seats">{{ stat.seats - stat.books.length }}</span>
+                  <span ng-if="stat.books.length <= stat.seats">{{ stat.seats - blockedBikes.length - stat.books.length }}</span>
                   <span ng-if="stat.books.length > stat.seats">0</span>
                 </td>
                 <td>

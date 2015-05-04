@@ -1,4 +1,5 @@
 from app.models.admins import Setting
+from app.models.schedules import BookedSchedule
 from datetime import datetime
 import sys
 import tornado.escape
@@ -40,13 +41,22 @@ def update(self, id):
         week_release.value = tornado.escape.json_encode(values)
         yield week_release.save()
     elif id == 'blocked_bikes':
-        bikes = yield Setting.objects.get(key='blocked_bikes')
-        if bikes:
-            blocks = tornado.escape.json_decode(bikes.value)
-            blocks[data['bike']] = data['reason']
+        bike_scheds = yield BookedSchedule.objects.filter(seat_number=data['bike'],status='booked').find_all()
 
-            bikes.value = tornado.escape.json_encode(blocks)
-            yield bikes.save()
+        if bike_scheds and len(bike_scheds) > 0:
+            self.render_json({
+                'error': 'bike has schedule',
+                'scheds': bike_scheds
+            })
+            return
+        else:
+            bikes = yield Setting.objects.get(key='blocked_bikes')
+            if bikes:
+                blocks = tornado.escape.json_decode(bikes.value)
+                blocks[data['bike']] = data['reason']
+
+                bikes.value = tornado.escape.json_encode(blocks)
+                yield bikes.save()
     self.finish()
 
 def destroy(self, id):

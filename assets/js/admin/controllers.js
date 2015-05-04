@@ -1547,6 +1547,18 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     $scope.stats = data;
   });
 
+  SettingService.getBlockedBikes(function (bikes) {
+    $scope.blockedBikes = bikes;
+    var count = 0;
+    for (var key in bikes){
+      if(parseInt(key)){
+        count++
+      }
+    }
+    $scope.blockedBikes.length = count;
+    console.log($scope.blockedBikes)
+  });
+
   var from_input = angular.element('#input_from').pickadate({
       format: 'yyyy-mm-dd',
       formatSubmit: 'yyyy-mm-dd',
@@ -1646,6 +1658,13 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     $scope.selectedStat = stat;
     SettingService.getBlockedBikes(function (bikes) {
       $scope.blockedBikes = bikes;
+      var count = 0;
+      for (var key in bikes){
+        if(parseInt(key)){
+          count++
+        }
+      }
+      $scope.blockedBikes.length = count;
     });
 
     angular.element('#bike-map-modal').Modal();
@@ -1741,16 +1760,23 @@ ctrls.controller('SettingCtrl', function ($scope, $timeout, SettingService) {
         return;
       }
 
-      SettingService.update({ key: 'blocked_bikes' }, $scope.newBlock, function () {
-        reloadBlockBikes();
+      SettingService.update({ key: 'blocked_bikes' }, $scope.newBlock, function (bike) {
+        if (bike && bike.error && bike.scheds){
+          $scope.bikeScheds = bike.scheds;
+          angular.element('#bike-sched-modal').Modal();
+        } else {
+          reloadBlockBikes();
+        }
         $scope.newBlock = {};
       }, function (error) { $.Alert(error.data); $scope.newBlock = {}; });
     }
   }
 
   $scope.unBlockedBike = function (bike) {
-    SettingService.delBlockedBikes({ key: 'blocked_bikes', bike: bike }, function () {
-      reloadBlockBikes();
+    $.Confirm('Are you sure on unblocking bike ' + bike + ' ?', function () {
+      SettingService.delBlockedBikes({ key: 'blocked_bikes', bike: bike }, function () {
+        reloadBlockBikes();
+      });
     });
   }
 
