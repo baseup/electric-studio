@@ -148,13 +148,39 @@ app.filter('search', function($filter){
       if (target != null && target.length > 0) {
         if (propStrArr) {
           for (var i in propStrArr) {
-            properties = parseString(propStrArr[i]);
-            if (getValue(item, properties).toLowerCase().indexOf(target.toLowerCase()) > -1) {
+            var value = null;
+            if (propStrArr[i].indexOf('+')) {
+              var concat = propStrArr[i].split('+')
+              for (var c in concat) {
+                if (concat[c].trim().length > 0){
+                  value += getValue(item, parseString(concat[c]));
+                } else {
+                  value += concat[c]
+                }
+              }
+            } else {
+              properties = parseString(propStrArr[i]);
+              value = getValue(item, properties);
+            }
+            if (value && value.toLowerCase().indexOf(target.toLowerCase()) > -1) {
               return true;
             }
           }
         } else {
-          var val = getValue(item, properties);
+          var val = null;
+          if (propertyString.indexOf('+')) {
+            var concat = propertyString.split('+')
+            for (var c in concat) {
+              if (concat[c].trim().length > 0){
+                val += getValue(item, parseString(concat[c]));
+              } else {
+                val += concat[c]
+              }
+            }
+          } else {
+            val = getValue(item, properties);
+          }
+
           if (val) {
             return val.toLowerCase().indexOf(target.toLowerCase()) > -1;
           }

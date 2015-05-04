@@ -43,14 +43,15 @@ def download_bookings(self):
 
 def download_user_accounts(self):
     email = self.get_query_argument('email')
-    accounts = yield User.objects.order_by('last_name', direction=ASCENDING).find_all()
+    accounts = yield User.objects.order_by('last_name', direction=ASCENDING).filter(status__ne='Deleted').find_all()
     filename = 'user-accounts-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
     with open(filename, 'w') as csvfile:
         fieldnames = ['Last Name', 'First Name', 'Email Address']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for a in accounts:
-            if email in a.email:
+            fullname = a.first_name + ' ' + a.last_name
+            if email.lower() in a.email.lower() or email.lower() in fullname.lower():
                 writer.writerow({
                     'Last Name': a.last_name,
                     'First Name': a.first_name,
