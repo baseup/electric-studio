@@ -197,7 +197,7 @@ body {
     }
   }
   
-  a {
+  a,span {
     display: block;
     padding: 6px 0;
     text-transform: uppercase;
@@ -380,27 +380,35 @@ body {
           }
         }
 
-        &:hover .sub-menu-holder{
-          display: block;
-        }
-
         &:last-child {
           border: none;
         }
       }
-      
     }
+
+  li:hover .sub-menu-holder{
+    display: block;
+  }
+
   .sub-menu-holder{
-    position: absolute;
-    left: 100%;
-    top: 0;
     display: none;
+    padding-left: 30px;
 
     ul.submenu{
-      padding: 0 15px;
-      list-style: none;
-      width: 220px;
-      background: $brand-color-quaternary;
+        list-style: none;
+    }
+
+    @include breakpoint(md) {
+      left: 100%;
+      position: absolute;
+      top: 0;
+      padding-left: 0;
+
+      ul.submenu{
+        padding: 0 15px;
+        width: 220px;
+        background: $brand-color-quaternary;
+      }
     }
   }  
   }
@@ -414,9 +422,9 @@ body {
   color: #fff;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-right: 40px;
   cursor: pointer;
   color: purple;
+  display: inline-block;
   
   &:hover {
     color: $color-text-light;
@@ -445,9 +453,51 @@ body {
   color: #fff;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-right: 40px;
+  display: inline-block;
   cursor: pointer;
   color: purple;
+
+  span{
+    display: block;
+  }
+
+  div.dropdown-holder{
+    position: absolute;
+    display: none;
+
+    ul.dropdown{
+      display: block;
+      padding: 0;
+      list-style: none;
+      background-color: #ccc;
+      margin-top: 18px;
+      width: 220px;
+
+      li{
+        text-align: center;
+        display: block;
+      }
+
+      a{
+        display: block;
+        color: $color-text-light;
+        font-weight: normal;
+        font-size: 20px;
+        padding: 10px 0;
+      }
+
+      @include breakpoint(md) {
+        margin-top: 30px;
+      }
+    }
+  }
+
+  &:hover{
+    div.dropdown-holder{
+      display: block;
+    }
+  }
+
   
   &:hover {
     color: $color-text-light;
