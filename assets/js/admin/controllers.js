@@ -560,6 +560,10 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       $scope.waitList = books.waitlist;
       $scope.schedDetails = books.schedule;
       if (books.schedules.length) {
+        $scope.blockedBikes = {};
+        SettingService.getBlockedBikes(function (bikes) {
+          $scope.blockedBikes = bikes;
+        });
         var selectize = angular.element('#select-class-time')[0].selectize;
 
         angular.forEach(books.schedules, function (sched) {
@@ -574,6 +578,21 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     });
   }
   $scope.reloadDate();
+
+  $scope.getBlockedSeats = function () {
+    if ($scope.schedDetails) {
+      var seats = $scope.schedDetails.seats;
+      for (var k in $scope.blockedBikes) {
+        var key = parseInt(k)
+        if (key && key <= $scope.schedDetails.seats) {
+          seats -= 1;
+        }
+      }
+      return seats;
+    }
+    
+    return 0;
+  }
 
   UserService.query(function (users) {
     $scope.users = users;
