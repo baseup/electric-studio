@@ -177,11 +177,10 @@ body {
   
   @include breakpoint(md) {
     padding: 0;
-    display: block;
-    position: absolute;
-    bottom: 32px;
-    left: 240px;
+    display: inline-block;
     margin: 0;
+    position: relative;
+    top: 41px;
   }
   
   & > li {
@@ -399,10 +398,11 @@ body {
     }
 
     @include breakpoint(md) {
-      left: 100%;
+      left: calc( 100% + 1px);
       position: absolute;
       top: 0;
       padding-left: 0;
+      box-shadow: 0 1px 2px rgba(102, 102, 102, 0.6);
 
       ul.submenu{
         padding: 0 15px;
@@ -431,9 +431,6 @@ body {
   }
   
   @include breakpoint(md) {
-    position: absolute;
-    right: 20px;
-    bottom: 31px;
     text-align: right;
     margin-right: 0;
     font-size: 22px
@@ -445,7 +442,22 @@ body {
   }
 }
 
+.book-buy{
+  float: right;
+  position: relative;
+  top: -4px;
+  margin-right: 40px;
 
+  @include breakpoint(md) {
+    margin-right: 0px;
+    top: 35px;
+  }
+
+  @include breakpoint(lg) {
+    margin-right: 73px;
+    top: 31px;
+  }
+}
 .book-ride-btn {
   font-size: 18px;
   font-weight: bold;
@@ -464,13 +476,15 @@ body {
   div.dropdown-holder{
     position: absolute;
     display: none;
+    right: -16px;
 
     ul.dropdown{
       display: block;
       padding: 0;
       list-style: none;
-      background-color: #ccc;
-      margin-top: 18px;
+      background: $brand-color-quaternary;
+      box-shadow: 0 1px 2px rgba($brand-color-secondary, .6);
+      margin-top: 22px;
       width: 220px;
 
       li{
@@ -504,12 +518,13 @@ body {
   }
   
   @include breakpoint(md) {
-    position: absolute;
-    right: 20px;
-    bottom: 31px;
     text-align: right;
     margin-right: 0;
-    font-size: 22px
+    font-size: 22px;
+
+    ul.dropdown{
+      margin-top: 18px;
+    }
   }
   
   @include breakpoint(lg) {
