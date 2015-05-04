@@ -158,6 +158,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
           $scope.users = users;
         });
         angular.element('#close-add-account').click();
+        $scope.newAccount = {}
       }
 
       var registerFail = function (error) {
