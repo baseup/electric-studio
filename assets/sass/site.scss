@@ -184,7 +184,7 @@ body {
     margin: 0;
   }
   
-  li {
+  & > li {
     display: block;
     
     @include breakpoint(md) {
@@ -352,6 +352,7 @@ body {
   
   .class-menu__holder { 
     padding-left: 20px;
+    list-style: none;
     
     @include breakpoint(md) {
       
@@ -360,22 +361,24 @@ body {
       padding: 15px;
       text-align: center;
 
-      a {
+      & > li {
         display: block;
         border-bottom: 2px solid #fff;
-        color: inherit;
         text-transform: uppercase;
         padding: 10px 0;
-        color: $color-text-light;
-        font-size: 14px;
-        font-weight: normal;
 
-        &:last-child {
-          border: none;
+        a{
+          color: $color-text-light;
+          font-size: 14px;
+          font-weight: normal;
+        
+          &:hover {
+            color: $brand-color-primary!important;
+          }
         }
 
-        &:hover {
-          color: $brand-color-primary!important;
+       &:last-child {
+          border: none;
         }
       }
       
