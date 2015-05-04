@@ -282,6 +282,7 @@
             <th>Package Type</th>
             <th>Rides Used</th>
             <th>Rides Left</th>
+            <th>Purchase Date</th>
             <th>Expiration Date</th>
             <th>Notes</th>
           </tr>
@@ -289,6 +290,7 @@
             <td>{{ pack.package_name || 'Free' }} </td>
             <td>{{ pack.credit_count }}</td>
             <td>{{ pack.remaining_credits }}</td>
+            <td>{{ pack.create_at | formatDate }}</td>
             <td>{{ pack.create_at | addDay:pack.expiration | formatDate }}</td>
             <td>{{ pack.notes }}</td>
           </tr>

@@ -905,6 +905,26 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
         callback(events);
       });
     },
+    // eventRender: function (event, element) {
+    //   element.attr('title', event.title);
+    // },
+    eventMouseover: function (event, element) {
+      var element = element;
+      var tooltip = '<div class="cal-tooltip">' + event.title + '</div>';
+      angular.element('body').append(tooltip);
+      $(this).mouseover(function (e) {
+        $(this).css('z-index', 10000);
+        angular.element('.cal-tooltip').fadeIn('500');
+        angular.element('.cal-tooltip').fadeTo('10', 1.9);
+      }).mousemove(function (e) {
+        angular.element('.cal-tooltip').css('top', e.pageY + 10);
+        angular.element('.cal-tooltip').css('left', e.pageX + 20);
+      });
+    },
+    eventMouseout: function (calEvent, jsEvent) {
+        $(this).css('z-index', 8);
+        angular.element('.cal-tooltip').remove();
+    },
     eventClick: function (calEvent, jsEvent, view) {
       $scope.selectedSched = $scope.schedules[calEvent.index];
       $scope.editSched = {
@@ -933,7 +953,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     editSeats.addOption({ value: x, text: x });
   }
   addSeats.setValue(37);
-
 
   // $scope.updateRegularSchedule = function () {
   //   var updatedSched = angular.copy($scope.editRegSched);
