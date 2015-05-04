@@ -1,4 +1,5 @@
 from app.models.admins import Setting
+from datetime import datetime
 import sys
 import tornado.escape
 
@@ -35,7 +36,7 @@ def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
     if id == 'week_release':
         week_release = yield Setting.objects.get(key='week_release')
-        values = { 'day' : data['day'], 'time': data['time'] }
+        values = { 'day' : data['day'], 'time': data['time'], 'date': str(datetime.now()) }
         week_release.value = tornado.escape.json_encode(values)
         yield week_release.save()
     elif id == 'blocked_bikes':

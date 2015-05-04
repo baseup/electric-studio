@@ -29,10 +29,10 @@
           <input type="hidden" name="rm" value="2">
           <input type="hidden" name="business" value="ogsmelvin05-facilitator@gmail.com">
           <input type="hidden" name="item_name" value="{{ package.name }}">
-          <input type="hidden" name="item_number" value="{{ package.id }}">
+          <input type="hidden" name="item_number" value="{{ package._id }}">
           <input type="hidden" name="amount" value="{{ package.fee }}">
           <input type="hidden" name="currency_code" value="PHP">
-          <input type="hidden" name="return" value="{{ redirectUrl }}?pid={{ package.id }}&success=True">
+          <input type="hidden" name="return" value="{{ redirectUrl }}?pid={{ package._id }}&success=True">
           <input type="hidden" name="cancel_return" value="{{ redirectUrl }}?success=False">
           <input type="hidden" name="cbt" value="Return to Electric Studio">
           <input class="button primary small" ng-click="buyPackage($event, $index)" value = "Buy" class = "button" type = "button">
