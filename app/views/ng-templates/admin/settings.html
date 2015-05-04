@@ -77,4 +77,26 @@
     </div>
   </div>
 
+  <div class="modal" data-modal="bike-sched" id="bike-sched-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Bike has schedules</h3>
+
+      <div style="height: 400px; overflow: scroll">
+        <table class="data-table account-summary-table">
+          <tr>
+            <th>Schedule</th>
+            <th>Name</th>
+            <th>Bike</th>
+          </tr>
+          <tr ng-repeat="book in bikeScheds">
+            <td>{{ book.date | formatDate }} {{ book.schedule.start | formatTime }}</td>
+            <td>{{ book.user_id.first_name }} {{ book.user_id.last_name }}</td>
+            <td>{{ book.seat_number }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
