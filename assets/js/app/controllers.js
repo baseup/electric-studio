@@ -598,14 +598,20 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   $scope.resched = SharedService.get('resched');
 
   var days = { 'mon' : 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6, 'sun': 7 };
-  $scope.weekRelease = null;
+  $scope.weekRelease = {};
   SettingService.getWeekRelease(function (data) {
     if (data && data.time && data.day) {
+
+      var parts = data.date.split(/[^0-9]/);
+      var updateAt = new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+      updateAt.setDate(updateAt.getDate() - updateAt.getDay() + 7);
+
       var date = new Date()
-      date.setDate(date.getDate() - date.getDay() + days[data.day]) 
+      date.setDate(date.getDate() - date.getDay() + days[data.day])
       var time = data.time.split(':')
       date.setHours(time[0], time[1], 0 , 0);
-      $scope.weekRelease = date;
+      $scope.weekRelease.date = date;
+      $scope.weekRelease.updateAt = updateAt;
     }
   });
 
@@ -686,7 +692,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       }
 
       if ($scope.weekRelease) {
-        if (today < $scope.weekRelease) {
+        if ($scope.weekRelease.updateAt < today && today < $scope.weekRelease.date) {
           var d = $scope.weekRelease;
           var strDate = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() + ' ' + 
                         d.getHours() + ':' + d.getMinutes() +':' +d.getSeconds();
@@ -747,7 +753,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
           
         }
       });
-
     }
   }
 
