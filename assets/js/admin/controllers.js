@@ -211,7 +211,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     $.Confirm('Are you sure to verify account ' + username + ' - ' + user.email, function () {
 
       var verifySuccess = function () {
-        $.Alert('Successfully verify account ' + username)
+        $.Alert('Successfully verify account ' + username);
         UserService.query(function (users) {
           $scope.users = users;
         });
@@ -227,8 +227,12 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   $scope.deleteAccount = function (user, index) {
     $.Confirm('Are you sure you want to delete ' + user.first_name + ' ' + user.last_name + ' account?<br/>(THIS ACTION CANNOT BE UNDONE)' , function () {
       chkSecurity(function () {
-        $scope.users.splice(index, 1);
-        UserService.delete({ userId: user._id });
+        UserService.delete({ userId: user._id }, function () {
+          $.Alert('Successfully deleted account ' + user.email);
+          UserService.query(function (users) {
+            $scope.users = users;
+          });
+        });
       });
     });
   }
