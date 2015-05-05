@@ -219,11 +219,16 @@
     $('#confirm-modal').Modal();
   }
 
-  $.Prompt = function (message, okcallback) {
+  $.Prompt = function (message, okcallback, isPassword) {
     var content = message;
     if (typeof message == 'object') {
       content = message.content;
     }
+
+    if (isPassword) {
+      $('#prompt-input').attr('type','password');
+    }
+
     $('#prompt-modal-message').html(message);
     $('#prompt-ok-button').off('click');
     $('#prompt-ok-button').click(function () {

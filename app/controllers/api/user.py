@@ -3,6 +3,7 @@ from passlib.hash import bcrypt
 from motorengine.errors import InvalidDocumentError
 from app.helper import send_email_verification, send_email
 from app.models.users import User
+from app.models.schedules import BookedSchedule
 from datetime import datetime
 import tornado
 import json
@@ -95,5 +96,33 @@ def update(self, id):
 
 def destroy(self, id):
     user = yield User.objects.get(id)
-    user.delete()
+    password = self.get_query_argument('pass');
+
+    if password:
+        if(bcrypt.verify(password, user.password)):
+            scheds = yield BookedSchedule.objects.filter(user_id=user._id, status__ne='completed') \
+                                                 .filter(status__ne='cancelled') \
+                                                 .filter(status__ne='missed').find_all()
+            if scheds:
+                for i, sched in enumerate(scheds):
+
+                    if sched.user_package:
+                        sched.user_package.remaining_credits += 1
+                        yield sched.user_package.save()
+
+                    if sched.status == 'waitlisted':
+                        user.credits += 1
+
+                    sched.status = 'cancelled'
+                    yield sched.save()
+
+            user.status = 'Deleted'
+            user = yield user.save()
+        else:
+            self.set_status(400);
+            self.write('Invalid User Password')
+    else:
+        self.set_status(400);
+        self.write('Invalid User Password')
+        
     self.finish()
