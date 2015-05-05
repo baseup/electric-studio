@@ -215,8 +215,9 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
         $scope.registered = false;
 
         var errorMsg = error.data
-        if (errorMsg.split(' ').length === 2) {
-          errorMsg = errorMsg + ' is required';
+        if (errorMsg.split('_').length === 2 &&
+            errorMsg.indexOf('required') == -1) {
+          errorMsg = 'Field ' + errorMsg + ' is required';
         }
         $scope.signupError = errorMsg;
       }
