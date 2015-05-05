@@ -728,6 +728,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
             angular.forEach(seats.available, function (seat) {
               selectbike.addOption({ value: seat, text: seat });
             }); 
+            $scope.selectedRider = {};
+            angular.element('#select-user-id')[0].selectize.setValue('');
             angular.element('#book-ride-modal').Modal();
           } else {
             $.Alert('No available seats');
@@ -747,6 +749,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         $scope.newWaitlist = {};
         $scope.newWaitlist.sched_id = $scope.newBook.sched_id;
         $scope.newWaitlist.date = $scope.newBook.date;
+        $scope.selectedRider = {};
+        angular.element('#select-waitlist-user')[0].selectize.setValue('');
         angular.element('#add-waitlist-modal').Modal();
       } else {
         $.Notify({ content: 'Not allow to modify, This schedule is completed' });
