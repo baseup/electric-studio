@@ -63,7 +63,7 @@
    *
    * call using $(modal).Modal();
    */
-  $.fn.Modal = function () {
+  $.fn.Modal = function (withoutXBtn) {
     return this.each(function () {
 
       var el = $(this);
@@ -77,7 +77,7 @@
       el.click(function (e) {
         var target = $(e.target);
 
-        if (!target.closest('.modal__box').length) {
+        if (!withoutXBtn && !target.closest('.modal__box').length) {
           modalClose(el);
         }
       });
@@ -190,13 +190,19 @@
     }
   }
 
-  $.Alert = function (message) {
+  $.Alert = function (message, withoutXBtn) {
     var content = message;
     if (typeof message == 'object') {
       content = message.content;
     }
+    if (withoutXBtn) {
+      $('#alert-close-btn').hide();
+    } else {
+      $('#alert-close-btn').show();
+    }
+
     $('#alert-modal-message').html(message);
-    $('#alert-modal').Modal();
+    $('#alert-modal').Modal(withoutXBtn);
   }
 
   $.Confirm = function (message, okcallback) {

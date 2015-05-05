@@ -579,7 +579,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
       $.Confirm('Are you sure on cancelling schedule?', function () {
         var data = {};
         data.status = 'cancelled';
-        
+        $.Alert('Canceling schedule ...', true);
         var bookSuccess = function () {
           window.location.reload();
         }
@@ -954,7 +954,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       return true;
     }
 
-    if ($scope.blockedBikes[num]) {
+    if ($scope.blockedBikes && $scope.blockedBikes[num]) {
       return true;
     }
 
@@ -1026,15 +1026,17 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
       book.seats = seats;
       book.sched_id = sched.schedule._id;
+      var str_seats = seats.sort(function(a, b){return a-b}) + '';
+      str_seats = str_seats.replace(/,/g, ', ');
       var confirm_message = "You're about to book a ride on " + 
-                            $scope.daySched + ', ' + $scope.dateSched + ' with seat'+ (seats.length > 1 ? 's' : '') +' number ' + seats;
+                            $scope.daySched + ', ' + $scope.dateSched + ' with seat'+ (seats.length > 1 ? 's' : '') +' number ' + str_seats;
       if ($scope.forWaitlist) {
         confirm_message = "You're about to join the waitlist for this schedule " + $scope.daySched + ', ' + $scope.dateSched;
         book.status = 'waitlisted';
       }
 
       $.Confirm(confirm_message, function () {
-
+        $.Alert('Booking seats ...', true);
         var bookSuccess = function () {
 
           if ($scope.resched) {
