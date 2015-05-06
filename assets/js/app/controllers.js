@@ -215,9 +215,20 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
         $scope.registered = false;
 
         var errorMsg = error.data
-        if (errorMsg.split('_').length === 2 &&
-            errorMsg.indexOf('required') == -1) {
-          errorMsg = 'Field ' + errorMsg + ' is required';
+        errorMsg = errorMsg.replace(/'/g, '')
+        errorMsg = errorMsg.replace('Field ', '')
+
+        var errorMsgArr = errorMsg.split('_');
+        if (errorMsgArr.length === 2) {
+          errorMsg = '';
+          for (var i in errorMsgArr){
+            errorMsg += errorMsgArr[i].charAt(0).toUpperCase() + errorMsgArr[i].slice(1) + ' ';
+          }
+          if (errorMsg.indexOf('required') === -1){
+            errorMsg = errorMsg + 'is required';
+          }
+        } else {
+          errorMsg = errorMsg.charAt(0).toUpperCase() + errorMsg.slice(1);
         }
         $scope.signupError = errorMsg;
       }
@@ -358,7 +369,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
     $location.search({ s: null, pname: null });
   }
 
- if (!$scope.loginUser) {
+  if (!$scope.loginUser) {
     $location.path('/');
     angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
     angular.element('.login-toggle').click();
