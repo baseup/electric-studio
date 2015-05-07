@@ -60,3 +60,21 @@ def create(self):
         return
 
     self.render_json(trans)
+
+
+def update(self, id):
+
+    tran = yield UserPackage.objects.get(id)
+    data = tornado.escape.json_decode(self.request.body)
+
+    if tran:
+        if 'extend' in data:
+            tran.expiration += int(data['extend'])
+            tran.expire_date = tran.create_at + timedelta(days=int(tran.expiration))
+            tran = yield tran.save()
+    else:
+        self.set_status(400)
+        self.write('Transaction not found')
+
+    self.finish()
+

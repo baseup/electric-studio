@@ -405,6 +405,20 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     }
   });  
 
+  $scope.extendPackageExpiry = function (userpackage) {
+    $.Prompt('Extend expiration by how many days ?', function (days) {
+      if (parseInt(days)) {
+        TransactionService.update({ transactionId: userpackage._id}, { extend: parseInt(days) }, function () {
+          UserService.get({ userId: userpackage.user_id._id }, function (summary) {
+            $scope.selectedAccount = summary;
+          });
+        }, function (error) { $.Alert(error.data); })
+      } else {
+        $.Alert('Please put valid number of days to extend')
+      }
+    });
+  }
+
   $scope.moveBikeModal = function (book) {
     ClassService.query({ date: book.date.replace(' 00:00:00',''), sched_id: book.schedule._id, seats: true }, function (seats) {
       $scope.selectedBook = book;
