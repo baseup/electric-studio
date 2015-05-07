@@ -596,11 +596,11 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
       var time = book.schedule.start.split(/[^0-9]/);
       var chkDate =  new Date(date[0], date[1]-1, date[2]-1, 17, 0, 0);
       if (+today >= +chkDate) {
-        $.Alert('Schedule met the cut-off limit, could not be canceled anymore')
+        $.Alert('This ride can no longer be cancelled. You can only cancel your booking until 5pm the day before your ride.')
         return;
       }
 
-      $.Confirm('Are you sure on cancelling schedule?', function () {
+      $.Confirm('Are you sure you want to cancel?', function () {
         var data = {};
         data.status = 'cancelled';
         $.Alert('Canceling schedule ...', true);
