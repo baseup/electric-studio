@@ -1947,12 +1947,15 @@ body {
     margin: 0 auto;
     
     @include breakpoint(md) {
-      height: 60px;
-    width: 60px;
+      height: 120px;
+    width: 120px;
     }
     
     img {
-      width: 100%;
+      max-width: 230px !important; 
+      width: 230px;
+      left: -55px;
+      position: relative
     }
   }
 
