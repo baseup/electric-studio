@@ -127,7 +127,7 @@ def create(self):
                                                                          user=serialized_user, 
                                                                          instructor=sched.instructor, 
                                                                          time=sched.start.strftime('%I:%M %p')), 'UTF-8')
-                                        yield self.io.async_task(send_email, user=serialized_user, content=content, subject='WaitList Schedule')
+                                        yield self.io.async_task(send_email, user=serialized_user, content=content, subject='Waitlisted')
                                     break
 
                                 if not has_valid_package:

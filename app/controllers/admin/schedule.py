@@ -148,7 +148,7 @@ def create(self):
                                          type=ins_sched.type, user=user, 
                                          instructor=ins_sched.instructor, 
                                          time=ins_sched.start.strftime('%I:%M %p')), 'UTF-8')
-        yield self.io.async_task(send_email, user=user, content=content, subject='WaitListed Schedule')
+        yield self.io.async_task(send_email, user=user, content=content, subject='Waitlisted')
 
     self.render_json(sched)
 
