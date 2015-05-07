@@ -1697,6 +1697,10 @@ body {
     padding: 10px;
     line-height: 1.4em;
     color: $color-text-light;
+
+    button {
+      visibility: hidden;
+    }
     
     &.unavailable {
       color: $brand-color-tertiary;
@@ -1714,6 +1718,10 @@ body {
     &:not(.unavailable):hover {
       background: #fff;
       color: $brand-color-primary;
+
+      button {
+        visibility: visible;
+      }
     }
     
     span {
