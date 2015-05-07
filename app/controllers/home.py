@@ -114,7 +114,7 @@ def buy(self):
 
     if not self.get_secure_cookie('loginUserID'):
         self.set_status(403)
-        self.write('User not logged in')
+        self.write('Please log in to your Electric account.')
         self.redirect('/#/rates?s=error')
     else:
         if success == 'True':
