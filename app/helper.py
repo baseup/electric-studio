@@ -120,7 +120,7 @@ def send_email_move(user, content):
             },
             'html': content,
             'important': True,
-            'subject': 'Electric Studio - Moved Bike',
+            'subject': 'Electric Studio - Bike Moved',
             'to': [
                 {
                     'email': user['email'],
