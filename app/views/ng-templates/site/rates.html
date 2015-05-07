@@ -18,8 +18,9 @@
   <div id="rates-section" class="content bg-gray parts-4 rates-info" ng-controller="RatesCtrl">
     <div class="wrapper">
       <section ng-repeat="package in packages">
+        <p>{{ package.description }}</p>
         <h2>{{ package.credits }} <span ng-if="package.credits > 1">Rides</span><span  ng-if="package.credits <= 1">Ride</span></h2>
-        <p class="price">PHP <span>{{ package.fee | currency:'' }}</span></p>
+        <p class="price">PHP {{ package.fee | currency:'' }}</p>
         <p>Expires in {{ package.expiration }} days</p>
         <form id="payForm-{{ $index }}" action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
           <input type="hidden" name="cmd" value="_xclick"> 
