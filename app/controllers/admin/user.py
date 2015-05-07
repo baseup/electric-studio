@@ -34,7 +34,7 @@ def find_one(self, id):
                                             .order_by('date',direction=DESCENDING).find_all()
         json_user['books'] = to_json_serializable(books)
     else:
-        packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
+        packages = yield UserPackage.objects.filter(user_id=user._id).order_by('expire_date').find_all()
         json_user['packages'] = to_json_serializable(packages)
 
     self.write(to_json(json_user))

@@ -13,7 +13,8 @@ def find(self):
         self.finish()
     else:
         user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-        transactions = yield UserPackage.objects.filter(user_id=ObjectId(user_id), remaining_credits__gt=0, status__ne='Expired').find_all()
+        transactions = yield UserPackage.objects.order_by('expire_date') \
+                                                .filter(user_id=ObjectId(user_id), remaining_credits__gt=0, status__ne='Expired').find_all()
         self.render_json(transactions)
 
 def find_one(self, id):
