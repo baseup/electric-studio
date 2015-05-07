@@ -748,11 +748,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       $scope.waitlist.$promise.then(function (waitlistData) {
         $scope.waitlist = waitlistData;
         if ($scope.waitlist.length > 0) {
-          $.Confirm('This schedule is full, would you like to join the waitlist ?', function () {
+          $.Confirm('This class is full. Would you like to join the waitlist?', function () {
             $scope.$apply(function () {
 
               if (+today >= +cutOffchkDate) {
-                $.Alert('Warning: Booking on this schedule will no longer be canceled')
+                $.Alert('Warning: You can no longer cancel this ride once a booking is made. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.')
               }
               $scope.waitlistUser(sched);
             });
@@ -770,7 +770,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
               }
             }
             if ($scope.reserved.length >= seats) {
-              $.Confirm('This schedule is full, would you like to join the waitlist ?', function () {
+              $.Confirm('This class is full. Would you like to join the waitlist?', function () {
                 $scope.$apply(function () {
                   if (+today >= +cutOffchkDate) {
                     $.Alert('Warning: Booking on this schedule will no longer be canceled')
@@ -780,7 +780,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
               });
             } else {
               if (+today >= +cutOffchkDate) {
-                $.Alert('Warning: Booking on this schedule will no longer be canceled')
+                $.Alert('Warning: You can no longer cancel this ride once a booking is made. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.')
               }
               SharedService.set('selectedSched', sched);
               $location.path('/class');
@@ -940,7 +940,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       $scope.instructor = sched.schedule.instructor;
     });
 
-    $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() + ' ' + sched.date.getFullYear();
+    $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() + ', ' + sched.date.getFullYear();
     $scope.daySched = days[sched.date.getDay()];
     $scope.timeSched = sched.schedule.start;
     $scope.sched = sched.schedule;
@@ -1054,8 +1054,8 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       book.sched_id = sched.schedule._id;
       var str_seats = seats.sort(function(a, b){return a-b}) + '';
       str_seats = str_seats.replace(/,/g, ', ');
-      var confirm_message = "You're about to book a ride on " + 
-                            $scope.daySched + ', ' + $scope.dateSched + ' with seat'+ (seats.length > 1 ? 's' : '') +' number ' + str_seats;
+      var confirm_message = 'You’re about to book bike'+ (seats.length > 1 ? 's' : '') + ' # ' + str_seats + 
+                            ' for ' + $scope.daySched + ', ' + $scope.dateSched + '.';
       if ($scope.forWaitlist) {
         confirm_message = "You're about to join the waitlist for this schedule " + $scope.daySched + ', ' + $scope.dateSched;
         book.status = 'waitlisted';
