@@ -635,7 +635,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       var time = data.time.split(':')
       date.setHours(time[0], time[1], 0 , 0);
       $scope.weekRelease.date = date;
-      $scope.weekRelease.updateAt = updateAt;
+      $scope.weekRelease.updateWeek = updateAt;
     }
   });
 
@@ -808,7 +808,9 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     if (date > nextMonday) 
       return true;
 
-    if ($scope.weekRelease && now < $scope.weekRelease.date) 
+    if ($scope.weekRelease &&
+        $scope.weekRelease.updateWeek < now && 
+        now < $scope.weekRelease.date) 
       return true;
 
 
