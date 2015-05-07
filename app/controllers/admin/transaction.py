@@ -51,7 +51,7 @@ def create(self):
         user = (yield User.objects.get(user._id)).serialize()
         site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
         content = str(self.render_string('emails/freeclass', user=user, site=site_url, expiration=trans.expiration, credits=trans.credit_count), 'UTF-8')
-        yield self.io.async_task(send_email, user=user, content=content, subject='Free Class')
+        yield self.io.async_task(send_email, user=user, content=content, subject='For You, On Us')
 
     except InvalidDocumentError:
         self.set_status(400)
