@@ -143,7 +143,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
       }
 
       if ($scope.newAccount.password && $scope.newAccount.password.length < 6) {
-        $.Alert('Password must be 6 characters');
+        $.Alert('Password must be at least 6 characters.');
         return;
       }
 

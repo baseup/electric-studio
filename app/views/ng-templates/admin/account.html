@@ -37,13 +37,17 @@
                 <dd ng-if="user.status == 'Unverified'" class="inline space--bottom">Account is not <a href="" ng-click="verifyAccount(user)">verified</a>.</dd>
               </dl>
 
-              <dl>
-              <dt>Class Package</dt>
-              <a title="Buy Package" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
-              <dd class="">{{ user.credits }} Classes Left</dd>
+              <dl ng-if="user.status != 'Frozen'">
+                <dt>Class Package</dt>
+                <a title="Buy Package" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
+                <dd class="">{{ user.credits }} Classes Left</dd>
               <!-- <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd> -->
               </dl>
 
+              <dl ng-if="user.status == 'Frozen'">
+                <dt>Account is frozen due to</dt>
+                <dd>{{ user.remarks }}</dd>
+              </dl>
               
             </div>
           </div>
