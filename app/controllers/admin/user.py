@@ -51,7 +51,7 @@ def create(self):
     is_exist = (yield User.objects.filter(email=data['email'], status__ne='Deleted').count())
     if is_exist > 0:
         self.set_status(400)
-        self.write('Email already in used')
+        self.write('Email address is already in use.')
     else:
         try:
             user = User(first_name=data['first_name'], 

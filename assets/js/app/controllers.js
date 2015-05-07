@@ -202,7 +202,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
       }
 
       if ($scope.user.password && $scope.user.password.length < 6) {
-        $scope.signupError = 'Password must be 6 characters';
+        $scope.signupError = 'Password must be at least 6 characters.';
         return;
       }
 
@@ -310,7 +310,7 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
     if ($scope.pass && $scope.pass.password && $scope.pass.password.length > 0) {
 
       if ($scope.pass.password.length < 6) {
-        $.Alert('Password should be atleast 6 characters');
+        $.Alert('Password must be at least 6 characters.');
         return;
       }
 
@@ -527,7 +527,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
       $scope.reloadUser(user);
 
       if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
-        $.Alert('Account is frozen, Please check your contact adminstrator');
+        $.Alert('Your account is frozen. Please contact the studio for more details.');
         return;
       }
 
@@ -668,7 +668,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       $scope.loginUser = user;
 
       if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
-        $.Alert('Account is frozen, Please check your contact adminstrator');
+        $.Alert('Your account is frozen. Please contact the studio for more details.');
         return;
       }
 
@@ -1032,7 +1032,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       $scope.loginUser = user;
 
       if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
-        $.Alert('Account is frozen, Please check your contact adminstrator');
+        $.Alert('Your account is frozen. Please contact the studio for more details.');
         return;
       }
 
