@@ -95,7 +95,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 });
 
-ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserService, PackageService, TransactionService, ClassService, SecurityService) {
+ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserService, PackageService, TransactionService, ClassService, SecurityService, EmailVerifyService) {
 
   
   var qstring = $location.search();
@@ -157,6 +157,8 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
         UserService.query(function (users) {
           $scope.users = users;
         });
+
+        $scope.sendEmailConfirmation($scope.newAccount);
         angular.element('#close-add-account').click();
         $scope.newAccount = {}
       }
@@ -176,6 +178,20 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     } else {
       $.Alert('Please fill form to add account')
     }
+  }
+
+  $scope.sendEmailConfirmation = function (user) {
+
+    var sendEmailSuccess = function () {
+      $.Alert('Email Veification link have been sent to ' + user.email + '.');
+    }
+
+    var sendEmailFailed = function (error) {
+      $.Alert(error.data);
+    }
+
+    EmailVerifyService.email_verify(user)
+                      .$promise.then(sendEmailSuccess, sendEmailFailed);
   }
 
   $scope.accountInfo = function (user) {
