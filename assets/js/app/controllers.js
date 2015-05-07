@@ -515,7 +515,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
   $scope.buyPackage = function (event, index) {
 
     if (!$scope.loginUser) {
-      $.Alert('User is not logged In');
+      $.Alert('Please log in to your Electric account.');
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
@@ -655,7 +655,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   $scope.waitlistUser = function (sched) {
 
     if (!$scope.loginUser) {
-      $.Alert('User is not logged In');
+      $.Alert('Please log in to your Electric account.');
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
@@ -1023,7 +1023,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
   $scope.bookSchedule = function () {
 
     if (!$scope.loginUser) {
-      $.Alert('User is not logged In');
+      $.Alert('Please log in to your Electric account.');
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
