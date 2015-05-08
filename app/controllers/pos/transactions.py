@@ -13,12 +13,12 @@ def find(self):
 def find_one(self, id):
     transaction = yield UserPackage.objects.get(id)
     if transaction:
-    	self.render_json(transaction)
+        self.render_json(transaction)
     else:
-    	result = {
-       	    'message' : 'No transaction found with this id ' + id,
+        result = {
+            'message' : 'No transaction found with this id ' + id,
             'valid' : False,
             'status' : 404
         }
-    	self.set_status(404)
-    	self.render_json(result)
+        self.set_status(404)
+        self.render_json(result)
