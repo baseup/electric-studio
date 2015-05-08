@@ -130,7 +130,7 @@
         <span class="label">Confirm Password</span>
         <input type="password" ng-model="newAccount.confirm_password" class="text-input">
       </div>
-      <button type="button" ng-click="addAccount()" class="btn btn--primary btn--medium float--right space--top">Add</button>
+      <button ng-disabled="registeringAccount" type="button" ng-click="addAccount()" class="btn btn--primary btn--medium float--right space--top">Add</button>
     </div>
   </div>
 

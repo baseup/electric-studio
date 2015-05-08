@@ -129,7 +129,7 @@
         <input type="password" class="input-box" placeholder="Password (minimum 6 character)" ng-model="user.password">
         <input type="password" required compare-to="user.password" class="input-box" placeholder="Re-type Password" ng-model="user.confirm_password">
 
-        <input type="button" value="Sign Up" class="button primary" ng-click="signUp()">
+        <input ng-disabled="signingUp" type="button" value="Sign Up" class="button primary" ng-click="signUp()">
       </form>
       <span class="close-btn">X</span>
     </div>

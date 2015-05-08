@@ -130,6 +130,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     angular.element('#add-account-modal').Modal();
   }
 
+  $scope.registeringAccount = false;
   $scope.addAccount = function () {
     if ($scope.newAccount) {
       if (!$scope.newAccount.email || $scope.newAccount.email.length == 0) {
@@ -152,6 +153,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
         return;
       }
 
+      $scope.registeringAccount = true;
       var registerSuccess = function () {
         $.Alert('Successfully added new account')
         UserService.query(function (users) {
@@ -161,6 +163,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
         $scope.sendEmailConfirmation($scope.newAccount);
         angular.element('#close-add-account').click();
         $scope.newAccount = {}
+        $scope.registeringAccount = false;
       }
 
       var registerFail = function (error) {
@@ -172,6 +175,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
         }
 
         $.Alert(errorMsg);
+        $scope.registeringAccount = false;
       }
 
       UserService.create($scope.newAccount).$promise.then(registerSuccess, registerFail);
