@@ -46,11 +46,13 @@
       });
       e.preventDefault(); // disable selection
     }).on('mouseup', function () {
-      if (opt.handle === '') {
-        $selected.removeClass(opt.draggableClass);
-      } else {
-        $selected.removeClass(opt.draggableClass)
-                 .find(opt.handle).removeClass(opt.activeHandleClass);
+      if ($selected !== null) {
+        if (opt.handle === '') {
+          $selected.removeClass(opt.draggableClass);
+        } else {
+          $selected.removeClass(opt.draggableClass)
+                   .find(opt.handle).removeClass(opt.activeHandleClass);
+        }
       }
       $selected = null;
     });
