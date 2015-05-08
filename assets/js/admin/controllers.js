@@ -991,6 +991,13 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
         end: new Date(0, 0, 0, calEvent.end.hour(), calEvent.end.minute(), 0, 0),
         id: calEvent.id
       };
+
+      if ( $('[type="time"]').prop('type') != 'time' ) {
+        $timeout(function () {
+          angular.element('#edit-time-start').val($scope.selectedSched.start_time);
+          angular.element('#edit-time-end').val($scope.selectedSched.end_time);
+        }, 400);
+      }
       angular.element('#edit-class-instructor')[0].selectize.setValue($scope.selectedSched.instructor._id);
       $scope.$apply();
       angular.element('#view-schedule-modal').Modal();
@@ -999,6 +1006,14 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     //   angular.element('.calendar').fullCalendar('changeView', 'agendaDay');
     // }
   });
+
+  if ( $('[type="time"]').prop('type') != 'time' ) {
+    $('[type="time"]').pickatime({
+      formatSubmit: 'HH:i',
+      hiddenName: true,
+      min: [5, 0]
+    });
+  }
 
   var addSeats = angular.element('#add-no-seats')[0].selectize;
   var editSeats = angular.element('#edit-no-seats')[0].selectize;
@@ -1038,6 +1053,8 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     angular.element('#add-sched-modal .modal__box').drags();
   }
 
+
+
   // $scope.addRegularSchedule = function () {
   //   angular.element('#add-regular-sched-modal').Modal();
   // }
@@ -1054,6 +1071,25 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   //     $scope.newRegSched = {};
   //   });
   // }
+
+  var strTimeToDate = function (strTime) {
+    if (strTime) {
+
+      var timeSplit = strTime.split(' ');
+      var time = timeSplit[0].split(':');
+      var ampm = timeSplit[1];
+
+      if(ampm.toLowerCase() == 'pm'){
+        if (parseInt(time[0]) < 12) {
+          time[0] = (parseInt(time[0]) + 12) + '';
+        }
+      }
+
+      var date = new Date();
+      date.setHours(parseInt(time[0]), parseInt(time[1]), 0);
+      return date;
+    }
+  }
 
   $scope.isPastDate = function (sched) {
     var now = new Date();
@@ -1099,6 +1135,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
 
   $scope.saveSchedule = function () {
 
+    if ( $('[type="time"]').prop('type') != 'time' ) {
+      $scope.newSpecSched.start = strTimeToDate(angular.element('#add-time-start').val());
+      $scope.newSpecSched.end = strTimeToDate(angular.element('#add-time-end').val());
+    }
+
     if (!$scope.newSpecSched.date || 
         !$scope.newSpecSched.type || 
         !$scope.newSpecSched.instructor || 
@@ -1126,7 +1167,23 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   }
 
   $scope.updateSchedule = function () {
+
+    if ( $('[type="time"]').prop('type') != 'time' ) {
+      $scope.editSched.start = strTimeToDate(angular.element('#edit-time-start').val());
+      $scope.editSched.end = strTimeToDate(angular.element('#edit-time-end').val());
+    }
+
+    if (!$scope.editSched.date || 
+        !$scope.editSched.type || 
+        !$scope.editSched.instructor || 
+        !$scope.editSched.start || 
+        !$scope.editSched.end) {
+      $.Alert('Please complete schedule information');
+      return;
+    }
+
     if (!$scope.isPastDate($scope.editSched)) {
+
       var updatedSched = angular.copy($scope.editSched);
       updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
       updatedSched.end = updatedSched.end.getHours() + ':' + updatedSched.end.getMinutes();

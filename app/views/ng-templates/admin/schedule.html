@@ -75,14 +75,14 @@
         <dl class="space--bottom">
           <dt class="label">Start</span>
           <dd class="bp-md-one-half">
-            <input class="text-input" ng-model="newSpecSched.start" type="time">
+            <input class="text-input" id="add-time-start" ng-model="newSpecSched.start" type="time">
           <dd>
         </dl>
 
         <dl class="space--bottom">
           <dt class="label">End</span>
           <dd class="bp-md-one-half">
-            <input class="text-input" ng-model="newSpecSched.end" type="time">
+            <input class="text-input" id="add-time-end" ng-model="newSpecSched.end" type="time">
           <dd>
         </dl>
 
@@ -140,14 +140,14 @@
         <dl class="space--bottom">
           <dt class="label">Start</span>
           <dd class="bp-md-one-half">
-            <input class="text-input" ng-model="editSched.start" type="time">
+            <input class="text-input" id="edit-time-start" ng-model="editSched.start" type="time">
           <dd>
         </dl>
 
         <dl class="space--bottom">
           <dt class="label">End</span>
           <dd class="bp-md-one-half">
-            <input class="text-input" ng-model="editSched.end" type="time">
+            <input class="text-input" id="edit-time-end" ng-model="editSched.end" type="time">
           <dd>
         </dl>
 
@@ -171,8 +171,7 @@
         </dl>
       </div>
       <button ng-click="updateSchedule()"
-        class="btn btn--medium btn--primary space--top modal-close"
-        ng-disabled="!editSched.date || !editSched.type || !editSched.instructor || !editSched.start || !editSched.end">
+        class="btn btn--medium btn--primary space--top modal-close">
         Update
       </button>
     </div>
