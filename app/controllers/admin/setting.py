@@ -1,6 +1,7 @@
 from app.models.admins import Setting
 from app.models.schedules import BookedSchedule
 from datetime import datetime
+from app.helper import GMT8
 import sys
 import tornado.escape
 
@@ -37,7 +38,8 @@ def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
     if id == 'week_release':
         week_release = yield Setting.objects.get(key='week_release')
-        values = { 'day' : data['day'], 'time': data['time'], 'date': str(datetime.now()) }
+        gmt8 = GMT8()
+        values = { 'day' : data['day'], 'time': data['time'], 'date': str(datetime.now(tz=gmt8)) }
         week_release.value = tornado.escape.json_encode(values)
         yield week_release.save()
     elif id == 'blocked_bikes':

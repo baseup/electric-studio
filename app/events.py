@@ -6,21 +6,7 @@ from tornado import gen
 from app.models.users import User
 from app.models.schedules import BookedSchedule
 from app.models.packages import UserPackage
-
-class GMT8(tzinfo):
-    def utcoffset(self, dt):
-        return timedelta(hours=7) + self.dst(dt)
-    def dst(self, dt):
-        d = datetime(dt.year, 4, 1)
-        self.dston = d - timedelta(days=d.weekday() + 1)
-        d = datetime(dt.year, 11, 1)
-        self.dstoff = d - timedelta(days=d.weekday() + 1)
-        if self.dston <=  dt.replace(tzinfo=None) < self.dstoff:
-            return timedelta(hours=1)
-        else:
-            return timedelta(0)
-    def tzname(self,dt):
-        return "GMT +8"
+from app.helper import GMT8
 
 @gen.coroutine
 def schedule_watcher():
