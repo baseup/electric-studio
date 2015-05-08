@@ -185,8 +185,10 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
 ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService) {
 
   $scope.registered = false;
+  $scope.signingUp = false;
   $scope.signUp = function () {
     $scope.signupError = null;
+    $scope.signingUp = true;
     if ($scope.user) {
       if (!$scope.user.email || $scope.user.email.length == 0) {
         $scope.signupError = 'Email Address is required';
@@ -209,6 +211,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
       var registerSuccess = function () {
         $scope.registered = true;
         $scope.sendEmailConfirmation($scope.user);
+        $scope.signingUp = false;
       }
 
       var registerFail = function (error) {
@@ -231,6 +234,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
           errorMsg = errorMsg.charAt(0).toUpperCase() + errorMsg.slice(1);
         }
         $scope.signupError = errorMsg;
+        $scope.signingUp = false;
       }
 
       UserService.create($scope.user).$promise.then(registerSuccess, registerFail);
