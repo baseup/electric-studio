@@ -3,9 +3,11 @@ from app.models.users import User
 from app.models.packages import Package, UserPackage
 from app.helper import send_email_verification, send_email
 from app.models.schedules import InstructorSchedule, BookedSchedule
-from app.models.admins import Instructor, Admin, Setting
+from app.models.admins import Instructor, Admin, Setting, Branch
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
+
+import hashlib
 import sys
 import tornado
 import json
@@ -363,4 +365,21 @@ def add_regular_schedule(self):
     #                                       end=datetime.strptime(endtimes[t],'%I:%M %p'))
     #         schedule = yield schedule.save()
 
+    self.redirect('/')
+
+def add_branch(self):
+
+    branches = yield Branch.objects.find_all()
+    for i, a in enumerate(branches):
+        yield a.delete()
+
+    branch = Branch()
+    branch.name = 'ES Sample Branch'
+    branch.password = hashlib.md5('password'.encode()).hexdigest()
+    token = 'password' + str(datetime.now())
+    branch.token = hashlib.md5(token.encode()).hexdigest()
+    branch.expire_at = datetime.now() + timedelta(days=1)
+
+    yield branch.save()
+    
     self.redirect('/')

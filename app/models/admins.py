@@ -45,5 +45,12 @@ class Setting(Model):
     value = StringField(required=True)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
-    
 
+class Branch(Model):
+    __collection__ = 'branches'
+    name = StringField(required=True)
+    password = StringField(required=True)
+    token = StringField(required=True)
+    expire_at = DateTimeField(required=True)
+    create_at = DateTimeField(auto_now_on_insert=True)
+    update_at = DateTimeField(auto_now_on_update=True)
