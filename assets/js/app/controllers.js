@@ -805,6 +805,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
     var nextMonday = new Date(now);
     nextMonday.setDate(nextMonday.getDate() - nextMonday.getDay() + 8);
+    nextMonday.setHours(23, 59, 59);
     if (date > nextMonday) 
       return true;
 
