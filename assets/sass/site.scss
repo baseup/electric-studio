@@ -503,12 +503,16 @@ body {
       @include breakpoint(md) {
         margin-top: 30px;
 
+        .pad{
+          padding: 4px !important;
+        }
         a.special{
           background-color: $brand-color-primary;
-          box-shadow: 3px 3px 0 $brand-color-secondary;
+          box-shadow: 2px 2px 0 $brand-color-secondary;
           color: #fff;
           font-weight: bold;
           margin: 10px;
+          font-size: 16px;
           text-transform: none;
         }
       }
