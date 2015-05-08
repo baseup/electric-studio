@@ -9,9 +9,11 @@ import json
 def find(self):
     transactions = yield UserPackage.objects.find_all()
     self.render_json(transactions)
-    self.finish()
 
 def find_one(self, id):
     transaction = yield UserPackage.objects.get(id)
-    self.render_json(transaction)
-    self.finish()
+    if transaction:
+    	self.render_json(transaction)
+    else:
+    	self.set_status(404)
+    	self.finish()

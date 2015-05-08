@@ -10,12 +10,11 @@ import sys
 def find(self):
     packages = yield Package.objects.find_all()
     self.render_json(packages)
-    self.finish()
 
 def find_one(self, id):
     package = yield Package.objects.get(id)
-    self.render_json(package) 
-    self.finish()
-
-
-
+    if package:
+    	self.render_json(package) 
+    else:
+    	self.set_status(404)
+    	self.finish()

@@ -8,12 +8,14 @@ import json
 def find(self):
     products = yield Product.objects.find_all()
     self.render_json(products);
-    self.finish()
 
 def find_one(self, id):
-    package = yield Product.objects.get(id)
-    self.write(package.to_dict())
-    self.finish()
+    product = yield Product.objects.get(id)
+    if product:
+        self.render_json(product)
+    else:
+        self.set_status(404)
+        self.finish()
 
 def create(self):
     name = self.get_argument('name')
@@ -29,9 +31,13 @@ def create(self):
         self.render_json(product)
     except :
         value = sys.exc_info()[1]
-        self.set_status(403)
-        self.write(str(value))
-    self.finish()
+        result = {
+            'message': str(value),
+            'status': 400,
+            'valid': False
+        }
+        self.set_status(400)
+        self.render_json(result)
 
 def update(self, id):
     name = self.get_argument('name')
@@ -40,17 +46,25 @@ def update(self, id):
     product_desc = self.get_argument('product_desc')
     try :
         product = yield Product.objects.get(id)
-        product.name = name
-        product.amount = amount
-        product.stock = stock
-        product.product_desc = product_desc
-        product = yield product.save()
-        self.render_json(product)
+        if product:
+            product.name = name
+            product.amount = amount
+            product.stock = stock
+            product.product_desc = product_desc
+            product = yield product.save()
+            self.render_json(product)
+        else:
+            self.set_status(404)
+            self.finish()
     except :
         value = sys.exc_info()[1]
-        self.set_status(403)
-        self.write(str(value))
-    self.finish()
+        result = {
+            'message': str(value),
+            'status': 400,
+            'valid': False
+        }
+        self.set_status(400)
+        self.render_json(result)
 
 def destroy(self, id):
     del_product = yield Product.objects.get(id)

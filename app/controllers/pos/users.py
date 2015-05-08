@@ -14,11 +14,13 @@ def find(self):
         del user['password']
         users[i] = user 
     self.render_json(users)
-    self.finish()
 
 def find_one(self, id):
     user = yield User.objects.get(id)
     user = user.to_dict()
-    del user['password']
-    self.write(user)
+    if user:
+        del user['password']
+        self.write(user)
+    else:
+        self.set_status(404)
     self.finish()
