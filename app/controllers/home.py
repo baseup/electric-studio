@@ -6,6 +6,8 @@ from app.models.schedules import InstructorSchedule, BookedSchedule
 from app.models.admins import Instructor, Admin, Setting, Branch
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
+
+import hashlib
 import sys
 import tornado
 import json
