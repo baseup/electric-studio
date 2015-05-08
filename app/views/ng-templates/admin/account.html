@@ -24,7 +24,7 @@
           <div class="pad--sides">
             <div class="data-list">
 
-              <dl class="data--inline">
+              <dl class="data--inline" ng-if="user.status != 'Frozen'">
                 <dt><i class="fa fa-phone"></i></dt>
                 <dd>{{ user.phone_number }}</dd>
               </dl>
@@ -44,7 +44,7 @@
 
               <dl ng-if="user.status == 'Frozen'">
                 <dt>Account is frozen due to</dt>
-                <dd>{{ user.remarks }}</dd>
+                <dd class="frozen-message" disable-outside-scroll>{{ user.remarks }}</dd>
               </dl>
               
             </div>
@@ -146,7 +146,7 @@
         <span class="label">Last Name</span>
         <input ng-model="selectedInfo.last_name" class="text-input">
       </div>
-      <div class="float--left space--bottom">
+      <div class="one-whole float--left space--bottom">
         <span class="label">Email</span>
         <input ng-model="selectedInfo.email" disabled class="text-input">
       </div>
@@ -158,7 +158,7 @@
         <span class="label">Birthday</span>
         <input ng-model="selectedInfo.birthdate" class="text-input datepicker">
       </div>
-      <div class="bp-md-one-half float--left space--bottom">
+      <div class="one-whole float--left space--bottom">
         <span class="label">Address</span>
         <input ng-model="selectedInfo.address" class="text-input">
       </div>
