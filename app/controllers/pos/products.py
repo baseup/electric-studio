@@ -14,8 +14,13 @@ def find_one(self, id):
     if product:
         self.render_json(product)
     else:
+        result = {
+            'message' : 'No product found with this id ' + id,
+            'valid' : False,
+            'status' : 404
+        }
         self.set_status(404)
-        self.finish()
+        self.render_json(result)
 
 def create(self):
     name = self.get_argument('name')
@@ -54,8 +59,13 @@ def update(self, id):
             product = yield product.save()
             self.render_json(product)
         else:
+            result = {
+                'message' : 'No product found with this id ' + id,
+                'valid' : False,
+                'status' : 404
+            }
             self.set_status(404)
-            self.finish()
+            self.render_json(result)
     except :
         value = sys.exc_info()[1]
         result = {

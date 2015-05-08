@@ -15,5 +15,10 @@ def find_one(self, id):
     if transaction:
     	self.render_json(transaction)
     else:
+    	result = {
+       	    'message' : 'No transaction found with this id ' + id,
+            'valid' : False,
+            'status' : 404
+        }
     	self.set_status(404)
-    	self.finish()
+    	self.render_json(result)

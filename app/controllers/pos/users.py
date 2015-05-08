@@ -20,7 +20,12 @@ def find_one(self, id):
     user = user.to_dict()
     if user:
         del user['password']
-        self.write(user)
+        self.render_json(user)
     else:
+        result = {
+            'message' : 'No user found with this id ' + id,
+            'valid' : False,
+            'status' : 404
+        }
         self.set_status(404)
-    self.finish()
+        self.render_json(result)
