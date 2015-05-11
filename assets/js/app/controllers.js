@@ -681,6 +681,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
         return;
       }
 
+      if ($scope.loginUser && $scope.loginUser.credits <= 0) {
+        $.Alert('Insufficient Credits');
+      } 
+
       var book = {};
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
       book.seats = [];
@@ -1025,6 +1029,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     }
   }
 
+  $scope.booking = false;
   $scope.bookSchedule = function () {
 
     if (!$scope.loginUser) {
@@ -1053,6 +1058,10 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
         return;
       }
 
+      if ($scope.loginUser && $scope.loginUser.credits < seats.length) {
+        $.Alert('Insufficient Credits, you only have ' + $scope.loginUser.credits);
+      } 
+
       var book = {};
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
       book.seats = seats;
@@ -1068,6 +1077,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
 
       $.Confirm(confirm_message, function () {
         $.Alert('Booking seats ...', true);
+        $scope.booking = true;
         var bookSuccess = function () {
 
           if ($scope.resched) {
@@ -1086,7 +1096,8 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
           });
         }
         var bookFail = function (error) {
-          $.Alert(error.data)
+          $.Alert(error.data);
+          $scope.reloadUser();
           $route.reload();
         }
 

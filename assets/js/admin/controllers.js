@@ -720,11 +720,13 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       $.Notify({ content: 'Booking 1 month in advance is prohibited' });
       return;
     }
-
+    $.Alert('Booking bike # ' + $scope.newBook.seat_number + ' ...', true);
     ClassService.save($scope.newBook, function (savedBook) {
       $scope.reload();
       angular.element('#select-user-id')[0].selectize.setValue('');
+      $('#alert-close-btn').click();
     }, function (error) {
+      $('#alert-close-btn').click();
       $.Notify({ content: error.data });
     });
   }
@@ -743,10 +745,13 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     }
 
     $scope.newWaitlist.status = 'waitlisted';
+    $.Alert('waitlisting user ' + $scope.selectedRider.first_name + ' ' + $scope.selectedRider.last_name + ' ...', true);
     ClassService.save($scope.newWaitlist, function (savedBook) {
       $scope.reload();
       angular.element('#select-waitlist-user')[0].selectize.setValue('');
+      $('#alert-close-btn').click();
     }, function (error) {
+      $('#alert-close-btn').click();
       $.Notify({ content: error.data });
     });
   }
