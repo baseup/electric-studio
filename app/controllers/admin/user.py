@@ -1,7 +1,7 @@
 import sys
 from passlib.hash import bcrypt
 from motorengine.errors import InvalidDocumentError
-from motorengine import DESCENDING
+from motorengine import DESCENDING, ASCENDING
 from app.models.users import User
 from app.models.packages import UserPackage
 from app.models.schedules import BookedSchedule
@@ -32,7 +32,7 @@ def find_one(self, id):
             to_date = datetime.strptime(end_date, '%Y-%m-%d')
 
         books = yield BookedSchedule.objects.filter(user_id=user._id, date__gte=from_date, date__lte=to_date) \
-                                            .order_by('date',direction=DESCENDING).find_all()
+                                            .order_by('date', direction=ASCENDING).find_all()
         json_user['books'] = to_json_serializable(books)
     else:
         packages = yield UserPackage.objects.filter(user_id=user._id).order_by('expire_date').find_all()
@@ -61,6 +61,7 @@ def create(self):
                         email=data['email'],
                         password=password,
                         status='Unverified',
+                        notes=data['notes'],
                         credits=0)
 
             user = yield user.save()
@@ -127,6 +128,8 @@ def update(self, id):
                 user.contact_person = data['contact_person']
             if data['emergency_contact'] != None:
                 user.emergency_contact = data['emergency_contact']
+            if data['notes'] != None:
+                user.notes = data['notes']
 
             user = yield user.save()
 
