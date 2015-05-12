@@ -60,6 +60,12 @@ def create(self):
                     sched = yield InstructorSchedule.objects.get(data['sched_id']);
                     
                     seats = data['seats']
+                    if user.credits < len(seats):
+                        self.set_status(400)
+                        self.write('Insuficient credits to booked ' + str(len(seats)) + ' bikes')
+                        self.finish()
+                        return;
+
                     book_status = 'booked'
                     if 'status' in data:
                         book_status = data['status']
