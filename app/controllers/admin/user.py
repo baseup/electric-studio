@@ -95,7 +95,18 @@ def update(self, id):
                 user.credits += 1
                 sched = yield sched.save()
             user = yield user.save()
-        elif 'unfroze' in data:
+        elif 'deactivate' in data:
+            user.status = 'Deactivated'
+            scheds = yield BookedSchedule.objects.filter(user_id=user._id, status='booked').find_all()
+            for i, sched in enumerate(scheds):
+                sched.status = 'cancelled';
+                if sched.user_package:
+                    sched.user_package.remaining_credits += 1
+                    yield sched.user_package.save()
+                user.credits += 1
+                sched = yield sched.save()
+            user = yield user.save()
+        elif 'unfroze' in data or 'activate' in data:
             user.status = 'Active'
             user = yield user.save()
         elif 'verify' in data:
