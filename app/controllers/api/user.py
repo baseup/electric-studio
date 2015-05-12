@@ -3,6 +3,7 @@ from passlib.hash import bcrypt
 from motorengine.errors import InvalidDocumentError
 from app.helper import send_email_verification, send_email
 from app.models.users import User
+from app.models.schedules import BookedSchedule
 from datetime import datetime
 import tornado
 import json
@@ -23,35 +24,38 @@ def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
 
-    passWord = None
+    password = None
     if 'password' in data:
-        passWord = bcrypt.encrypt(data['password'])
-    try :
-        user = User(first_name=data['first_name'], 
-                    # middle_name=data['middle_name'],
-                    last_name=data['last_name'],
-                    email=data['email'],
-                    password=passWord,
-                    # birthdate=datetime.strptime(data['birthdate'],'%Y-%m-%d'),
-                    phone_number=data['phone_number'],
-                    # emergency_contact=data['emergency_contact'],
-                    # address=data['address'],
-                    status='Unverified',
-                    # profile_pic=data['profile_pic'],
-                    credits=0)
-        user = yield user.save()
-    except :
-        value = sys.exc_info()[1]
-        self.set_status(403)
-        str_value = str(value)
-        if 'The index "caused" was violated ' in str_value:
-            str_value = 'Email already in used'
-        self.write(str_value)
+        password = bcrypt.encrypt(data['password'])
+
+    isExist = (yield User.objects.filter(email=data['email'], status__ne='Deleted').count())
+    if isExist > 0:
+        self.set_status(400)
+        self.write('Email address is already in use.')
+    else:
+        try:
+            user = User(first_name=data['first_name'], 
+                        # middle_name=data['middle_name'],
+                        last_name=data['last_name'],
+                        email=data['email'].lower(),
+                        password=password,
+                        status='Unverified',
+                        credits=0)
+
+            if 'phone_number' in data:
+                user.phone_number = data['phone_number']
+
+            user = yield user.save()
+        except:
+            value = sys.exc_info()[1]
+            self.set_status(403)
+            str_value = str(value)
+            self.write(str_value)
     self.finish()
 
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
-    try :
+    try:
         user = yield User.objects.get(id)
 
         if 'current_password' in data:
@@ -61,10 +65,9 @@ def update(self, id):
             else:
                 self.set_status(403)
                 self.write('Current Password did not match')
-        if 'reset_password' in data:
+        elif 'reset_password' in data:
             user.password = bcrypt.encrypt(data['reset_password'])
             user = yield user.save()
-
         elif 'billing' in data:
             user.billing = data['billing']
             user = yield user.save()
@@ -73,32 +76,19 @@ def update(self, id):
             # user.middle_name = data['middle_name']
             user.last_name = data['last_name']
 
-            if user.email != data['email']:
-                user.email = data['email']
-                user.status = 'Unverified'
-
             if data['birthdate'] != None:
                 user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
-
-            user.phone_number = data['phone_number']
+            if data['address'] != None:
+                user.address = data['address']
+            if data['phone_number'] != None:
+                user.phone_number = data['phone_number']
             if data['contact_person'] != None:
                 user.contact_person = data['contact_person']
             if data['emergency_contact'] != None:
                 user.emergency_contact = data['emergency_contact']
-            # user.address = data['address']
-            # user.status = data['status']
-            # user.profile_pic = data['profile_pic']
-            # user.credits = data['credits']
+
             user = yield user.save()
-            if user.status == 'Unverified':
-                user = user.serialize()
-                url = self.request.protocol + '://' + self.request.host + '/verify?ticket=%s' % user['_id']
-                yield self.io.async_task(
-                    send_email_verification,
-                    user=user,
-                    content=str(self.render_string('emails/registration', user=user, url=url), 'UTF-8')
-                )
-    except :
+    except:
         value = sys.exc_info()[1]
         self.set_status(403)
         self.write(str(value))
@@ -106,5 +96,33 @@ def update(self, id):
 
 def destroy(self, id):
     user = yield User.objects.get(id)
-    user.delete()
+    password = self.get_query_argument('pass');
+
+    if password:
+        if(bcrypt.verify(password, user.password)):
+            scheds = yield BookedSchedule.objects.filter(user_id=user._id, status__ne='completed') \
+                                                 .filter(status__ne='cancelled') \
+                                                 .filter(status__ne='missed').find_all()
+            if scheds:
+                for i, sched in enumerate(scheds):
+
+                    if sched.user_package:
+                        sched.user_package.remaining_credits += 1
+                        yield sched.user_package.save()
+
+                    if sched.status == 'waitlisted':
+                        user.credits += 1
+
+                    sched.status = 'cancelled'
+                    yield sched.save()
+
+            user.status = 'Deleted'
+            user = yield user.save()
+        else:
+            self.set_status(400);
+            self.write('Invalid User Password')
+    else:
+        self.set_status(400);
+        self.write('Invalid User Password')
+        
     self.finish()

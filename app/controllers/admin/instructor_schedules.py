@@ -36,14 +36,15 @@ def find(self):
         spec_scheds = yield InstructorSchedule.objects.filter(date=start_date_filter).find_all()
         for sched in spec_scheds:
             events.append({
-                'title': sched.instructor.admin.first_name + "'s class",
+                'title': sched.type + ' with ' + sched.instructor.admin.first_name,
                 'start': start_date_string + sched.start.strftime(' %H:%M:%S'),
                 'end': start_date_string + sched.end.strftime(' %H:%M:%S'),
                 'instructor': sched.instructor,
                 'start_time': sched.start.strftime('%I:%M %p'),
                 'end_time': sched.end.strftime('%I:%M %p'),
                 'id': str(sched._id),
-                'type': 'special',
+                'type': sched.type,
+                'seats': sched.seats,
                 'ridersCount': (yield BookedSchedule.objects.filter(status='booked', date=start_date_filter, schedule=sched._id).count())
             })
         start_date += timedelta(days=1)
@@ -59,7 +60,11 @@ def create(self):
         new_sched.date = parser.parse(data['date'])
     new_sched.start = parser.parse(data['start'], default=DEFAULT_TIME)
     new_sched.end = parser.parse(data['end'], default=DEFAULT_TIME)
-    if new_sched.start > new_sched.end:
+    if 'type' in data:
+        new_sched.type = data['type']
+    if 'seats' in data:
+        new_sched.seats = data['seats']
+    if new_sched.start >= new_sched.end:
         self.set_status(400)
         self.write('Invalid start and end time')
         self.finish()
@@ -84,9 +89,13 @@ def update(self, id):
     sched = yield InstructorSchedule.objects.get(id)
     if 'day' in data:
         sched.day = data['day']
+    if 'type' in data:
+        sched.type = data['type']
+    if 'seats' in data:
+        sched.seats = data['seats']
     sched.start = parser.parse(data['start'], default=DEFAULT_TIME)
     sched.end = parser.parse(data['end'], default=DEFAULT_TIME)
-    if sched.start > sched.end:
+    if sched.start >= sched.end:
         self.set_status(400)
         self.write('Invalid start and end time')
         self.finish()

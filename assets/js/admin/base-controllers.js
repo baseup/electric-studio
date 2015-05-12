@@ -21,8 +21,15 @@ ctrls.controller('AdminCtrl', function ($scope){
     });
 
     angular.element('.dashboard-menu').Dropdown();
+    angular.element('.classes-menu').Dropdown();
   
     angular.element('.datepicker').pickadate({
+      labelMonthNext: 'Go to the next month',
+      labelMonthPrev: 'Go to the previous month',
+      labelMonthSelect: 'Pick a month from the dropdown',
+      labelYearSelect: 'Pick a year from the dropdown',
+      selectMonths: true,
+      selectYears: 20,
       format: 'yyyy-mm-dd',
       formatSubmit: 'yyyy-mm-dd',
       today: false

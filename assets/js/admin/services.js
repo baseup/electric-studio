@@ -64,6 +64,15 @@ services.factory('AuthService', function (UserService) {
   };
 });
 
+services.factory('SecurityService', function($resource) {
+  return $resource('/admin/security', {}, {
+    check: {
+      method: 'POST',
+      isArray: false
+    },
+  });
+});
+
 services.factory('PackageService', function($resource) {
   return $resource('/admin/package/:packageId', {}, {
     query: {
@@ -171,3 +180,23 @@ services.factory('SliderService', function ($resource) {
     }
   });
 });
+
+services.factory('SettingService', function ($resource) {
+  return $resource('/admin/setting/:key', {}, {
+    getBlockedBikes: {
+      method: 'GET',
+      isArray: false,
+      params: {
+        key: 'blocked_bikes'
+      }
+    },
+    update: {
+      method: 'PUT'
+    },
+
+    delBlockedBikes: {
+      method: 'DELETE'
+    }
+  });
+});
+

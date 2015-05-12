@@ -13,6 +13,20 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
 
   $scope.loginUser = AuthService.getCurrentUser();
 
+  $scope.reloadUser = function (user) {
+    UserService.get(function (user) {
+      if ($scope.loginUser) {
+        angular.extend($scope.loginUser, user);
+      } else {
+        $scope.loginUser = user;
+      }
+    });
+  } 
+
+  if (!$scope.loginUser && window.localStorage.getItem('login-user')) {
+    $scope.reloadUser();
+  }
+
   $scope.isVerified = false;
   if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
     $scope.user = $scope.loginUser;
@@ -40,6 +54,12 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     
   
   angular.element('.datepicker').pickadate({
+    labelMonthNext: 'Go to the next month',
+    labelMonthPrev: 'Go to the previous month',
+    labelMonthSelect: 'Pick a month from the dropdown',
+    labelYearSelect: 'Pick a year from the dropdown',
+    selectMonths: true,
+    selectYears: 20,
     format: 'yyyy-mm-dd',
     formatSubmit: 'yyyy-mm-dd',
     today: false
@@ -47,12 +67,11 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
 
   angular.element('.fit-text span').fitText(2);
   
-  angular.element('.close-btn').click(function() {
+  angular.element('.close-btn').click(function () {
     var headerForm = angular.element(this).closest(login.add(signup));
     
     headerForm.removeClass('show');
   });
-
 
   loginToggle.off('click').on('click', function () {
     login.toggleClass('show');
@@ -66,14 +85,6 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
 
   menuToggle.off('click').click(function () {
     angular.element('.main-menu').toggleClass('show');
-  });
-
-
-  angular.element('.seats td').find('span').click(function () {
-    angular.element('.seats td').removeClass('selected');
-    if (!angular.element(this).parent('td').hasClass('unavailable')) {
-      angular.element(this).parent('td').toggleClass('selected');
-    }
   });
 
   $(window).resize(function () {
@@ -104,12 +115,12 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   
 });
 
-ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService){
+ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
   $scope.sliders = SliderService.query();
   $scope.sliders.$promise.then(function (data) {
     $scope.sliders = data;
 
-    $timeout(function(){
+    $timeout(function () {
 
       var glideObj = angular.element('.slider-container').glide({
         autoplay: 3000,
@@ -121,6 +132,39 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService){
       var winH = win.height(), 
         headerH = angular.element('.main-header').outerHeight(),
         footerH = angular.element('.main-footer').height();
+
+      //preload images
+      $timeout(function () {
+        var maxTries = 60;
+        var intervals = [];
+        var counter = 0;
+
+        angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
+          var img = angular.element(value);
+          var src = img.attr('src');
+          
+          intervals.push({
+            fn : '',
+            tries : 0
+          });
+
+          var thsObj = intervals[counter];
+
+          thsObj.fn = setInterval(function () {
+            if (thsObj.tries > maxTries) {
+              clearInterval(thsObj.fn);
+            }
+            if (img[0].complete) {
+              img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
+              img.remove();
+              clearInterval(thsObj.fn);
+            }
+
+            thsObj.tries++;
+          }, 50)
+          counter++;;
+        });
+      }, 800);
 
       if (win.width() >= 980) {
         angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
@@ -141,32 +185,56 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService){
 ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService) {
 
   $scope.registered = false;
+  $scope.signingUp = false;
   $scope.signUp = function () {
     $scope.signupError = null;
+    $scope.signingUp = true;
     if ($scope.user) {
       if (!$scope.user.email || $scope.user.email.length == 0) {
-        $scope.signupError = 'Email Field is required';
+        $scope.signupError = 'Email Address is required';
         return;
       }
+
       if ($scope.user.password != $scope.user.confirm_password) {
         $scope.signupError = "Password didn't match";
+        if ($scope.user.password == '') {
+          $scope.signupError = "Password is required";
+        }
+        return;
+      }
+
+      if ($scope.user.password && $scope.user.password.length < 6) {
+        $scope.signupError = 'Password must be at least 6 characters.';
         return;
       }
 
       var registerSuccess = function () {
         $scope.registered = true;
         $scope.sendEmailConfirmation($scope.user);
+        $scope.signingUp = false;
       }
 
       var registerFail = function (error) {
         $scope.registered = false;
 
         var errorMsg = error.data
-        if (errorMsg.trim().indexOf(' ') === -1) {
-          errorMsg = 'Field ' + errorMsg + ' is empty';
-        }
+        errorMsg = errorMsg.replace(/'/g, '')
+        errorMsg = errorMsg.replace('Field ', '')
 
+        var errorMsgArr = errorMsg.split('_');
+        if (errorMsgArr.length === 2) {
+          errorMsg = '';
+          for (var i in errorMsgArr){
+            errorMsg += errorMsgArr[i].charAt(0).toUpperCase() + errorMsgArr[i].slice(1) + ' ';
+          }
+          if (errorMsg.indexOf('required') === -1){
+            errorMsg = errorMsg + 'is required';
+          }
+        } else {
+          errorMsg = errorMsg.charAt(0).toUpperCase() + errorMsg.slice(1);
+        }
         $scope.signupError = errorMsg;
+        $scope.signingUp = false;
       }
 
       UserService.create($scope.user).$promise.then(registerSuccess, registerFail);
@@ -178,7 +246,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
     $scope.verificationLink = null;
     var sendEmailSuccess = function () {
       $scope.sendingEmail = false;
-      $.Alert('Successfully sent email verification');
+      $.Alert('Please check your e-mail to verify your account and complete registration.');
     }
 
     var sendEmailFailed = function (error) {
@@ -194,7 +262,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
 
 ctrls.controller('LoginCtrl', function ($scope) {
 
-  $scope.forgotPass = function(){
+  $scope.forgotPass = function () {
     angular.element('#forgot-password-modal').Modal();
   }
 
@@ -243,7 +311,12 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
 
   $scope.resetPassword = function (id) {
 
-    if($scope.pass && $scope.pass.password && $scope.pass.password.length > 0){
+    if ($scope.pass && $scope.pass.password && $scope.pass.password.length > 0) {
+
+      if ($scope.pass.password.length < 6) {
+        $.Alert('Password must be at least 6 characters.');
+        return;
+      }
 
       if ($scope.pass.password != $scope.pass.confirm_password) {
         $.Alert("Retype Password didn't match");
@@ -290,18 +363,35 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
 
 ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthService, UserPackageService) {
 
+  var qstring = $location.search();
+  if (qstring.s) {
+    if (qstring.s == 'success' && qstring.pname) {
+      $.Alert('Success! You have bought ' + qstring.pname);
+    } else if (qstring.s == 'exists') {
+      $.Alert('Transaction already exists');
+    }
+    $location.search({ s: null, pname: null });
+  }
 
- if (!$scope.loginUser) {
-    $location.path("/")
-    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+  if (!$scope.loginUser) {
+    $location.path('/');
+    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
     angular.element('.login-toggle').click();
   } else {
     $scope.account = $scope.loginUser;
     $scope.billing = {};
 
-    if($scope.account.billing && $scope.account.billing != 'null'){ 
+    if ($scope.account.billing && $scope.account.billing != 'null') { 
       $scope.billing = JSON.parse($scope.account.billing);
     }
+
+    UserService.get(function (user) {
+      $scope.account = user;
+
+      if ($scope.account.birthdate) {
+        $scope.account.birthdate = $scope.account.birthdate.replace(' 00:00:00', '');;
+      }
+    });
 
     $scope.transactions = UserPackageService.query();
     $scope.transactions.$promise.then(function (data) {
@@ -327,6 +417,10 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
         $.Alert(error.data);
       }
 
+      if ($scope.account.billing) {
+        delete $scope.account.billing;
+      }
+
       UserService.update({ userId: $scope.loginUser._id }, $scope.account).$promise.then(addSuccess, addFail);
     }
 
@@ -334,12 +428,17 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 
       if ($scope.pass && $scope.pass.current_password) {
 
+        if ($scope.pass.password && $scope.pass.password.length < 6) {
+          $.Alert('Password should be atleast more than 5 characters');
+          return;
+        }
+
         if ($scope.pass.password != $scope.pass.confirm_password) {
           $.Alert("Retype Password didn't match");
           return;
         }
         var addSuccess = function () {
-          $.Alert("Successfully updated your password")
+          $.Alert('Successfully updated your password');
           $scope.pass = null;
         }
         var addFail = function (error) {
@@ -355,20 +454,56 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 
     $scope.updateBilling = function () {
       if ($scope.billing) {
-        var billingSuccess = function () {
-          $.Alert("Successfully updated billing information");
-        }
 
-        var billingFail = function (error) {
-          $.Alert(error.data)
+        if ($scope.billing.first_name &&
+            $scope.billing.last_name &&
+            $scope.billing.address &&
+            $scope.billing.city &&
+            $scope.billing.province &&
+            $scope.billing.postalcode &&
+            $scope.billing.email &&
+            $scope.billing.card_number  &&
+            $scope.billing.card_type &&
+            $scope.billing.card_expiration &&
+            $scope.billing.csc) {
+          var billingSuccess = function () {
+            $.Alert('Successfully updated billing information');
+          }
+
+          var billingFail = function (error) {
+            $.Alert(error.data)
+          }
+          UserService.update({ userId: $scope.loginUser._id }, { billing: $scope.billing }).$promise.then(billingSuccess, billingFail);
+        } else {
+          $.Alert('Please complete billing info')
         }
-        UserService.update({ userId: $scope.loginUser._id }, { billing: $scope.billing }).$promise.then(billingSuccess, billingFail);
       }
+    }
+
+    $scope.deleteAccount = function () {
+      var user = $scope.loginUser;
+      $.Confirm('Are you sure you want to delete ' + user.first_name + ' ' + user.last_name + ' account?<br/>(THIS ACTION CANNOT BE UNDONE)' , function () {
+        $.Prompt('User Password', function (password) {
+          UserService.delete({ userId: user._id, pass: password }, function () {
+            $.Alert('Successfully deleted account ' + user.email);
+            $scope.logout();
+          }, function (error){ $.Alert(error.data); });
+        }, true);
+      });
     }
   }
 });
 
-ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageService) {
+ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, PackageService) {
+  
+  var scrollableView = angular.element('#rates-section').offset().top;
+  angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+
+  var qstring = $location.search();
+  if (qstring.s == 'error') {
+    $.Alert('Transaction failed');
+    $location.search('s', null);
+  }
 
   $scope.packages = PackageService.query();
   $scope.packages.$promise.then(function (data) {
@@ -381,35 +516,35 @@ ctrls.controller('RatesCtrl', function ($scope, $http, UserService, PackageServi
 
   $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/buy';
 
-  $scope.buyPackage = function (event) {
-
+  $scope.buyPackage = function (event, index) {
 
     if (!$scope.loginUser) {
-      $.Alert('User is not logged In');
-      angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+      $.Alert('Please log in to your Electric account.');
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
     }
 
-    UserService.get(function(user) {
+    UserService.get(function (user) {
       
-      $scope.loginUser = user;
+      $scope.loginUser =  user;
+      $scope.reloadUser(user);
 
-      if($scope.loginUser && $scope.loginUser.status == 'Frozen'){
-        $.Alert('Account is frozen, Please check your contact adminstrator');
+      if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
+        $.Alert('Your account is frozen. Please contact the studio for more details.');
         return;
       }
 
-      if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
+      if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
         $.Alert('User is Unverified, Please check your email');
         return;
       }
 
-      angular.element('#payForm').submit();
+      angular.element('#payForm-' + index).submit();
 
-    })
+    });
   }
-})
+});
 
 ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService) {
 
@@ -439,10 +574,10 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService
 ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, SharedService, UserService) {
 
   if (!$scope.loginUser) {
-    $location.path("/")
-    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+    $location.path('/');
+    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
     angular.element('.login-toggle').click();
-  }else{
+  } else {
 
     $scope.reservations = BookService.query();
     $scope.reservations.$promise.then(function (data) {
@@ -463,25 +598,18 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
       var today = new Date();
       var date = book.date.split(/[^0-9]/);
       var time = book.schedule.start.split(/[^0-9]/);
-      var chkDate =  new Date(date[0], date[1]-1, date[2], time[3] - 1, time[4], time[5]);
+      var chkDate =  new Date(date[0], date[1]-1, date[2]-1, 17, 0, 0);
       if (+today >= +chkDate) {
-        $.Alert('Schedule could not be cancelled anymore')
+        $.Alert('This ride can no longer be cancelled. You can only cancel your booking until 5pm the day before your ride.')
         return;
       }
 
-      $.Confirm('Are you sure on cancelling schedule?', function(){
+      $.Confirm('Are you sure you want to cancel?', function () {
         var data = {};
         data.status = 'cancelled';
-        
+        $.Alert('Canceling schedule ...', true);
         var bookSuccess = function () {
-          $scope.reservations = BookService.query();
-          $scope.reservations.$promise.then(function (data) {
-            $scope.reservations = data;
-          });
-          $scope.user = UserService.get();
-          $scope.user.$promise.then(function (data) {
-            $scope.user = data;
-          });
+          window.location.reload();
         }
         var bookFail = function (error) {
           $.Alert(error.data)
@@ -494,12 +622,30 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, SharedService, BookService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService) {
   $scope.resched = SharedService.get('resched');
 
-  $scope.reserved = BookService.query();
-  $scope.reserved.$promise.then(function (data) {
-    $scope.reserved = data;
+  var days = { 'mon' : 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6, 'sun': 7 };
+  $scope.weekRelease = {};
+  SettingService.getWeekRelease(function (data) {
+    if (data && data.time && data.day) {
+
+      var parts = data.date.split(/[^0-9]/);
+      var updateAt = new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+      updateAt.setDate(updateAt.getDate() - updateAt.getDay() + 7);
+
+      var date = new Date()
+      date.setDate(date.getDate() - date.getDay() + days[data.day])
+      var time = data.time.split(':')
+      date.setHours(time[0], time[1], 0 , 0);
+      $scope.weekRelease.date = date;
+      $scope.weekRelease.updateWeek = updateAt;
+    }
+  });
+
+  $scope.blockedBikes = {};
+  SettingService.getBlockedBikes(function (bikes) {
+    $scope.blockedBikes = bikes;
   });
 
   $scope.cancelResched = function () {
@@ -508,43 +654,174 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
   }
 
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var week_days = ['Sunday','Monday','Tuesday','Friday','Thursday','Friday','Saturday'];
+
+  $scope.waitlistUser = function (sched) {
+
+    if (!$scope.loginUser) {
+      $.Alert('Please log in to your Electric account.');
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+      angular.element('.login-toggle').click();
+      return;
+    }
+
+    $.Alert('Setting schedule as waitlist ...')
+
+    UserService.get(function (user) {
+
+      $scope.loginUser = user;
+
+      if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
+        $.Alert('Your account is frozen. Please contact the studio for more details.');
+        return;
+      }
+
+      if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
+        $.Alert('User is Unverified, Please check your email');
+        return;
+      }
+
+      if ($scope.loginUser && $scope.loginUser.credits <= 0) {
+        $.Alert('Insufficient Credits');
+      } 
+
+      var book = {};
+      book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+      book.seats = [];
+      book.sched_id = sched.schedule._id;
+      book.status = 'waitlisted';
+
+      var waitlistSuccess = function () {
+
+        if ($scope.resched) {
+          SharedService.clear('resched');
+        }
+
+        $.Alert('You have beed added to waitlist');
+        $scope.reloadUser();
+        window.location = '/#/reserved'
+        window.location.reload();
+      }
+      var waitlistFail = function (error) {
+        $.Alert(error.data)
+        $route.reload();
+      }
+
+      BookService.book(book).$promise.then(waitlistSuccess, waitlistFail);
+    });
+  }
 
   $scope.setSchedule = function (schedule, date) {
 
     if (!$scope.chkSched(date, schedule)) {
+
+      if ($scope.loginUser && $scope.loginUser.credits <= 0) {
+        $.Alert('Insufficient Credits');
+      } 
+
+      var today = new Date();
+      var time = schedule.start.split(/[^0-9]/);
+      var chkDate = new Date(date);
+      chkDate.setHours(time[3] - 1, time[4], 0);
+      if (+today >= +chkDate) {
+        $.Alert('You can only book 1 hour before the class or contact studio to book this class')
+        return;
+      }
+
+      // if ($scope.weekRelease) {
+      //   if (today < $scope.weekRelease.date) {
+      //     var d = $scope.weekRelease;
+      //     var strDate = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() + ' ' + 
+      //                   d.getHours() + ':' + d.getMinutes() +':' +d.getSeconds();
+      //     var tryDate = week_days[$scope.weekRelease.getDay()] + ' ' + $filter('formatTime')(strDate);
+      //     $.Alert('Booking is not yet available, Please try again on ' + tryDate);
+      //     return;
+      //   }
+      // }
+
+      var cutOffchkDate = new Date(date);
+      cutOffchkDate.setDate(date.getDate() - 1);
+      cutOffchkDate.setHours(17, 0, 0);
+
       var sched = {};
       sched.date = date;
       sched.schedule = schedule;
-      SharedService.set('selectedSched', sched);
-      $location.path('/class');
+
+      var bfilter = {};
+      bfilter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+      bfilter.sched_id = sched.schedule._id;
+      bfilter.waitlist = true
+      
+      $scope.waitlist = BookService.query(bfilter);
+      $scope.waitlist.$promise.then(function (waitlistData) {
+        $scope.waitlist = waitlistData;
+        if ($scope.waitlist.length > 0) {
+          $.Confirm('This class is full. Would you like to join the waitlist?', function () {
+            $scope.$apply(function () {
+
+              if (+today >= +cutOffchkDate) {
+                $.Alert('Warning: You can no longer cancel this ride once a booking is made. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.')
+              }
+              $scope.waitlistUser(sched);
+            });
+          });
+        } else {
+          delete bfilter.waitlist;
+          $scope.reserved = BookService.query(bfilter);
+          $scope.reserved.$promise.then(function (data) {
+            $scope.reserved = data;
+            var seats = sched.schedule.seats;
+            for (var k in $scope.blockedBikes) {
+              var key = parseInt(k)
+              if (key && key <= sched.schedule.seats) {
+                seats -= 1;
+              }
+            }
+            if ($scope.reserved.length >= seats) {
+              $.Confirm('This class is full. Would you like to join the waitlist?', function () {
+                $scope.$apply(function () {
+                  if (+today >= +cutOffchkDate) {
+                    $.Alert('Warning: Booking on this schedule will no longer be canceled')
+                  }
+                  $scope.waitlistUser(sched);
+                });
+              });
+            } else {
+              if (+today >= +cutOffchkDate) {
+                $.Alert('Warning: You can no longer cancel this ride once a booking is made. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.')
+              }
+              SharedService.set('selectedSched', sched);
+              $location.path('/class');
+            }
+          });
+          
+        }
+      });
     }
   }
 
   $scope.chkSched = function (date, sched) {
-
-  
-    if ($scope.reserved) {
-      for (var i in $scope.reserved) {
-        var rDate = new Date($scope.reserved[i].date);
-        if ($scope.loginUser && +date == +rDate){
-          if(sched && $scope.reserved[i].schedule && sched._id == $scope.reserved[i].schedule._id)
-            return true;
-        }
-      }
-    }
 
     var now = new Date();
     var parts = sched.start.split(/[^0-9]/);
     var dTime =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
     var hours = dTime.getHours();
     var minutes = dTime.getMinutes();
-    date.setHours(hours - 1, minutes, 0, 0);
+    date.setHours(hours, minutes, 0, 0);
     if (date < now)
       return true;
 
-    var next7Days = new Date(now.getFullYear(), now.getMonth(), now.getDate()+8);
-    if (date > next7Days) 
+    var nextMonday = new Date(now);
+    nextMonday.setDate(nextMonday.getDate() - nextMonday.getDay() + 8);
+    nextMonday.setHours(23, 59, 59);
+    if (date > nextMonday) 
       return true;
+
+    if ($scope.weekRelease &&
+        $scope.weekRelease.updateWeek < now && 
+        now < $scope.weekRelease.date) 
+      return true;
+
 
     return false;
   }
@@ -553,6 +830,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
 
     var now = date? new Date(date) : new Date();
     now.setHours(0,0,0,0);
+
+    var pWeek = new Date(date);
+    pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 6);
+    if (Math.ceil((now - pWeek) / (24 * 60 * 60 * 1000)) < 7) {
+      now = pWeek;
+    }
 
     var mon = new Date(now);
     mon.setDate(mon.getDate() - mon.getDay() + 1);
@@ -607,43 +890,51 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, ScheduleService, S
       $scope.schedules = data;
     });
 
-    $scope.reserved = BookService.query();
-    $scope.reserved.$promise.then(function (data) {
-      $scope.reserved = data;
-    });
+  }
 
+  $scope.isFull = function (sched) {
+    var seats = sched.seats;
+    for (var k in $scope.blockedBikes) {
+      var key = parseInt(k)
+      if (key && key <= sched.seats) {
+        seats -= 1;
+      }
+    }
+    if ($scope.schedules.counts[sched._id].books >= seats || $scope.schedules.counts[sched._id].waitlist > 0) {
+      return true;
+    }
+    return false;
   }
 
   $scope.getWeek(new Date());
   $scope.nextWeek = function () {
     var now = new Date();
-    // var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
-    // if ($scope.nmonDate < nextMonth) {
+    var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
+    if ($scope.nmonDate < nextMonth) {
       $scope.getWeek($scope.nmonDate);
-    // }
+    }
   }
   $scope.prevWeek = function () {
     var pWeek = new Date($scope.monDate);
-    pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 1);
+    pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 6);
 
     var now = new Date();
-    now.setDate(now.getDate() - now.getDay() + 1);
 
-    if(pWeek > now){
+    if (((now - pWeek) / (24 * 60 * 60 * 1000)) < 7) {
       $scope.getWeek(pWeek);
     }
   }
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedService, BookService) {
+ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, ScheduleService, SharedService, BookService, SettingService) {
   var sched = SharedService.get('selectedSched');
   if (!sched) {
     $location.path('/schedule')
   } else {
 
-    var seat = 0;
+    var seats = [];
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var days = ['Monday','Tuesday','Friday','Thursday','Friday','Saturday', 'Sunday'];
+    var days = ['Sunday','Monday','Tuesday','Friday','Thursday','Friday','Saturday'];
 
     $scope.resched = SharedService.get('resched');
     
@@ -652,9 +943,16 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
       $location.path('/reserved');
     }
 
-    $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() + ' ' + sched.date.getFullYear();
+    ScheduleService.get({ scheduleId: sched.schedule._id }, function (schedule) {
+      sched.schedule = schedule;
+      $scope.timeSched = sched.schedule.start;
+      $scope.instructor = sched.schedule.instructor;
+    });
+
+    $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() + ', ' + sched.date.getFullYear();
     $scope.daySched = days[sched.date.getDay()];
     $scope.timeSched = sched.schedule.start;
+    $scope.sched = sched.schedule;
     $scope.instructor = sched.schedule.instructor;
 
     var book_filter = {};
@@ -665,16 +963,39 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
     $scope.reserved = BookService.query(book_filter);
     $scope.reserved.$promise.then(function (data) {
       $scope.reserved = data;
-      if($scope.reserved.length >= 37){
+      if ($scope.reserved.length >= sched.schedule.seats) {
         $scope.forWaitlist = true;
       }
+    });
+
+    book_filter.waitlist = true
+    $scope.waitlist = BookService.query(book_filter);
+    $scope.waitlist.$promise.then(function (waitlistData) {
+      $scope.waitlist = waitlistData;
+      if ($scope.waitlist.length > 0) {
+        $scope.forWaitlist = true;
+      }
+    });
+
+    $scope.blockedBikes = {};
+    SettingService.getBlockedBikes(function (bikes) {
+      $scope.blockedBikes = bikes;
     });
 
   }
 
   $scope.checkSeat = function (num) {
+    if ($scope.forWaitlist) {
+      return true;
+    }
+
+    if ($scope.blockedBikes && $scope.blockedBikes[num]) {
+      return true;
+    }
+
     for (var r in $scope.reserved) {
-      if ($scope.reserved[r].seat_number == num) {
+      if ($scope.reserved[r].seat_number == num ||
+          num > sched.schedule.seats) {
         return true;
       }
     }
@@ -682,65 +1003,107 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
   }
 
   $scope.setSeatNumber = function (number, event) {
-
+    
+    var seat_index = -1;
+    for (var i = 0; i < seats.length; i++) {
+      if (seats[i] === number) {
+        seat_index = i;
+      }
+    }
     if (!$scope.checkSeat(number)) {
-      seat = number;
-    }else{
-      seat = 0;
+      if (seat_index == -1) {
+        if ($scope.loginUser && 
+            seats.length >= $scope.loginUser.credits) {
+          $.Alert('Not enough credits');
+          return;
+        } else {
+          angular.element('#seat' + number).toggleClass('selected');
+          seats.push(number);
+        }
+      } else {
+        angular.element('#seat' + number).toggleClass('selected');
+        seats.splice(seat_index, 1);
+      }
+    } else {
       event.preventDefault();
     }
   }
 
+  $scope.booking = false;
   $scope.bookSchedule = function () {
 
     if (!$scope.loginUser) {
-      $.Alert('User is not logged In');
-      angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+      $.Alert('Please log in to your Electric account.');
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
     }
 
-    UserService.get(function(user) {
+    UserService.get(function (user) {
+
       $scope.loginUser = user;
 
-      if($scope.loginUser && $scope.loginUser.status == 'Frozen'){
-        $.Alert('Account is frozen, Please check your contact adminstrator');
+      if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
+        $.Alert('Your account is frozen. Please contact the studio for more details.');
         return;
       }
 
-      if($scope.loginUser && $scope.loginUser.status == 'Unverified'){
+      if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
         $.Alert('User is Unverified, Please check your email');
         return;
       }
 
-      if (!$scope.forWaitlist && seat == 0) {
+      if (!$scope.forWaitlist && seats.length == 0) {
         $.Alert('Please pick a seat');
         return;
       }
 
+      if ($scope.loginUser && $scope.loginUser.credits < seats.length) {
+        $.Alert('Insufficient Credits, you only have ' + $scope.loginUser.credits);
+      } 
+
       var book = {};
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
-      book.seat = seat;
+      book.seats = seats;
       book.sched_id = sched.schedule._id;
-      if($scope.forWaitlist){
+      var str_seats = seats.sort(function(a, b){return a-b}) + '';
+      str_seats = str_seats.replace(/,/g, ', ');
+      var confirm_message = 'You’re about to book bike'+ (seats.length > 1 ? 's' : '') + ' # ' + str_seats + 
+                            ' for ' + $scope.daySched + ', ' + $scope.dateSched + '.';
+      if ($scope.forWaitlist) {
+        confirm_message = "You're about to join the waitlist for this schedule " + $scope.daySched + ', ' + $scope.dateSched;
         book.status = 'waitlisted';
       }
 
-      $.Confirm('Your about to book a ride on '+ $scope.daySched + ', ' + $scope.dateSched + ' with seat number ' + seat, function(){
-
+      $.Confirm(confirm_message, function () {
+        $.Alert('Booking seats ...', true);
+        $scope.booking = true;
         var bookSuccess = function () {
+
           if ($scope.resched) {
             SharedService.clear('resched');
           }
-          $location.path('/reserved')
+
+          if ($scope.forWaitlist) {
+            $.Alert('You have beed added to waitlist');
+          } else {  
+            $.Alert('You have successfully booked a ride');
+          }
+          UserService.get(function (user) {
+            $scope.reloadUser();
+            window.location = '/#/reserved'
+            window.location.reload();
+          });
         }
         var bookFail = function (error) {
-          $.Alert(error.data)
+          $.Alert(error.data);
+          $scope.reloadUser();
+          $route.reload();
         }
 
         if ($scope.resched == undefined) {
           BookService.book(book).$promise.then(bookSuccess, bookFail);
-        }else{
+        } else {
           BookService.update({ bookId: $scope.resched._id }, book).$promise.then(bookSuccess, bookFail);
         }
       });
@@ -750,10 +1113,10 @@ ctrls.controller('ClassCtrl', function ($scope, $location,UserService, SharedSer
 
 ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) {
   if (!$scope.loginUser) {
-    $location.path("/")
-    angular.element("html, body").animate({ scrollTop: 0 }, "slow");
+    $location.path('/');
+    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
     angular.element('.login-toggle').click();
-  }else{
+  } else {
 
     $('#history-tabs').Tab();
 
@@ -765,8 +1128,8 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
       $scope.histories = data;
     });
 
-    $scope.prevScheds = function(event){
-      if($scope.currentScheds > 0){
+    $scope.prevScheds = function (event) {
+      if ($scope.currentScheds > 0) {
         $scope.currentScheds -= 1;
         $scope.histories = HistoryService.query({ schedPage : $scope.currentScheds });
         $scope.histories.$promise.then(function (data) {
@@ -776,8 +1139,8 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
       event.preventDefault();
     }
 
-    $scope.nextScheds = function(event){
-      if($scope.currentScheds < parseInt($scope.histories.schedsTotal)){
+    $scope.nextScheds = function (event) {
+      if ($scope.currentScheds < parseInt($scope.histories.schedsTotal)) {
         $scope.currentScheds += 1;
         $scope.histories = HistoryService.query({ schedPage : $scope.currentScheds });
         $scope.histories.$promise.then(function (data) {
@@ -787,8 +1150,8 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
       event.preventDefault();
     }
 
-    $scope.prevTrans = function(event){
-      if($scope.currentTrans > 0){
+    $scope.prevTrans = function (event) {
+      if ($scope.currentTrans > 0) {
         $scope.currentTrans -= 1;
         $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
         $scope.histories.$promise.then(function (data) {
@@ -798,8 +1161,8 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
       event.preventDefault();
     }
 
-    $scope.nextTrans = function(event){
-      if($scope.currentTrans > parseInt($scope.histories.transTotal)){
+    $scope.nextTrans = function (event) {
+      if ($scope.currentTrans < parseInt($scope.histories.transTotal)) {
         $scope.currentTrans += 1;
         $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
         $scope.histories.$promise.then(function (data) {
@@ -808,14 +1171,13 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
       }        
       event.preventDefault();
     }
-
   }
 
 });
 
 ctrls.controller('WhatsnewCtrl', function ($scope, Instagram) {
   
-  Instagram.fetchRecent(function(data) {
+  Instagram.fetchRecent(function (data) {
     $scope.instagram = data;
   });
   

@@ -30,11 +30,18 @@
         <li class="class-menu">
           <a>Classes <i class="fa fa-caret-down"></i></a>
           <div class="class-menu__list">
-            <div class="class-menu__holder">
-              <a href="#/workouts">The Workouts</a>
-              <a href="#/rates-and-packages">Rates &amp; Packages</a>
-              <a href="#/schedule">Schedule</a>
-            </div>  
+            <ul class="class-menu__holder">
+              <li><a href="#/workouts">The Workouts</a></li>
+              <li><a href="#/rates-and-packages">Rates &amp; Packages</a></li>
+              <li>
+                <span>Schedule</span>
+                <div class="sub-menu-holder">
+                  <ul class="submenu">
+                    <li><a href="#/schedule">FORT BGC</a></li>
+                  </ul>
+                </div>
+              </li>
+            </ul>  
           </div>  
         </li>
         <li>
@@ -44,12 +51,17 @@
       
       <div class="account-menu">
         <div class="account-menu__options">
-          {% if not loginUser %}
-            <a class="login-toggle">Login</a> /  
-            <a class="signup-toggle">Sign up</a>
-          {% else %}
-          <a href="javascript:void(0)" class="user-loggedin">Hi <strong>{{ loginUser }}</strong>! <i class="fa fa-caret-down"></i></a>
-          {% end %}            
+        {% if not loginUser %}
+          <a class="login-toggle">Login</a> /  
+          <a class="signup-toggle">Sign up</a>
+          <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
+        {% else %}
+          <a href="javascript:void(0)" class="user-loggedin">
+            Hi <strong>{{ loginUser }}</strong>! 
+            <span>{{! loginUser.credits }}</span>
+            <i class="fa fa-caret-down"></i>
+          </a>
+        {% end %}            
         </div>
         {% if loginUser %}  
         <div class="account-menu__list">
@@ -61,8 +73,24 @@
         </div>
         {% end %}  
       </div>  
-        
-      <a class="book-ride-btn" href="#/schedule">Book A Ride</a>
+      
+      <div class="book-buy">
+        <span class="book-ride-btn" href="#/schedule">
+          <span>Buy/Book A Ride</span>
+          <div class="dropdown-holder">
+            <ul class="dropdown">
+              <li>
+                <div class="pad">
+                  <a class="special" href="#/rates-and-packages">Buy Rides</a>
+                </div>
+                <hr/>
+              </li>
+              <li><a href="#/schedule">FORT BGC</a></li>
+            </ul>
+          </div>
+        </span>  
+      </div>
+      
 
       <a class="menu-toggle"><i class="fa fa-bars"></i></a>
       
@@ -98,17 +126,17 @@
         <input class="input-box" placeholder="Last Name" ng-model="user.last_name">
         <input class="input-box" placeholder="Email Address" ng-model="user.email">
         <input class="input-box" placeholder="Mobile Number" ng-model="user.phone_number">
-        <input type="password" class="input-box" placeholder="Password" ng-model="user.password">
+        <input type="password" class="input-box" placeholder="Password (minimum 6 character)" ng-model="user.password">
         <input type="password" required compare-to="user.password" class="input-box" placeholder="Re-type Password" ng-model="user.confirm_password">
 
-        <input type="button" value="Sign Up" class="button primary" ng-click="signUp()">
+        <input ng-disabled="signingUp" type="button" value="Sign Up" class="button primary" ng-click="signUp()">
       </form>
       <span class="close-btn">X</span>
     </div>
     <div class="wrapper" ng-show="registered">
-      <h2 class="h large light">Please check your email for confirmation</h2>
-      <button class="button" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
-      <!-- We didn't setup the mailchimp yet, go <a href="{{! verificationLink }}">here</a> to verify account.  -->
+      <h2 class="h medium light">Check your Email!</h2><br/><br/><br/>
+      <button class="h small btn" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
+      <span class="close-btn">X</span>
     </div>
   </div>
 
@@ -125,7 +153,7 @@
       
       <ul class="social-links">
         <li>
-          <a href="mailto:info@electricstudio.ph"><i class="fa fa-envelope"></i></a>
+          <a href="mailto:letsride@electricstudio.ph"><i class="fa fa-envelope"></i></a>
         </li>
         <li>
           <a href="https://www.facebook.com/teamelectricph"><i class="fa fa-facebook"></i></a>
@@ -142,7 +170,7 @@
 
   <div class="modal alert-modal" id="alert-modal">
     <div class="modal__box pad">
-      <span class="close-btn modal-close">X</span>
+      <span id="alert-close-btn" class="close-btn modal-close">X</span>
       <p id="alert-modal-message"></p>
     </div>
   </div>
@@ -155,9 +183,18 @@
     </div>
   </div>
 
+  <div class="modal" id="prompt-modal">
+    <div class="modal__box pad">
+      <span class="label" id="prompt-modal-message"></span>
+      <input class="text-input" id="prompt-input"><br/><br/>
+      <a class="btn btn--small btn--tertiary modal-close" id="prompt-cancel-button">Cancel</a>
+      <a class="btn btn--small btn--secondary modal-close" id="prompt-ok-button">OK</a>
+    </div>
+  </div>
+
   <div class="modal" id="forgot-password-modal" ng-controller="ForgotPasswordCtrl" >
     <div class="modal__box pad">
-      <p>Input your email address for reset password confirmation</p>
+      <p>Please enter your email address below and we will send you a link to reset your password.</p>
       <br/>
       <span class="label">Email Address</span>
       <input class="text-input" ng-model="forgotPassEmail"><br/><br/>

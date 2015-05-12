@@ -86,7 +86,7 @@ services.factory('PackageService', function($resource) {
   return $resource('/api/package/:packageId', {}, {
     query: {
       method: 'GET',
-      isArray: false
+      isArray: true
     },
     update: {
       method: 'PUT',
@@ -138,6 +138,10 @@ services.factory('ScheduleService', function($resource) {
     query: {
       method: 'GET',
       isArray: false
+    },
+    get: {
+      method: 'GET',
+      isArray: false
     }
   });
 });
@@ -164,6 +168,25 @@ services.factory('HistoryService', function($resource) {
     query: {
       method: 'GET',
       isArray: false
+    }
+  });
+});
+
+services.factory('SettingService', function ($resource) {
+  return $resource('/admin/setting/:key', {}, {
+    getBlockedBikes: {
+      method: 'GET',
+      isArray: false,
+      params: {
+        key: 'blocked_bikes'
+      }
+    },
+    getWeekRelease: {
+      method: 'GET',
+      isArray: false,
+      params: {
+        key: 'week_release'
+      } 
     }
   });
 });

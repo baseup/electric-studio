@@ -1,8 +1,24 @@
 from motorengine import *
+from datetime import datetime, timedelta, tzinfo
 from app.settings import MANDRILL_API_KEY, EMAIL_SENDER, EMAIL_SENDER_NAME
 
 import mandrill
 import sys
+
+class GMT8(tzinfo):
+    def utcoffset(self, dt):
+        return timedelta(hours=7) + self.dst(dt)
+    def dst(self, dt):
+        d = datetime(dt.year, 4, 1)
+        self.dston = d - timedelta(days=d.weekday() + 1)
+        d = datetime(dt.year, 11, 1)
+        self.dstoff = d - timedelta(days=d.weekday() + 1)
+        if self.dston <=  dt.replace(tzinfo=None) < self.dstoff:
+            return timedelta(hours=1)
+        else:
+            return timedelta(0)
+    def tzname(self,dt):
+        return "GMT +8"
 
 def mongo_to_dict(obj):
     return_data = []
@@ -48,7 +64,7 @@ def send_email_verification(user, content):
             },
             'html': content,
             'important': True,
-            'subject': 'Email Verification',
+            'subject': 'Electric Studio - Email Verification',
             'to': [
                 {
                     'email': user['email'],
@@ -72,7 +88,7 @@ def send_email_booking(user, content):
             },
             'html':  content,
             'important': True,
-            'subject': 'Booked',
+            'subject': 'Electric Studio - Booked',
             'to': [
                 {
                     'email': user['email'],
@@ -96,7 +112,7 @@ def send_email_cancel(user, content):
             },
             'html': content,
             'important': True,
-            'subject': 'Cancelled Booking',
+            'subject': 'Electric Studio - Cancelled',
             'to': [
                 {
                     'email': user['email'],
@@ -120,7 +136,7 @@ def send_email_move(user, content):
             },
             'html': content,
             'important': True,
-            'subject': 'Moved Booking',
+            'subject': 'Electric Studio - Bike Moved',
             'to': [
                 {
                     'email': user['email'],
@@ -144,7 +160,7 @@ def send_email(user, content, subject):
             },
             'html': content,
             'important': True,
-            'subject': subject,
+            'subject': 'Electric Studio - ' + subject,
             'to': [
                 {
                     'email': user['email'],

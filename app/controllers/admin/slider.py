@@ -16,7 +16,7 @@ def find_one(self, id):
 def create(self):
 
     if self.request.files and self.get_argument('text'):
-        try :
+        try:
             upload_file = self.request.files['file'][0]
             new_name = datetime.now().strftime('%Y_%m_%d_%H_%M_%S') + '_' + upload_file['filename']
             path = 'assets/uploads/'
@@ -27,7 +27,7 @@ def create(self):
             slider = Slider(text=self.get_argument('text'),
                             image=path + new_name)
             slider = yield slider.save()
-        except :
+        except:
             value = sys.exc_info()[1]
             self.set_status(403)
             self.write(str(value))
@@ -40,7 +40,7 @@ def create(self):
 def update(self, id):
 
     text = self.get_argument('text');
-    try :
+    try:
         slider = yield Slider.objects.get(id)
         if slider:
             if self.request.files:
@@ -60,7 +60,7 @@ def update(self, id):
         else:
             self.set_status(404)
             self.write('Not Found')
-    except :
+    except:
         value = sys.exc_info()[1]
         self.set_status(403)
         self.write(str(value))

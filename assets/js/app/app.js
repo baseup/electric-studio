@@ -115,6 +115,15 @@ app.directive("compareTo", function() {
   };
 });
 
+app.filter('capitalize', function() {
+  return function(input) {
+    if (input) {
+      input = input.toLowerCase();
+      return input.substring(0,1).toUpperCase()+input.substring(1);
+    }
+  }
+});
+
 app.filter('formatTime', function() {
   return function(time) {
     if (time) {
@@ -138,8 +147,9 @@ app.filter('formatDate', function() {
   return function(date) {
     if(date){
       var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      var date = new Date(date);
-      return months[date.getMonth()] + ', ' + date.getDate() + ' ' + date.getFullYear();
+      var parts = date.split(/[^0-9]/);
+      var date =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+      return months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
     } else {
       return date;
     }
@@ -149,9 +159,10 @@ app.filter('formatDate', function() {
 app.filter('addDay', function() {
   return function(date, days) {
     if (date) {
-      var newDate = new Date(date);
+      var parts = date.split(/[^0-9]/);
+      var newDate =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
       newDate.setTime(newDate.getTime() +  (days * 24 * 60 * 60 * 1000));
-      return newDate;
+      return newDate.toISOString();
     } else {
       return date;
     }

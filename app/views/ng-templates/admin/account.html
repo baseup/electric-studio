@@ -2,9 +2,10 @@
   <div class="content-filter pad cf border--bottom">
     <div class="content-filter__item space--right">
       <span class="label">Search Account</span>
-      <input class="text-input" placeholder="Enter Name" ng-model="search.first_name">
+      <input class="text-input" placeholder="Enter Name or Email" ng-model="searchText">
+      <button class="btn btn--small btn--tertiary float--right" ng-click="downloadUserAccounts()">Export User Accounts List</button>
+      <button ng-click="showAddAccount()" class="btn btn--small btn--primary space--right float--right" data-modal-toggle="add-account">Add Account</button>
     </div>
-
   </div>
 
 
@@ -13,7 +14,7 @@
 
     <div class="account-list grid">
 
-      <div ng-repeat="user in users | filter:search" class="grid__item bp-md-one-half bp-lg-one-third">
+      <div ng-repeat="user in users | search:'first_name+ +last_name,email':searchText" class="grid__item bp-md-one-half bp-lg-one-third">
           
         <div class="account__item box--bordered box--white space--bottom cf">
           <div class="pad">
@@ -23,7 +24,7 @@
           <div class="pad--sides">
             <div class="data-list">
 
-              <dl class="data--inline">
+              <dl class="data--inline" ng-if="user.status != 'Frozen'">
                 <dt><i class="fa fa-phone"></i></dt>
                 <dd>{{ user.phone_number }}</dd>
               </dl>
@@ -34,30 +35,42 @@
                 <dd ng-if="user.status == 'Unverified'" class="inline space--bottom">Account is not <a href="" ng-click="verifyAccount(user)">verified</a>.</dd>
               </dl>
 
-              <dl>
-              <dt>Class Package</dt>
-              <a ng-if="user.billing != 'null'" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy Package</a>
-              <dd class="">{{ user.credits }} Classes Left</dd>
+              <dl ng-if="user.status != 'Frozen'">
+                <dt>Class Package</dt>
+                <a title="Buy Package" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
+                <dd class="">{{ user.credits }} Classes Left</dd>
               <!-- <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd> -->
               </dl>
 
+              <dl ng-if="user.status == 'Frozen'">
+                <dt>Account is frozen due to</dt>
+                <dd class="frozen-message" disable-outside-scroll>{{ user.remarks }}</dd>
+              </dl>
               
             </div>
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">Add Class</a>
+            <a title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
+              <i class="fa fa-plus"></i> Class
+            </a>
             <ul class="nav float--right">
               <li>
-                <a href="" ng-click="accountSummary(user)"><i class="fa fa-bars"></i></a>
+                <a href="" title="Account Info" ng-click="accountInfo(user)"><i class="fa fa-info-circle"></i></a>
               </li>
               <li>
-                <a ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
-                <a ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
+                <a href="" title="Package Summary" ng-click="accountSummary(user)"><i class="fa fa-bars"></i></a>
               </li>
-              <!-- <li>
-                <a href="" class="pad--off-right"><i class="fa fa-share"></i></a>
-              </li> -->
+              <li>
+                <a href="" title="Schedules" ng-click="accountSchedules(user)"><i class="fa fa-book"></i></a>
+              </li>
+              <li>
+                <a title="Froze Account" ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
+                <a title="Unfroze Account" ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
+              </li>
+              <li>
+                <a title="Remove Account" class="pad--off-right" ng-click="deleteAccount(user, $index)"><i class="fa fa-times"></i></a>
+              </li>
             </ul>
           </div>
         </div>
@@ -75,31 +88,216 @@
     </div>
   </div>
 
-  <!-- modal account summary -->
-  <div class="modal" data-modal="account-summary" id="account-summary-modal">
+  <div class="modal" data-modal="security-check" id="security-check-modal">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
-      <h3 class="h--medium brand-color space--bottom">Summary of Classes and Packages</h3>
+      <h3 class="h--medium brand-color space--bottom">Security Check</h3>
+      
+      <ul class="form-fields">
+        <li>
+          <span class="label">Password</span>
+          <input ng-model="securityPass" type="password" class="text-input">
+        </li>
+      </ul>
+     
+      <button type="button" id="btn-security" class="btn btn--primary btn--medium space--top modal-close">Confirm</button>
+
+    </div>
+  </div>
+
+  <div class="modal" data-modal="add-account" id="add-account-modal">
+    <div class="modal__box pad">
+      <span id="close-add-account" class="close-btn modal-close">X</span>
+      <h3 class="h medium gray">Add Account</h3>
+      
+      <div class="float--left space--bottom">
+        <span class="label">First Name</span>
+        <input ng-model="newAccount.first_name" class="text-input">
+      </div>
+      <div class="float--right space--bottom">
+        <span class="label">Last Name</span>
+        <input ng-model="newAccount.last_name" class="text-input">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Email</span>
+        <input ng-model="newAccount.email" class="text-input">
+      </div>
+      <div class="float--left space--bottom">
+        <span class="label">Password</span>
+        <input type="password" ng-model="newAccount.password" class="text-input">
+      </div>
+      <div class="float--right space--bottom">
+        <span class="label">Confirm Password</span>
+        <input type="password" ng-model="newAccount.confirm_password" class="text-input">
+      </div>
+      <button ng-disabled="registeringAccount" type="button" ng-click="addAccount()" class="btn btn--primary btn--medium float--right space--top">Add</button>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="account-info" id="account-info-modal">
+    <div class="modal__box pad" >
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h medium gray">Personal Info</h3>
+      <div class="float--left space--bottom">
+        <span class="label">First Name</span>
+        <input ng-model="selectedInfo.first_name" class="text-input">
+      </div>
+      <div class="float--right space--bottom">
+        <span class="label">Last Name</span>
+        <input ng-model="selectedInfo.last_name" class="text-input">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Email</span>
+        <input ng-model="selectedInfo.email" disabled class="text-input">
+      </div>
+      <div class="bd float--right space--bottom">
+        <span class="label">Mobile Number</span>
+        <input ng-model="selectedInfo.phone_number" class="text-input">
+      </div>
+      <div class="float--left space--bottom">
+        <span class="label">Birthday</span>
+        <input ng-model="selectedInfo.birthdate" class="text-input datepicker">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Address</span>
+        <input ng-model="selectedInfo.address" class="text-input">
+      </div>
+      <div class="float--left space--bottom">
+        <span class="label">Contact Person</span>
+        <input ng-model="selectedInfo.contact_person" class="text-input">
+      </div>
+      <div class="float--right space--bottom">
+        <span class="label">Contact Number</span>
+        <input ng-model="selectedInfo.emergency_contact" class="text-input">
+      </div>
+      <button type="button" ng-click="updateAccountInfo()" class="btn btn--primary btn--medium float--right space--top modal-close">Save</button>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="account-schedules" id="account-schedules-modal">
+    <div class="modal__box pad" style="max-width: 100%">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }} schedules</h3>
+      
+      <div class="class-search pad cf">
+        <div class="float--left space--right">
+          <span class="label">From</span>
+          <input class="text-input" id="input_from" ng-model='schedFilter.fromDate' placeholder="Today" />
+        </div>
+        <div class="float--left space--right">
+          <span class="label">To</span>
+          <input class="text-input" id="input_to" ng-model='schedFilter.toDate' placeholder="To" />
+        </div>
+        <div class="float--left space--left space--bottom">
+          <span class="label">&nbsp;</span>
+          <button type="button" class="btn btn--small btn--primary float--left" ng-click="filterSchedDate(selectedAccount)">Filter Date</button>
+        </div>
+        <div class="float--left space--left">
+          <span class="label">Status</span>
+          <select class="select" ng-change="changeStatus()" ng-model="statusFilter"> 
+            <option value="">Select Status</option>
+            <option value="booked">Booked</option>
+            <option value="missed">Missed</option>
+            <option value="waitlisted">Waitlisted</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pad"  style="height: 400px; overflow: scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Schedule</th>
+              <th>Class Type</th>
+              <th>Instructor</th>
+              <th>Status</th>
+              <th>Seat</th>
+              <th>Create Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sched in selectedAccount.books | search:'status':statusFilter">
+              <td>{{ sched.date | formatDate }} {{ sched.schedule.start | formatTime }}</td>
+              <td>{{ sched.schedule.type }}</td>
+              <td>{{ sched.schedule.instructor.admin.first_name }} {{ sched.schedule.instructor.admin.last_name }}</td>
+              <td>{{ sched.status }}</td>
+              <td>{{ sched.seat_number }}</td>
+              <td>{{ sched.create_at | formatDate }} {{ sched.create_at | formatTime }} </td>
+              <td>
+                <button ng-if="sched.status == 'waitlisted'" class="btn btn--small btn--primary" ng-click="cancelWaitlist($index, sched)">
+                  Cancel
+                </button>
+                <button class="btn btn--small btn--primary" ng-if="sched.status == 'booked'" ng-click="moveBikeModal(sched)">Move Bike</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="switch-bike-modal" class="modal" data-modal="switch">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Switch Bike</h3>
+
+      <div class="user-select space--bottom">
+        <span class="label">Rider</span>
+        <h4 class="h-small">{{ selectedBook.user_id.first_name }} {{ selectedBook.user_id.last_name }}</h4>
+      </div>
+
+       <div class="cf">   
+        <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
+          <span class="label">Current Bike</span>
+          <h4 class="h-small">{{ selectedBook.seat_number  }}</h4>
+        </div>
+        <div class="space--bottom bp-md-one-third float--left">
+          <span class="label">Switch to</span>
+          <select class="select" id="switch-seat" ng-model="selectedBike">
+            <option value="">Select Seat</option>
+          </select>
+        </div>    
+      </div>
+
+      <button class="btn btn--primary btn--medium space--top modal-close" ng-click="moveBike()">Switch</button>
+    </div>
+  </div>
+
+  <!-- modal account summary -->
+  <div class="modal" data-modal="account-summary" id="account-summary-modal">
+    <div class="modal__box pad" style="max-width: 80%">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Rides and Packages</h3>
 
       <div class="space--bottom pad--bottom">
         <span class="label">Rider</span>
         <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
       </div>
 
-      <div class="space--bottom one-whole">
+      <div style="height: 400px; overflow: scroll" class="space--bottom one-whole">
 
         <table class="data-table account-summary-table">
           <tr>
             <th>Package Type</th>
-            <th>Classes Used</th>
-            <th>Classes Left</th>
+            <th>Total Rides</th>
+            <th>Rides Left</th>
             <th>Expiration Date</th>
+            <th>Notes</th>
+            <th>Purchase Date</th>
           </tr>
-          <tr ng-repeat="pack in selectedAccount._packages">
-            <td>{{ pack.package_id.name }} </td>
+          <tr ng-repeat="pack in selectedAccount.packages">
+            <td>{{ pack.package_name || 'Free' }} </td>
             <td>{{ pack.credit_count }}</td>
             <td>{{ pack.remaining_credits }}</td>
-            <td>{{ pack.create_at }}</td>
+            <td>
+              {{ pack.create_at | addDay:pack.expiration | formatDate }}
+              <a ng-click="extendPackageExpiry(pack)"><i class="fa fa-plus-square"></i></a>
+            </td>
+            <td>{{ pack.notes }}</td>
+            <td>{{ pack.create_at | formatDate }}</td>
           </tr>
         </table>
       </div>
@@ -118,7 +316,7 @@
         </li>
         <li>
           <span class="label">Select Class Package</span>
-          <select class="select" id="select-add-package" ng-change="setPackage(newPackageId)" ng-model="newPackageId">
+          <select class="select" id="select-buy-package" ng-change="setPackage(newPackageId)" ng-model="newPackageId">
             <option value="">Select Package</option>
           </select>
         </li>
@@ -128,20 +326,48 @@
                 <b class="h--small">{{ newPackage.name }}</b>
                 <br/><br/>
                 <span class="h small ">Price: {{ newPackage.fee }} Php</span><br>
-                <span class="h small ">Classes: {{ newPackage.credits }} </span><br>
+                <span class="h small ">No. of Rides: {{ newPackage.credits }} </span><br>
                 <span class="h small ">Expiration: {{ newPackage.expiration }} days</span><br>
               </div>
             </div>
         </li>
       </ul>
+
+      <form id="admin-pay-form" action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="no_note" value = "0">
+        <input type="hidden" name="bn" value="PP-BuyNowBF">
+        <input type="hidden" name="rm" value="2">
+        <input type="hidden" name="business" value="ogsmelvin05-facilitator@gmail.com">
+        <input type="hidden" name="item_name" value="{{ newPackage.name }}">
+        <input type="hidden" name="item_number" value="{{ newPackage._id }}">
+        <input type="hidden" name="amount" value="{{ newPackage.fee }}">
+
+       <!--  <input type="hidden" name="first_name" value="{{ selectedAccount.billing.first_name }}">
+        <input type="hidden" name="last_name" value="{{ selectedAccount.billing.first_name }}">
+        <input type="hidden" name="address1" value="{{ selectedAccount.billing.address }}">
+        <input type="hidden" name="landing_page" value="Billing" />
+        <input type="hidden" name="city" value="{{ selectedAccount.billing.city }}">
+        <input type="hidden" name="state" value="{{ selectedAccount.billing.province }}">
+        <input type="hidden" name="zip" value="{{ selectedAccount.billing.postalcode }}">
+        <input type="hidden" name="email" value="{{ selectedAccount.billing.email }}">
+        <input type="hidden" name="night_phone_a" value="{{ selectedAccount.billing.phone_a }}">
+        <input type="hidden" name="night_phone_b" value="{{ selectedAccount.billing.phone_b }}">
+        <input type="hidden" name="night_phone_c" value="{{ selectedAccount.billing.phone_c }}"> -->
+
+        <input type="hidden" name="currency_code" value="PHP">
+        <input type="hidden" name="return" value="{{ redirectUrl }}?pid={{ newPackage._id }}&uid={{ selectedAccount._id }}&success=True">
+        <input type="hidden" name="cancel_return" value="{{ redirectUrl }}?success=False">
+        <input type="hidden" name="cbt" value="Return to Electric Studio">
+      </form>
      
       <button type="button" ng-click="confirmBilling()" class="btn btn--primary btn--medium space--top modal-close">Buy</button>
 
     </div>
   </div>
 <br/>
-  <div class="modal" data-modal="billing-preview" id="billing-preview-modal">
-    <div class="modal__box pad">
+  <!-- <div class="modal" data-modal="billing-preview" id="billing-preview-modal">
+    <div class="modal__box pad" style="max-width: 100%">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Billing Information</h3>
       
@@ -151,24 +377,97 @@
           <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
         </li>
         <li>
-          <b>First Name:</b> {{ selectedAccount.billing.first_name }}<br/>
-          <b>Last Name:</b> {{ selectedAccount.billing.last_name }}<br/>
-          <b>Address:</b> {{ selectedAccount.billing.address }}<br/>
-          <b>City:</b> {{ selectedAccount.billing.city }}<br/>
-          <b>State/Province:</b> {{ selectedAccount.billing.province }}<br/>
-          <b>Postal:</b> {{ selectedAccount.billing.postalcode }}<br/>
-          <b>Email:</b> {{ selectedAccount.billing.email }}<br/>
-          <b>Card #:</b> {{ selectedAccount.billing.card_number }}<br/>
-          <b>Payment Type:</b> {{ selectedAccount.billing.card_type }}<br/>
-          <b>Expiration:</b> {{ selectedAccount.billing.card_expiration }}<br/>
-          <b>CSC:</b> {{ selectedAccount.billing.csc }}<br/>
+          <div class="bp-md-one-half float--left space--bottom">
+            <span class="label">First Name</span>
+            <input ng-model="selectedAccount.billing.first_name" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--right space--bottom">
+            <span class="label">Last Name</span>
+            <input ng-model="selectedAccount.billing.last_name" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--left space--bottom">
+            <span class="label">Address</span>
+            <input ng-model="selectedAccount.billing.address" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--right space--bottom">
+            <span class="label">City</span>
+            <input ng-model="selectedAccount.billing.city" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--left space--bottom">
+            <span class="label">State/Province</span>
+            <input ng-model="selectedAccount.billing.province" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--right space--bottom">
+            <span class="label">Postal</span>
+            <input ng-model="selectedAccount.billing.postalcode" class="text-input">
+          </div>
+          <div class="bp-md-one-twelfth space--right float--left space--bottom">
+            <span class="label">Telephone</span>
+            <input ng-model="selectedAccount.billing.phone_a" placeholder="123" class="text-input">
+          </div>
+          <div class="bp-md-one-twelfth space--right float--left space--bottom">
+            <span class="label">&nbsp;</span>
+            <input ng-model="selectedAccount.billing.phone_b" placeholder="1234" class="text-input">
+          </div>
+          <div class="bp-md-one-twelfth space--right float--left space--bottom">
+            <span class="label">&nbsp;</span>
+            <input ng-model="selectedAccount.billing.phone_c" placeholder="1234" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--right space--bottom">
+            <span class="label">Email</span>
+            <input ng-model="selectedAccount.billing.email" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--right space--bottom">
+            <span class="label">Card #</span>
+            <input ng-model="selectedAccount.billing.card_number" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--left space--bottom">
+            <span class="label">Payment Type</span>
+            <input ng-model="selectedAccount.billing.card_type" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--right space--bottom">
+            <span class="label">Expiration</span>
+            <input ng-model="selectedAccount.billing.card_expiration" placeholder="MM/YY" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--left space--bottom">
+            <span class="label">CSC</span>
+            <input ng-model="selectedAccount.billing.csc" class="text-input">
+          </div>
         </li>
       </ul>
+
+      <form id="admin-pay-form" action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="no_note" value = "0">
+        <input type="hidden" name="bn" value="PP-BuyNowBF">
+        <input type="hidden" name="rm" value="2">
+        <input type="hidden" name="business" value="ogsmelvin05-facilitator@gmail.com">
+        <input type="hidden" name="item_name" value="{{ newPackage.name }}">
+        <input type="hidden" name="item_number" value="{{ newPackage._id }}">
+        <input type="hidden" name="amount" value="{{ newPackage.fee }}">
+
+        <input type="hidden" name="first_name" value="{{ selectedAccount.billing.first_name }}">
+        <input type="hidden" name="last_name" value="{{ selectedAccount.billing.first_name }}">
+        <input type="hidden" name="address1" value="{{ selectedAccount.billing.address }}">
+        <input type="hidden" name="landing_page" value="Billing" />
+        <input type="hidden" name="city" value="{{ selectedAccount.billing.city }}">
+        <input type="hidden" name="state" value="{{ selectedAccount.billing.province }}">
+        <input type="hidden" name="zip" value="{{ selectedAccount.billing.postalcode }}">
+        <input type="hidden" name="email" value="{{ selectedAccount.billing.email }}">
+        <input type="hidden" name="night_phone_a" value="{{ selectedAccount.billing.phone_a }}">
+        <input type="hidden" name="night_phone_b" value="{{ selectedAccount.billing.phone_b }}">
+        <input type="hidden" name="night_phone_c" value="{{ selectedAccount.billing.phone_c }}">
+
+        <input type="hidden" name="currency_code" value="PHP">
+        <input type="hidden" name="return" value="{{ redirectUrl }}?pid={{ newPackage._id }}&uid={{ selectedAccount._id }}&success=True">
+        <input type="hidden" name="cancel_return" value="{{ redirectUrl }}?success=False">
+        <input type="hidden" name="cbt" value="Return to Electric Studio">
+      </form>
      
-      <button type="button" ng-click="buyPackage()" class="btn btn--primary btn--medium space--top modal-close">Continue</button>
+      <button type="button" ng-click="buyPackage()" class="btn btn--primary btn--medium float--right space--top modal-close">Save and Continue</button>
 
     </div>
-  </div>
+  </div> -->
 
   <!-- modal Add Class -->
   <div class="modal" data-modal="add-class" id="add-class-modal">

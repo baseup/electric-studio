@@ -44,3 +44,206 @@
   }
   
 }
+
+/* Class Seats */
+.seats {
+  font-family: 'Brandon_Grotesque'; 
+  display: block;
+  
+  @include breakpoint(md) {
+    display: table;
+  }
+  
+ 
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+
+  @include breakpoint(md) {
+  tr:nth-child(even) td {
+    text-align: right;
+  }
+  }
+
+  tr {
+    display: inline;
+    @include breakpoint(md) {
+      display: table-row;
+    }
+  }
+
+  td {
+    display: block;
+    float: left;
+
+    @include breakpoint(md) {
+      display: table-cell;
+      float: none;
+    }
+
+    width: 12.5%;
+    padding: 10px 0;
+
+    span {
+      display: inline-block;
+      height: 30px;
+      width: 30px;
+      text-align: center;
+      line-height: 30px;
+      background: #fff;
+      border-radius: 50%;
+      font-weight: bold;
+      font-size: 16px;
+      color: $brand-color-secondary;
+      cursor: pointer;
+
+      &:hover {
+        box-shadow: 0 0 0 5px $brand-color-primary;
+      }
+
+      @include breakpoint(md) {
+        height: 60px;
+        width: 60px;
+        line-height: 60px;
+        font-size: 20px;
+      }
+    }
+
+    &.unavailable {
+
+      span {
+        background: $brand-color-tertiary;
+        cursor: default;
+        box-shadow: none;
+      }
+    }
+
+    &.blocked {
+
+      span {
+        background: #a00;
+        cursor: default;
+        box-shadow: none;
+      }
+    }
+
+    &.selected {
+      span {
+        background: $brand-color-primary;
+        color: #fff;
+      }
+    }
+
+    &.hidden {
+      display: none;
+
+      @include breakpoint(md) {
+        display: table-cell;
+      }
+
+      span {
+        display: none;
+      }
+    }
+  }
+}
+
+.class-instructor {
+  
+  @include breakpoint(md) {
+    margin: -50px 45px 0 0;
+  }
+  
+  .image {   
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto;
+    
+    @include breakpoint(md) {
+      height: 60px;
+      width: 60px;
+    }
+    
+    img {
+      width: 100%;
+    }
+  }
+
+}
+
+.h {
+  text-transform: uppercase;
+  font-weight: bold;
+  margin: 20px 0;
+  font-family: 'Brandon_Grotesque';
+  
+  &.large {
+    font-size: 2em;
+    font-family: 'Brandon_Grotesque';
+  }
+  
+  &.medium {
+    font-size: 1.4em;
+  }
+  
+  &.small {
+    font-size: 1em;
+  }
+  
+  &.light {
+    color: #fff!important;
+  }
+  
+  &.dark {
+    color: $color-text!important;
+  }
+  
+  &.primary, &.color-primary {
+    color: $brand-color-primary!important;
+  }
+  
+  &.gray {
+    color: $color-text-light!important;
+  }
+  
+  &.center {
+    text-align: center;
+    display: block;
+  }
+  
+  &.block {
+    display: block;
+  }
+  
+  &.face-primary {
+    font-family: 'Brandon_Grotesque';
+  }
+  
+  &.xl {
+    font-family: 'Tungsten', sans-serif;
+    font-weight: 300;
+    text-transform: uppercase;
+    color: $brand-color-primary;
+    letter-spacing: 0.2em;
+    font-size: 50px;
+    
+    @include breakpoint(sm) {
+      font-size: 70px;
+    }
+  }
+}
+
+.bike-map-modal {
+  max-width: 80% !important;
+}
+
+.option-booking {
+  line-height: 30px !important;
+}
+
+.frozen-message {
+  height: 54px;
+  overflow-y: scroll;
+}

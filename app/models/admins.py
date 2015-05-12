@@ -38,5 +38,19 @@ class Slider(Model):
     text = StringField(required=True)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
-    
 
+class Setting(Model):
+    __collection__ = 'settings'
+    key = StringField(required=True)
+    value = StringField(required=True)
+    create_at = DateTimeField(auto_now_on_insert=True)
+    update_at = DateTimeField(auto_now_on_update=True)
+
+class Branch(Model):
+    __collection__ = 'branches'
+    name = StringField(required=True)
+    password = StringField(required=True)
+    token = StringField(required=True)
+    expire_at = DateTimeField(required=True)
+    create_at = DateTimeField(auto_now_on_insert=True)
+    update_at = DateTimeField(auto_now_on_update=True)

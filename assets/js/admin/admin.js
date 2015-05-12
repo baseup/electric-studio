@@ -50,6 +50,10 @@ app.config(function ($routeProvider, $httpProvider) {
     '/statistics': {
       templateUrl: '/admin/statistics',
       controller: 'AdminCtrl'
+    },
+    '/settings': {
+      templateUrl: '/admin/settings',
+      controller: 'AdminCtrl'
     }
   };
 
@@ -68,6 +72,22 @@ app.config(function ($routeProvider, $httpProvider) {
   $routeProvider.otherwise({
     redirectTo: '/notfound'
   });
+});
+
+app.directive('disableOutsideScroll', function () {
+ return {
+   restrict: 'A',
+   link: function (scope, element, attrs) {
+
+     element.bind('mousewheel DOMMouseScroll', function (e) {
+       var e0 = e.originalEvent,
+         delta = e0.wheelDelta || -e0.detail;
+
+       this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+       e.preventDefault();
+     });
+   }
+ };
 });
 
 app.filter('formatTime', function() {
@@ -93,8 +113,22 @@ app.filter('formatDate', function() {
   return function(date) {
     if(date){
       var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      var date = new Date(date);
-      return months[date.getMonth()] + ', ' + date.getDate() + ' ' + date.getFullYear();
+      var parts = date.split(/[^0-9]/);
+      var date =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+      return months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
+    } else {
+      return date;
+    }
+  };
+});
+
+app.filter('addDay', function() {
+  return function(date, days) {
+    if (date) {
+      var parts = date.split(/[^0-9]/);
+      var newDate =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+      newDate.setTime(newDate.getTime() +  (days * 24 * 60 * 60 * 1000));
+      return newDate.toISOString();
     } else {
       return date;
     }
@@ -130,13 +164,39 @@ app.filter('search', function($filter){
       if (target != null && target.length > 0) {
         if (propStrArr) {
           for (var i in propStrArr) {
-            properties = parseString(propStrArr[i]);
-            if (getValue(item, properties).toLowerCase().indexOf(target.toLowerCase()) > -1) {
+            var value = null;
+            if (propStrArr[i].indexOf('+')) {
+              var concat = propStrArr[i].split('+')
+              for (var c in concat) {
+                if (concat[c].trim().length > 0){
+                  value += getValue(item, parseString(concat[c]));
+                } else {
+                  value += concat[c]
+                }
+              }
+            } else {
+              properties = parseString(propStrArr[i]);
+              value = getValue(item, properties);
+            }
+            if (value && value.toLowerCase().indexOf(target.toLowerCase()) > -1) {
               return true;
             }
           }
         } else {
-          var val = getValue(item, properties);
+          var val = null;
+          if (propertyString.indexOf('+')) {
+            var concat = propertyString.split('+')
+            for (var c in concat) {
+              if (concat[c].trim().length > 0){
+                val += getValue(item, parseString(concat[c]));
+              } else {
+                val += concat[c]
+              }
+            }
+          } else {
+            val = getValue(item, properties);
+          }
+
           if (val) {
             return val.toLowerCase().indexOf(target.toLowerCase()) > -1;
           }

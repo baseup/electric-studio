@@ -13,7 +13,8 @@ def find(self):
         self.finish()
     else:
         user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-        transactions = yield UserPackage.objects.filter(user_id=ObjectId(user_id), remaining_credits__gt=0).find_all()
+        transactions = yield UserPackage.objects.order_by('expire_date') \
+                                                .filter(user_id=ObjectId(user_id), remaining_credits__gt=0, status__ne='Expired').find_all()
         self.render_json(transactions)
 
 def find_one(self, id):
@@ -24,12 +25,14 @@ def find_one(self, id):
 def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
-    try :
+    try:
         user = yield User.objects.get(data['user_id']);
         transaction = UserPackage(user_id=data['user_id'])
         if 'package_id' in data:
             package = yield Package.objects.get(data['package_id'])
             transaction.package_id = data['package_id']
+            transaction.package_name = package.name
+            transaction.package_fee = package.fee
             transaction.credit_count = package.credits
             transaction.remaining_credits = package.credits
             transaction.expiration = package.expiration
@@ -49,7 +52,7 @@ def create(self):
         transaction = yield transaction.save()
         if transaction:
             user = yield user.save();
-    except :
+    except:
         value = sys.exc_info()[1]
         self.set_status(403)
         self.write(str(value))
@@ -57,13 +60,13 @@ def create(self):
 
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
-    try :
+    try:
         transaction = yield UserPackage.objects.get(id)
         transaction.expiration = data['expiration']
         if 'notes' in data:
             transaction.notes = data['notes']
         transaction = yield package.save()
-    except :
+    except:
         value = sys.exc_info()[1]
         self.set_status(403)
         self.write(str(value))

@@ -1,5 +1,5 @@
 from app.models.packages import Package
-
+import sys
 import tornado.escape
 
 def find(self):
@@ -14,14 +14,14 @@ def find_one(self, id):
 def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
-    try :
+    try:
         package = Package(name=data['name'], 
                           fee=data['fee'],
                           description=data['description'],
                           expiration=data['expiration'],
                           credits=data['credits'])
         package = yield package.save()
-    except :
+    except:
         value = sys.exc_info()[1]
         self.set_status(403)
         self.write(str(value))
@@ -29,7 +29,7 @@ def create(self):
 
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
-    try :
+    try:
         package = yield Package.objects.get(id)
         package.name = data['name']
         package.fee = data['fee']
@@ -37,7 +37,7 @@ def update(self, id):
         package.expiration = data['expiration']
         package.credits = data['credits']
         package = yield package.save()
-    except :
+    except:
         value = sys.exc_info()[1]
         self.set_status(403)
         self.write(str(value))

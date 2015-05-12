@@ -2,53 +2,157 @@
 
   <div class="grid content pad">
     <div class="grid__item">
-    <div class="packages box--white box--bordered">
-      <div class="box__header align--middle cf pad">
-        <span class="label label--inline">Class Statistics</span>
-      </div>
-
-      <div class="class-search pad cf">
-        <div class="bp-md-one-fourth float--left space--bottom space--right">
-          <span class="label">From</span>
-          <input class="text-input" id='input_from' placeholder="Today">
-          <span class="label">To</span>
-          <input class="text-input" id='input_to' placeholder="To"><br/><br/>
-          <button type="button" class="btn btn--small btn--primary float--right" id="filter-date">Filter Date</button>
+      <div class="packages box--white box--bordered">
+        <div class="box__header align--middle cf pad">
+          <span class="label label--inline">Class Statistics</span>
         </div>
-        <div class="float--left">
-          <span class="label">Instructor</span>
-          <select class="select" id="search-instructor" ng-model="searchIns">
-            <option value="">Select Instructor</option>
-          </select><br/>
-          <input type="checkbox" id="checkAS"/> With available seat
-        </div>
-      </div>
 
-      <div class="pad">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Schedule</th>
-              <th>Instructor</th>
-              <th>Total Seats</th>
-              <th>Available Seats</th>
-              <th>Reserved Seats</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="stat in stats | search:'instructor._id':searchIns | filter:withAvailableSeats">
-              <td>{{ stat.date | formatDate }} {{ stat.start | formatTime }}</td>
-              <td>{{ stat.instructor.admin.first_name }} {{ stat.instructor.admin.last_name }}</td>
-              <td>37</td>
-              <td>{{ 37 - stat._books.length }}</td>
-              <td>
-                <a ng-if="stat._books.length > 0" ng-click="viewUserList(stat)">{{ stat._books.length }}</a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="class-search pad cf">
+          <div class="float--left space--right">
+            <span class="label">From</span>
+            <input class="text-input" id="input_from" ng-model='statFilter.fromDate' placeholder="Today" />
+          </div>
+          <div class="float--left space--right">
+            <span class="label">To</span>
+            <input class="text-input" id="input_to" ng-model='statFilter.toDate' placeholder="To" />
+          </div>
+          <div class="float--left space--left space--bottom">
+            <span class="label">&nbsp;</span>
+            <button type="button" class="btn btn--small btn--primary float--left" ng-click="filterDate()">Filter Date</button>
+          </div>
+        </div>
+        <div class="class-search pad cf">
+          <div class="float--left space--right">
+            <span class="label">Instructor</span>
+            <select class="select" id="search-instructor" ng-model="searchIns">
+              <option value="">Select Instructor</option>
+            </select><br/>
+            <!-- <input type="checkbox" id="checkAS"/> With available seat -->
+          </div>
+          <div class="float--left space--left">
+            <span class="label">Option</span>
+            <select class="select" ng-change="changeOp()" ng-model="selectedOption"> 
+              <option value="all">All</option>
+              <option value="withAvailable">With Available Seats Only</option>
+              <option value="withWaitlisted">With Waitlisted Seats Only</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pad">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Schedule</th>
+                <th>Type</th>
+                <th>Instructor</th>
+                <th>Status</th>
+                <th>Seats</th>
+                <th>Available</th>
+                <th>Reserved</th>
+                <th>Waitlisted</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="stat in stats | search:'instructor._id':searchIns | filter:withAvailableSeats">
+                <td>{{ stat.date | formatDate }} {{ stat.start | formatTime }}</td>
+                <td>{{ stat.type }}</td>
+                <td>{{ stat.instructor.admin.first_name }} {{ stat.instructor.admin.last_name }}</td>
+                <td>
+                  <span ng-if="isCompleted(stat)">Completed</span>
+                  <span ng-if="!isCompleted(stat)">Available</span>
+                </td>
+                <td><a ng-click="viewBikeMap(stat)">{{ stat.seats - blockedBikes.length }}</a></td>
+                <td>
+                  <span ng-if="stat.books.length <= stat.seats">{{ stat.seats - blockedBikes.length - stat.books.length }}</span>
+                  <span ng-if="stat.books.length > stat.seats">0</span>
+                </td>
+                <td>
+                  <a ng-if="stat.books.length > 0" ng-click="viewUserList(stat,'book')">{{ stat.books.length }}</a>
+                  <span ng-if="stat.books.length == 0">0</span>
+                </td>
+                <td>
+                  <a ng-if="stat.waitlist.length > 0" ng-click="viewUserList(stat,'waitlist')">{{ stat.waitlist.length }}</a>
+                  <span ng-if="stat.waitlist.length == 0">0</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
+  </div>
+
+  <div class="modal" data-modal="bike-map" id="bike-map-modal">
+    <div class="bike-map-modal modal__box pad">
+      <span class="close-btn modal-close">X</span>
+
+      <div class="space--bottom pad--bottom">
+        <span class="label">Schedule</span>
+        <h4 class="h-small">{{ selectedStat.date | formatDate }} {{ selectedStat.start | formatTime }}</h4>
+      </div>
+
+      <div class="class">
+        <table class="seats">
+          <tr>
+            <td ng-class="{ unavailable: checkSeat(1), hidden: 1 > selectedStat.seats, blocked: isBlocked(1) }"><span>1</span></td>
+            <td ng-class="{ unavailable: checkSeat(2), hidden: 2 > selectedStat.seats, blocked: isBlocked(2) }"><span>2</span></td>
+            <td ng-class="{ unavailable: checkSeat(3), hidden: 3 > selectedStat.seats, blocked: isBlocked(3) }"><span>3</span></td>
+            <td ng-class="{ unavailable: checkSeat(4), hidden: 4 > selectedStat.seats, blocked: isBlocked(4) }"><span>4</span></td>
+            <td ng-class="{ unavailable: checkSeat(5), hidden: 5 > selectedStat.seats, blocked: isBlocked(5) }"><span>5</span></td>
+            <td ng-class="{ unavailable: checkSeat(6), hidden: 6 > selectedStat.seats, blocked: isBlocked(6) }"><span>6</span></td>
+            <td ng-class="{ unavailable: checkSeat(7), hidden: 7 > selectedStat.seats, blocked: isBlocked(7) }"><span>7</span></td>
+            <td ng-class="{ unavailable: checkSeat(8), hidden: 8 > selectedStat.seats, blocked: isBlocked(8) }"><span>8</span></td>
+          </tr>
+          <tr>
+            <td ng-class="{ unavailable: checkSeat(9), hidden: 9 > selectedStat.seats, blocked: isBlocked(9) }"><span>9</span></td>
+            <td ng-class="{ unavailable: checkSeat(10), hidden: 10 > selectedStat.seats, blocked: isBlocked(10) }"><span>10</span></td>
+            <td ng-class="{ unavailable: checkSeat(11), hidden: 11 > selectedStat.seats, blocked: isBlocked(11) }"><span>11</span></td>
+            <td ng-class="{ unavailable: checkSeat(12), hidden: 12 > selectedStat.seats, blocked: isBlocked(12) }"><span>12</span></td>
+            <td ng-class="{ unavailable: checkSeat(13), hidden: 13 > selectedStat.seats, blocked: isBlocked(13) }"><span>13</span></td>
+            <td ng-class="{ unavailable: checkSeat(14), hidden: 14 > selectedStat.seats, blocked: isBlocked(14) }"><span>14</span></td>
+            <td ng-class="{ unavailable: checkSeat(15), hidden: 15 > selectedStat.seats, blocked: isBlocked(15) }"><span>15</span></td>
+            <td ng-class="{ unavailable: checkSeat(16), hidden: 16 > selectedStat.seats, blocked: isBlocked(16) }"><span>16</span></td>
+          </tr>
+          <tr>
+            <td ng-class="{ unavailable: checkSeat(17), hidden: 17 > selectedStat.seats, blocked: isBlocked(17) }"><span>17</span></td>
+            <td ng-class="{ unavailable: checkSeat(18), hidden: 18 > selectedStat.seats, blocked: isBlocked(18) }"><span>18</span></td>
+            <td ng-class="{ unavailable: checkSeat(19), hidden: 19 > selectedStat.seats, blocked: isBlocked(19) }"><span>19</span></td>
+            <td ng-class="{ unavailable: checkSeat(20), hidden: 20 > selectedStat.seats, blocked: isBlocked(20) }"><span>20</span></td>
+            <td ng-class="{ unavailable: checkSeat(21), hidden: 21 > selectedStat.seats, blocked: isBlocked(21) }"><span>21</span></td>
+            <td ng-class="{ unavailable: checkSeat(22), hidden: 22 > selectedStat.seats, blocked: isBlocked(22) }"><span>22</span></td>
+            <td ng-class="{ unavailable: checkSeat(23), hidden: 23 > selectedStat.seats, blocked: isBlocked(23) }"><span>23</span></td>
+            <td ng-class="{ unavailable: checkSeat(24), hidden: 24 > selectedStat.seats, blocked: isBlocked(24) }"><span>24</span></td>
+          </tr>
+          <tr>
+            <td ng-class="{ unavailable: checkSeat(25), hidden: 25 > selectedStat.seats, blocked: isBlocked(25) }"><span>25</span></td>
+            <td ng-class="{ unavailable: checkSeat(26), hidden: 26 > selectedStat.seats, blocked: isBlocked(26) }"><span>26</span></td>
+            <td ng-class="{ unavailable: checkSeat(27), hidden: 27 > selectedStat.seats, blocked: isBlocked(27) }"><span>27</span></td>
+            <td class="hidden"><span></span></td>
+            <td ng-class="{ unavailable: checkSeat(28), hidden: 28 > selectedStat.seats, blocked: isBlocked(28) }"><span>28</span></td>
+            <td ng-class="{ unavailable: checkSeat(29), hidden: 29 > selectedStat.seats, blocked: isBlocked(29) }"><span>29</span></td>
+            <td ng-class="{ unavailable: checkSeat(30), hidden: 30 > selectedStat.seats, blocked: isBlocked(30) }"><span>30</span></td>
+            <td ng-class="{ unavailable: checkSeat(31), hidden: 31 > selectedStat.seats, blocked: isBlocked(31) }"><span>31</span></td>
+          </tr>
+          <tr>
+            <td ng-class="{ unavailable: checkSeat(32), hidden: 32 > selectedStat.seats, blocked: isBlocked(32) }"><span>32</span></td>
+            <td ng-class="{ unavailable: checkSeat(33), hidden: 33 > selectedStat.seats, blocked: isBlocked(33) }"><span>33</span></td>
+            <td ng-class="{ unavailable: checkSeat(34), hidden: 34 > selectedStat.seats, blocked: isBlocked(34) }"><span>34</span></td>
+            <td class="hidden"><span></span></td>
+            <td class="hidden"><span></span></td>
+            <td ng-class="{ unavailable: checkSeat(35), hidden: 35 > selectedStat.seats, blocked: isBlocked(35) }"><span>35</span></td>
+            <td ng-class="{ unavailable: checkSeat(36), hidden: 36 > selectedStat.seats, blocked: isBlocked(36) }"><span>36</span></td>
+            <td ng-class="{ unavailable: checkSeat(37), hidden: 37 > selectedStat.seats, blocked: isBlocked(37) }"><span>37</span></td>
+          </tr>
+        </table>
+        
+        <div class="class-instructor">
+          <div class="image">
+            <img src="{{ selectedStat.instructor.image ? '/assets/' + selectedStat.instructor.image : 'http://placehold.it/350x150' }}">
+          </div>
+          <h3 class="h small center primary">{{ selectedStat.instructor.admin.first_name }}</h3>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -58,17 +162,29 @@
       <h3 class="h--medium brand-color space--bottom">List of Users</h3>
 
       <div class="space--bottom pad--bottom">
-        <span class="label">Schedule</span>
+        <span class="label">{{ selectedType }}ed Schedule</span>
         <h4 class="h-small">{{ selectedStat.date | formatDate }} {{ selectedStat.start | formatTime }}</h4>
       </div>
 
       <div style="height: 400px; overflow: scroll">
-        <table class="data-table account-summary-table">
+        <table ng-if="selectedType == 'book'" class="data-table account-summary-table">
           <tr>
             <th>Name</th>
+            <th>Bike</th>
           </tr>
-          <tr ng-repeat="book in selectedStat._books">
+          <tr ng-repeat="book in selectedStat.books">
             <td>{{ book.user_id.first_name }} {{ book.user_id.last_name }}</td>
+            <td>{{ book.seat_number }}</td>
+          </tr>
+        </table>
+        <table ng-if="selectedType == 'waitlist'" class="data-table account-summary-table">
+          <tr>
+            <th>Name</th>
+            <th>Date</th>
+          </tr>
+          <tr ng-repeat="wait in selectedStat.waitlist">
+            <td>{{ wait.user_id.first_name }} {{ wait.user_id.last_name }}</td>
+            <td>{{ wait.create_at | formatDate }} {{ wait.create_at | formatTime }}</td>
           </tr>
         </table>
       </div>

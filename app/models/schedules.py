@@ -14,6 +14,7 @@ class InstructorSchedule(Model):
     date = DateTimeField()
     start = DateTimeField()
     end = DateTimeField()
+    seats = IntField(default=37)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 
@@ -29,6 +30,7 @@ class BookedSchedule(Model):
     user_package = ReferenceField(reference_document_type=UserPackage)
     seat_number = IntField()
     status = StringField()
+    notes = StringField(required=False)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
     

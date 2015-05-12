@@ -3,9 +3,11 @@ from app.models.users import User
 from app.models.packages import Package, UserPackage
 from app.helper import send_email_verification, send_email
 from app.models.schedules import InstructorSchedule, BookedSchedule
-from app.models.admins import Instructor, Admin
-from datetime import datetime
+from app.models.admins import Instructor, Admin, Setting, Branch
+from datetime import datetime, timedelta
 from bson.objectid import ObjectId
+
+import hashlib
 import sys
 import tornado
 import json
@@ -17,7 +19,7 @@ def index(self):
 def login(self):
     email = self.get_argument('email')
     passWord = self.get_argument('password')
-    login_user = yield User.objects.filter(email=email).find_all()
+    login_user = yield User.objects.filter(email=email.lower(), status__ne='Deleted').find_all()
     if login_user:
         if bcrypt.verify(passWord, login_user[0].password):
             user = login_user[0]
@@ -34,7 +36,7 @@ def login(self):
             self.write('Invalid Password')
     else:
         self.set_status(403)
-        self.write('Invalid Email Address')
+        self.write('Account doesn\'t exist')
     self.finish()
 
 def logout(self):
@@ -52,6 +54,12 @@ def verify(self):
                     user = yield user.save()
                     self.set_secure_cookie('loginUser', user.first_name, expires_days=None)
                     self.set_secure_cookie('loginUserID', str(user._id), expires_days=None)
+                    user = (yield User.objects.get(user._id)).serialize()
+                    host = self.request.protocol + '://' + self.request.host
+                    book_url = host + '/#/schedule'
+                    pack_url = host + '/#/rates-and-packages'
+                    content = str(self.render_string('emails/welcome', user=user, pack_url=pack_url, book_url=book_url), 'UTF-8')
+                    yield self.io.async_task(send_email, user=user, content=content, subject='Welcome to Team Electric')
                     self.render('verify', success=True)
                 else:
                     self.render('verify', success=True, message='Account Already Verified')
@@ -62,7 +70,7 @@ def verify(self):
     else:
         data = tornado.escape.json_decode(self.request.body)
         if 'email' in data:
-            user = (yield User.objects.get(email=data['email'])).serialize()
+            user = (yield User.objects.get(email=data['email'], status__ne='Deleted')).serialize()
             url = self.request.protocol + '://' + self.request.host + '/verify?ticket=%s' % user['_id']
             yield self.io.async_task(
                 send_email_verification,
@@ -103,70 +111,85 @@ def forgot_password(self):
 
 
 def buy(self):
-    if self.request.method == 'GET':
-        self.redirect('/#/rates')
+
+    success = self.get_argument('success')
+
+    if not self.get_secure_cookie('loginUserID'):
+        self.set_status(403)
+        self.write('Please log in to your Electric account.')
+        self.redirect('/#/rates?s=error')
     else:
-        success = self.get_argument('success')
+        if success == 'True':
+            pp_tx = self.get_query_argument('tx')
+            pp_st = self.get_query_argument('st')
+            pp_amt = self.get_query_argument('amt')
+            pp_cc = self.get_query_argument('cc')
+            pp_cm = self.get_query_argument('cm')
+            pp_item = self.get_query_argument('item_number')
 
-        if not self.get_secure_cookie('loginUserID'):
-            self.set_status(403)
-            self.write('User not logged in')
-            self.finish()
-        else:
-            if success == 'True':
-                data = {
-                    'payment_type' : self.get_argument('payment_type'),
-                    'payer_status' : self.get_argument('payer_status'),
-                    'payer_id' : self.get_argument('payer_id'),
-                    'payment_date' : self.get_argument('payment_date'),
-                    'receiver_id' : self.get_argument('receiver_id'),
-                    'verify_sign' : self.get_argument('verify_sign')
-                }
+            if not pp_tx:
+                self.set_status(403)
+                self.redirect('/#/rates?s=error')
+                return
 
-                payment_exist = yield UserPackage.objects.get(trans_info=str(data));
-                if payment_exist:
-                    self.redirect('/#/account#packages')
-                    return;
-                
-                try: 
-                    pid = self.get_argument('pid');
-                    package = yield Package.objects.get(pid)
-                    if pid:
-                        user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-                        user = yield User.objects.get(user_id)
-                        
-                        if user.status != 'Frozen' and user.status != 'Unverified':
-                            transaction = UserPackage()
-                            transaction.user_id = user._id
-                            transaction.package_id = package._id
-                            transaction.credit_count = package.credits
-                            transaction.remaining_credits = package.credits
-                            transaction.expiration = package.expiration
-                            transaction.trans_info = str(data)
-                            user.credits += package.credits
+            data = {
+                'transaction' : pp_tx,
+                'status' : pp_st,
+                'amount' : pp_amt,
+                'curency' : pp_cc,
+                'cm' : pp_cm,
+                'item_number' : pp_item
+            }
 
-                            transaction = yield transaction.save()
-                            user = yield user.save()
+            payment_exist = yield UserPackage.objects.get(trans_info=str(data));
+            if payment_exist:
+                self.redirect('/#/account?s=exists#packages')
+                return;
+            
+            try: 
+                pid = self.get_argument('pid');
+                package = yield Package.objects.get(pid)
+                if pid:
+                    user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+                    user = yield User.objects.get(user_id)
+                    
+                    if user.status != 'Frozen' and user.status != 'Unverified':
+                        transaction = UserPackage()
+                        transaction.user_id = user._id
+                        transaction.package_id = package._id
+                        transaction.package_name = package.name
+                        transaction.package_fee = package.fee
+                        transaction.credit_count = package.credits
+                        transaction.remaining_credits = package.credits
+                        transaction.expiration = package.expiration
+                        transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
+                        transaction.trans_info = str(data)
+                        user.credits += package.credits
 
-                            user = (yield User.objects.get(user._id)).serialize()
-                            content = str(self.render_string('emails/buy', user=user, host=self.request.host), 'UTF-8')
-                            yield self.io.async_task(send_email, user=user, content=content, subject='Bought Package')
+                        transaction = yield transaction.save()
+                        user = yield user.save()
 
-                            self.redirect('/#/account#packages')
-                        else:
-                            self.set_status(403)
-                            self.write('Invalid User Status')
-                            self.finish()
+                        user = (yield User.objects.get(user._id)).serialize()
+                        site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                        exp_date = transaction.create_at + timedelta(days=transaction.expiration)
+                        content = str(self.render_string('emails/buy', user=user, site=site_url, package=package.name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
+                        yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
+
+                        self.redirect('/#/account?pname=' + package.name + '&s=success#packages')
                     else:
                         self.set_status(403)
-                        self.write('Package not found')
+                        self.write('Invalid User Status')
                         self.finish()
-                except :
-                    value = sys.exc_info()[1]
+                else:
                     self.set_status(403)
-                    self.write(str(value))  
-            else:
-                self.redirect('/#/rates')
+                    self.write('Package not found')
+                    self.finish()
+            except:
+                value = sys.exc_info()[1]
+                self.set_status(403)
+                self.write(str(value))  
+        else:
+            self.redirect('/#/rates?s=error')
 
 def test_waitlist(self):
 
@@ -193,7 +216,18 @@ def test_waitlist(self):
             user = yield user.save();
 
         yield BookedSchedule.objects.filter(user_id=user._id).delete()
-        for x in range(0, 37):
+        currentBooks = yield BookedSchedule.objects.filter(schedule=sched._id).find_all()
+
+        for x in range(0, sched.seats):
+            isReserved = False
+            for i, book in enumerate(currentBooks):
+                if (x + 1) == book.seat_number:
+                    isReserved = True
+                    break
+
+            if isReserved:
+                continue
+
             if user:            
                 book = BookedSchedule(user_id=user._id, 
                                       date=date,
@@ -212,6 +246,34 @@ def remove_test_waitlist(self):
         yield user.delete()
     self.finish()
 
+def schedule_migrate(self):
+    schedules = yield InstructorSchedule.objects.find_all()
+    for sched in schedules:
+        sched.seats = 37
+        sched.save()
+
+    self.redirect('/')
+
+def package_migrate(self):
+    user_packages = yield UserPackage.objects.find_all()
+    for upack in user_packages:
+        if upack.package_id:
+            upack.package_name = upack.package_id.name
+            upack.package_fee = upack.package_id.fee
+        upack.expire_date = upack.create_at + timedelta(days=upack.expiration)
+        upack.status = 'Active'
+        yield upack.save()
+
+    self.redirect('/')
+
+def add_default_sudopass(self): 
+    setting = yield Setting.objects.get(key='security_password')
+    if not setting:
+        setting = Setting()
+        setting.key = 'security_password'
+        setting.value = bcrypt.encrypt('es456')
+        yield setting.save()
+    self.finish()
 
 def add_regular_schedule(self):
 
@@ -229,6 +291,7 @@ def add_regular_schedule(self):
     
     scheds = yield InstructorSchedule.objects.find_all()
     for i, sched in enumerate(scheds):
+        yield BookedSchedule.objects.filter(schedule=sched._id).delete()
         yield sched.delete()
 
     instructors = yield Instructor.objects.find_all()
@@ -302,4 +365,21 @@ def add_regular_schedule(self):
     #                                       end=datetime.strptime(endtimes[t],'%I:%M %p'))
     #         schedule = yield schedule.save()
 
-    self.finish()
+    self.redirect('/')
+
+def add_branch(self):
+
+    branches = yield Branch.objects.find_all()
+    for i, a in enumerate(branches):
+        yield a.delete()
+
+    branch = Branch()
+    branch.name = 'ES Sample Branch'
+    branch.password = hashlib.md5('password'.encode()).hexdigest()
+    token = 'password' + str(datetime.now())
+    branch.token = hashlib.md5(token.encode()).hexdigest()
+    branch.expire_at = datetime.now() + timedelta(days=1)
+
+    yield branch.save()
+    
+    self.redirect('/')

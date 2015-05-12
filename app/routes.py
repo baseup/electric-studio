@@ -3,6 +3,20 @@ routes = RouteProvider()
 
 routes.when('admin.index', 'auth.admin')
 
+# filters for pos api
+routes.when('pos.buy', 'auth.api')
+routes.when('pos.packages.find', 'auth.api')
+routes.when('pos.packages.find_one', 'auth.api')
+routes.when('pos.products.find', 'auth.api')
+routes.when('pos.products.find_one', 'auth.api')
+routes.when('pos.products.create', 'auth.api')
+routes.when('pos.products.update', 'auth.api')
+routes.when('pos.products.destroy', 'auth.api')
+routes.when('pos.transactions.find', 'auth.api')
+routes.when('pos.transactions.find_one', 'auth.api')
+routes.when('pos.users.find', 'auth.api')
+routes.when('pos.users.find_one', 'auth.api')
+
 routes.get('/', 'home.index')
 routes.get('/buy', 'home.buy')
 routes.post('/buy', 'home.buy')
@@ -12,11 +26,17 @@ routes.get('/fpass', 'home.forgot_password')
 routes.post('/fpass', 'home.forgot_password')
 routes.post('/user/login', 'home.login')
 routes.get('/user/logout', 'home.logout')
+routes.post('/upload/instructor', 'upload.instructor')
+routes.post('/upload/images', 'upload.images')
+
+# to be remove
+routes.get('/add_default_sudopass', 'home.add_default_sudopass')
 routes.get('/add_regular_schedules', 'home.add_regular_schedule')
 routes.get('/test_waitlist', 'home.test_waitlist')
 routes.get('/remove_test_waitlist', 'home.remove_test_waitlist')
-routes.post('/upload/instructor', 'upload.instructor')
-routes.post('/upload/images', 'upload.images')
+routes.get('/package_migrate', 'home.package_migrate')
+routes.get('/schedule_migrate', 'home.schedule_migrate')
+routes.get('/add_branch', 'home.add_branch')
 
 routes.prefix('/admin', [
 
@@ -27,6 +47,8 @@ routes.prefix('/admin', [
     ('post', '/login', 'admin.login'),
     ('get', '/logout', 'admin.logout'),
 
+    ('resource', '/security', 'admin.security'),
+    ('resource', '/setting', 'admin.setting'),
     ('resource', '/transaction', 'admin.transaction'),
     ('resource', '/statistic', 'admin.statistic'),
     ('resource', '/package', 'admin.package'),
@@ -35,7 +57,9 @@ routes.prefix('/admin', [
     ('resource', '/instructor/schedules', 'admin.instructor_schedules'),
     ('resource', '/slider', 'admin.slider'),
 
-    ('get', '/export/download-bookings', 'admin.export.download_bookings')
+    ('get', '/export/download-bookings', 'admin.export.download_bookings'),
+    ('get', '/export/waitlist', 'admin.export.waitlist'),
+    ('get', '/export/download-user-accounts', 'admin.export.download_user_accounts')
 ])
 
 routes.prefix('/api', [
@@ -46,7 +70,13 @@ routes.prefix('/api', [
     ('resource', '/transaction', 'api.transaction'),
     ('resource', '/schedule', 'api.schedules'),
     ('resource', '/book', 'api.book'),
-    ('resource', '/history', 'api.history')
+    ('resource', '/history', 'api.history'),
+    ('resource', '/users', 'pos.users'),
+    ('resource', '/packages', 'pos.packages'),
+    ('resource', '/products', 'pos.products'),
+    ('resource', '/transactions', 'pos.transactions'),
+    ('post', '/buy', 'pos.buy'),
+    ('get', '/request_token', 'pos.request_token')
 ])
 
 routes.subdomain('api.electric-studio.dev', [

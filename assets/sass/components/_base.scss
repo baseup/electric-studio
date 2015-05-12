@@ -55,6 +55,20 @@ a {
   .close-btn {
     top: -3px;
   }
+  div{
+    p{
+      text-align:center;
+    }   
+  } 
+}
+
+.cal-tooltip {
+  @extend .text-color-light;
+  text-transform: uppercase;
+  padding: 4px;
+  background: #fff;
+  position: absolute;
+  z-index: 10001;
 }
 
 select, .select {
@@ -76,6 +90,10 @@ select, .select {
 
 .inline {
   display: inline!important;
+}
+
+.hidden {
+  display: none;
 }
 
 @include headings() {

@@ -76,6 +76,11 @@ body {
   background: #fff;
 }
 
+.clearfix {
+  display: block;
+  content: '';
+  clear: both;
+}
 
 .main-header {
   -webkit-touch-callout: none;
@@ -102,6 +107,12 @@ body {
       padding: $base-spacing-unit*2 $base-spacing-unit;
     }
   }
+}
+
+.badge {
+  border-radius: 15px;
+  background-color: gray;
+  padding: 3px;
 }
 
 .brand {
@@ -166,14 +177,13 @@ body {
   
   @include breakpoint(md) {
     padding: 0;
-    display: block;
-    position: absolute;
-    bottom: 32px;
-    left: 240px;
+    display: inline-block;
     margin: 0;
+    position: relative;
+    top: 41px;
   }
   
-  li {
+  & > li {
     display: block;
     
     @include breakpoint(md) {
@@ -186,7 +196,7 @@ body {
     }
   }
   
-  a {
+  a,span {
     display: block;
     padding: 6px 0;
     text-transform: uppercase;
@@ -195,7 +205,7 @@ body {
     font-weight: bold;
     
     @include breakpoint(md) {
-      padding: 10px 0 0 0;
+      padding: 0;
     }
     
     &:hover, &.active { 
@@ -249,6 +259,18 @@ body {
 
         strong {
           text-transform: uppercase;
+        }
+        
+        span {
+          display: inline-block;
+          background-color: #fff;
+          border-radius: 100%;
+          color: #000;
+          padding: 5px 0;
+          width: 25px;
+          text-align: center;
+          font-weight: bold;
+          font-size: 12px;
         }
       }
 
@@ -318,7 +340,7 @@ body {
     
     @include breakpoint(md) {
       position: absolute;
-      top: 20px;
+      top: 10px;
       left: -55px;
       right: auto;
       width: 220px;
@@ -329,40 +351,113 @@ body {
   
   .class-menu__holder { 
     padding-left: 20px;
+    list-style: none;
     
     @include breakpoint(md) {
       
       background: $brand-color-quaternary;
       box-shadow: 0 1px 2px rgba($brand-color-secondary, .6);
-      padding: 15px;
+      padding: 15px 0;
       text-align: center;
 
-      a {
+       li {
         display: block;
         border-bottom: 2px solid #fff;
-        color: inherit;
         text-transform: uppercase;
-        padding: 10px 0;
-        color: $color-text-light;
-        font-size: 14px;
-        font-weight: normal;
+        padding: 0;
+        position: relative;
+
+        a,span{
+          display: block;
+          color: $color-text-light;
+          font-size: 14px;
+          font-weight: normal;
+          padding: 10px;
+        
+          &:hover{
+            color: $brand-color-primary!important;
+          }
+        }
 
         &:last-child {
           border: none;
         }
-
-        &:hover {
-          color: $brand-color-primary!important;
-        }
       }
-      
     }
-    
+
+  li:hover .sub-menu-holder{
+    display: block;
+  }
+
+  .sub-menu-holder{
+    display: none;
+    padding-left: 30px;
+
+    ul.submenu{
+        list-style: none;
+    }
+
+    @include breakpoint(md) {
+      left: calc( 100% + 1px);
+      position: absolute;
+      top: 0;
+      padding-left: 0;
+      box-shadow: 0 1px 2px rgba(102, 102, 102, 0.6);
+
+      ul.submenu{
+        padding: 0 15px;
+        width: 220px;
+        background: $brand-color-quaternary;
+      }
+    }
+  }  
   }
   
 }
 
+.buy-ride-btn {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: left;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  color: purple;
+  display: inline-block;
+  
+  &:hover {
+    color: $color-text-light;
+  }
+  
+  @include breakpoint(md) {
+    text-align: right;
+    margin-right: 0;
+    font-size: 22px
+  }
+  
+  @include breakpoint(lg) {
+    right: 296px;
+    font-size: 26px;
+  }
+}
 
+.book-buy{
+  float: right;
+  position: relative;
+  top: -4px;
+  margin-right: 40px;
+
+  @include breakpoint(md) {
+    margin-right: 0px;
+    top: 35px;
+  }
+
+  @include breakpoint(lg) {
+    margin-right: 73px;
+    top: 31px;
+  }
+}
 .book-ride-btn {
   font-size: 18px;
   font-weight: bold;
@@ -370,21 +465,79 @@ body {
   color: #fff;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-right: 40px;
+  display: inline-block;
   cursor: pointer;
   color: purple;
+
+  span{
+    display: block;
+  }
+
+  div.dropdown-holder{
+    position: absolute;
+    display: none;
+    right: -16px;
+
+    ul.dropdown{
+      display: block;
+      padding: 0;
+      list-style: none;
+      background: $brand-color-quaternary;
+      box-shadow: 0 1px 2px rgba($brand-color-secondary, .6);
+      margin-top: 22px;
+      width: 220px;
+
+      li{
+        text-align: center;
+        display: block;
+      }
+
+      a{
+        display: block;
+        color: $color-text-light;
+        font-weight: normal;
+        font-size: 20px;
+        padding: 10px 0;
+      }
+
+      @include breakpoint(md) {
+        margin-top: 30px;
+
+        .pad{
+          padding: 4px !important;
+        }
+        a.special{
+          background-color: $brand-color-primary;
+          box-shadow: 2px 2px 0 $brand-color-secondary;
+          color: #fff;
+          font-weight: bold;
+          margin: 10px;
+          font-size: 16px;
+          text-transform: none;
+        }
+      }
+    }
+  }
+
+  &:hover{
+    div.dropdown-holder{
+      display: block;
+    }
+  }
+
   
   &:hover {
     color: $color-text-light;
   }
   
   @include breakpoint(md) {
-    position: absolute;
-    right: 20px;
-    bottom: 31px;
     text-align: right;
     margin-right: 0;
-    font-size: 22px
+    font-size: 22px;
+
+    ul.dropdown{
+      margin-top: 18px;
+    }
   }
   
   @include breakpoint(lg) {
@@ -759,6 +912,32 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
+
+  li {
+    position: relative;
+
+    span {
+      opacity: 1;
+      -webkit-transition: all 800ms;
+      -moz-transition: all 800ms;
+      transition: all 800ms;
+    }
+
+    img.preloaded-img {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      visibility: hidden;
+    }
+  }
+
+  li.loading {
+    background: url(/assets/images/preloader.gif) center no-repeat;
+    
+    span {
+      opacity: 0;
+    }
+  }
 }
   
 .slide, .banner {
@@ -1531,6 +1710,10 @@ body {
     padding: 10px;
     line-height: 1.4em;
     color: $color-text-light;
+
+    button {
+      visibility: hidden;
+    }
     
     &.unavailable {
       color: $brand-color-tertiary;
@@ -1540,15 +1723,32 @@ body {
         visibility: hidden;
       }
     }
-    
+
+    &.full {
+      background: $brand-color-tertiary;
+    }
+
     &:not(.unavailable):hover {
       background: #fff;
       color: $brand-color-primary;
+
+      button {
+        visibility: visible;
+      }
     }
     
     span {
       display: block;
+      font-size: 0.5em;
+    }
+    
+    .time {
+      font-size: 0.9em;    
+    }    
+
+    .instructor {
       font-size: 0.9em;
+      font-weight: bold;    
     }
     
     .link {
@@ -1664,6 +1864,16 @@ body {
   max-width: 980px;
   margin: 0 auto;
 
+  tbody{
+    display: block;
+
+    &:after{
+      content: '';
+      display: block;
+      clear: both;
+    }
+  }
+
   @include breakpoint(md) {
   tr:nth-child(even) td {
     text-align: right;
@@ -1673,7 +1883,7 @@ body {
   tr {
     display: inline;
     @include breakpoint(md) {
-      display: table-row;
+      //display: table-row;
     }
   }
 
@@ -1683,7 +1893,7 @@ body {
 
     @include breakpoint(md) {
       display: table-cell;
-      float: none;
+      //float: none;
     }
 
     width: 12.5%;
@@ -1747,7 +1957,7 @@ body {
 .class-instructor {
   
   @include breakpoint(md) {
-    margin: -90px 45px 0 0;
+    margin: -50px 45px 0 0;
   }
   
   .image {   
@@ -1758,12 +1968,15 @@ body {
     margin: 0 auto;
     
     @include breakpoint(md) {
-      height: 60px;
-    width: 60px;
+      height: 120px;
+      width: 120px;
     }
     
     img {
-      width: 100%;
+      max-width: 230px !important; 
+      width: 230px;
+      left: -55px;
+      position: relative
     }
   }
 
