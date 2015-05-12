@@ -87,6 +87,7 @@ def create(self):
     ins_sched = yield InstructorSchedule.objects.get(ObjectId(data['sched_id']))
     if not 'status' in data or data['status'] == 'booked':
         total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched._id).count()
+
         if total_booked >= ins_sched.seats:
             self.set_status(400)
             self.write('No available slots')
@@ -97,6 +98,13 @@ def create(self):
             self.set_status(400)
             self.write('Please select a bike')
             self.finish()
+        else:
+            seat_reserved = yield BookedSchedule.objects.filter(seat_number=data['seat_number'], schedule=ins_sched._id).count()
+            if seat_reserved > 0:
+                self.set_status(400)
+                self.write('Seat unavailable or reserved')
+                self.finish()
+                return
 
     user_package = yield UserPackage.objects \
         .filter(user_id=obj_user_id, remaining_credits__gt=0, status__ne='Expired') \
