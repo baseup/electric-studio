@@ -68,5 +68,5 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['html2js', 'sass']);
+  grunt.registerTask('default', ['html2js', 'sass', 'watch']);
 }

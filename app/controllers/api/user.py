@@ -57,7 +57,6 @@ def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
     try:
         user = yield User.objects.get(id)
-
         if 'current_password' in data:
             if(bcrypt.verify(data['current_password'], user.password)):
                 user.password = bcrypt.encrypt(data['password'])
@@ -70,6 +69,9 @@ def update(self, id):
             user = yield user.save()
         elif 'billing' in data:
             user.billing = data['billing']
+            user = yield user.save()
+        elif 'activate_account' in data:
+            user.status = 'Active'
             user = yield user.save()
         else:
             user.first_name = data['first_name']
@@ -91,7 +93,7 @@ def update(self, id):
     except:
         value = sys.exc_info()[1]
         self.set_status(403)
-        self.write(str(value))
+        self.write(str(sys.exc_info()))
     self.finish()
 
 def destroy(self, id):
@@ -116,7 +118,7 @@ def destroy(self, id):
                     sched.status = 'cancelled'
                     yield sched.save()
 
-            user.status = 'Deleted'
+            user.status = 'Deactivated'
             user = yield user.save()
         else:
             self.set_status(400);
