@@ -93,7 +93,7 @@ def update(self, id):
     except:
         value = sys.exc_info()[1]
         self.set_status(403)
-        self.write(str(sys.exc_info()))
+        self.write(str(value))
     self.finish()
 
 def destroy(self, id):
