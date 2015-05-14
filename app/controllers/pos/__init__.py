@@ -39,6 +39,7 @@ def buy(self):
                     transaction.credit_count = package.credits
                     transaction.remaining_credits = package.credits
                     transaction.expiration = package.expiration
+                    transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
                     transaction.trans_info = ''
                     user.credits += package.credits
 
