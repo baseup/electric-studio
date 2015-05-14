@@ -42,7 +42,7 @@ class Product(Model):
     __collection__ = 'products'
     name = StringField(required=True)
     amount = DecimalField()
-    stock = IntField(required=True)
+    quantity = IntField(required=True)
     product_desc = StringField(default=None)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)

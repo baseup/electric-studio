@@ -25,12 +25,12 @@ def find_one(self, id):
 def create(self):
     name = self.get_argument('name')
     amount = self.get_argument('amount')
-    stock = self.get_argument('stock')
+    quantity = self.get_argument('quantity')
     product_desc = self.get_argument('product_desc')
     try :
         product = Product(name=name, 
                             amount=amount,
-                            stock=stock,
+                            quantity=quantity,
                             product_desc=product_desc)
         product = yield product.save()
         self.render_json(product)
@@ -47,14 +47,14 @@ def create(self):
 def update(self, id):
     name = self.get_argument('name')
     amount = self.get_argument('amount')
-    stock = self.get_argument('stock')
+    quantity = self.get_argument('quantity')
     product_desc = self.get_argument('product_desc')
     try :
         product = yield Product.objects.get(id)
         if product:
             product.name = name
             product.amount = amount
-            product.stock = stock
+            product.quantity = quantity
             product.product_desc = product_desc
             product = yield product.save()
             self.render_json(product)
