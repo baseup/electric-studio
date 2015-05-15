@@ -70,9 +70,6 @@ def update(self, id):
         elif 'billing' in data:
             user.billing = data['billing']
             user = yield user.save()
-        elif 'activate_account' in data:
-            user.status = 'Active'
-            user = yield user.save()
         else:
             user.first_name = data['first_name']
             # user.middle_name = data['middle_name']

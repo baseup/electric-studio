@@ -19,7 +19,7 @@ def index(self):
 def login(self):
     email = self.get_argument('email')
     passWord = self.get_argument('password')
-    login_user = yield User.objects.filter(email=email.lower(), status__ne='Deleted').find_all()
+    login_user = yield User.objects.filter(email=email.lower(), status__ne='Deactivated').find_all()
     if login_user:
         if bcrypt.verify(passWord, login_user[0].password):
             user = login_user[0]

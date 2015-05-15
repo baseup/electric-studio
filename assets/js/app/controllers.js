@@ -491,22 +491,6 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
         }, true);
       });
     }
-
-    $scope.activateAccount = function () {
-      var user = $scope.loginUser;
-      $.Confirm('Are you sure you want to activate your account?' , function () {
-
-        var activateSuccess = function () {
-          $scope.account.status = 'Active' 
-          $.Alert('Account successfully activated');
-        }
-        var activateFailed = function (error) {
-          $.Alert(error.data)
-        }
-        UserService.update({ userId: $scope.loginUser._id }, { activate_account: true }).$promise.then(activateSuccess, activateFailed);
-      });
-    }
-
   }
 });
 

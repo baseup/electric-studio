@@ -88,8 +88,7 @@
           <a href="#/rates" class="button small pads primary">Buy Package</a>
         </section>
         <hr/>
-        <a ng-if="account.status == 'Active'" class="float--right button small pads primary" ng-click="deactivateAccount()">Deactivate Account</a>
-        <a ng-if="account.status == 'Deactivated'" class="float--right button small pads primary" ng-click="activateAccount()">Activate Account</a>
+        <a class="float--right button small pads primary" ng-click="deactivateAccount()">Deactivate Account</a>
       </div>
       
       <div ng-include="'/site/account-nav'"></div>
