@@ -265,7 +265,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     var username = user.first_name + ' ' + user.last_name;
     $.Confirm('Are you sure you want to activate ' + username + ' account?' , function () {
       var activateSuccess = function () {
-        $.Alert('Successfully deactivated account ' + username);
+        $.Alert('Successfully activated account ' + username);
         UserService.query(function (users) {
           $scope.users = users;
         });

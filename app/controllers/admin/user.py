@@ -107,13 +107,6 @@ def update(self, id):
                 sched = yield sched.save()
             user = yield user.save()
 
-            # user = (yield User.objects.get(user._id)).serialize()
-            # host = self.request.protocol + '://' + self.request.host
-            # book_url = host + '/#/schedule'
-            # pack_url = host + '/#/rates-and-packages'
-            # content = str(self.render_string('emails/welcome', user=user, pack_url=pack_url, book_url=book_url), 'UTF-8')
-            # yield self.io.async_task(send_email, user=user, content=content, subject='Account Deactivated')
-
         elif 'unfroze' in data or 'activate' in data:
             user.status = 'Active'
             user = yield user.save()
