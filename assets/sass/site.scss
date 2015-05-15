@@ -2203,6 +2203,26 @@ body {
         padding-left: 20px;
       }
     }
+
+    &.parts-5 {
+      section {
+        width: 20%;
+        float: left;
+      }
+      
+      section:nth-of-type(5n+1) {
+        padding-right: 20px;
+      }
+
+      section:nth-of-type(5n+2), section:nth-of-type(5n+3), section:nth-of-type(5n+4) {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      
+      section:nth-of-type(5n+5) {
+        padding-left: 20px;
+      }
+    }
   }
   
   /* WOrkouts */
