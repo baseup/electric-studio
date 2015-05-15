@@ -480,12 +480,12 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
       }
     }
 
-    $scope.deleteAccount = function () {
+    $scope.deactivateAccount = function () {
       var user = $scope.loginUser;
-      $.Confirm('Are you sure you want to delete ' + user.first_name + ' ' + user.last_name + ' account?<br/>(THIS ACTION CANNOT BE UNDONE)' , function () {
+      $.Confirm('Are you sure you want to deactivate your account?' , function () {
         $.Prompt('User Password', function (password) {
           UserService.delete({ userId: user._id, pass: password }, function () {
-            $.Alert('Successfully deleted account ' + user.email);
+            $.Alert('Account successfully deactivated');
             $scope.logout();
           }, function (error){ $.Alert(error.data); });
         }, true);

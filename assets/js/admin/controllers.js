@@ -246,16 +246,36 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     });
   }
 
-  $scope.deleteAccount = function (user, index) {
-    $.Confirm('Are you sure you want to delete ' + user.first_name + ' ' + user.last_name + ' account?<br/>(THIS ACTION CANNOT BE UNDONE)' , function () {
-      chkSecurity(function () {
-        UserService.delete({ userId: user._id }, function () {
-          $.Alert('Successfully deleted account ' + user.email);
-          UserService.query(function (users) {
-            $scope.users = users;
-          });
+  $scope.deactivateAccount = function (user, index) {
+    var username = user.first_name + ' ' + user.last_name;
+    $.Confirm('Are you sure you want to deactivate ' + username + ' account?' , function () {
+      var deactivateSuccess = function () {
+        $.Alert('Successfully deactivated account ' + username);
+        UserService.query(function (users) {
+          $scope.users = users;
         });
-      });
+      }
+      var deactivateFailed = function (error) {
+        $.Alert(error.data);
+      }
+      UserService.update({ userId: user._id }, { deactivate: true }, deactivateSuccess, deactivateFailed);      
+      // chkSecurity(function () {});
+    });
+  }
+
+  $scope.activateAccount = function (user, index) {
+    var username = user.first_name + ' ' + user.last_name;
+    $.Confirm('Are you sure you want to activate ' + username + ' account?' , function () {
+      var activateSuccess = function () {
+        $.Alert('Successfully activated account ' + username);
+        UserService.query(function (users) {
+          $scope.users = users;
+        });
+      }
+      var activateFailed = function (error) {
+        $.Alert(error.data);
+      }
+      UserService.update({ userId: user._id }, { activate: true }, activateSuccess, activateFailed);      
     });
   }
 

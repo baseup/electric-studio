@@ -16,7 +16,7 @@
 
       <div ng-repeat="user in users | search:'first_name+ +last_name,email':searchText" class="grid__item bp-md-one-half bp-lg-one-third">
           
-        <div class="account__item box--bordered box--white space--bottom cf">
+        <div class="account__item box--bordered space--bottom cf" ng-class="{'box--white': user.status != 'Deactivated', 'box--grey': user.status == 'Deactivated'}">
           <div class="pad">
             <b class="h--small">{{ user.first_name }} {{ user.last_name }}</b>
           </div>
@@ -69,7 +69,8 @@
                 <a title="Unfroze Account" ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
               </li>
               <li>
-                <a title="Remove Account" class="pad--off-right" ng-click="deleteAccount(user, $index)"><i class="fa fa-times"></i></a>
+                <a title="Deactivate Account" ng-if="user.status != 'Deactivated'" class="pad--off-right" ng-click="deactivateAccount(user, $index)"><i class="fa fa-toggle-on"></i></a>
+                <a title="Activate Account" ng-if="user.status == 'Deactivated'" class="pad--off-right" ng-click="activateAccount(user, $index)"><i class="fa fa-toggle-off"></i></a>
               </li>
             </ul>
           </div>
