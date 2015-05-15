@@ -112,6 +112,8 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
   $scope.newCredits = {};
 
+
+
   UserService.query(function (users) {
     $scope.users = users;
   });
@@ -501,6 +503,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     $scope.schedFilter.toDate = to_picker.get('value');
     UserService.get({ userId: user._id, books: true }, function (userWithScheds) {
       $scope.selectedAccount = userWithScheds;
+      
       angular.element('#account-schedules-modal').Modal();
     });
   }

@@ -11,7 +11,7 @@
       <div class="class-search pad cf">
         <span class="label">Search</span>
         <div class="bp-md-one-fourth float--left space--bottom space--right">
-          <input class="text-input" ng-model="searchTrans" placeholder="Name">
+          <input class="text-input" ng-model="searchTrans" placeholder="Enter Name or Email">
         </div>
         <div class="float--left">
           <select class="select" id="search-trans-package" ng-model="searchPac">
@@ -25,6 +25,7 @@
           <thead>
             <tr>
               <th>Name</th>
+              <th>Email</th>
               <th>Package Name</th>
               <th>Total</th>
               <th>Used</th>
@@ -34,8 +35,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="transaction in transactions | search:'user_id.first_name+ +user_id.last_name':searchTrans | search:'package_id._id':searchPac">
+            <tr ng-repeat="transaction in transactions | search:'user_id.first_name+ +user_id.last_name,user_id.email':searchTrans | search:'package_id._id':searchPac">
               <td>{{ transaction.user_id.first_name }} {{ transaction.user_id.last_name }}</td>
+              <td>{{ transaction.user_id.email }} </td>
               <td>
                 <span ng-if="transaction.package_name && transaction.is_free">Free - </span>
                 {{ transaction.package_name || 'Free' }}

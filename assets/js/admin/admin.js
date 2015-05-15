@@ -161,7 +161,7 @@ app.filter('search', function($filter){
     }
 
     return $filter('filter')(array, function(item){
-      if (target != null && target.length > 0) {
+      if (target != null && target.length > 0 && target !='--') {
         if (propStrArr) {
           for (var i in propStrArr) {
             var value = null;

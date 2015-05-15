@@ -163,15 +163,14 @@
         <h3 class="h small center primary">{{ instructor.admin.first_name }}</h3>
       </div>
     </div>
-    
+    <a ng-if="!resched && !forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Book A Ride</a>
     <ul class="legend">
       <li class="free">Free Bikes</li>
       <li class="reserved">Reserved Bikes</li>
       <li class="selection">Your Selection</li>
     </ul>
-    <a ng-if="!resched && !forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Book A Ride</a>
-    <a ng-if="resched && !forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Reschedule Ride</a>
-    <a ng-if="forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Join the WaitList</a>
+     <a ng-if="resched && !forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Reschedule Ride</a>
+     <a ng-if="forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Join the WaitList</a>
     <a class="h small primary center link" href="#/schedule">Back to Schedules</a>
   </div>
 </div>

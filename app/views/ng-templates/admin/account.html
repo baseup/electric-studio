@@ -130,6 +130,10 @@
         <span class="label">Confirm Password</span>
         <input type="password" ng-model="newAccount.confirm_password" class="text-input">
       </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Notes</span>
+        <textarea ng-model="newAccount.notes" class="text-input"></textarea>
+      </div>
       <button ng-disabled="registeringAccount" type="button" ng-click="addAccount()" class="btn btn--primary btn--medium float--right space--top">Add</button>
     </div>
   </div>
@@ -170,6 +174,10 @@
         <span class="label">Contact Number</span>
         <input ng-model="selectedInfo.emergency_contact" class="text-input">
       </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Notes</span>
+        <textarea ng-model="selectedInfo.notes" class="text-input"></textarea>
+      </div>
       <button type="button" ng-click="updateAccountInfo()" class="btn btn--primary btn--medium float--right space--top modal-close">Save</button>
     </div>
   </div>
@@ -194,8 +202,9 @@
         </div>
         <div class="float--left space--left">
           <span class="label">Status</span>
-          <select class="select" ng-change="changeStatus()" ng-model="statusFilter"> 
-            <option value="">Select Status</option>
+          <select size="" class="select" ng-change="changeStatus()" ng-model="statusFilter"> 
+            
+            <option value="--">All</option>
             <option value="booked">Booked</option>
             <option value="missed">Missed</option>
             <option value="waitlisted">Waitlisted</option>
@@ -203,6 +212,7 @@
             <option value="completed">Completed</option>
           </select>
         </div>
+
       </div>
 
       <div class="pad"  style="height: 400px; overflow: scroll">
