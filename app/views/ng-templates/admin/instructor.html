@@ -56,8 +56,8 @@
            ng-repeat="instructor in instructors">
         <div class="account__item box--bordered box--white space--bottom cf">
           <div ng-show="!chkChangePic(instructor._id)" align="center" class="image" ng-click="changeInsPic(instructor)">
-            <img ng-if="instructor.image" width="200" height="200" ng-src="{{ instructor.image }}">
-            <img ng-if="!instructor.image" width="200" height="200" src="assets/images/pic-placeholder.png">
+            <img ng-if="instructor.image" height="200" ng-src="{{ instructor.image }}">
+            <img ng-if="!instructor.image"  height="200" src="assets/images/pic-placeholder.png">
           </div>  
           <div class="pad" style="height: 203px;" ng-show="chkChangePic(instructor._id)">
             <input ng-show="!uploading" type="file" ng-file-select="uploadInsPic($files)" ng-model="inspic"/>
