@@ -1844,31 +1844,77 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
 
 });
 
-ctrls.controller('SettingCtrl', function ($scope, $timeout, SettingService) {
+ctrls.controller('SettingCtrl', function ($scope, $timeout, $filter, SettingService) {
+
+  var strTimeToDate = function (strTime) {
+    if (strTime) {
+
+      var timeSplit = strTime.split(' ');
+      var time = timeSplit[0].split(':');
+      var ampm = timeSplit[1];
+
+      if(ampm.toLowerCase() == 'pm'){
+        if (parseInt(time[0]) < 12) {
+          time[0] = (parseInt(time[0]) + 12) + '';
+        }
+      }
+
+      var date = new Date();
+      date.setHours(parseInt(time[0]), parseInt(time[1]), 0);
+      return date;
+    }
+  }
 
   SettingService.get({ key: 'week_release' }, function (data) {
     if (data) {
 
+      var time_split = null;
       if (data.time) {
         var date = new Date()
-        var time_split = data.time.split(':')
+        time_split = data.time.split(':')
         date.setHours(time_split[0], time_split[1], 0 , 0);
         data.time = date;
       }
       $scope.weekRelease = {}
       $scope.weekRelease.time = data.time;
+
       $timeout(function () {
+        if (time_split && $('[type="time"]').prop('type') != 'time' ) {
+          var dateTime = data.time.getFullYear() + '-' + (data.time.getMonth()+1) + '-' + data.time.getDate() + ' ';
+          dateTime += data.time.getHours() + ':' + data.time.getMinutes() + ':' + data.time.getSeconds();
+          angular.element('#week-release-time').val($filter('formatTime')(dateTime));
+        }
         angular.element('#week-release-day')[0].selectize.setValue(data.day)
       }, 400);
       
     }
   });
 
+  if ( $('[type="time"]').prop('type') != 'time' ) {
+    $('[type="time"]').pickatime({
+      formatSubmit: 'HH:i',
+      hiddenName: true,
+      min: [5, 0]
+    });
+  }
+
   $scope.setWeekRelease = function () {
+
+
+    if ( $('[type="time"]').prop('type') != 'time' ) {
+      $scope.weekRelease.time = strTimeToDate(angular.element('#week-release-time').val());
+    }
+
     if ($scope.weekRelease && $scope.weekRelease.day && $scope.weekRelease.time) {
       var wr = angular.copy($scope.weekRelease);
       wr.time = wr.time.getHours() + ':' + wr.time.getMinutes();
       SettingService.update({ key: 'week_release' }, wr,  function () {
+        if ($('[type="time"]').prop('type') != 'time' ) {
+          var dtime = $scope.weekRelease.time;
+          var dateTime = dtime.getFullYear() + '-' + (dtime.getMonth()+1) + '-' + dtime.getDate() + ' ';
+          dateTime += dtime.getHours() + ':' + dtime.getMinutes() + ':' + dtime.getSeconds();
+          angular.element('#week-release-time').val($filter('formatTime')(dateTime));
+        }
         $.Alert('Successfully update schedule week release settings');
       }, function (error) { $.Alert(error.data); });
     } else {
