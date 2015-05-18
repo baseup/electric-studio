@@ -99,7 +99,7 @@ def create(self):
             self.write('Please select a bike')
             self.finish()
         else:
-            seat_reserved = yield BookedSchedule.objects.filter(seat_number=data['seat_number'], schedule=ins_sched._id).count()
+            seat_reserved = yield BookedSchedule.objects.filter(status='booked', seat_number=data['seat_number'], schedule=ins_sched._id).count()
             if seat_reserved > 0:
                 self.set_status(400)
                 self.write('Seat unavailable or reserved')
