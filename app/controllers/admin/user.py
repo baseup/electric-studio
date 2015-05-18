@@ -61,7 +61,6 @@ def create(self):
                         email=data['email'],
                         password=password,
                         status='Unverified',
-                        notes=data['notes'],
                         credits=0)
 
             if 'notes' in data:
