@@ -64,6 +64,9 @@ def create(self):
                         notes=data['notes'],
                         credits=0)
 
+            if 'notes' in data:
+                user.notes = data['notes']
+
             user = yield user.save()
         except:
             value = sys.exc_info()[1]
