@@ -137,3 +137,11 @@ select, .select {
 .text-color-light {
   color: rgba($color-text, .70);
 }
+
+.ellipsis{
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 90%;
+}
