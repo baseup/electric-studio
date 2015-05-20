@@ -1,13 +1,26 @@
 import sys
 from motorengine import ASCENDING
 from motorengine.errors import InvalidDocumentError
-from app.models.packages import Package
+from app.models.packages import Package, UserPackage
+from bson.objectid import ObjectId
 import tornado
 import json
     
 def find(self):
-    packages = yield Package.objects.order_by('credits', direction=ASCENDING).find_all()
-    self.render_json(packages)
+    has_first_timer = False
+    if self.get_secure_cookie('loginUserID'):
+        user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+        ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
+        if ft_package_count > 0:
+            has_first_timer = True
+
+    if has_first_timer:
+        packages = yield Package.objects.filter(first_timer=False).order_by('credits', direction=ASCENDING).find_all()
+        self.render_json(packages)
+    else: 
+        packages = yield Package.objects.order_by('credits', direction=ASCENDING).find_all()
+        self.render_json(packages)
+    
 
 def find_one(self, id):
     package = yield Package.objects.get(id)

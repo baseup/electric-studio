@@ -20,6 +20,9 @@ def create(self):
                           description=data['description'],
                           expiration=data['expiration'],
                           credits=data['credits'])
+
+        if 'first_timer' in data: 
+            package.first_timer = bool(data['first_timer'])
         package = yield package.save()
     except:
         value = sys.exc_info()[1]
