@@ -94,6 +94,27 @@ services.factory('PackageService', function($resource) {
   });
 });
 
+services.factory('AdminService', function($resource) {
+  return $resource('/api/admin/:adminId', {}, {
+    query: {
+      method: 'GET',
+      isArray: true
+    },
+    update: {
+      method: 'PUT',
+      isArray: false
+    },
+    create: {
+      method: 'POST',
+      isArray: false
+    },
+    delete: {
+      method: 'DELETE',
+      isArray: false
+    }
+  });
+});
+
 services.factory('InstructorService', function($resource) {
   return $resource('/api/instructor/:instructorId', {}, {
     query: {
@@ -160,6 +181,15 @@ services.factory('ClassService', function ($resource) {
   });
 });
 
+services.factory('AccessService', function ($resource) {
+  return $resource('/admin/access/:accessId', {}, {
+    query: {
+      method: 'GET',
+      isArray: true
+    },
+  });
+});
+
 services.factory('StatisticService', function ($resource) {
   return $resource('/admin/statistic', {}, {
     query: {
@@ -198,5 +228,20 @@ services.factory('SettingService', function ($resource) {
       method: 'DELETE'
     }
   });
+});
+
+services.factory('SharedService', function(){
+  var records = {};
+  return {
+    set : function(key, value){
+      records[key] = value;
+    }, 
+    get : function(key) {
+      return records[key];
+    },
+    clear : function(key) {
+      delete records[key];
+    }
+  }
 });
 

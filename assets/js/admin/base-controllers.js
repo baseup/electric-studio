@@ -34,5 +34,12 @@ ctrls.controller('AdminCtrl', function ($scope){
       formatSubmit: 'yyyy-mm-dd',
       today: false
     });
+
+    $scope.getAccess = function (module, action) {
+      if ($scope.access[module]){
+        return $scope.access[module].indexOf(action) >= 0;
+      }
+      return false;   
+    }
   
 });

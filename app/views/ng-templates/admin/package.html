@@ -4,7 +4,7 @@
     <div class="packages box--white box--bordered">
       <div class="box__header align--middle cf pad">
         <span class="label label--inline">Packages</span>
-        <button ng-click="showAddPackage()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-package">Add Package</button>
+        <button ng-click="showAddPackage()" class="btn btn--small btn--primary float--right"  data-modal-toggle="add-package" ng-if="getAccess('packages', 'create')">Add Package</button>
       </div>
 
         <div class="modal__box pad" ng-show="isUpdatePackage">
@@ -53,10 +53,10 @@
               <td><small>PHP</small> {{ package.fee }}</td>
               <td>{{ package.expiration }} days</td>
               <td>
-                <button class="btn btn--small btn--secondary" ng-click="removePackage(package)">
+                <button ng-show="getAccess('packages', 'delete')" class="btn btn--small btn--secondary" ng-click="removePackage(package)">
                   <i class="fa fa-trash"></i> Remove
                 </button>
-                <button class="btn btn--small btn--secondary" ng-click="setToUpdate(package)" data-modal-toggle="update-package">
+                <button ng-show="getAccess('packages', 'update')" class="btn btn--small btn--secondary" ng-click="setToUpdate(package)" data-modal-toggle="update-package">
                   <i class="fa fa-pencil"></i> Edit
                 </button>
               </td>
@@ -95,7 +95,7 @@
           <input class="text-input" value="30" ng-model="newPackage.expiration"> Days
         </div>
       </div>
-      <button class="btn btn--medium btn--primary space--top modal-close" ng-click="addPackage()">Add</button>
+      <button ng-show="getAccess('packages', 'create')" class="btn btn--medium btn--primary space--top modal-close" ng-click="addPackage()">Add</button>
     </div>
   </div>
 </div>

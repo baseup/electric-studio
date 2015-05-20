@@ -26,7 +26,7 @@
 
   </head>
 
-  <body ng-controller="AdminCtrl">
+  <body ng-controller="AdminCtrl" ng-init="access={{access.privileges}}">
     <div class="page-wrapper">
       <div class="page-sidebar">
         <div class="brand pad">
@@ -42,10 +42,11 @@
             </a>
 
             <ul class="nav nav--stacked sub-nav" data-dropdown="dashboard-sub-menu">
-              <li><a href="#/analytics">Analytics</a></li>
+              <li><a ng-show="getAccess('analytics', 'read')" href="#/analytics">Analytics</a></li>
               <li><a href="#/packages">Packages</a></li>
               <li><a href="#/instructors">Instructors</a></li>
               <li><a href="#/sliders">Sliders</a></li>
+              <li><a ng-show="getAccess('users', 'read')" href="#/users">Users</a></li>
             </ul>
           </li>
           <li>
@@ -70,7 +71,7 @@
               <span class="nav-label">Schedules</span>
             </a>
           </li>
-          <li>
+          <li ng-show="getAccess('transactions', 'read')">
             <a href="#/transactions">
               <i class="fa fa-credit-card"></i>
               <span class="nav-label">Transactions</span>

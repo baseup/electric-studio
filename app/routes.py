@@ -37,7 +37,7 @@ routes.get('/remove_test_waitlist', 'home.remove_test_waitlist')
 routes.get('/package_migrate', 'home.package_migrate')
 routes.get('/schedule_migrate', 'home.schedule_migrate')
 routes.get('/add_branch', 'home.add_branch')
-
+routes.get('/add_access_types', 'home.add_access_types')
 routes.prefix('/admin', [
 
     ('get', '/?', 'admin.index'),
@@ -56,6 +56,7 @@ routes.prefix('/admin', [
     ('resource', '/schedule', 'admin.schedule'),
     ('resource', '/instructor/schedules', 'admin.instructor_schedules'),
     ('resource', '/slider', 'admin.slider'),
+    ('resource', '/access', 'admin.access'),
 
     ('get', '/export/download-bookings', 'admin.export.download_bookings'),
     ('get', '/export/waitlist', 'admin.export.waitlist'),

@@ -5,9 +5,9 @@
       <div class="box__header align--middle cf pad">
         <span class="label label--inline">Schedules</span>
         <!-- <button ng-click="addRegularSchedule()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-regular-schedule">Add Regular Schedule</button> -->
-        <button ng-click="addSchedule()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-schedule">Add Schedule</button>
+        <button ng-click="addSchedule()" class="btn btn--small btn--primary float--right" ng-if="getAccess('schedules', 'create')" data-modal-toggle="add-schedule">Add Schedule</button>
       </div>
-      <div class="calendar pad">
+      <div class="calendar pad"> 
       </div>
     </div>
     </div>
@@ -40,8 +40,8 @@
         </dl>
       </div>
 
-      <button ng-click="editSchedule(selectedSched)" class="btn btn--medium btn--primary space--top modal-close">Edit</button>
-      <button ng-click="removeSchedule(selectedSched)"
+      <button ng-show="getAccess('schedules', 'update')" ng-click="editSchedule(selectedSched)" class="btn btn--medium btn--primary space--top modal-close">Edit</button>
+      <button ng-show="getAccess('schedules', 'delete')" ng-click="removeSchedule(selectedSched)"
         class="btn btn--medium btn--tertiary space--top modal-close">Remove</button>
     </div>
   </div>
@@ -105,7 +105,7 @@
           <dd>
         </dl>
       </div>
-      <button ng-click="saveSchedule()"
+      <button ng-show="getAccess('schedules', 'create')" ng-click="saveSchedule()"
         class="btn btn--medium btn--primary space--top modal-close">
         Add
       </button>

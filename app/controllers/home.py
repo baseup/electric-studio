@@ -4,6 +4,7 @@ from app.models.packages import Package, UserPackage
 from app.helper import send_email_verification, send_email
 from app.models.schedules import InstructorSchedule, BookedSchedule
 from app.models.admins import Instructor, Admin, Setting, Branch
+from app.models.access import AccessType, Privilege
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 
@@ -278,6 +279,8 @@ def add_default_sudopass(self):
 def add_regular_schedule(self):
 
     admins = yield Admin.objects.find_all()
+    access = yield AccessType.objects.get(admin_type='Admin')
+
     for i, a in enumerate(admins):
         yield a.delete()
 
@@ -287,6 +290,7 @@ def add_regular_schedule(self):
     admin.first_name = 'Admin First Name'
     admin.last_name = 'Admin Last Name'
     admin.email = 'admin@electricstudio.ph'
+    admin.access_type = access._id
     yield admin.save()
     
     scheds = yield InstructorSchedule.objects.find_all()
@@ -301,25 +305,27 @@ def add_regular_schedule(self):
         if admin:
             yield admin.delete()
 
-    adkris = Admin(username='kris', password=bcrypt.encrypt('kris'), first_name='kris', last_name='kris', email='kris@electric.com')
+    access = yield AccessType.objects.get(admin_type='Manager')
+
+    adkris = Admin(username='kris', password=bcrypt.encrypt('kris'), first_name='kris', last_name='kris', email='kris@electric.com', access_type=access._id)
     adkris = yield adkris.save()
-    adyessa = Admin(username='yessa', password=bcrypt.encrypt('yessa'), first_name='yessa', last_name='yessa', email='yessa@electric.com')
+    adyessa = Admin(username='yessa', password=bcrypt.encrypt('yessa'), first_name='yessa', last_name='yessa', email='yessa@electric.com', access_type=access._id)
     adyessa = yield adyessa.save()
-    admigs = Admin(username='migs', password=bcrypt.encrypt('migs'), first_name='migs', last_name='migs', email='migs@electric.com')
+    admigs = Admin(username='migs', password=bcrypt.encrypt('migs'), first_name='migs', last_name='migs', email='migs@electric.com', access_type=access._id)
     admigs = yield admigs.save()
-    adabel = Admin(username='abel', password=bcrypt.encrypt('abel'), first_name='abel', last_name='abel', email='abel@electric.com')
+    adabel = Admin(username='abel', password=bcrypt.encrypt('abel'), first_name='abel', last_name='abel', email='abel@electric.com', access_type=access._id)
     adabel = yield adabel.save()
-    admel = Admin(username='mel', password=bcrypt.encrypt('mel'), first_name='mel', last_name='mel', email='mel@electric.com')
+    admel = Admin(username='mel', password=bcrypt.encrypt('mel'), first_name='mel', last_name='mel', email='mel@electric.com', access_type=access._id)
     admel = yield admel.save()
-    adrache = Admin(username='rache', password=bcrypt.encrypt('rache'), first_name='rache', last_name='rache', email='rache@electric.com')
+    adrache = Admin(username='rache', password=bcrypt.encrypt('rache'), first_name='rache', last_name='rache', email='rache@electric.com', access_type=access._id)
     adrache = yield adrache.save()
-    adraisa = Admin(username='raisa', password=bcrypt.encrypt('raisa'), first_name='raisa', last_name='raisa', email='raisa@electric.com')
+    adraisa = Admin(username='raisa', password=bcrypt.encrypt('raisa'), first_name='raisa', last_name='raisa', email='raisa@electric.com', access_type=access._id)
     adraisa = yield adraisa.save()
-    adtrish = Admin(username='trish', password=bcrypt.encrypt('trish'), first_name='trish', last_name='trish', email='trish@electric.com')
+    adtrish = Admin(username='trish', password=bcrypt.encrypt('trish'), first_name='trish', last_name='trish', email='trish@electric.com', access_type=access._id)
     adtrish = yield adtrish.save()
-    adarmand = Admin(username='armand', password=bcrypt.encrypt('armand'), first_name='armand', last_name='armand', email='armand@electric.com')
+    adarmand = Admin(username='armand', password=bcrypt.encrypt('armand'), first_name='armand', last_name='armand', email='armand@electric.com', access_type=access._id)
     adarmand = yield adarmand.save()
-    admitch = Admin(username='mitch', password=bcrypt.encrypt('mitch'), first_name='mitch', last_name='mitch', email='mitch@electric.com')
+    admitch = Admin(username='mitch', password=bcrypt.encrypt('mitch'), first_name='mitch', last_name='mitch', email='mitch@electric.com', access_type=access._id)
     admitch = yield admitch.save()
 
     kris = Instructor(admin=adkris._id, gender='female', image='images/instructors/instructor-kris.jpg')
@@ -383,3 +389,35 @@ def add_branch(self):
     yield branch.save()
     
     self.redirect('/')
+
+def add_access_types(self):
+
+    accessTypes = yield AccessType.objects.find_all()
+    for i, a in enumerate(accessTypes):
+        yield a.delete()
+
+    analytics = Privilege(module='analytics', actions=['read'])
+    accounts = Privilege(module='accounts', actions=['create', 'update','read', 'freeze', 'unfreeze', 'delete', 'update_expiration'])
+    packages = Privilege(module='packages', actions=['read', 'update_expiration'])
+    schedules = Privilege(module='schedules', actions=['create', 'read', 'update', 'delete', 'move_bike'])
+    users = Privilege(module='users', actions=['create', 'read', 'update', 'delete'])
+    instructors = Privilege(module='instructors', actions=['create', 'read', 'update', 'delete'])
+    sliders = Privilege(module='sliders', actions=['read', 'update', 'create', 'delete'])
+    transactions = Privilege(module='transactions', actions=['read'])
+    settings = Privilege(module='settings', actions=['read', 'block_bike'])
+
+    staffAccessType = AccessType(admin_type='Staff')
+    yield staffAccessType.save()
+
+    managerAccessType = AccessType(admin_type='Manager')
+    managerAccessType.privileges = [analytics, packages, instructors, sliders, settings, transactions, schedules, accounts, settings]
+    yield managerAccessType.save()
+
+    adminAccessType = AccessType(admin_type='Admin')
+    packages = Privilege(module='packages', actions=['create', 'read', 'update_expiration'])
+    adminAccessType.privileges = [analytics, packages, instructors, sliders, settings, transactions, schedules, accounts, settings, users]
+    yield adminAccessType.save()
+
+    self.redirect('/add_regular_schedules')
+
+
