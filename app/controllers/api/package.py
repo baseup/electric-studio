@@ -1,5 +1,5 @@
 import sys
-from motorengine import ASCENDING
+from motorengine import ASCENDING, DESCENDING
 from motorengine.errors import InvalidDocumentError
 from app.models.packages import Package, UserPackage
 from bson.objectid import ObjectId
@@ -14,13 +14,15 @@ def find(self):
         if ft_package_count > 0:
             has_first_timer = True
 
+    new_pack = yield Package.objects.order_by('create_at', direction=DESCENDING).limit(1).find_all();
     if has_first_timer:
-        packages = yield Package.objects.filter(first_timer=False).order_by('credits', direction=ASCENDING).find_all()
+        packages = yield Package.objects.filter(id__ne=new_pack[0]._id,first_timer=False).order_by('credits', direction=ASCENDING).find_all()
+        packages.insert(0, new_pack[0]);
         self.render_json(packages)
     else: 
-        packages = yield Package.objects.order_by('credits', direction=ASCENDING).find_all()
+        packages = yield Package.objects.filter(id__ne=new_pack[0]._id).order_by('credits', direction=ASCENDING).find_all()
+        packages.insert(0, new_pack[0]);
         self.render_json(packages)
-    
 
 def find_one(self, id):
     package = yield Package.objects.get(id)
@@ -33,9 +35,10 @@ def create(self):
     try:
         package = Package(name=data['name'], 
                           fee=data['fee'],
-                          description=data['description'],
                           expiration=data['expiration'],
                           credits=data['credits'])
+        if 'description' in data:
+            package.description = data['description']
         package = yield package.save()
     except:
         value = sys.exc_info()[1]

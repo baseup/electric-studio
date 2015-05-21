@@ -15,10 +15,10 @@
     </div>
   </div>
   
-  <div id="rates-section" class="content bg-gray parts-4 rates-info" ng-controller="RatesCtrl">
+  <div id="rates-section" class="content bg-gray parts-5 rates-info" ng-controller="RatesCtrl">
     <div class="wrapper">
       <section ng-repeat="package in packages">
-        <p>{{ package.description }}</p>
+        <p>{{ package.description || '&nbsp;' }}</p>
         <h2>
           <span>{{ package.first_timer ? '1st Timer' : '' }}</span>
           {{ package.credits }} <span>Ride{{ package.credits > 1 ? 's' : '' }}</span>
@@ -42,7 +42,6 @@
         </form>
       </section>
       <div class="faq">
-        <p>If it's your first time, call our studio to check for special promos and packages.</p>
         <p>You must purchase Electric Studio classes before you can reserve a spot in the class. Classes are transferrable between studios, but may cost different amounts. To purchases classes for another studio, click on the change studio dropdown menu and select your desired location. A mandatory waiver must be signed by parent/guardian, for riders under the age of 18 to take class at Electric Studio.</p>
         <a class="link" href="#/faq">Faqs</a>
       </div>  

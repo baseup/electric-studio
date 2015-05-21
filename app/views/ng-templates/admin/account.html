@@ -241,7 +241,23 @@
                 <button ng-if="sched.status == 'waitlisted'" class="btn btn--small btn--primary" ng-click="cancelWaitlist($index, sched)">
                   Cancel
                 </button>
-                <button class="btn btn--small btn--primary" ng-if="sched.status == 'booked'" ng-click="moveBikeModal(sched)">Move Bike</button>
+                <ul class="nav" ng-if="sched.status == 'booked'">
+                  <li>
+                    <a title="Switch Bike" ng-click="moveBikeModal(sched)">
+                      <i class="fa fa-exchange"></i>
+                    </a>&nbsp;&nbsp;&nbsp;
+                  </li>
+                  <li>
+                    <a title="Mark as Missed" ng-click="missedBooking(sched)">
+                      <i class="fa fa-clock-o"></i>
+                    </a>&nbsp;&nbsp;&nbsp;
+                  </li>
+                  <li>
+                    <a title="Cancel Book" ng-click="cancelBooking(sched)">
+                      <i class="fa fa-times"></i>
+                    </a>
+                  </li>
+                </ul>
               </td>
             </tr>
           </tbody>

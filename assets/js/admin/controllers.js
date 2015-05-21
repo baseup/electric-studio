@@ -493,6 +493,28 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     }
   }
 
+  $scope.missedBooking = function (booking) {
+    $.Confirm('Are you sure on marking ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride as MISSED ? (THIS CANNOT BE UNDONE)', function () {
+      ClassService.delete({ scheduleId: booking._id, missed: true }, function () {
+        $scope.filterSchedDate($scope.selectedAccount);
+      });
+    });
+  }
+
+  $scope.cancelBooking = function (booking) {
+    $.Confirm('Are you sure on cancelling ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride ?', function () {
+      $.Prompt('Notes on cancelling ' + booking.user_id.first_name + ' ride', function (notes) {
+        if (notes && notes.length > 0) {
+          ClassService.delete({ scheduleId: booking._id, notes: notes }, function () {
+            $scope.filterSchedDate($scope.selectedAccount);
+          });
+        } else {
+          $.Alert('Please provide a notes on cancelling schedules');
+        }
+      });
+    });
+  }
+
   $scope.cancelWaitlist = function (index, sched) {
     ClassService.delete({ scheduleId: sched._id }, function () {
       $scope.filterSchedDate($scope.selectedAccount);

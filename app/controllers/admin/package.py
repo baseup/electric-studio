@@ -17,12 +17,13 @@ def create(self):
     try:
         package = Package(name=data['name'], 
                           fee=data['fee'],
-                          description=data['description'],
                           expiration=data['expiration'],
                           credits=data['credits'])
 
         if 'first_timer' in data: 
             package.first_timer = bool(data['first_timer'])
+        if 'description' in data:
+            package.description = data['description']
         package = yield package.save()
     except:
         value = sys.exc_info()[1]
