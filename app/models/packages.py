@@ -10,6 +10,7 @@ class Package(Model):
     description = StringField()
     expiration = IntField(required=False, default=30)
     credits = IntField(required=True)
+    first_timer = BooleanField(default=False);
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 
@@ -24,6 +25,7 @@ class UserPackage(Model):
     package_id = ReferenceField(reference_document_type=Package, required=False)
     package_name = StringField(required=False)
     package_fee = DecimalField(required=False, default='0.00')
+    package_ft = BooleanField(required=False, default=False)
     credit_count = IntField(required=True)
     expiration = IntField(required=True)
     expire_date = DateTimeField(required=False)

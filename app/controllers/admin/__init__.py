@@ -83,6 +83,7 @@ def buy(self):
                     transaction.package_id = package._id
                     transaction.package_name = package.name
                     transaction.package_fee = package.fee
+                    transaction.package_ft = package.first_timer
                     transaction.credit_count = package.credits
                     transaction.remaining_credits = package.credits
                     transaction.expiration = package.expiration

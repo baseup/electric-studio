@@ -159,6 +159,7 @@ def buy(self):
                         transaction.package_id = package._id
                         transaction.package_name = package.name
                         transaction.package_fee = package.fee
+                        transaction.package_ft = package.first_timer
                         transaction.credit_count = package.credits
                         transaction.remaining_credits = package.credits
                         transaction.expiration = package.expiration
@@ -255,13 +256,22 @@ def schedule_migrate(self):
     self.redirect('/')
 
 def package_migrate(self):
+
+    packages = yield Package.objects.find_all()
+    for pack in packages:
+        pack.first_timer = False
+        yield pack.save()
+
     user_packages = yield UserPackage.objects.find_all()
     for upack in user_packages:
         if upack.package_id:
             upack.package_name = upack.package_id.name
             upack.package_fee = upack.package_id.fee
-        upack.expire_date = upack.create_at + timedelta(days=upack.expiration)
-        upack.status = 'Active'
+            upack.package_ft = upack.package_id.first_timer
+        if not upack.expire_date:
+            upack.expire_date = upack.create_at + timedelta(days=upack.expiration)
+        if not upack.status:
+            upack.status = 'Active'
         yield upack.save()
 
     self.redirect('/')

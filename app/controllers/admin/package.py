@@ -19,6 +19,9 @@ def create(self):
                           fee=data['fee'],
                           expiration=data['expiration'],
                           credits=data['credits'])
+
+        if 'first_timer' in data: 
+            package.first_timer = bool(data['first_timer'])
         if 'description' in data:
             package.description = data['description']
         package = yield package.save()

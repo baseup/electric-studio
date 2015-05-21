@@ -22,6 +22,7 @@ def create(self):
         trans.package_id = package._id
         trans.package_name = package.name
         trans.package_fee = package.fee
+        trans.package_ft = package.first_timer
         trans.credit_count = package.credits
         trans.expiration = package.expiration
         trans.remaining_credits = package.credits
