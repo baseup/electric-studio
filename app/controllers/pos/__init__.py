@@ -1,6 +1,6 @@
 from bson.objectid import ObjectId
 from app.models.users import User
-from app.models.packages import Package, UserPackage
+from app.models.packages import Package, UserPackage, UserProduct, Product
 from app.auth import auth_token, create_token
 from datetime import datetime, timedelta
 from app.helper import send_email
@@ -29,7 +29,7 @@ def buy(self):
         package = yield Package.objects.get(package_id) 
         user = yield User.objects.get(user_id)
         if user:
-            if user.status !='Frozen' and user.status !='Unverified':
+            if user.status !='Frozen' and user.status !='Unverified' and user.status != 'Deactivated':
                 if package:
                     transaction = UserPackage()
                     transaction.user_id = user._id
@@ -62,6 +62,48 @@ def buy(self):
             message = 'Invalid transaction: Required ES user account'
     else:
         message = 'Invalid params. Please provide valid user and package id'
+    
+    result = {
+        'message' : message,
+        'valid' : success,
+        'status' : status
+    }           
+
+    self.set_status(status)
+    self.render_json(result)
+
+def buy_product(self):
+    message, success, status = '', False, 400
+    product_id = self.get_argument('product_id')
+    user_id = self.get_argument('user_id')
+    quantity = self.get_argument('quantity')
+    if user_id and product_id and quantity:
+        quantity = int(quantity)
+        product = yield Product.objects.get(product_id) 
+        user = yield User.objects.get(user_id)
+        if user:
+            if user.status !='Frozen' and user.status !='Unverified' and user.status != 'Deactivated':
+                if product:
+                    transaction = UserProduct()
+                    transaction.user_id = user._id
+                    transaction.product_id = product._id
+                    transaction.product_name = product.name
+                    transaction.product_amount = product.amount
+                    transaction.quantity = quantity
+                    product.quantity -= quantity
+
+                    transaction = yield transaction.save()
+                    product = yield product.save()
+
+                    self.render_json(transaction)
+                else:
+                    message = 'Invalid transaction: No product found with this id ' + product_id
+            else:
+                message = 'Invalid transaction: User ' + user.status
+        else:
+            message = 'Invalid transaction: Required ES user account'
+    else:
+        message = 'Invalid params. Please provide valid user id, product id and quantity'
     
     result = {
         'message' : message,

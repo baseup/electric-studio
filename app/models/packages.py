@@ -56,10 +56,8 @@ class UserProduct(Model):
     user_id = ReferenceField(reference_document_type=User)
     product_id = ReferenceField(reference_document_type=Product, required=False)
     product_name = StringField(required=False)
-    product_amout = DecimalField(required=False, default='0.00')
-    notes = StringField()
-    is_free = BooleanField(default=False)
-    trans_info = StringField(default=None)
+    product_amount = DecimalField(required=False, default='0.00')
+    quantity = IntField(required=True)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 
