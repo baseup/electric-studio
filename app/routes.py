@@ -5,6 +5,7 @@ routes.when('admin.index', 'auth.admin')
 
 # filters for pos api
 routes.when('pos.buy', 'auth.api')
+routes.when('pos.buy_product', 'auth.api')
 routes.when('pos.packages.find', 'auth.api')
 routes.when('pos.packages.find_one', 'auth.api')
 routes.when('pos.products.find', 'auth.api')
@@ -14,6 +15,8 @@ routes.when('pos.products.update', 'auth.api')
 routes.when('pos.products.destroy', 'auth.api')
 routes.when('pos.transactions.find', 'auth.api')
 routes.when('pos.transactions.find_one', 'auth.api')
+routes.when('pos.transaction_products.find', 'auth.api')
+routes.when('pos.transaction_products.find_one', 'auth.api')
 routes.when('pos.users.find', 'auth.api')
 routes.when('pos.users.find_one', 'auth.api')
 
@@ -71,11 +74,14 @@ routes.prefix('/api', [
     ('resource', '/schedule', 'api.schedules'),
     ('resource', '/book', 'api.book'),
     ('resource', '/history', 'api.history'),
+    # pos api
     ('resource', '/users', 'pos.users'),
     ('resource', '/packages', 'pos.packages'),
     ('resource', '/products', 'pos.products'),
     ('resource', '/transactions', 'pos.transactions'),
+    ('resource', '/transaction_products', 'pos.transaction_products'),
     ('post', '/buy', 'pos.buy'),
+    ('post', '/buy_product', 'pos.buy_product'),
     ('get', '/request_token', 'pos.request_token')
 ])
 
