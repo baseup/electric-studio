@@ -1054,7 +1054,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       }
 
       if (!$scope.forWaitlist && seats.length == 0) {
-        $.Alert('Please pick a seat');
+        $.Alert('Please pick a bike');
         return;
       }
 
@@ -1076,7 +1076,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       }
 
       $.Confirm(confirm_message, function () {
-        $.Alert('Booking seats ...', true);
+        $.Alert('Booking bike' + (seats.length > 1 ? 's' : '' ) + ' ...', true);
         $scope.booking = true;
         var bookSuccess = function () {
 
