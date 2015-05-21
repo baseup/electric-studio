@@ -2,7 +2,7 @@
     <div class="content-result pad">
       <div class="cf space--bottom">
         <span class="label inline">Instructors</span>
-        <button ng-show="getAccess('instructors', 'create')" ng-click="showAddInstructor()" class="btn btn--small btn--secondary float--right" data-modal-toggle="add-instructor">Add Instructor</button>
+        <button ng-if="getAccess('instructors', 'create')" ng-click="showAddInstructor()" class="btn btn--small btn--secondary float--right" data-modal-toggle="add-instructor">Add Instructor</button>
       </div>
 
     <div ng-show="isUpdateInstructor">
@@ -45,7 +45,7 @@
             <textarea class="text-input" ng-model="updateInstructor.motto"></textarea>
           </div>
         </div>
-        <button class="btn btn--medium btn--primary space--top" ng-show="getAccess('instructors', 'update')" ng-click="setInstructor()">Update</button>
+        <button class="btn btn--medium btn--primary space--top" ng-if="getAccess('instructors', 'update')" ng-click="setInstructor()">Update</button>
         <button class="btn btn--medium btn--primary space--top" ng-click="cancelUpdateInstructor()">Cancel</button>
       </div>
     </div>
@@ -55,11 +55,11 @@
       <div class="grid__item bp-md-one-half bp-lg-one-third"
            ng-repeat="instructor in instructors">
         <div class="account__item box--bordered box--white space--bottom cf">
-          <div ng-show="!chkChangePic(instructor._id) || !getAccess('instructors', 'update')" align="center" class="image" ng-click="changeInsPic(instructor)">
+          <div ng-if="!chkChangePic(instructor._id) || !getAccess('instructors', 'update')" align="center" class="image" ng-click="changeInsPic(instructor)">
             <img ng-if="instructor.image" height="200" ng-src="{{ instructor.image }}">
             <img ng-if="!instructor.image"  height="200" src="assets/images/pic-placeholder.png">
           </div>  
-          <div class="pad" style="height: 203px;" ng-show="chkChangePic(instructor._id) && getAccess('instructors', 'update')">
+          <div class="pad" style="height: 203px;" ng-if="chkChangePic(instructor._id) && getAccess('instructors', 'update')">
             <input ng-show="!uploading" type="file" ng-file-select="uploadInsPic($files)" ng-model="inspic"/>
             <span ng-show="uploading">Uploading: {{ progress }}</span>
             <div class="account__options pad--sides pad--half-ends space--top cf">
@@ -88,8 +88,8 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" ng-show="getAccess('instructors', 'update')" ng-click="setToUpdate(instructor)" >Update</a>
-            <a href="" class="float--right link--secondary" ng-show="getAccess('instructors', 'update')" ng-click="removeInstructor(instructor)">Remove</a>
+            <a href="" class="float--left" ng-if="getAccess('instructors', 'update')" ng-click="setToUpdate(instructor)" >Update</a>
+            <a href="" class="float--right link--secondary" ng-if="getAccess('instructors', 'delete')" ng-click="removeInstructor(instructor)">Remove</a>
           </div>
 
         </div>

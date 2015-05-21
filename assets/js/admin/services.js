@@ -190,6 +190,15 @@ services.factory('AccessService', function ($resource) {
   });
 });
 
+services.factory('PrivilegeService', function ($resource) {
+  return $resource('/admin/privileges', {}, {
+    query: {
+      method: 'GET',
+      isArray: false
+    },
+  });
+});
+
 services.factory('StatisticService', function ($resource) {
   return $resource('/admin/statistic', {}, {
     query: {

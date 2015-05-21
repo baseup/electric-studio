@@ -8,13 +8,10 @@ import sys
     
 def find(self):
     administrators = yield Admin.objects.find_all()
-    # for i, admin in enumerate(administrators):
-    #     administrators[i]['admin_type'] = admin.access_type.admin_type
     self.render_json(administrators)
 
 def find_one(self, id):
     admin = yield Admin.objects.get(id)
-    # admin.admin_type = admin.access_type.admin_type
     self.write(admin.to_dict())
     self.finish()
 

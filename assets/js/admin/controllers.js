@@ -157,9 +157,9 @@ ctrls.controller('UserCtrl', function ($scope, AdminService, AccessService, Secu
         $.Alert(error.data);
       }
 
-      // chkSecurity(function () {
+      chkSecurity(function () {
         AdminService.delete({adminId : user._id}).$promise.then(removeSuccess, removeFailed);
-      // });   
+      });   
     });
   }
 });
@@ -255,7 +255,6 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
 });
 
 ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserService, PackageService, TransactionService, ClassService, SecurityService, EmailVerifyService) {
-
   
   var qstring = $location.search();
   if (qstring.s) {

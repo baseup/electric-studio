@@ -17,6 +17,9 @@ routes.when('pos.transactions.find_one', 'auth.api')
 routes.when('pos.users.find', 'auth.api')
 routes.when('pos.users.find_one', 'auth.api')
 
+# admin access
+# routes.when('admin.user.create', 'auth.admin_access')
+
 routes.get('/', 'home.index')
 routes.get('/buy', 'home.buy')
 routes.post('/buy', 'home.buy')
@@ -46,6 +49,7 @@ routes.prefix('/admin', [
     ('get', '/login', 'admin.login'),
     ('post', '/login', 'admin.login'),
     ('get', '/logout', 'admin.logout'),
+    ('get', '/privileges', 'admin.privileges'),
 
     ('resource', '/security', 'admin.security'),
     ('resource', '/setting', 'admin.setting'),

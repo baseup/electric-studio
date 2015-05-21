@@ -6,12 +6,16 @@ from app.helper import send_email_verification, send_email
 from bson.objectid import ObjectId
 from datetime import timedelta
 from app.models.access import AccessType
+from hurricane.helpers import to_json, to_json_serializable
 import sys
 import tornado
 import json
 import base64
 
 def index(self):
+    self.render('admin', user=self.get_secure_cookie('admin'))
+
+def privileges(self):
     username = self.get_secure_cookie('admin')
     admin = yield Admin.objects.get(username=username.decode('UTF-8'))
     access = AccessType()
@@ -21,7 +25,7 @@ def index(self):
         for i, privilege in enumerate(access.privileges):
            privileges[privilege.module] = privilege.actions
         access.privileges = privileges
-    self.render('admin', user=self.get_secure_cookie('admin'), access=access)
+    self.render_json(access.to_dict())   
 
 def login(self):
     if self.request.method == 'GET':

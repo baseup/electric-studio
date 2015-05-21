@@ -37,7 +37,7 @@
 
         <div class="pad box--white box--bordered">
           <h3 class="label">Blocked Bikes</h3>
-          <div ng-show="getAccess('settings', 'block_bike')" class="float--right">
+          <div ng-if="getAccess('settings', 'block_bike')" class="float--right">
             <div class="bp-md-one-eight float--left space--right space--bottom">
               <select class="select" id="select-blocked-bikes" ng-model="newBlock.bike">
                 <option value="">Bike</option>

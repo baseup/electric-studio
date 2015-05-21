@@ -4,7 +4,7 @@
       <span class="label">Search  </span>
       <input class="text-input" placeholder="Enter Name or Email" ng-model="searchText">
       <button class="btn btn--small btn--tertiary float--right" ng-click="downloadUserAccounts()">Export User Accounts List</button>
-      <button ng-show="getAccess('accounts', 'create')" ng-click="showAddAccount()" class="btn btn--small btn--primary space--right float--right" data-modal-toggle="add-account">Add Account</button>
+      <button ng-if="getAccess('accounts', 'create')" ng-click="showAddAccount()" class="btn btn--small btn--primary space--right float--right" data-modal-toggle="add-account">Add Account</button>
     </div>
   </div>
 
@@ -51,7 +51,7 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a ng-show="getAccess('accounts', 'update')" title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
+            <a ng-if="getAccess('accounts', 'update')" title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
               <i class="fa fa-plus"></i> Class
             </a>
             <ul class="nav float--right">
@@ -64,11 +64,11 @@
               <li>
                 <a href="" title="Schedules" ng-click="accountSchedules(user)"><i class="fa fa-book"></i></a>
               </li>
-              <li ng-show="getAccess('accounts', 'freeze')">
+              <li ng-if="getAccess('accounts', 'freeze')">
                 <a title="Froze Account" ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
                 <a title="Unfroze Account" ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
               </li>
-              <li ng-show="getAccess('accounts', 'delete')">
+              <li ng-if="getAccess('accounts', 'delete')">
                 <a title="Deactivate Account" ng-if="user.status != 'Deactivated'" class="pad--off-right" ng-click="deactivateAccount(user, $index)"><i class="fa fa-toggle-on"></i></a>
                 <a title="Activate Account" ng-if="user.status == 'Deactivated'" class="pad--off-right" ng-click="activateAccount(user, $index)"><i class="fa fa-toggle-off"></i></a>
               </li>
@@ -179,7 +179,7 @@
         <span class="label">Notes</span>
         <textarea ng-model="selectedInfo.notes" class="text-input"></textarea>
       </div>
-      <button type="button" ng-show="getAccess('accounts', 'update')" ng-click="updateAccountInfo()" class="btn btn--primary btn--medium float--right space--top modal-close">Save</button>
+      <button type="button" ng-if="getAccess('accounts', 'update')" ng-click="updateAccountInfo()" class="btn btn--primary btn--medium float--right space--top modal-close">Save</button>
     </div>
   </div>
 
@@ -305,7 +305,7 @@
             <td>{{ pack.remaining_credits }}</td>
             <td>
               {{ pack.create_at | addDay:pack.expiration | formatDate }}
-              <a ng-show="getAccess('accounts', 'update_expiration')" ng-click="extendPackageExpiry(pack)"><i class="fa fa-plus-square"></i></a>
+              <a ng-if="getAccess('accounts', 'update_expiration')" ng-click="extendPackageExpiry(pack)"><i class="fa fa-plus-square"></i></a>
             </td>
             <td>{{ pack.notes }}</td>
             <td>{{ pack.create_at | formatDate }}</td>

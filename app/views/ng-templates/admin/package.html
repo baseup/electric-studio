@@ -53,10 +53,10 @@
               <td><small>PHP</small> {{ package.fee }}</td>
               <td>{{ package.expiration }} days</td>
               <td>
-                <button ng-show="getAccess('packages', 'delete')" class="btn btn--small btn--secondary" ng-click="removePackage(package)">
+                <button ng-if="getAccess('packages', 'delete')" class="btn btn--small btn--secondary" ng-click="removePackage(package)">
                   <i class="fa fa-trash"></i> Remove
                 </button>
-                <button ng-show="getAccess('packages', 'update')" class="btn btn--small btn--secondary" ng-click="setToUpdate(package)" data-modal-toggle="update-package">
+                <button ng-if="getAccess('packages', 'update')" class="btn btn--small btn--secondary" ng-click="setToUpdate(package)" data-modal-toggle="update-package">
                   <i class="fa fa-pencil"></i> Edit
                 </button>
               </td>
@@ -95,7 +95,7 @@
           <input class="text-input" value="30" ng-model="newPackage.expiration"> Days
         </div>
       </div>
-      <button ng-show="getAccess('packages', 'create')" class="btn btn--medium btn--primary space--top modal-close" ng-click="addPackage()">Add</button>
+      <button ng-if="getAccess('packages', 'create')" class="btn btn--medium btn--primary space--top modal-close" ng-click="addPackage()">Add</button>
     </div>
   </div>
 </div>
