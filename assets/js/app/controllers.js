@@ -743,6 +743,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       cutOffchkDate.setDate(date.getDate() - 1);
       cutOffchkDate.setHours(17, 0, 0);
 
+      var cutOffMsg = '';
+      if (+today >= +cutOffchkDate) {
+        cutOffMsg = 'You can no longer cancel this ride once waitlisted. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.<br><br>';
+      }
+
       var sched = {};
       sched.date = date;
       sched.schedule = schedule;
@@ -756,12 +761,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       $scope.waitlist.$promise.then(function (waitlistData) {
         $scope.waitlist = waitlistData;
         if ($scope.waitlist.length > 0) {
-          $.Confirm('This class is full. Would you like to join the waitlist?', function () {
-            $scope.$apply(function () {
 
-              if (+today >= +cutOffchkDate) {
-                $.Alert('Warning: You can no longer cancel this ride once a booking is made. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.')
-              }
+          
+
+          $.Confirm(cutOffMsg + 'This class is full. Would you like to join the waitlist?', function () {
+            $scope.$apply(function () {
               $scope.waitlistUser(sched);
             });
           });
@@ -778,23 +782,16 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
               }
             }
             if ($scope.reserved.length >= seats) {
-              $.Confirm('This class is full. Would you like to join the waitlist?', function () {
+              $.Confirm(cutOffMsg + 'This class is full. Would you like to join the waitlist?', function () {
                 $scope.$apply(function () {
-                  if (+today >= +cutOffchkDate) {
-                    $.Alert('Warning: Booking on this schedule will no longer be canceled')
-                  }
                   $scope.waitlistUser(sched);
                 });
               });
             } else {
-              if (+today >= +cutOffchkDate) {
-                $.Alert('Warning: You can no longer cancel this ride once a booking is made. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.')
-              }
               SharedService.set('selectedSched', sched);
               $location.path('/class');
             }
           });
-          
         }
       });
     }
@@ -1060,7 +1057,14 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
 
       if ($scope.loginUser && $scope.loginUser.credits < seats.length) {
         $.Alert('Insufficient Credits, you only have ' + $scope.loginUser.credits);
+        return;
       } 
+
+      var today = new Date();
+
+      var cutOffchkDate = new Date(sched.date);
+      cutOffchkDate.setDate(sched.date.getDate() - 1);
+      cutOffchkDate.setHours(17, 0, 0);
 
       var book = {};
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
@@ -1070,12 +1074,17 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       str_seats = str_seats.replace(/,/g, ', ');
       var confirm_message = 'You’re about to book bike'+ (seats.length > 1 ? 's' : '') + ' # ' + str_seats + 
                             ' for ' + $scope.daySched + ', ' + $scope.dateSched + '.';
+      var cutOffMsg = '';                     
+      if (+today >= +cutOffchkDate) {
+        cutOffMsg = 'You can no longer cancel this ride once a booking is made. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.<br/><br/>'
+      }
+
       if ($scope.forWaitlist) {
         confirm_message = "You're about to join the waitlist for this schedule " + $scope.daySched + ', ' + $scope.dateSched;
         book.status = 'waitlisted';
       }
 
-      $.Confirm(confirm_message, function () {
+      $.Confirm(cutOffMsg+confirm_message, function () {
         $.Alert('Booking bike' + (seats.length > 1 ? 's' : '' ) + ' ...', true);
         $scope.booking = true;
         var bookSuccess = function () {
