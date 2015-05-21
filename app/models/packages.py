@@ -6,8 +6,8 @@ from hurricane.db import Model
 class Package(Model):
     __collection__ = 'packages'
     name = StringField(required=True)
-    fee = DecimalField()
-    description = StringField(required=True)
+    fee = DecimalField(required=True)
+    description = StringField()
     expiration = IntField(required=False, default=30)
     credits = IntField(required=True)
     create_at = DateTimeField(auto_now_on_insert=True)
