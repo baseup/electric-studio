@@ -17,16 +17,9 @@
 
     <div class="header">
       <p ng-if="forWaitlist" class="intro large center">There's no available seat for this ride.<br>but you can join the waitlisted below </p>
-      <h2 class="range">{{ dateSched }}</h2>
-      <!-- <div class="nav left"><i class="fa fa-angle-left"></i></div>
-      <div class="nav right"><i class="fa fa-angle-right"></i></div> -->
+      <h2 class="range">{{ dateSched }}</h2> <br\>
+      <h2 class="range"><span>{{ daySched }} {{ timeSched | formatTime }}</span></h2>
     </div>
-    <div class="header">
-      <h2 class="range"><span>{{ daySched }}</span> {{ timeSched | formatTime }}</h2>
-     <!--  <div class="nav left"><i class="fa fa-angle-left"></i></div>
-      <div class="nav right"><i class="fa fa-angle-right"></i></div> -->
-    </div>
-    <a class="h small primary center link" href="#/schedule">Back to Schedule</a>
     
     <div class="class">
       <table class="seats">
