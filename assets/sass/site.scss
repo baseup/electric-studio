@@ -496,13 +496,19 @@ body {
       li{
         text-align: center;
         display: block;
+        border-bottom: solid 1px #fff;
+
+        &:last-child{
+          border: 0;
+        }
       }
+
 
       a{
         display: block;
         color: $color-text-light;
         font-weight: normal;
-        font-size: 20px;
+        font-size: 14px;
         padding: 10px 0;
 
         &:hover{
@@ -520,11 +526,18 @@ body {
         a.special{
           background-color: $brand-color-primary;
           box-shadow: 2px 2px 0 $brand-color-secondary;
+          border-top: solid 3px transparent;
           color: #fff;
           font-weight: bold;
           margin: 10px;
           font-size: 16px;
           text-transform: none;
+          display: inline-block;
+          padding: 4px 20px 8px;
+
+          &:hover{
+            box-shadow: none;
+          }
         }
       }
     }
