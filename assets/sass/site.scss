@@ -20,7 +20,7 @@
 }
 
 @font-face {
-  font-family: 'Tungsten';
+  font-family: 'TungstenLight';
   src: url('../fonts/Tungsten-Light.otf') format('opentype');
   font-weight: 300;
 }
@@ -180,7 +180,8 @@ body {
     display: inline-block;
     margin: 0;
     position: relative;
-    top: 41px;
+    top: 40px;
+    left: 14px;
   }
   
   & > li {
@@ -230,7 +231,7 @@ body {
   @include breakpoint(md) {
     position: absolute;
     right: 20px;
-    bottom: 64px;
+    bottom: 66px;
     text-align: right;
     display: block;
   }
@@ -357,7 +358,7 @@ body {
       
       background: $brand-color-quaternary;
       box-shadow: 0 1px 2px rgba($brand-color-secondary, .6);
-      padding: 15px 0;
+      padding: 0;
       text-align: center;
 
        li {
@@ -398,16 +399,21 @@ body {
     }
 
     @include breakpoint(md) {
-      left: calc( 100% + 1px);
+      left: 100%;
       position: absolute;
       top: 0;
       padding-left: 0;
       box-shadow: 0 1px 2px rgba(102, 102, 102, 0.6);
 
       ul.submenu{
-        padding: 0 15px;
+        padding: 0;
         width: 220px;
         background: $brand-color-quaternary;
+
+        a:hover{
+          background-color: $brand-color-primary;
+          color: #fff !important;
+        }
       }
     }
   }  
@@ -461,7 +467,7 @@ body {
 
   @include breakpoint(lg) {
     margin-right: 73px;
-    top: 31px;
+    top: 30px;
   }
 }
 .book-ride-btn {
@@ -491,7 +497,7 @@ body {
       background: $brand-color-quaternary;
       box-shadow: 0 1px 2px rgba($brand-color-secondary, .6);
       margin-top: 22px;
-      width: 220px;
+      width: 200px;
 
       li{
         text-align: center;
@@ -532,8 +538,7 @@ body {
           margin: 10px;
           font-size: 16px;
           text-transform: none;
-          display: inline-block;
-          padding: 4px 20px 8px;
+          padding: 4px 0 8px;
 
           &:hover{
             box-shadow: none;
@@ -706,7 +711,8 @@ body {
 }
 
 .intro {
-  font-size: 1.2em;
+  font-size: 1.1em;
+  line-height: 1.2em;
   color: lighten($color-text, 30%);
 }
 
@@ -873,6 +879,7 @@ body {
     @include breakpoint(md) {
       margin-right: 20px;
       width: 300px;
+      font-size: 0.9em;
     }
   }
   
@@ -902,14 +909,15 @@ body {
     top: 20px;
     right: 20px;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 30px;
     
     &:hover {
       color: $brand-color-primary;
     }
     
     @include breakpoint(md) {
-      font-size: 24px;
+      font-size: 35px;
+      top: 15px;
     }
   }
   
@@ -1317,6 +1325,7 @@ body {
     width: 100px;
     padding-top: 14px;
     font-size: 40px;
+    font-family: TungstenLight;
     background: #fff;
     color: $brand-color-primary;
     border-radius: 50%;
@@ -1342,6 +1351,7 @@ body {
       display: block;
       font-size: 16px;
       text-transform: uppercase;
+      font-family: Brandon_Grotesque;
     }
   }
   
@@ -1384,6 +1394,8 @@ body {
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
+    font-size: 0.9em;
+    line-height: 1.5em;
   }
 }
 
@@ -2186,6 +2198,8 @@ body {
       section {
         width: 33.333%;
         float: left;
+        padding-top: 5px;
+        padding-bottom: 0;
       }
 
       section:nth-of-type(3n+1) {
