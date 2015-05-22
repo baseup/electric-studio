@@ -904,14 +904,15 @@ body {
     top: 20px;
     right: 20px;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 30px;
     
     &:hover {
       color: $brand-color-primary;
     }
     
     @include breakpoint(md) {
-      font-size: 24px;
+      font-size: 35px;
+      top: 15px;
     }
   }
   
