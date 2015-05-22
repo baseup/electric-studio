@@ -188,8 +188,8 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
   $scope.signingUp = false;
   $scope.signUp = function () {
     $scope.signupError = null;
-    $scope.signingUp = true;
     if ($scope.user) {
+      $scope.signingUp = true;
       if (!$scope.user.email || $scope.user.email.length == 0) {
         $scope.signupError = 'Email Address is required';
         return;
