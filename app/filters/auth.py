@@ -1,6 +1,8 @@
 from tornado.web import HTTPError
 from tornado.web import *
 from app.auth import auth_token
+from app.models.access import AccessType
+from app.models.admins import Admin
 
 def admin(self):
     if not self.get_secure_cookie('admin'):
@@ -16,3 +18,48 @@ def api(self):
     else:
         self.set_status(404)
         self.redirect('/#/notfound')
+
+def access(self):
+    uri = self.request.uri.split('/')
+    module, param_id = '', ''
+
+    privileges = self.get_secure_cookie('privileges')
+    privileges = tornado.escape.json_decode(privileges)
+    forbid_access = False
+
+    if len(uri) >= 2:
+        module = uri[2]
+
+        if module == 'user':
+            module = 'account'
+        if module == 'admin':
+            module = 'user'
+        module+='s'
+
+    if self.request.method == 'GET':
+        if 'read' not in privileges[module]:
+            forbid_access = True
+    if self.request.method == 'POST':
+        if 'create' not in privileges[module]:
+            forbid_access = True
+    if self.request.method == 'PUT':
+        if 'update' not in privileges[module]:
+            forbid_access = True
+    if self.request.method == 'DELETE':
+        if 'delete' not in privileges[module]:
+            forbid_access = True
+
+    if forbid_access:
+        self.set_status(403)
+        self.finish()
+
+
+
+
+
+
+
+
+
+
+

@@ -157,9 +157,9 @@ ctrls.controller('UserCtrl', function ($scope, AdminService, AccessService, Secu
         $.Alert(error.data);
       }
 
-      chkSecurity(function () {
+      // chkSecurity(function () {
         AdminService.delete({adminId : user._id}).$promise.then(removeSuccess, removeFailed);
-      });   
+      // });   
     });
   }
 });

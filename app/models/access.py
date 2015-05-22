@@ -6,6 +6,9 @@ class Privilege(Document):
     module = StringField(required=True)
     actions = ListField(StringField())
 
+    def to_dict(self):
+       return mongo_to_dict(self)
+
 class AccessType(Document):
     __collection__ = 'access_types'
     admin_type = StringField(required=True)

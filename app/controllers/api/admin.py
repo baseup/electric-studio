@@ -1,6 +1,6 @@
 from passlib.hash import bcrypt
 from motorengine.errors import InvalidDocumentError
-from app.models.admins import Admin
+from app.models.admins import Admin, Instructor
 from app.models.access import AccessType
 import tornado
 import json
@@ -67,6 +67,8 @@ def update(self, id):
 
 def destroy(self, id):
     del_admin = yield Admin.objects.get(id)
+    instructor = yield Instructor.objects.get(admin=del_admin._id)
     del_admin.delete()
+    instructor.delete()
     self.finish()
 

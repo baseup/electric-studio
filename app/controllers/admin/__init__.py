@@ -48,6 +48,11 @@ def login(self):
             self.set_secure_cookie('admin_login_invalid', 'Invalid username and password')
             self.redirect('/admin/login')
 
+        privileges = {}
+        for i, privilege in enumerate(admin.access_type.privileges):
+           privileges[privilege.module] = privilege.actions
+
+        self.set_secure_cookie('privileges', to_json(privileges))
         self.set_secure_cookie('admin', admin.username)
         self.redirect('/admin/')
 
