@@ -1170,7 +1170,8 @@ body {
   text-align: center;
   color: #fff;
   text-transform: uppercase;
-  
+  font-size: 14px;
+
   li {
     padding-bottom: 15px;
   }
@@ -1180,7 +1181,7 @@ body {
     color: inherit;
     
     &:hover {
-      color: $color-text;
+      color: $brand-color-secondary;
     }
   }
 }
