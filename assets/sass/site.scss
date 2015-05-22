@@ -20,7 +20,7 @@
 }
 
 @font-face {
-  font-family: 'Tungsten';
+  font-family: 'TungstenLight';
   src: url('../fonts/Tungsten-Light.otf') format('opentype');
   font-weight: 300;
 }
@@ -399,7 +399,7 @@ body {
     }
 
     @include breakpoint(md) {
-      left: calc( 100% + 1px);
+      left: 100%;
       position: absolute;
       top: 0;
       padding-left: 0;
@@ -1325,6 +1325,7 @@ body {
     width: 100px;
     padding-top: 14px;
     font-size: 40px;
+    font-family: TungstenLight;
     background: #fff;
     color: $brand-color-primary;
     border-radius: 50%;
@@ -1350,6 +1351,7 @@ body {
       display: block;
       font-size: 16px;
       text-transform: uppercase;
+      font-family: Brandon_Grotesque;
     }
   }
   
