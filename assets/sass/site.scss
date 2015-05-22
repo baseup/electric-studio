@@ -180,7 +180,8 @@ body {
     display: inline-block;
     margin: 0;
     position: relative;
-    top: 41px;
+    top: 40px;
+    left: 14px;
   }
   
   & > li {
@@ -230,7 +231,7 @@ body {
   @include breakpoint(md) {
     position: absolute;
     right: 20px;
-    bottom: 64px;
+    bottom: 66px;
     text-align: right;
     display: block;
   }
@@ -461,7 +462,7 @@ body {
 
   @include breakpoint(lg) {
     margin-right: 73px;
-    top: 31px;
+    top: 30px;
   }
 }
 .book-ride-btn {
@@ -706,7 +707,8 @@ body {
 }
 
 .intro {
-  font-size: 1.2em;
+  font-size: 1.1em;
+  line-height: 1.2em;
   color: lighten($color-text, 30%);
 }
 
@@ -2186,6 +2188,8 @@ body {
       section {
         width: 33.333%;
         float: left;
+        padding-top: 5px;
+        padding-bottom: 0;
       }
 
       section:nth-of-type(3n+1) {
