@@ -1,6 +1,7 @@
 from motorengine import DESCENDING, ASCENDING
 from app.models.schedules import BookedSchedule, InstructorSchedule
 from app.models.users import User
+from app.models.packages import UserPackage
 from datetime import datetime
 from bson.objectid import ObjectId
 import csv
@@ -43,19 +44,48 @@ def download_bookings(self):
 
 def download_user_accounts(self):
     email = self.get_query_argument('email')
-    accounts = yield User.objects.order_by('last_name', direction=ASCENDING).filter(status__ne='Deleted').find_all()
+    accounts = yield User.objects.order_by('last_name', direction=ASCENDING).find_all()
+
     filename = 'user-accounts-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
     with open(filename, 'w') as csvfile:
-        fieldnames = ['Last Name', 'First Name', 'Email Address']
+        fieldnames = ['Full Name', 'Mobile Number', 'Email Address', 'Account Status', '# of Rides Bought', 
+                    '# of Rides Booked', '# of Active Rides', '# of Missed Class', 'Date Account Created', 'Date of Last Ride']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for a in accounts:
+            bookings = yield BookedSchedule.objects.filter(user_id=a._id).find_all()
+            transactions = yield UserPackage.objects.filter(user_id=a._id).find_all()
+            total_rides_bought, total_riddes_missed, total_riddes_booked  = 0, 0, 0
+            date_last_ride = ''
+            for transaction in transactions:
+                total_rides_bought += transaction.credit_count
+            if len(bookings) > 0:
+                for book in bookings:
+                    if book.status == 'completed':
+                        if date_last_ride == '':
+                            date_last_ride = book.schedule.date
+                        if date_last_ride < book.schedule.date:
+                            date_last_ride = book.schedule.date
+                    if book.status == 'missed':
+                        total_riddes_missed+=1
+                    if book.status == 'booked':
+                        total_riddes_booked+=1
+
+            if date_last_ride != '':
+                date_last_ride.strftime('%Y-%m-%d')
             fullname = a.first_name + ' ' + a.last_name
             if email.lower() in a.email.lower() or email.lower() in fullname.lower():
                 writer.writerow({
-                    'Last Name': a.last_name,
-                    'First Name': a.first_name,
-                    'Email Address': a.email
+                    'Full Name': a.first_name+ " " + a.last_name,
+                    'Mobile Number': a.phone_number,
+                    'Email Address': a.email,
+                    'Account Status': a.status,
+                    '# of Rides Bought': '' ,
+                    '# of Rides Booked': total_riddes_booked,
+                    '# of Active Rides': a.credits,
+                    '# of Missed Class': total_riddes_missed,
+                    'Date Account Created': a.create_at.strftime('%Y-%m-%d'),
+                    'Date of Last Ride': date_last_ride
                 })
 
     buf_size = 4096
