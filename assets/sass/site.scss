@@ -1315,6 +1315,7 @@ body {
   
   p {
     margin: $base-spacing-unit 0;
+    font-size: 0.8em;
   }
   
   .button {
@@ -1358,6 +1359,7 @@ body {
   }
   
   .price {
+    font-size: 1em;
     span {
       font-size: 30px;
     }
@@ -2284,6 +2286,7 @@ body {
     .faq {
       text-align: left;
     }
+
   }
   
   /* Contacts */
