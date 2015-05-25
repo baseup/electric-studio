@@ -20,7 +20,7 @@
 }
 
 @font-face {
-  font-family: 'TungstenLight';
+  font-family: 'Tungsten';
   src: url('../fonts/Tungsten-Light.otf') format('opentype');
   font-weight: 300;
 }
@@ -1326,7 +1326,8 @@ body {
     width: 100px;
     padding-top: 14px;
     font-size: 40px;
-    font-family: TungstenLight;
+    font-family: Tungsten;
+    font-weight: 300;
     background: #fff;
     color: $brand-color-primary;
     border-radius: 50%;
