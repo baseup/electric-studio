@@ -5,6 +5,7 @@ from hurricane.db import Model
 
 class Admin(Model):
     __collection__ = 'admins'
+    __lazy__ = False
     username = StringField(required=True, unique=True)
     password = StringField(required=True)
     first_name = StringField(required=True)
@@ -12,6 +13,7 @@ class Admin(Model):
     contact_number = StringField()
     email = EmailField(required=True)
     access_type = ReferenceField(reference_document_type=AccessType)
+    # access_type = StringField()
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 

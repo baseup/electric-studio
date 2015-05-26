@@ -17,7 +17,7 @@
 
     <div class="tab-sliders tab-pane tab-pane--active" data-tab-pane="tab-sliders">
         <div class="box__header align--middle cf pad">
-          <button ng-click="addSlide()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-slide">Add Slide</button>
+          <button ng-if="getAccess('sliders', 'create')" ng-click="addSlide()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-slide">Add Slide</button>
         </div>
 
         <table class="slider-list data-table">
@@ -79,7 +79,7 @@
                 About Us
               </td>
               <td>
-                  <input type="file" ng-file-select="uploadImage($files,'about-us')"/>
+                  <input ng-if="getAccess('sliders', 'update')" type="file" ng-file-select="uploadImage($files,'about-us')"/>
               </td>
             </tr>
             <tr>
@@ -92,7 +92,7 @@
                 Workouts
               </td>
               <td>
-                  <input type="file" ng-file-select="uploadImage($files,'workouts')"/>
+                  <input ng-if="getAccess('sliders', 'update')" type="file" ng-file-select="uploadImage($files,'workouts')"/>
               </td>
             </tr>
             <tr>
@@ -105,7 +105,7 @@
                 First Ride
               </td>
               <td>
-                  <input type="file" ng-file-select="uploadImage($files,'first-ride')"/>
+                  <input ng-if="getAccess('sliders', 'update')" type="file" ng-file-select="uploadImage($files,'first-ride')"/>
               </td>
             </tr>
             <tr>
@@ -118,7 +118,7 @@
                 Rates & Packages
               </td>
               <td>
-                  <input type="file" ng-file-select="uploadImage($files,'rates')"/>
+                  <input ng-if="getAccess('sliders', 'update')" type="file" ng-file-select="uploadImage($files,'rates')"/>
               </td>
             </tr>
           </tbody>
@@ -142,7 +142,7 @@
         <span class="label">Text</span>
         <input placeholder="Add Text" class="text-input" ng-model="newSlider.text">
       </div>
-      <button class="btn btn--medium btn--primary space--top modal-close" ng-click="saveSlider()">Add</button>
+      <button ng-if="getAccess('sliders', 'create')" class="btn btn--medium btn--primary space--top modal-close" ng-click="saveSlider()">Add</button>
     </div>
   </div>
 </div>
