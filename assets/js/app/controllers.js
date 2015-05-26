@@ -112,6 +112,13 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     });
 
   }
+
+  $scope.showSignup = function () {
+    if (!$scope.loginUser) {
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+      angular.element('.signup-toggle').click();
+    }
+  }
   
 });
 
