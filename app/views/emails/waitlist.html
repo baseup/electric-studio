@@ -540,6 +540,11 @@
       display:block !important;
     }
 
+} @media only screen and (max-width: 480px){
+    td[class=mcnTextContent]  div{
+      padding-right: 15px !important;
+      padding-left: 15px !important;
+    }
 }</style></head>
     <body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0">
         <center>
@@ -648,7 +653,7 @@
                         
                         <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;">
                         
-                            <div style="padding:10px 30px 30px; color:#757575!important;">
+                            <div style="padding:10px 5% 30px; color:#757575!important;">
 <p><span style="font-size:14px"><span style="font-family:Arial, Helvetica, sans-serif"><strong style="font-size:0.8em">CLASS:</strong> {{ type }} Class with {{ instructor.admin.first_name.capitalize() }}<br>
 <strong style="font-size:0.8em">DATE/TIME:</strong> <b>{{ date }} {{ time }}</b><br>
 <strong style="font-size:0.8em">STUDIO:</strong> 2/F 8 Forbes Town Road, Fort BGC, Taguig 1201</span></span></p>
