@@ -412,7 +412,7 @@ def add_access_types(self):
 
     analytics = Privilege(module='analytics', actions=['read'])
     accounts = Privilege(module='accounts', actions=['create', 'update','read', 'freeze', 'unfreeze', 'delete', 'update_expiration', 'export_data'])
-    packages = Privilege(module='packages', actions=['read', 'update_expiration'])
+    packages = Privilege(module='packages', actions=['read', 'create','update_expiration', 'update', 'delete'])
     schedules = Privilege(module='schedules', actions=['create', 'read', 'update', 'delete', 'move_bike'])
     users = Privilege(module='users', actions=['create', 'read', 'update', 'delete'])
     instructors = Privilege(module='instructors', actions=['create', 'read', 'update', 'delete'])
