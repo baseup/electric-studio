@@ -272,7 +272,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
 
 
-  UserService.query(function (users) {
+  UserService.query({ deactivated: true}, function (users) {
     $scope.users = users;
   });
 
@@ -316,7 +316,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
       $scope.registeringAccount = true;
       var registerSuccess = function () {
         $.Alert('Successfully added new account')
-        UserService.query(function (users) {
+        UserService.query({ deactivated: true}, function (users) {
           $scope.users = users;
         });
 
@@ -392,7 +392,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
       var verifySuccess = function () {
         $.Alert('Successfully verify account ' + username);
-        UserService.query(function (users) {
+        UserService.query({ deactivated: true}, function (users) {
           $scope.users = users;
         });
       }
@@ -409,7 +409,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     $.Confirm('Are you sure you want to deactivate ' + username + ' account?' , function () {
       var deactivateSuccess = function () {
         $.Alert('Successfully deactivated account ' + username);
-        UserService.query(function (users) {
+        UserService.query({ deactivated: true}, function (users) {
           $scope.users = users;
         });
       }
@@ -426,7 +426,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     $.Confirm('Are you sure you want to activate ' + username + ' account?' , function () {
       var activateSuccess = function () {
         $.Alert('Successfully activated account ' + username);
-        UserService.query(function (users) {
+        UserService.query({ deactivated: true}, function (users) {
           $scope.users = users;
         });
       }
@@ -742,7 +742,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
         var freezeSuccess = function () {
           $.Alert('Successfully freeze account ' + account_name)
-          UserService.query(function (users) {
+          UserService.query({ deactivated: true}, function (users) {
             $scope.users = users;
           });
         }
@@ -764,7 +764,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
       var unFrozeSuccess = function () {
         $.Alert('Successfully unfreeze account ' + name)
-        UserService.query(function (users) {
+        UserService.query({ deactivated: true}, function (users) {
           $scope.users = users;
         });
       }
