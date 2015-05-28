@@ -44,10 +44,17 @@ def download_bookings(self):
 
 def download_user_accounts(self):
     email = self.get_query_argument('email')
-    date_range = self.get_query_argument('past_month')
-    if date_range != '':
+    past_month = self.get_query_argument('past_month')
+    date_range = None;
+    print (past_month);
+    if past_month:
         date_range = datetime.now() - timedelta(weeks=int(past_month) * 4)
-    accounts = yield User.objects.order_by('last_name', direction=ASCENDING).find_all()
+
+    query = User.objects.order_by('last_name', direction=ASCENDING);
+    if date_range:
+        query.filter(create_at__gte=date_range)
+
+    accounts = yield query.find_all()
 
     filename = 'user-accounts-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
     with open(filename, 'w') as csvfile:
@@ -78,9 +85,6 @@ def download_user_accounts(self):
                 date_last_ride.strftime('%Y-%m-%d')
             fullname = a.first_name + ' ' + a.last_name
             if email.lower() in a.email.lower() or email.lower() in fullname.lower():
-                if date_range != '':
-                    if a.create_at <= date_range:
-                        continue
                 writer.writerow({
                     'Full Name': a.first_name+ " " + a.last_name,
                     'Mobile Number': a.phone_number,
