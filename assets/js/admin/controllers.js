@@ -62,7 +62,7 @@ ctrls.controller('UserCtrl', function ($scope, AdminService, AccessService, Secu
 
       var addSuccess = function () {
         AdminService.query(function (users) {
-          $scope.users = users;
+          $scope.users = {};
           var user_tmp = [];
           var i = 0;
           angular.forEach(users, function (user) {
@@ -146,7 +146,7 @@ ctrls.controller('UserCtrl', function ($scope, AdminService, AccessService, Secu
   }
 
   $scope.removeUser = function (user) {
-    $.Confirm('Are you want to delete ' + user.first_name+ ' ?', function () {
+    $.Confirm('Are you sure you want to delete ' + user.first_name+ ' ?', function () {
       var removeSuccess = function () {
         AdminService.query().$promise.then(function (data) {
           $scope.users = data;
@@ -516,6 +516,17 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     }
   }
 
+  $scope.onDateRange = function (user) {
+    if ($scope.dateFilter && $scope.dateFilter != '0') {
+      if ($scope.selectedOption == 'withAvailable') {
+        return user.books.length < stat.seats;  
+      } else if ($scope.selectedOption == 'withWaitlisted') {
+        return user.waitlist.length > 0;
+      }
+    }
+    return true;
+  }
+
   // $scope.buyPackage = function () {
 
   //   if ($scope.selectedAccount.billing && 
@@ -768,10 +779,14 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
   $scope.downloadUserAccounts = function () {
     var emailFilter = $scope.searchText;
+    var past_month = $scope.dateFilter;
+    if (!past_month){
+      past_month = '';
+    }
     if (!emailFilter) {
       emailFilter = '';
     }
-    window.location = '/admin/export/download-user-accounts?email=' + emailFilter
+    window.location = '/admin/export/download-user-accounts?email=' + emailFilter + '&past_month=' + past_month
   }
   
 });

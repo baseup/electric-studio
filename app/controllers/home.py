@@ -407,7 +407,7 @@ def add_access_types(self):
         yield a.delete()
 
     analytics = Privilege(module='analytics', actions=['read'])
-    accounts = Privilege(module='accounts', actions=['create', 'update','read', 'freeze', 'unfreeze', 'delete', 'update_expiration'])
+    accounts = Privilege(module='accounts', actions=['create', 'update','read', 'freeze', 'unfreeze', 'delete', 'update_expiration', 'export_data'])
     packages = Privilege(module='packages', actions=['read', 'update_expiration'])
     schedules = Privilege(module='schedules', actions=['create', 'read', 'update', 'delete', 'move_bike'])
     users = Privilege(module='users', actions=['create', 'read', 'update', 'delete'])
@@ -424,7 +424,7 @@ def add_access_types(self):
     yield managerAccessType.save()
 
     adminAccessType = AccessType(admin_type='Admin')
-    packages = Privilege(module='packages', actions=['create', 'read', 'update_expiration'])
+    packages = Privilege(module='packages', actions=['create', 'read', 'update_expiration', 'update', 'delete'])
     adminAccessType.privileges = [analytics, packages, instructors, sliders, settings, transactions, schedules, accounts, settings, users]
     yield adminAccessType.save()
 

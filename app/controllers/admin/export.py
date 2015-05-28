@@ -2,7 +2,7 @@ from motorengine import DESCENDING, ASCENDING
 from app.models.schedules import BookedSchedule, InstructorSchedule
 from app.models.users import User
 from app.models.packages import UserPackage
-from datetime import datetime
+from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import csv
 
@@ -44,6 +44,9 @@ def download_bookings(self):
 
 def download_user_accounts(self):
     email = self.get_query_argument('email')
+    date_range = self.get_query_argument('past_month')
+    if date_range != '':
+        date_range = datetime.now() - timedelta(weeks=int(past_month) * 4)
     accounts = yield User.objects.order_by('last_name', direction=ASCENDING).find_all()
 
     filename = 'user-accounts-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
@@ -75,6 +78,9 @@ def download_user_accounts(self):
                 date_last_ride.strftime('%Y-%m-%d')
             fullname = a.first_name + ' ' + a.last_name
             if email.lower() in a.email.lower() or email.lower() in fullname.lower():
+                if date_range != '':
+                    if a.create_at <= date_range:
+                        continue
                 writer.writerow({
                     'Full Name': a.first_name+ " " + a.last_name,
                     'Mobile Number': a.phone_number,
