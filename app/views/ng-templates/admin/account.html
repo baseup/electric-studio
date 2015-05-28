@@ -37,7 +37,7 @@
 
               <dl ng-if="user.status != 'Frozen'">
                 <dt>Class Package</dt>
-                <a title="Buy Package" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
+                <a  ng-if="user.status != 'Deactivated'" title="Buy Package" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
                 <dd class="">{{ user.credits }} Classes Left</dd>
               <!-- <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd> -->
               </dl>
@@ -51,20 +51,20 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a ng-if="getAccess('accounts', 'update')" title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
+            <a ng-if="getAccess('accounts', 'update') && user.status != 'Deactivated'" title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
               <i class="fa fa-plus"></i> Class
             </a>
             <ul class="nav float--right">
-              <li>
+              <li ng-if="user.status != 'Deactivated'">
                 <a href="" title="Account Info" ng-click="accountInfo(user)"><i class="fa fa-info-circle"></i></a>
               </li>
-              <li>
+              <li ng-if="user.status != 'Deactivated'">
                 <a href="" title="Package Summary" ng-click="accountSummary(user)"><i class="fa fa-bars"></i></a>
               </li>
-              <li>
+              <li ng-if="user.status != 'Deactivated'">
                 <a href="" title="Schedules" ng-click="accountSchedules(user)"><i class="fa fa-book"></i></a>
               </li>
-              <li ng-if="getAccess('accounts', 'freeze')">
+              <li ng-if="getAccess('accounts', 'freeze') && user.status != 'Deactivated'">
                 <a title="Froze Account" ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
                 <a title="Unfroze Account" ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
               </li>
