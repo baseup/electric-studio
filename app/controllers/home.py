@@ -15,7 +15,9 @@ import json
 import base64
 
 def index(self):
-    self.render('index', loginUser=self.get_secure_cookie('loginUser'))
+    user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+    user = yield User.objects.get(user_id)
+    self.render('index', loginUser=self.get_secure_cookie('loginUser'), credits=user.credits)
 
 def login(self):
     email = self.get_argument('email')
@@ -171,21 +173,23 @@ def buy(self):
                         transaction = yield transaction.save()
                         user = yield user.save()
 
+                        pack_name = package.name;
+                        if not pack_name:
+                            pack_name = package.credits + ' Ride' + ('s' if package.credits > 1 else '')
+
                         user = (yield User.objects.get(user._id)).serialize()
                         site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
                         exp_date = transaction.create_at + timedelta(days=transaction.expiration)
-                        content = str(self.render_string('emails/buy', user=user, site=site_url, package=package.name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
+                        content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
                         yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
 
-                        self.redirect('/#/account?pname=' + package.name + '&s=success#packages')
+                        self.redirect('/#/account?pname=' + pack_name + '&s=success#packages')
                     else:
                         self.set_status(403)
-                        self.write('Invalid User Status')
-                        self.finish()
+                        self.redirect('/#/rates?s=error')
                 else:
                     self.set_status(403)
-                    self.write('Package not found')
-                    self.finish()
+                    self.redirect('/#/rates?s=error')
             except:
                 value = sys.exc_info()[1]
                 self.set_status(403)
