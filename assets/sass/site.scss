@@ -171,7 +171,7 @@ body {
   letter-spacing: 2px;
   cursor: default;
   font-size: 14px;
-  display: none;
+  display: block;
   padding: $base-spacing-unit / 2 0;
   text-align: left;
   
@@ -1597,7 +1597,7 @@ body {
 
 /* faq */
 .faq.content {
-
+  
   ul{
     padding-left: 10px;
     margin: 20px 0 0 10px;
@@ -2021,7 +2021,8 @@ body {
     border-radius: 50%;
     overflow: hidden;
     margin: 0 auto;
-    
+    position: relative;
+
     @include breakpoint(md) {
       height: 120px;
       width: 120px;
@@ -2030,8 +2031,11 @@ body {
     img {
       max-width: 175px !important; 
       width: 175px;
-      left: -30px;
-      position: relative
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+      -moz-transform: translateX(-50%);
+      transform: translateX(-50%);
+      position: absolute;
     }
   }
 
