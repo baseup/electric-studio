@@ -407,7 +407,7 @@ def add_access_types(self):
         yield a.delete()
 
     analytics = Privilege(module='analytics', actions=['read'])
-    accounts = Privilege(module='accounts', actions=['create', 'update','read', 'freeze', 'unfreeze', 'delete', 'update_expiration'])
+    accounts = Privilege(module='accounts', actions=['create', 'update','read', 'freeze', 'unfreeze', 'delete', 'update_expiration', 'export_data'])
     packages = Privilege(module='packages', actions=['read', 'update_expiration'])
     schedules = Privilege(module='schedules', actions=['create', 'read', 'update', 'delete', 'move_bike'])
     users = Privilege(module='users', actions=['create', 'read', 'update', 'delete'])

@@ -2,10 +2,22 @@
   <div class="content-filter pad cf border--bottom">
     <div class="content-filter__item space--right">
       <span class="label">Search  </span>
-      <input class="text-input" placeholder="Enter Name or Email" ng-model="searchText">
-      <button class="btn btn--small btn--tertiary float--right" ng-click="downloadUserAccounts()">Export User Accounts List</button>
+      <div class="bp-md-one-fourth float--left space--bottom space--right">
+        <input class="text-input" placeholder="Enter Name or Email" ng-model="searchText">
+      </div>
+      <div class="float--left" ng-if="getAccess('accounts', 'export_data')">
+        <select ng-change="reload()" class="select" id="select-account-time" ng-model="dateFilter">
+          <option selected value="0">Ever since opening</option>
+          <option value="12">Past 12 months</option>
+          <option value="6">Past 6 months</option>
+          <option value="3">Past 3 months</option>
+          <option value="1">Past month</option>
+        </select>
+      </div>
+      <button ng-if="getAccess('accounts', 'export_data')" class="btn btn--small btn--tertiary float--right" ng-click="downloadUserAccounts()">Export User Accounts List</button>
       <button ng-if="getAccess('accounts', 'create')" ng-click="showAddAccount()" class="btn btn--small btn--primary space--right float--right" data-modal-toggle="add-account">Add Account</button>
     </div>
+
   </div>
 
 
