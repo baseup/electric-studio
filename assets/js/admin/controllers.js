@@ -906,6 +906,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   $scope.sendNewBook = function () {
 
+
+
     var now = new Date();
     var parts = $scope.schedDetails.start.split(/[^0-9]/);
     var dTime =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
@@ -923,13 +925,16 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       $.Notify({ content: 'Booking 1 month in advance is prohibited' });
       return;
     }
+    $scope.booking = true;
     $.Alert('Booking bike # ' + $scope.newBook.seat_number + ' ...', true);
     ClassService.save($scope.newBook, function (savedBook) {
       $scope.reload();
       angular.element('#select-user-id')[0].selectize.setValue('');
+      $scope.booking = false;
       $('#alert-close-btn').click();
     }, function (error) {
       $('#alert-close-btn').click();
+      $scope.booking = false;
       $.Notify({ content: error.data });
     });
   }
@@ -948,12 +953,15 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     }
 
     $scope.newWaitlist.status = 'waitlisted';
+    $scope.waitlisting = true;
     $.Alert('waitlisting user ' + $scope.selectedRider.first_name + ' ' + $scope.selectedRider.last_name + ' ...', true);
     ClassService.save($scope.newWaitlist, function (savedBook) {
       $scope.reload();
       angular.element('#select-waitlist-user')[0].selectize.setValue('');
+      $scope.waitlisting = false;
       $('#alert-close-btn').click();
     }, function (error) {
+      $scope.waitlisting = false
       $('#alert-close-btn').click();
       $.Notify({ content: error.data });
     });
