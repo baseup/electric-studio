@@ -20,6 +20,31 @@ routes.when('pos.transaction_products.find_one', 'auth.api')
 routes.when('pos.users.find', 'auth.api')
 routes.when('pos.users.find_one', 'auth.api')
 
+# admin access
+routes.when('admin.user.create', 'auth.access')
+routes.when('admin.user.update', 'auth.access')
+routes.when('admin.user.destroy', 'auth.access')
+routes.when('api.admin.create', 'auth.access')
+routes.when('api.admin.update', 'auth.access')
+routes.when('api.admin.destroy', 'auth.access')
+routes.when('admin.instructor.create', 'auth.access')
+routes.when('admin.instructor.update', 'auth.access')
+routes.when('admin.instructor.destroy', 'auth.access')
+routes.when('admin.package.create', 'auth.access')
+routes.when('admin.package.update', 'auth.access')
+routes.when('admin.package.destroy', 'auth.access')
+routes.when('admin.slider.create', 'auth.access')
+routes.when('admin.slider.update', 'auth.access')
+routes.when('admin.slider.destroy', 'auth.access')
+routes.when('admin.schedule.create', 'auth.access')
+routes.when('admin.schedule.update', 'auth.access')
+routes.when('admin.schedule.destroy', 'auth.access')
+routes.when('admin.transaction.create', 'auth.access')
+routes.when('admin.transaction.update', 'auth.access')
+routes.when('admin.transaction.destroy', 'auth.access')
+routes.when('admin.buy', 'auth.access')
+
+
 routes.get('/', 'home.index')
 routes.get('/buy', 'home.buy')
 routes.post('/buy', 'home.buy')
@@ -40,7 +65,7 @@ routes.get('/remove_test_waitlist', 'home.remove_test_waitlist')
 routes.get('/package_migrate', 'home.package_migrate')
 routes.get('/schedule_migrate', 'home.schedule_migrate')
 routes.get('/add_branch', 'home.add_branch')
-
+routes.get('/add_access_types', 'home.add_access_types')
 routes.prefix('/admin', [
 
     ('get', '/?', 'admin.index'),
@@ -49,6 +74,7 @@ routes.prefix('/admin', [
     ('get', '/login', 'admin.login'),
     ('post', '/login', 'admin.login'),
     ('get', '/logout', 'admin.logout'),
+    ('get', '/privileges', 'admin.privileges'),
 
     ('resource', '/security', 'admin.security'),
     ('resource', '/setting', 'admin.setting'),
@@ -59,6 +85,7 @@ routes.prefix('/admin', [
     ('resource', '/schedule', 'admin.schedule'),
     ('resource', '/instructor/schedules', 'admin.instructor_schedules'),
     ('resource', '/slider', 'admin.slider'),
+    ('resource', '/access', 'admin.access'),
 
     ('get', '/export/download-bookings', 'admin.export.download_bookings'),
     ('get', '/export/waitlist', 'admin.export.waitlist'),

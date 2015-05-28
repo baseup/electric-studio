@@ -5,6 +5,165 @@ var ctrls = angular.module('elstudio.controllers.admin', [
   'angularFileUpload'
 ]);
 
+ctrls.controller('UserCtrl', function ($scope, AdminService, AccessService, SecurityService) {
+
+  $scope.showAddUser = function () {
+    $scope.newUser = {};
+    $scope.newUser.access_type = 'Staff';
+    angular.element('#add-user-modal').Modal();
+  }
+
+  AdminService.query(function (users) {
+    $scope.users = {};
+    var user_tmp = [];
+    var i = 0;
+    angular.forEach(users, function (user) {
+      AccessService.get({ accessId : user.access_type }, function (accessInfo) {
+        i++;
+         $scope.users[i] = user; 
+         $scope.users[i]['admin_type'] = accessInfo.admin_type
+      })
+    });
+  });
+
+  $scope.addUser = function () {
+
+    if ($scope.newUser) {
+      if (!$scope.newUser.first_name) {
+        $.Alert('User must have first name')
+        return;
+      }
+      
+      if (!$scope.newUser.last_name) {
+        $.Alert('User must have last name')
+        return;
+      }
+      
+      if (!$scope.newUser.email) {
+        $.Alert('User must have email address')
+        return;
+      }
+
+      if (!$scope.newUser.password || $scope.newUser.password.length == 0) {
+        $.Alert('Password is required');
+        return;
+      }
+
+      if ($scope.newUser.password && $scope.newUser.password.length < 6) {
+        $.Alert('Password must be at least 6 characters.');
+        return;
+      }
+
+      if ($scope.newUser.password != $scope.newUser.confirm_password) {
+        $.Alert("Password didn't match");
+        return;
+      }
+      
+
+      var addSuccess = function () {
+        AdminService.query(function (users) {
+          $scope.users = users;
+          var user_tmp = [];
+          var i = 0;
+          angular.forEach(users, function (user) {
+            AccessService.get({ accessId : user.access_type }, function (accessInfo) {
+              i++;
+               $scope.users[i] = user; 
+               $scope.users[i]['admin_type'] = accessInfo.admin_type
+            })
+          });
+        });
+        $scope.newUser = null;
+        angular.element('#close-add-user').click();
+      }
+
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
+
+      AdminService.create($scope.newUser).$promise.then(addSuccess, addFail);
+    }
+  }
+
+  var chkSecurity = function (securityCallback) {
+
+    $('#btn-security').off('click');
+    $('#btn-security').click(function () {
+      $scope.$apply(function () {
+        if ($scope.securityPass) {
+          SecurityService.check({ sudopass: $scope.securityPass }, function () {
+            securityCallback();
+            $scope.securityPass = null;
+          }, function (error) {
+            $.Alert(error.data);
+            $scope.securityPass = null;
+          });
+        } else {
+          $.Alert('Access Denied');
+          $scope.securityPass = null;
+        }
+      });
+    });
+
+    $('#security-check-modal').Modal();
+  }
+
+  $scope.setToUpdate = function (user) {
+    $scope.isUpdateUser = true;
+    $scope.updateUser = user;
+  }
+
+  $scope.cancelUpdateUser = function () {
+    $scope.isUpdateUser = false;
+    $scope.updateUser = null;
+  }
+
+  $scope.setUser = function () {
+
+    if ($scope.updateUser) {
+      var updateSuccess = function () {
+        AdminService.query(function (users) {
+          $scope.users = users;
+          var user_tmp = [];
+          var i = 0;
+          angular.forEach(users, function (user) {
+            AccessService.get({ accessId : user.access_type }, function (accessInfo) {
+              i++;
+               $scope.users[i] = user; 
+               $scope.users[i]['admin_type'] = accessInfo.admin_type
+            })
+          });
+        });
+        $scope.isUpdateUser = false;
+        $scope.updateUser = null;
+      }
+
+      var updateFail = function (error) {
+        $.Alert(error.data);
+      }
+      AdminService.update({ adminId: $scope.updateUser._id }, $scope.updateUser).$promise.then(updateSuccess, updateFail);
+    }
+  }
+
+  $scope.removeUser = function (user) {
+    $.Confirm('Are you want to delete ' + user.first_name+ ' ?', function () {
+      var removeSuccess = function () {
+        AdminService.query().$promise.then(function (data) {
+          $scope.users = data;
+        });
+      }
+
+      var removeFailed = function (error) {
+        $.Alert(error.data);
+      }
+
+      // chkSecurity(function () {
+        AdminService.delete({adminId : user._id}).$promise.then(removeSuccess, removeFailed);
+      // });   
+    });
+  }
+});
+
 ctrls.controller('PackageCtrl', function ($scope, PackageService) {
 
   $scope.showAddPackage = function () {
@@ -96,7 +255,6 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
 });
 
 ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserService, PackageService, TransactionService, ClassService, SecurityService, EmailVerifyService) {
-
   
   var qstring = $location.search();
   if (qstring.s) {
@@ -998,7 +1156,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
 
 ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, InstructorService) {
-  
+
   var calendar = angular.element('.calendar');
   calendar.fullCalendar({
     defaultView: 'agendaWeek',

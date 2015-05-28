@@ -8,7 +8,12 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 
 });
 
-ctrls.controller('AdminCtrl', function ($scope){
+ctrls.controller('AdminCtrl', function ($scope, PrivilegeService){
+
+    $scope.access = PrivilegeService.query();
+    $scope.access.$promise.then(function (data) {
+      $scope.access = data.privileges;
+    });
     
     angular.element('.sidebar-toggle').off('click').on('click', function() {
       angular.element('.page-sidebar').toggleClass('toggle');
@@ -34,5 +39,12 @@ ctrls.controller('AdminCtrl', function ($scope){
       formatSubmit: 'yyyy-mm-dd',
       today: false
     });
+
+    $scope.getAccess = function (module, action) {
+      if ($scope.access && $scope.access[module]){
+        return $scope.access[module].indexOf(action) >= 0;
+      }
+      return false;
+    }
   
 });

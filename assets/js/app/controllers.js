@@ -195,8 +195,8 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
   $scope.signingUp = false;
   $scope.signUp = function () {
     $scope.signupError = null;
-    $scope.signingUp = true;
     if ($scope.user) {
+      $scope.signingUp = true;
       if (!$scope.user.email || $scope.user.email.length == 0) {
         $scope.signupError = 'Email Address is required';
         return;
@@ -489,7 +489,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 
     $scope.deactivateAccount = function () {
       var user = $scope.loginUser;
-      $.Confirm('Are you sure you want to deactivate your account?' , function () {
+      $.Confirm('Are you sure you want to delete your account?' , function () {
         $.Prompt('User Password', function (password) {
           UserService.delete({ userId: user._id, pass: password }, function () {
             $.Alert('Account successfully deactivated');

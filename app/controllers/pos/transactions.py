@@ -8,11 +8,25 @@ import json
     
 def find(self):
     transactions = yield UserPackage.objects.find_all()
+    for i, transaction in enumerate(transactions):
+        product = transaction.package_id.to_dict()
+        user = transaction.user_id.to_dict()
+        del user['password']
+        transaction = transaction.to_dict()
+        transaction['user_id'] = user
+        transaction['package_id'] = product
+        transactions[i] = transaction
     self.render_json(transactions)
 
 def find_one(self, id):
     transaction = yield UserPackage.objects.get(id)
     if transaction:
+        user = transaction.user_id.to_dict()
+        product = transaction.package_id.to_dict()
+        del user['password']
+        transaction = transaction.to_dict()
+        transaction['user_id'] = user
+        transaction['package_id'] = product
         self.render_json(transaction)
     else:
         result = {
