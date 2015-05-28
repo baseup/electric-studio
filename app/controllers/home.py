@@ -15,9 +15,12 @@ import json
 import base64
 
 def index(self):
-    user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-    user = yield User.objects.get(user_id)
-    self.render('index', loginUser=self.get_secure_cookie('loginUser'), credits=user.credits)
+    user_credits = 0;
+    if self.get_secure_cookie('loginUserID'):
+        user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+        user = yield User.objects.get(user_id)
+        user_credits = user.credits
+    self.render('index', loginUser=self.get_secure_cookie('loginUser'), credits=user_credits)
 
 def login(self):
     email = self.get_argument('email')
