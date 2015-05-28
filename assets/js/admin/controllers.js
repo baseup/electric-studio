@@ -178,6 +178,10 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   $scope.addPackage = function () {
 
     if ($scope.newPackage) {
+      if (!$scope.newPackage.name) {
+        $.Alert('Package must have name')
+        return;
+      }
       
       if (!$scope.newPackage.fee) {
         $.Alert('Package must have price')

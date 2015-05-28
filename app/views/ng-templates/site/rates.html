@@ -31,7 +31,7 @@
           <input type="hidden" name="bn" value="PP-BuyNowBF">
           <input type="hidden" name="rm" value="2">
           <input type="hidden" name="business" value="ogsmelvin05-facilitator@gmail.com">
-          <input type="hidden" name="item_name" value="{{ package.name }}">
+          <input type="hidden" name="item_name" value="{{ package.name || package.credits + ' Ride' + (package.credits > 1 ? 's' : '') }}">
           <input type="hidden" name="item_number" value="{{ package._id }}">
           <input type="hidden" name="amount" value="{{ package.fee }}">
           <input type="hidden" name="currency_code" value="PHP">
