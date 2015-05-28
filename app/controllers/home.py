@@ -424,7 +424,7 @@ def add_access_types(self):
     yield managerAccessType.save()
 
     adminAccessType = AccessType(admin_type='Admin')
-    packages = Privilege(module='packages', actions=['create', 'read', 'update_expiration'])
+    packages = Privilege(module='packages', actions=['create', 'read', 'update_expiration', 'update', 'delete'])
     adminAccessType.privileges = [analytics, packages, instructors, sliders, settings, transactions, schedules, accounts, settings, users]
     yield adminAccessType.save()
 

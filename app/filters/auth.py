@@ -20,9 +20,11 @@ def api(self):
         self.redirect('/#/notfound')
 
 def access(self):
+    if not self.get_secure_cookie('admin') and self.get_secure_cookie('privileges'):
+        self.redirect('/admin/login')
+        
     uri = self.request.uri.split('/')
     module, param_id = '', ''
-
     privileges = self.get_secure_cookie('privileges')
     privileges = tornado.escape.json_decode(privileges)
     forbid_access = False

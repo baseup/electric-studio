@@ -62,7 +62,7 @@ ctrls.controller('UserCtrl', function ($scope, AdminService, AccessService, Secu
 
       var addSuccess = function () {
         AdminService.query(function (users) {
-          $scope.users = users;
+          $scope.users = {};
           var user_tmp = [];
           var i = 0;
           angular.forEach(users, function (user) {

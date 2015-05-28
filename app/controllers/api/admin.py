@@ -69,6 +69,7 @@ def destroy(self, id):
     del_admin = yield Admin.objects.get(id)
     instructor = yield Instructor.objects.get(admin=del_admin._id)
     del_admin.delete()
-    instructor.delete()
+    if instructor:
+        instructor.delete()
     self.finish()
 
