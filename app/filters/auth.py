@@ -53,6 +53,7 @@ def access(self):
 
     if forbid_access:
         self.set_status(403)
+        self.write("Access Denied")
         self.finish()
 
 

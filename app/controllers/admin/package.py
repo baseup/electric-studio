@@ -40,6 +40,7 @@ def update(self, id):
         package.description = data['description']
         package.expiration = data['expiration']
         package.credits = data['credits']
+        package.first_timer = bool(data['first_timer']);
         package = yield package.save()
     except:
         value = sys.exc_info()[1]
