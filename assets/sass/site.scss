@@ -1902,6 +1902,15 @@ body {
         }
       }
     } 
+  }
+
+  .fake-center {
+    @include breakpoint(md) {
+      max-width: 500px;
+      margin: 0 auto;
+      position: relative;
+      left: -27px;
+    }
   } 
 }
 
