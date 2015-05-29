@@ -28,7 +28,7 @@
         <a ng-class="{ row: monday, unavailable: chkSched(monDate, monday), full: isFull(monday) }" ng-repeat="monday in schedules.mon">
           <span class="time">{{ monday.start | formatTime }}</span>
           <span class="instructor">{{ monday.instructor.admin.first_name }}</span>
-          <span class="schedtype">{{ monday.type }}</span><br/>
+          <span class="schedtype">{{ monday.type }}</span>
           <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, monDate)">
             {{ isFull(monday) ? 'waitlist' : 'reserve' }}
           </button>

@@ -21,7 +21,8 @@
         <p>{{ package.description || '&nbsp;' }}</p>
         <h2>
           <span>{{ package.first_timer ? '1st Timer' : '' }}</span>
-          {{ package.credits }} <span>Ride{{ package.credits > 1 ? 's' : '' }}</span>
+          <span class="credits">{{ package.credits }}</span>
+          <span>Ride{{ package.credits > 1 ? 's' : '' }}</span>
         </h2>
         <p class="price">PHP {{ package.fee | currency:'' }}</p>
         <p>Expires in {{ package.expiration }} days</p>
