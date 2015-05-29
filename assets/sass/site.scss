@@ -228,23 +228,33 @@ body {
   position: relative;
   padding: 15px 0 10px 0;
   
+  .account-menu__list.active {
+    display: block;
+  }
+
   @include breakpoint(md) {
     position: absolute;
     right: 20px;
     bottom: 66px;
     text-align: right;
     display: block;
+
+    .account-menu__list.active {
+      display: none;
+    }
+
+
+    &:hover { 
+      .account-menu__list {
+        display: block;
+      }
+    }
   }
   
   @include breakpoint(lg) {
     right: 100px;
   }
   
-  &:hover { 
-    .account-menu__list {
-      display: block;
-    }
-  }
   
   .account-menu__options {
     font-size: 14px;
