@@ -1327,8 +1327,6 @@ body {
     height: 100px;
     width: 100px;
     padding-top: 14px;
-    font-size: 40px;
-    font-family: Tungsten;
     font-weight: 300;
     background: #fff;
     color: $brand-color-primary;
@@ -1356,6 +1354,12 @@ body {
       font-size: 16px;
       text-transform: uppercase;
       font-family: Brandon_Grotesque;
+    
+      &.credits {
+        font-size: 70px;
+        font-family: Tungsten;
+        padding-left: 2px;
+      }
     }
   }
   
