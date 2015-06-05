@@ -36,8 +36,8 @@ def login(self):
     else:
         username = self.get_argument('username')
         password = self.get_argument('password')
-
-        admin = yield Admin.objects.get(username=username)
+        instructor = yield AccessType.objects.get(admin_type='Instructor')
+        admin = yield Admin.objects.get(username=username, access_type__ne=instructor)
         invalid = False
         try:
             if not admin or not bcrypt.verify(password, admin.password):

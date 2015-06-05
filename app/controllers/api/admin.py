@@ -7,7 +7,8 @@ import json
 import sys
     
 def find(self):
-    administrators = yield Admin.objects.find_all()
+    access_type = yield AccessType.objects.get(admin_type='Instructor')
+    administrators = yield Admin.objects.filter(access_type__ne=access_type).find_all()
     self.render_json(administrators)
 
 def find_one(self, id):
@@ -67,9 +68,6 @@ def update(self, id):
 
 def destroy(self, id):
     del_admin = yield Admin.objects.get(id)
-    instructor = yield Instructor.objects.get(admin=del_admin._id)
     del_admin.delete()
-    if instructor:
-        instructor.delete()
     self.finish()
 

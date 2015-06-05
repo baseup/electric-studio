@@ -322,7 +322,7 @@ def add_regular_schedule(self):
         if admin:
             yield admin.delete()
 
-    access = yield AccessType.objects.get(admin_type='Manager')
+    access = yield AccessType.objects.get(admin_type='Instructor')
 
     adkris = Admin(username='kris', password=bcrypt.encrypt('kris'), first_name='kris', last_name='kris', email='kris@electric.com', access_type=access._id)
     adkris = yield adkris.save()
@@ -426,12 +426,14 @@ def add_access_types(self):
     staffAccessType = AccessType(admin_type='Staff')
     yield staffAccessType.save()
 
+    staffAccessType = AccessType(admin_type='Instructor')
+    yield staffAccessType.save()
+
     managerAccessType = AccessType(admin_type='Manager')
     managerAccessType.privileges = [analytics, packages, instructors, sliders, settings, transactions, schedules, accounts, settings]
     yield managerAccessType.save()
 
     adminAccessType = AccessType(admin_type='Admin')
-    packages = Privilege(module='packages', actions=['create', 'read', 'update_expiration', 'update', 'delete'])
     adminAccessType.privileges = [analytics, packages, instructors, sliders, settings, transactions, schedules, accounts, settings, users]
     yield adminAccessType.save()
 
