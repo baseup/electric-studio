@@ -456,11 +456,11 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   }
 
   $scope.accountAddClass = function (user) {
-    chkSecurity(function () {
+    //chkSecurity(function () {
       $scope.newCredits.user_id = user._id;
       $scope.selectedAccount = user;
       angular.element('#add-class-modal').Modal();
-    });
+    //});
   }
 
   $scope.buyPackageModal = function (user) {
@@ -471,7 +471,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
     $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/admin/buy';
 
-    chkSecurity(function () {
+    //chkSecurity(function () {
       $scope.selectedAccount = user;
       if (!($scope.selectedAccount.billing instanceof Object)) {
         $scope.selectedAccount.billing = JSON.parse($scope.selectedAccount.billing);
@@ -480,7 +480,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
         } 
       }
       angular.element('#buy-package-modal').Modal();
-    });
+    //});
   }
 
   var chkSecurity = function (securityCallback) {
