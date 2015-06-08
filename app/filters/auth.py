@@ -37,24 +37,28 @@ def access(self):
         if module == 'admin':
             module = 'user'
         module+='s'
+        
+    if not module in privileges:
+        if 'manual_buy' not in privileges['accounts']:
+            forbid_access = True
+    else:
+        if self.request.method == 'GET':
+            if 'read' not in privileges[module]:
+                forbid_access = True
+        if self.request.method == 'POST':
+            if 'create' not in privileges[module]:
+                forbid_access = True
+        if self.request.method == 'PUT':
+            if 'update' not in privileges[module]:
+                forbid_access = True
+        if self.request.method == 'DELETE':
+            if 'delete' not in privileges[module]:
+                forbid_access = True
 
-    if self.request.method == 'GET':
-        if 'read' not in privileges[module]:
-            forbid_access = True
-    if self.request.method == 'POST':
-        if 'create' not in privileges[module]:
-            forbid_access = True
-    if self.request.method == 'PUT':
-        if 'update' not in privileges[module]:
-            forbid_access = True
-    if self.request.method == 'DELETE':
-        if 'delete' not in privileges[module]:
-            forbid_access = True
-
-    if forbid_access:
-        self.set_status(403)
-        self.write("Access Denied")
-        self.finish()
+        if forbid_access:
+            self.set_status(403)
+            self.write("Access Denied")
+            self.finish()
 
 
 

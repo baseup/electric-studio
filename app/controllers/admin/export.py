@@ -5,6 +5,7 @@ from app.models.packages import UserPackage
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import csv
+from dateutil.relativedelta import relativedelta
 
 def download_bookings(self):
     sched_id = self.get_query_argument('sched_id')
@@ -45,15 +46,12 @@ def download_bookings(self):
 def download_user_accounts(self):
     email = self.get_query_argument('email')
     past_month = self.get_query_argument('past_month')
-    date_range = None;
-    print (past_month);
+    date_range = None
     if past_month:
-        date_range = datetime.now() - timedelta(weeks=int(past_month) * 4)
-
-    query = User.objects.order_by('last_name', direction=ASCENDING);
+        date_range = datetime.now() - relativedelta(months=+int(past_month))
+    query = User.objects.order_by('last_name', direction=ASCENDING)
     if date_range:
         query.filter(create_at__gte=date_range)
-
     accounts = yield query.find_all()
 
     filename = 'user-accounts-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
@@ -65,7 +63,7 @@ def download_user_accounts(self):
         for a in accounts:
             bookings = yield BookedSchedule.objects.filter(user_id=a._id).find_all()
             transactions = yield UserPackage.objects.filter(user_id=a._id).find_all()
-            total_rides_bought, total_riddes_missed, total_riddes_booked  = 0, 0, 0
+            total_rides_bought, total_rides_missed, total_rides_booked  = 0, 0, 0
             date_last_ride = ''
             for transaction in transactions:
                 total_rides_bought += transaction.credit_count
@@ -77,9 +75,9 @@ def download_user_accounts(self):
                         if date_last_ride < book.schedule.date:
                             date_last_ride = book.schedule.date
                     if book.status == 'missed':
-                        total_riddes_missed+=1
+                        total_rides_missed+=1
                     if book.status == 'booked':
-                        total_riddes_booked+=1
+                        total_rides_booked+=1
 
             if date_last_ride != '':
                 date_last_ride.strftime('%Y-%m-%d')
@@ -90,10 +88,10 @@ def download_user_accounts(self):
                     'Mobile Number': a.phone_number,
                     'Email Address': a.email,
                     'Account Status': a.status,
-                    '# of Rides Bought': '' ,
-                    '# of Rides Booked': total_riddes_booked,
+                    '# of Rides Bought': total_rides_bought,
+                    '# of Rides Booked': total_rides_booked,
                     '# of Active Rides': a.credits,
-                    '# of Missed Class': total_riddes_missed,
+                    '# of Missed Class': total_rides_missed,
                     'Date Account Created': a.create_at.strftime('%Y-%m-%d'),
                     'Date of Last Ride': date_last_ride
                 })
