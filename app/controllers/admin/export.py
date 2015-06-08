@@ -119,16 +119,18 @@ def waitlist(self):
             filename = 'waitlisted-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
 
             with open(filename, 'w') as csvfile:
-                fieldnames = ['first_name', 'last_name', 'date', 'notes', 'created at']
+                fieldnames = ['First Name', 'Last Name', 'Email', 'Phone Number', 'Date', 'Notes', 'Created at']
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writeheader()
                 for b in scheds:
                     writer.writerow({
-                        'first_name': b.user_id.first_name,
-                        'last_name': b.user_id.last_name,
-                        'date': b.date.strftime('%Y-%m-%d'),
-                        'notes': b.notes,
-                        'created at': b.create_at.strftime('%Y-%m-%d %H:%M:%S')
+                        'First Name': b.user_id.first_name,
+                        'Last Name': b.user_id.last_name,
+                        'Email': b.user_id.email,
+                        'Phone Number': b.user_id.phone_number,
+                        'Date': b.date.strftime('%Y-%m-%d'),
+                        'Notes': b.notes,
+                        'Created at': b.create_at.strftime('%Y-%m-%d %H:%M:%S')
                     })
 
             buf_size = 4096
