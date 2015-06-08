@@ -420,7 +420,7 @@ def add_access_types(self):
     users = Privilege(module='users', actions=['create', 'read', 'update', 'delete'])
     instructors = Privilege(module='instructors', actions=['create', 'read', 'update', 'delete'])
     sliders = Privilege(module='sliders', actions=['read', 'update', 'create', 'delete'])
-    transactions = Privilege(module='transactions', actions=['read'])
+    transactions = Privilege(module='transactions', actions=['read', 'create', 'update', 'delete'])
     settings = Privilege(module='settings', actions=['read', 'block_bike'])
 
     staffAccessType = AccessType(admin_type='Staff')
