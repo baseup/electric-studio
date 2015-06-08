@@ -178,10 +178,6 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   $scope.addPackage = function () {
 
     if ($scope.newPackage) {
-      if (!$scope.newPackage.name) {
-        $.Alert('Package must have name')
-        return;
-      }
       
       if (!$scope.newPackage.fee) {
         $.Alert('Package must have price')
@@ -576,6 +572,20 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
       $scope.selectedAccount = summary;
     });
     angular.element('#account-summary-modal').Modal();
+  }
+
+  $scope.getTransId = function (pac) {
+    if (pac.trans_info) {
+      if (!(pac.trans_info instanceof Object)) {
+        var transInfo = pac.trans_info.replace(/'/g, '"');
+        var trans = JSON.parse(transInfo);
+        pac.trans_info = trans;
+        return trans.transaction;
+      } else {
+        return pac.trans_info.transaction;
+      }
+    }
+    return null;
   }
 
   var from_input = angular.element('#input_from').pickadate({
