@@ -14,15 +14,13 @@ def find(self):
         if ft_package_count > 0:
             has_first_timer = True
 
-    new_pack = yield Package.objects.order_by('create_at', direction=DESCENDING).limit(1).find_all();
     if has_first_timer:
-        packages = yield Package.objects.filter(id__ne=new_pack[0]._id,first_timer=False).order_by('credits', direction=ASCENDING).find_all()
-        packages.insert(0, new_pack[0]);
+        packages = yield Package.objects.filter(first_timer=False).order_by('credits', direction=ASCENDING).find_all()
         self.render_json(packages)
     else: 
-        packages = yield Package.objects.filter(id__ne=new_pack[0]._id).order_by('credits', direction=ASCENDING).find_all()
-        packages.insert(0, new_pack[0]);
-        self.render_json(packages)
+        ftPackages = yield Package.objects.filter(first_timer=True).order_by('credits', direction=ASCENDING).find_all();
+        packages = yield Package.objects.filter(first_timer=False).order_by('credits', direction=ASCENDING).find_all()
+        self.render_json(ftPackages+packages)
 
 def find_one(self, id):
     package = yield Package.objects.get(id)
