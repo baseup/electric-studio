@@ -2,6 +2,7 @@
 from motorengine.errors import InvalidDocumentError
 from app.models.admins import Instructor, Admin
 from app.models.schedules import InstructorSchedule
+from app.models.access import AccessType
 from datetime import datetime
 from passlib.hash import bcrypt
 
@@ -31,12 +32,14 @@ def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
     try:
-        admin = Admin(username=data['username'],
-                      password=bcrypt.encrypt(data['password']),
+        access_type = yield AccessType.objects.get(admin_type='Instructor')
+        admin = Admin(username=data['first_name'],
+                      password=data['first_name'],
                       first_name=data['first_name'],
                       last_name=data['last_name'],
                       contact_number=data['contact_number'],
-                      email=data['email'])
+                      email=data['email'],
+                      access_type=access_type)
 
         admin = yield admin.save()
         
@@ -63,8 +66,6 @@ def update(self, id):
         if instructor:
             admin = yield Admin.objects.get(instructor.admin._id)
             if admin:
-                admin.username = data['username']
-                admin.password = data['username']
                 admin.first_name = data['first_name']
                 admin.last_name = data['last_name']
                 admin.contact_number = data['contact_number']

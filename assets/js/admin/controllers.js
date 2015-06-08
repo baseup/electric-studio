@@ -123,7 +123,7 @@ ctrls.controller('UserCtrl', function ($scope, AdminService, AccessService, Secu
     if ($scope.updateUser) {
       var updateSuccess = function () {
         AdminService.query(function (users) {
-          $scope.users = users;
+          $scope.users = {};
           var user_tmp = [];
           var i = 0;
           angular.forEach(users, function (user) {
@@ -1806,7 +1806,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
           });
           $scope.picInstructor = null;
           $scope.uploading = false;
-        },
+       },
         function (e) {
           $scope.uploading = false;
           $.Alert(e.data);
