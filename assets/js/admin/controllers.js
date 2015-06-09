@@ -316,7 +316,9 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
           $scope.users = users;
         });
 
-        $scope.sendEmailConfirmation($scope.newAccount);
+        if (!$scope.newAccount.no_email) {
+          $scope.sendEmailConfirmation($scope.newAccount);
+        }
         angular.element('#close-add-account').click();
         $scope.newAccount = {}
         $scope.registeringAccount = false;
