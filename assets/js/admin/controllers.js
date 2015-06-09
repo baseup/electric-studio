@@ -259,7 +259,11 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     } else if (qstring.s == 'exists') {
       $.Alert('Transaction already exists');
     } else if (qstring.s == 'error') {
-      $.Alert('Transaction failed');
+      var msg = '';
+      if (qstring.msg) {
+        msg = ' : ' + qstring.msg; 
+      }
+      $.Alert('Transaction failed' + msg);
     }
     $location.search({ s: null, pname: null });
   }

@@ -61,81 +61,95 @@ def logout(self):
     self.redirect('/admin/')
 
 def buy(self):
+
+    privileges = self.get_secure_cookie('privileges')
+    privileges = tornado.escape.json_decode(privileges)
+    forbid_access = False
+    if 'accounts' not in privileges or 'manual_buy' not in privileges['accounts']:
+        forbid_access = True
+
+    if forbid_access:
+        self.redirect('/admin/#/accounts?s=error&msg=Access Denied')
+
     success = self.get_argument('success')
     if success == 'True':
-        pp_tx = self.get_query_argument('tx')
-        pp_st = self.get_query_argument('st')
-        pp_amt = self.get_query_argument('amt')
-        pp_cc = self.get_query_argument('cc')
-        pp_cm = self.get_query_argument('cm')
-        pp_item = self.get_query_argument('item_number')
 
-        if not pp_tx:
-            self.set_status(403)
-            self.redirect('admin/#/accounts?s=error')
-            return
- 
-        data = {
-            'transaction' : pp_tx,
-            'status' : pp_st,
-            'amount' : pp_amt,
-            'curency' : pp_cc,
-            'cm' : pp_cm,
-            'item_number' : pp_item
-        }
+        user_id = self.get_argument('uid')
+        user = yield User.objects.get(user_id)
+        error = None
+        if user:
 
-        payment_exist = yield UserPackage.objects.get(trans_info=str(data));
-        if payment_exist:
-            self.redirect('/admin/#/accounts?s=exists#packages')
-            return;
-     
-        try: 
-            pid = self.get_argument('pid');
-            package = yield Package.objects.get(pid)
-            if pid:
-                user_id = self.get_argument('uid')
-                user = yield User.objects.get(user_id)
-                
-                if user and user.status != 'Frozen' and user.status != 'Unverified':
-                    transaction = UserPackage()
-                    transaction.user_id = user._id
-                    transaction.package_id = package._id
-                    transaction.package_name = package.name
-                    transaction.package_fee = package.fee
-                    transaction.package_ft = package.first_timer
-                    transaction.credit_count = package.credits
-                    transaction.remaining_credits = package.credits
-                    transaction.expiration = package.expiration
-                    transaction.trans_info = str(data)
-                    user.credits += package.credits
+            pp_tx = self.get_query_argument('tx')
+            pp_st = self.get_query_argument('st')
+            pp_amt = self.get_query_argument('amt')
+            pp_cc = self.get_query_argument('cc')
+            pp_cm = self.get_query_argument('cm')
+            pp_item = self.get_query_argument('item_number')
 
-                    transaction = yield transaction.save()
-                    user = yield user.save()
-
-                    pack_name = package.name;
-                    if not pack_name:
-                        pack_name = package.credits + ' Ride' + ('s' if package.credits > 1 else '')
-
-                    user = (yield User.objects.get(user._id)).serialize()
-                    site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
-                    exp_date = transaction.create_at + timedelta(days=transaction.expiration)
-                    content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
-                    yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
-
-                    self.redirect('/admin/#/accounts?pname=' + pack_name + '&u=' + user['first_name'] + ' ' + user['last_name'] + '&s=success')
-                else:
-                    self.set_status(403)
-                    self.write('Invalid User Status')
-                    self.finish()
-            else:
+            if not pp_tx:
                 self.set_status(403)
-                self.write('Package not found')
-                self.finish()
-        except:
-            value = sys.exc_info()[1]
-            self.set_status(403)
-            self.write(str(value))  
-            self.finish()
+                self.redirect('/admin/#/accounts?s=error')
+                return
+     
+            data = {
+                'transaction' : pp_tx,
+                'status' : pp_st,
+                'amount' : pp_amt,
+                'curency' : pp_cc,
+                'cm' : pp_cm,
+                'item_number' : pp_item
+            }
+
+            user_packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
+            if user_packages:
+                for upack in user_packages:
+                    if pp_tx in upack.trans_info:
+                        self.redirect('/admin/#/accounts?s=exists#packages')
+                        return
+         
+            try: 
+                pid = self.get_argument('pid');
+                package = yield Package.objects.get(pid)
+                if pid:
+                    if user.status != 'Frozen' and user.status != 'Unverified':
+                        transaction = UserPackage()
+                        transaction.user_id = user._id
+                        transaction.package_id = package._id
+                        transaction.package_name = package.name
+                        transaction.package_fee = package.fee
+                        transaction.package_ft = package.first_timer
+                        transaction.credit_count = package.credits
+                        transaction.remaining_credits = package.credits
+                        transaction.expiration = package.expiration
+                        transaction.trans_info = str(data)
+                        user.credits += package.credits
+
+                        transaction = yield transaction.save()
+                        user = yield user.save()
+
+                        pack_name = package.name;
+                        if not pack_name:
+                            pack_name = package.credits + ' Ride' + ('s' if package.credits > 1 else '')
+
+                        user = (yield User.objects.get(user._id)).serialize()
+                        site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                        exp_date = transaction.create_at + timedelta(days=transaction.expiration)
+                        content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
+                        yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
+
+                        self.redirect('/admin/#/accounts?pname=' + pack_name + '&u=' + user['first_name'] + ' ' + user['last_name'] + '&s=success')
+                    else:
+                        error = 'Invalid User Status'
+                else:
+                    error = 'Package not found'
+            except:
+                value = sys.exc_info()[1]
+                error = str(value)
+        else:
+            error = 'User not found'
+
+        if error:
+            self.redirect('/admin/#/accounts?s=error&msg=' + error)
     else:
         self.redirect('/admin/#/accounts')
 
