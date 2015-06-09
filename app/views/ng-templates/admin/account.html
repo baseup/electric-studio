@@ -548,6 +548,9 @@
           <span class="label">Notes</span>
           <textarea class="text-input" cols="3" ng-model="newCredits.notes" placeholder="Indicate reason for free class"></textarea>
         </li>
+        <li>
+          <input type="checkbox" ng-model="newCredits.no_email" /> Do not send email notification
+        </li>
       </ul>
      
       <button type="button" ng-click="saveNewCredits()" class="btn btn--primary btn--medium space--top modal-close">Add</button>
