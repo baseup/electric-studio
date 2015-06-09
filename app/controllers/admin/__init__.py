@@ -103,7 +103,7 @@ def buy(self):
             user_packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
             if user_packages:
                 for upack in user_packages:
-                    if pp_tx in upack.trans_info:
+                    if upack.trans_info and pp_tx in upack.trans_info:
                         self.redirect('/admin/#/accounts?s=exists#packages')
                         return
          
