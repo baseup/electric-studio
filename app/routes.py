@@ -42,7 +42,6 @@ routes.when('admin.schedule.destroy', 'auth.access')
 routes.when('admin.transaction.create', 'auth.access')
 routes.when('admin.transaction.update', 'auth.access')
 routes.when('admin.transaction.destroy', 'auth.access')
-routes.when('admin.buy', 'auth.access')
 
 
 routes.get('/', 'home.index')

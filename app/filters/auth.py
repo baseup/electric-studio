@@ -15,13 +15,16 @@ def api(self):
         if not auth['valid']:
             self.set_status(403)
             self.render_json(auth)
+            return False
     else:
         self.set_status(404)
         self.redirect('/#/notfound')
+        return False
 
 def access(self):
     if not self.get_secure_cookie('admin') and self.get_secure_cookie('privileges'):
         self.redirect('/admin/login')
+        return False
         
     uri = self.request.uri.split('/')
     module, param_id = '', ''
@@ -54,12 +57,12 @@ def access(self):
     else:
         if 'manual_buy' not in privileges['accounts']:
             forbid_access = True
-        pass
     
     if forbid_access:
         self.set_status(403)
         self.write("Access Denied")
         self.finish()
+        return False
 
 
 

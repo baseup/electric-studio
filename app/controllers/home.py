@@ -147,17 +147,20 @@ def buy(self):
                 'item_number' : pp_item
             }
 
-            payment_exist = yield UserPackage.objects.get(trans_info=str(data));
-            if payment_exist:
-                self.redirect('/#/account?s=exists#packages')
-                return;
+            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+            user = yield User.objects.get(user_id)
+
+            user_packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
+            if user_packages:
+                for upack in user_packages:
+                    if pp_tx in upack.trans_info:
+                        self.redirect('/#/account?s=exists#packages')
+                        return;
             
             try: 
                 pid = self.get_argument('pid');
                 package = yield Package.objects.get(pid)
                 if pid:
-                    user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-                    user = yield User.objects.get(user_id)
                     
                     if user.status != 'Frozen' and user.status != 'Unverified':
                         transaction = UserPackage()

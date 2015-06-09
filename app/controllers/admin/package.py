@@ -19,7 +19,7 @@ def create(self):
                           expiration=data['expiration'],
                           credits=data['credits'])
         if 'name' in data:
-            packages.name = data['name']
+            package.name = data['name']
         if 'first_timer' in data: 
             package.first_timer = bool(data['first_timer'])
         if 'description' in data:

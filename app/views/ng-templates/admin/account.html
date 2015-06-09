@@ -54,7 +54,7 @@
 
               <dl ng-if="user.status != 'Frozen'">
                 <dt>Class Package</dt>
-                <a  ng-if="user.status != 'Deactivated'" title="Buy Package" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
+                <a  ng-if="getAccess('accounts', 'manual_buy') && user.status != 'Deactivated' && user.status != 'Unverified'" title="Buy Package" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
                 <dd class="">{{ user.credits }} Classes Left</dd>
               <!-- <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd> -->
               </dl>
@@ -68,7 +68,7 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a ng-if="getAccess('accounts', 'update') && user.status != 'Deactivated'" title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
+            <a ng-if="getAccess('accounts', 'update') && user.status != 'Deactivated' && user.status != 'Unverified'" title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
               <i class="fa fa-plus"></i> Class
             </a>
             <ul class="nav float--right">
