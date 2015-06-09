@@ -68,7 +68,7 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a ng-if="getAccess('accounts', 'update') && user.status != 'Deactivated' && user.status != 'Unverified'" title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
+            <a ng-if="getAccess('accounts', 'complimentary_class') && user.status != 'Deactivated' && user.status != 'Unverified'" title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
               <i class="fa fa-plus"></i> Class
             </a>
             <ul class="nav float--right">
