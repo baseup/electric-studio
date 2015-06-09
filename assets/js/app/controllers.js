@@ -742,7 +742,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       var chkDate = new Date(date);
       chkDate.setHours(time[3] - 1, time[4], 0);
       if (+today >= +chkDate) {
-        $.Alert('You can only book 1 hour before the class or contact studio to book this class')
+        $.Alert('Online booking closes 1 hour before class starts. Please call the studio to book this class.')
         return;
       }
 
