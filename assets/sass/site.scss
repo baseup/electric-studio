@@ -2032,37 +2032,96 @@ body {
   }
 }
 
-.class-instructor {
-  
-  @include breakpoint(md) {
-    margin: -120px 45px 0 0;
-  }
-  
-  .image {   
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    overflow: hidden;
+.class {
+
+  .formation {
+    width: 1000px;
     margin: 0 auto;
-    position: relative;
-
-    @include breakpoint(md) {
-      height: 120px;
-      width: 120px;
-    }
+    text-align: center;
     
-    img {
-      max-width: 175px !important; 
-      width: 175px;
-      left: 50%;
-      -webkit-transform: translateX(-50%);
-      -moz-transform: translateX(-50%);
-      transform: translateX(-50%);
-      position: absolute;
+    &:after {
+      content: '';
+      clear: both;
+      display: block;
+    }
+
+    .seats{
+      max-width: 100%;
+
+      span{
+        border: solid 3px transparent;
+        font-size: 20px;
+        height: 60px;
+        line-height: 60px;
+        width: 60px;
+        background: #fff none repeat scroll 0 0;
+        border-radius: 50%;
+        color: #666;
+        cursor: pointer;
+        display: inline-block;
+        font-weight: bold;
+        text-align: center;
+        margin: 3px;
+        transition: all 1000ms;
+        cursor: pointer;
+
+        &:hover{
+          border-color: #ff8f1c;
+        }
+
+        &.unavailable {
+          background: $brand-color-tertiary;
+          cursor: default;
+        }
+
+        &.selected {
+          background: $brand-color-primary;
+          color: #fff;
+        }
+
+        &.hidden {
+          visibility: hidden;
+          cursor: default;
+        }
+      }
+    }
+
+    .front {
+      width: 174px;
+      display: inline-block;
+      position: relative;
+      vertical-align: middle;
+      margin-bottom: 30px;
+    }
+
+    .back {
+      text-align: left;
+    }
+
+    .instructor{
+      text-align: center;
+
+      .image{
+        left: 50%;
+        margin-left: -75px;
+        border-radius: 150px;
+        height: 150px;
+        overflow: hidden;
+        position: relative;
+        width: 150px;
+
+        img{
+          left: 50%;
+          margin-left: -104px;
+          max-width: none;
+          position: absolute;
+          width: 200px;
+        }
+      }
     }
   }
-
 }
+
 
 .legend {
   list-style: none;
@@ -2088,6 +2147,12 @@ body {
       width: 30px;
       border-radius: 50%;
       margin-right: 10px;
+    }
+
+    &:first-child{
+      &:before{
+        box-shadow: 0 0 2px #ccc;
+      }
     }
     
     &.free:before {
