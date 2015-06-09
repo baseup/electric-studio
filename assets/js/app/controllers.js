@@ -121,6 +121,7 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   }
   var aboutUs = angular.element('#aboutus-section');
   var workouts = angular.element('#workouts-section');
+  var firstRide = angular.element('#firstride-section');
   if (aboutUs.length) {
     var scrollableView = aboutUs.offset().top;
     angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
@@ -129,6 +130,10 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     var scrollableView = workouts.offset().top;
     angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
   }
+  if (firstRide.length) {
+    var scrollableView = firstRide.offset().top;
+    angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+  } 
   
 });
 
