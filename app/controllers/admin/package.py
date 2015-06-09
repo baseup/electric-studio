@@ -15,11 +15,11 @@ def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
     try:
-        package = Package(name=data['name'], 
-                          fee=data['fee'],
+        package = Package(fee=data['fee'],
                           expiration=data['expiration'],
                           credits=data['credits'])
-
+        if 'name' in data:
+            packages.name = data['name']
         if 'first_timer' in data: 
             package.first_timer = bool(data['first_timer'])
         if 'description' in data:
@@ -40,6 +40,7 @@ def update(self, id):
         package.description = data['description']
         package.expiration = data['expiration']
         package.credits = data['credits']
+        package.first_timer = bool(data['first_timer']);
         package = yield package.save()
     except:
         value = sys.exc_info()[1]

@@ -19,11 +19,12 @@ def schedule_watcher():
             expire_date = expire_date.replace(tzinfo=gmt8)
             if expire_date < datetime.now(tz=gmt8):
                 user_pack.status = 'Expired'
-                user = yield User.objects.get(user_pack.user_id._id)
-                user.credits -= user_pack.remaining_credits
+                if user_pack.user_id:
+                    user = yield User.objects.get(user_pack.user_id._id)
+                    user.credits -= user_pack.remaining_credits
 
-                user.save()
-                user_pack.save()
+                    user.save()
+                    user_pack.save()
 
     schedules = yield BookedSchedule.objects.filter(date__lte=now, status__ne='completed') \
                                             .filter(status__ne='cancelled') \
@@ -41,11 +42,12 @@ def schedule_watcher():
                     sched.status = 'cancelled';
                     if sched.user_package:
                         sched.user_package.remaining_credits += 1
+                    if sched.user_id:
+                        user = yield User.objects.get(sched.user_id._id)
+                        user.credits += 1
+                        yield user.save()
                         yield sched.user_package.save()
-                    user = yield User.objects.get(sched.user_id._id)
-                    user.credits += 1
-                    yield user.save()
-                    yield sched.save()
+                        yield sched.save()
 
 # A function that runs before your Tornado app run.
 # This gives you an opportunity to set up your data model, run jobs, or perform some special logic.

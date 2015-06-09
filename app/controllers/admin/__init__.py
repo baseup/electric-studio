@@ -36,8 +36,8 @@ def login(self):
     else:
         username = self.get_argument('username')
         password = self.get_argument('password')
-
-        admin = yield Admin.objects.get(username=username)
+        instructor = yield AccessType.objects.get(admin_type='Instructor')
+        admin = yield Admin.objects.get(username=username, access_type__ne=instructor)
         invalid = False
         try:
             if not admin or not bcrypt.verify(password, admin.password):
@@ -112,13 +112,17 @@ def buy(self):
                     transaction = yield transaction.save()
                     user = yield user.save()
 
+                    pack_name = package.name;
+                    if not pack_name:
+                        pack_name = package.credits + ' Ride' + ('s' if package.credits > 1 else '')
+
                     user = (yield User.objects.get(user._id)).serialize()
                     site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
                     exp_date = transaction.create_at + timedelta(days=transaction.expiration)
-                    content = str(self.render_string('emails/buy', user=user, site=site_url, package=package.name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
+                    content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
                     yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
 
-                    self.redirect('/admin/#/accounts?pname=' + package.name + '&u=' + user['first_name'] + ' ' + user['last_name'] + '&s=success')
+                    self.redirect('/admin/#/accounts?pname=' + pack_name + '&u=' + user['first_name'] + ' ' + user['last_name'] + '&s=success')
                 else:
                     self.set_status(403)
                     self.write('Invalid User Status')

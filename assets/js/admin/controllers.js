@@ -62,7 +62,7 @@ ctrls.controller('UserCtrl', function ($scope, AdminService, AccessService, Secu
 
       var addSuccess = function () {
         AdminService.query(function (users) {
-          $scope.users = users;
+          $scope.users = {};
           var user_tmp = [];
           var i = 0;
           angular.forEach(users, function (user) {
@@ -123,7 +123,7 @@ ctrls.controller('UserCtrl', function ($scope, AdminService, AccessService, Secu
     if ($scope.updateUser) {
       var updateSuccess = function () {
         AdminService.query(function (users) {
-          $scope.users = users;
+          $scope.users = {};
           var user_tmp = [];
           var i = 0;
           angular.forEach(users, function (user) {
@@ -146,7 +146,7 @@ ctrls.controller('UserCtrl', function ($scope, AdminService, AccessService, Secu
   }
 
   $scope.removeUser = function (user) {
-    $.Confirm('Are you want to delete ' + user.first_name+ ' ?', function () {
+    $.Confirm('Are you sure you want to delete ' + user.first_name+ ' ?', function () {
       var removeSuccess = function () {
         AdminService.query().$promise.then(function (data) {
           $scope.users = data;
@@ -178,10 +178,6 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   $scope.addPackage = function () {
 
     if ($scope.newPackage) {
-      if (!$scope.newPackage.name) {
-        $.Alert('Package must have name')
-        return;
-      }
       
       if (!$scope.newPackage.fee) {
         $.Alert('Package must have price')
@@ -272,7 +268,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
 
 
-  UserService.query(function (users) {
+  UserService.query({ deactivated: true}, function (users) {
     $scope.users = users;
   });
 
@@ -316,7 +312,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
       $scope.registeringAccount = true;
       var registerSuccess = function () {
         $.Alert('Successfully added new account')
-        UserService.query(function (users) {
+        UserService.query({ deactivated: true}, function (users) {
           $scope.users = users;
         });
 
@@ -392,7 +388,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
       var verifySuccess = function () {
         $.Alert('Successfully verify account ' + username);
-        UserService.query(function (users) {
+        UserService.query({ deactivated: true}, function (users) {
           $scope.users = users;
         });
       }
@@ -409,7 +405,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     $.Confirm('Are you sure you want to deactivate ' + username + ' account?' , function () {
       var deactivateSuccess = function () {
         $.Alert('Successfully deactivated account ' + username);
-        UserService.query(function (users) {
+        UserService.query({ deactivated: true}, function (users) {
           $scope.users = users;
         });
       }
@@ -426,7 +422,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     $.Confirm('Are you sure you want to activate ' + username + ' account?' , function () {
       var activateSuccess = function () {
         $.Alert('Successfully activated account ' + username);
-        UserService.query(function (users) {
+        UserService.query({ deactivated: true}, function (users) {
           $scope.users = users;
         });
       }
@@ -456,11 +452,11 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   }
 
   $scope.accountAddClass = function (user) {
-    chkSecurity(function () {
+    //chkSecurity(function () {
       $scope.newCredits.user_id = user._id;
       $scope.selectedAccount = user;
       angular.element('#add-class-modal').Modal();
-    });
+    //});
   }
 
   $scope.buyPackageModal = function (user) {
@@ -471,7 +467,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
     $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/admin/buy';
 
-    chkSecurity(function () {
+    //chkSecurity(function () {
       $scope.selectedAccount = user;
       if (!($scope.selectedAccount.billing instanceof Object)) {
         $scope.selectedAccount.billing = JSON.parse($scope.selectedAccount.billing);
@@ -480,7 +476,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
         } 
       }
       angular.element('#buy-package-modal').Modal();
-    });
+    //});
   }
 
   var chkSecurity = function (securityCallback) {
@@ -514,6 +510,17 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     } else {
       $.Alert('Please select a package');
     }
+  }
+
+  $scope.onDateRange = function (user) {
+    if ($scope.dateFilter && $scope.dateFilter != '0') {
+      if ($scope.selectedOption == 'withAvailable') {
+        return user.books.length < stat.seats;  
+      } else if ($scope.selectedOption == 'withWaitlisted') {
+        return user.waitlist.length > 0;
+      }
+    }
+    return true;
   }
 
   // $scope.buyPackage = function () {
@@ -565,6 +572,20 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
       $scope.selectedAccount = summary;
     });
     angular.element('#account-summary-modal').Modal();
+  }
+
+  $scope.getTransId = function (pac) {
+    if (pac.trans_info) {
+      if (!(pac.trans_info instanceof Object)) {
+        var transInfo = pac.trans_info.replace(/'/g, '"');
+        var trans = JSON.parse(transInfo);
+        pac.trans_info = trans;
+        return trans.transaction;
+      } else {
+        return pac.trans_info.transaction;
+      }
+    }
+    return null;
   }
 
   var from_input = angular.element('#input_from').pickadate({
@@ -731,7 +752,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
         var freezeSuccess = function () {
           $.Alert('Successfully freeze account ' + account_name)
-          UserService.query(function (users) {
+          UserService.query({ deactivated: true}, function (users) {
             $scope.users = users;
           });
         }
@@ -753,7 +774,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
       var unFrozeSuccess = function () {
         $.Alert('Successfully unfreeze account ' + name)
-        UserService.query(function (users) {
+        UserService.query({ deactivated: true}, function (users) {
           $scope.users = users;
         });
       }
@@ -768,10 +789,14 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
   $scope.downloadUserAccounts = function () {
     var emailFilter = $scope.searchText;
+    var past_month = $scope.dateFilter;
+    if (!past_month){
+      past_month = '';
+    }
     if (!emailFilter) {
       emailFilter = '';
     }
-    window.location = '/admin/export/download-user-accounts?email=' + emailFilter
+    window.location = '/admin/export/download-user-accounts?email=' + emailFilter + '&past_month=' + past_month
   }
   
 });
@@ -906,6 +931,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   $scope.sendNewBook = function () {
 
+
+
     var now = new Date();
     var parts = $scope.schedDetails.start.split(/[^0-9]/);
     var dTime =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
@@ -923,13 +950,16 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       $.Notify({ content: 'Booking 1 month in advance is prohibited' });
       return;
     }
+    $scope.booking = true;
     $.Alert('Booking bike # ' + $scope.newBook.seat_number + ' ...', true);
     ClassService.save($scope.newBook, function (savedBook) {
       $scope.reload();
       angular.element('#select-user-id')[0].selectize.setValue('');
+      $scope.booking = false;
       $('#alert-close-btn').click();
     }, function (error) {
       $('#alert-close-btn').click();
+      $scope.booking = false;
       $.Notify({ content: error.data });
     });
   }
@@ -948,12 +978,15 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     }
 
     $scope.newWaitlist.status = 'waitlisted';
+    $scope.waitlisting = true;
     $.Alert('waitlisting user ' + $scope.selectedRider.first_name + ' ' + $scope.selectedRider.last_name + ' ...', true);
     ClassService.save($scope.newWaitlist, function (savedBook) {
       $scope.reload();
       angular.element('#select-waitlist-user')[0].selectize.setValue('');
+      $scope.waitlisting = false;
       $('#alert-close-btn').click();
     }, function (error) {
+      $scope.waitlisting = false
       $('#alert-close-btn').click();
       $.Notify({ content: error.data });
     });
@@ -1783,7 +1816,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
           });
           $scope.picInstructor = null;
           $scope.uploading = false;
-        },
+       },
         function (e) {
           $scope.uploading = false;
           $.Alert(e.data);

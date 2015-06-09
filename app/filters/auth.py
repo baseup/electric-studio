@@ -20,9 +20,11 @@ def api(self):
         self.redirect('/#/notfound')
 
 def access(self):
+    if not self.get_secure_cookie('admin') and self.get_secure_cookie('privileges'):
+        self.redirect('/admin/login')
+        
     uri = self.request.uri.split('/')
     module, param_id = '', ''
-
     privileges = self.get_secure_cookie('privileges')
     privileges = tornado.escape.json_decode(privileges)
     forbid_access = False
@@ -36,21 +38,27 @@ def access(self):
             module = 'user'
         module+='s'
 
-    if self.request.method == 'GET':
-        if 'read' not in privileges[module]:
+    if module in privileges:
+        if self.request.method == 'GET':
+            if 'read' not in privileges[module]:
+                forbid_access = True
+        if self.request.method == 'POST':
+            if 'create' not in privileges[module]:
+                forbid_access = True
+        if self.request.method == 'PUT':
+            if 'update' not in privileges[module]:
+                forbid_access = True
+        if self.request.method == 'DELETE':
+            if 'delete' not in privileges[module]:
+                forbid_access = True
+    else:
+        if 'manual_buy' not in privileges['accounts']:
             forbid_access = True
-    if self.request.method == 'POST':
-        if 'create' not in privileges[module]:
-            forbid_access = True
-    if self.request.method == 'PUT':
-        if 'update' not in privileges[module]:
-            forbid_access = True
-    if self.request.method == 'DELETE':
-        if 'delete' not in privileges[module]:
-            forbid_access = True
-
+        pass
+    
     if forbid_access:
         self.set_status(403)
+        self.write("Access Denied")
         self.finish()
 
 

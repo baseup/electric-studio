@@ -547,8 +547,9 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
         return;
       }
 
-      angular.element('#payForm-' + index).submit();
-
+      $.Confirm('Reminder: After payment done, Please let paypal redirect back to our site to make sure your rides will be credited on our system', function () {
+        angular.element('#payForm-' + index).submit();
+      });
     });
   }
 });

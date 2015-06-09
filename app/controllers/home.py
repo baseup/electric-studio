@@ -15,7 +15,12 @@ import json
 import base64
 
 def index(self):
-    self.render('index', loginUser=self.get_secure_cookie('loginUser'))
+    user_credits = 0;
+    if self.get_secure_cookie('loginUserID'):
+        user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+        user = yield User.objects.get(user_id)
+        user_credits = user.credits
+    self.render('index', loginUser=self.get_secure_cookie('loginUser'), credits=user_credits)
 
 def login(self):
     email = self.get_argument('email')
@@ -171,21 +176,23 @@ def buy(self):
                         transaction = yield transaction.save()
                         user = yield user.save()
 
+                        pack_name = package.name;
+                        if not pack_name:
+                            pack_name = package.credits + ' Ride' + ('s' if package.credits > 1 else '')
+
                         user = (yield User.objects.get(user._id)).serialize()
                         site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
                         exp_date = transaction.create_at + timedelta(days=transaction.expiration)
-                        content = str(self.render_string('emails/buy', user=user, site=site_url, package=package.name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
+                        content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
                         yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
 
-                        self.redirect('/#/account?pname=' + package.name + '&s=success#packages')
+                        self.redirect('/#/account?pname=' + pack_name + '&s=success#packages')
                     else:
                         self.set_status(403)
-                        self.write('Invalid User Status')
-                        self.finish()
+                        self.redirect('/#/rates?s=error')
                 else:
                     self.set_status(403)
-                    self.write('Package not found')
-                    self.finish()
+                    self.redirect('/#/rates?s=error')
             except:
                 value = sys.exc_info()[1]
                 self.set_status(403)
@@ -315,7 +322,7 @@ def add_regular_schedule(self):
         if admin:
             yield admin.delete()
 
-    access = yield AccessType.objects.get(admin_type='Manager')
+    access = yield AccessType.objects.get(admin_type='Instructor')
 
     adkris = Admin(username='kris', password=bcrypt.encrypt('kris'), first_name='kris', last_name='kris', email='kris@electric.com', access_type=access._id)
     adkris = yield adkris.save()
@@ -407,16 +414,19 @@ def add_access_types(self):
         yield a.delete()
 
     analytics = Privilege(module='analytics', actions=['read'])
-    accounts = Privilege(module='accounts', actions=['create', 'update','read', 'freeze', 'unfreeze', 'delete', 'update_expiration'])
-    packages = Privilege(module='packages', actions=['read', 'update_expiration'])
+    accounts = Privilege(module='accounts', actions=['create', 'update','read', 'freeze', 'unfreeze', 'delete', 'update_expiration', 'export_data', 'manual_buy'])
+    packages = Privilege(module='packages', actions=['read', 'create','update_expiration', 'update', 'delete'])
     schedules = Privilege(module='schedules', actions=['create', 'read', 'update', 'delete', 'move_bike'])
     users = Privilege(module='users', actions=['create', 'read', 'update', 'delete'])
     instructors = Privilege(module='instructors', actions=['create', 'read', 'update', 'delete'])
     sliders = Privilege(module='sliders', actions=['read', 'update', 'create', 'delete'])
-    transactions = Privilege(module='transactions', actions=['read'])
+    transactions = Privilege(module='transactions', actions=['read', 'create', 'update', 'delete'])
     settings = Privilege(module='settings', actions=['read', 'block_bike'])
 
     staffAccessType = AccessType(admin_type='Staff')
+    yield staffAccessType.save()
+
+    staffAccessType = AccessType(admin_type='Instructor')
     yield staffAccessType.save()
 
     managerAccessType = AccessType(admin_type='Manager')
@@ -424,7 +434,6 @@ def add_access_types(self):
     yield managerAccessType.save()
 
     adminAccessType = AccessType(admin_type='Admin')
-    packages = Privilege(module='packages', actions=['create', 'read', 'update_expiration'])
     adminAccessType.privileges = [analytics, packages, instructors, sliders, settings, transactions, schedules, accounts, settings, users]
     yield adminAccessType.save()
 

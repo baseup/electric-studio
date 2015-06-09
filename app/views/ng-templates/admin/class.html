@@ -32,10 +32,10 @@
 
     <ul class="nav-tabs" id="class-tabs">
       <li>
-        <a class="active" data-tab-toggle="booking">Booking</a>
+        <a class="active" data-tab-toggle="booking">Booking{{ books.length ? ' (' + books.length + ')' : '' }}</a>
       </li>
       <li>
-        <a data-tab-toggle="waitlist">Waitlist</a>
+        <a data-tab-toggle="waitlist">Waitlist{{ waitList.length ? ' (' + waitList.length + ')' : '' }}</a>
       </li>
     </ul>
 
@@ -164,7 +164,7 @@
       <div class="user-class-details" ng-show="selectedRider.credits">
         <span class="caps">{{ selectedRider.credits }} Ride<span ng-if="selectedRider.credits > 1">s</span> Left</span>
       </div>
-      <button type="button" ng-click="sendNewBook()" class="btn btn--medium btn--primary space--top modal-close">Book</button>
+      <button ng-disabled="booking" type="button" ng-click="sendNewBook()" class="btn btn--medium btn--primary space--top modal-close">Book</button>
 
     </div>
   </div>
@@ -189,7 +189,7 @@
       <div class="user-class-details" ng-show="selectedRider.credits">
         <span class="caps">{{ selectedRider.credits }} Ride<span ng-if="selectedRider.credits > 1">s</span> Left</span>
       </div>
-      <button type="button" ng-click="addNewWaitlist()" class="btn btn--medium btn--primary space--top modal-close">Add</button>
+      <button ng-disabled="waitlisting" type="button" ng-click="addNewWaitlist()" class="btn btn--medium btn--primary space--top modal-close">Add</button>
     </div>
   </div>  
 

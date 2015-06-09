@@ -32,7 +32,6 @@
           <span><span class="label inline">Seat:</span> {{ book.seat_number }}</span><br>
           <span><span class="label inline">Instructor:</span> {{ book.schedule.instructor.admin.first_name || '(class info not available)' }}</span><br>
           <span><span class="label inline">Status:</span> {{ book.status | uppercase }}</span><br>
-          <span ng-if="book.notes"><span class="label inline">Notes:</span> {{ book.notes }}<br></span>
           <span><span class="label inline">Created At:</span> {{ book.create_at | formatDate }}</span>
         </div>
       </section>
@@ -61,7 +60,6 @@
           <span><span class="label inline">Purchased On:</span> {{ package.create_at | formatDate }}</span><br>
           <span><span class="label inline">Cost:</span> {{ package.package_fee | currency:"" }}</span><br>
           <span><span class="label inline">Rides Left:</span> {{ package.remaining_credits || 0 }}</span><br>
-          <span ng-if="package.notes"><span class="label inline">Notes:</span> {{ package.notes }}<br></span>
           <span>
             <span ng-if="package.status != 'Expired'" class="label inline">Expires On:</span> 
             <span ng-if="package.status == 'Expired'" class="label inline">Expired:</span> 
