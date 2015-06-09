@@ -317,6 +317,10 @@
       <h3 class="h--medium brand-color space--bottom">Rides and Packages</h3>
 
       <div class="space--bottom pad--bottom">
+        <div class="bp-md-one-fourth float--right space--bottom space--right">
+          <span class="label">Search</span>
+          <input class="text-input" ng-model="searchTrans" placeholder="Enter Transaction">
+        </div>
         <span class="label">Rider</span>
         <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
       </div>
@@ -325,6 +329,7 @@
 
         <table class="data-table account-summary-table">
           <tr>
+            <th>Transaction Id</th>
             <th>Package Type</th>
             <th>Total Rides</th>
             <th>Rides Left</th>
@@ -332,8 +337,9 @@
             <th>Notes</th>
             <th>Purchase Date</th>
           </tr>
-          <tr ng-repeat="pack in selectedAccount.packages">
-            <td>{{ pack.package_name || 'Free' }} </td>
+          <tr ng-repeat="pack in selectedAccount.packages | search:'trans_info.transaction,package_name':searchTrans">
+            <td>{{ getTransId(pack) }}</td>
+            <td>{{ pack.package_name || (pack.is_free ? 'Free' : pack.credit_count + ' Ride' + (pack.credit_count > 1 ? 's' : '')) }} </td>
             <td>{{ pack.credit_count }}</td>
             <td>{{ pack.remaining_credits }}</td>
             <td>
