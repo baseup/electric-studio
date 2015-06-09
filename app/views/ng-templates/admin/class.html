@@ -32,10 +32,10 @@
 
     <ul class="nav-tabs" id="class-tabs">
       <li>
-        <a class="active" data-tab-toggle="booking">Booking</a>
+        <a class="active" data-tab-toggle="booking">Booking{{ books.length ? ' (' + books.length + ')' : '' }}</a>
       </li>
       <li>
-        <a data-tab-toggle="waitlist">Waitlist</a>
+        <a data-tab-toggle="waitlist">Waitlist{{ waitList.length ? ' (' + waitList.length + ')' : '' }}</a>
       </li>
     </ul>
 
