@@ -2032,37 +2032,172 @@ body {
   }
 }
 
-.class-instructor {
-  
-  @include breakpoint(md) {
-    margin: -120px 45px 0 0;
-  }
-  
-  .image {   
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin: 0 auto;
-    position: relative;
+.class {
+
+  .formation {
+    text-align: center;
+    margin: 0 -10px;
+
+    @media (min-width: 360px) {
+      width: 350px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 768px) {
+      width: 626px;
+    }
 
     @include breakpoint(md) {
-      height: 120px;
-      width: 120px;
+      width: 934px;
     }
     
-    img {
-      max-width: 175px !important; 
-      width: 175px;
-      left: 50%;
-      -webkit-transform: translateX(-50%);
-      -moz-transform: translateX(-50%);
-      transform: translateX(-50%);
-      position: absolute;
+    &:after {
+      content: '';
+      clear: both;
+      display: block;
+    }
+
+    .seats{
+      max-width: 100%;
+
+      span{
+        border: solid 1px transparent;
+        font-size: 11px;
+        height: 19px;
+        width: 19px;
+        background: #fff none repeat scroll 0 0;
+        border-radius: 50%;
+        color: #666;
+        cursor: pointer;
+        display: inline-block;
+        font-weight: bold;
+        text-align: center;
+        margin: 2px -1px;
+        transition: all 1000ms;
+        cursor: pointer;
+        padding-left: 2px;
+        line-height: 16px;
+
+        @media (min-width: 360px) {
+          width: 20px;
+          height: 20px;
+        }
+
+        @media (min-width: 768px) {
+          width: 40px;
+          height: 40px;
+          line-height: 38px;
+          font-size: 16px;
+          margin: 3px 0;
+        }
+
+        @include breakpoint(md) {
+          border-width: 3px;
+          font-size: 20px;
+          margin: 3px 1px;
+          font-size: 20px;
+          line-height: 60px;
+          height: 60px;
+          width: 60px;
+        }
+
+        &:hover{
+          border-color: #ff8f1c;
+        }
+
+        &.unavailable {
+          background: $brand-color-tertiary;
+          cursor: default;
+        }
+
+        &.selected {
+          background: $brand-color-primary;
+          color: #fff;
+        }
+
+        &.hidden {
+          visibility: hidden;
+          cursor: default;
+        }
+      }
+    }
+
+    .front {
+      width: 58px;
+      display: inline-block;
+      position: relative;
+      vertical-align: middle;
+      margin-bottom: 10px;
+
+      @media (min-width: 768px) {
+        width: 120px;
+      }
+
+      @include breakpoint(md) {
+        width: 174px;
+        margin-bottom: 30px;
+      }
+    }
+
+    .back {
+      text-align: left;
+    }
+
+    .instructor{
+      text-align: center;
+      width: 100px;
+
+      @media (min-width: 768px) {
+        width: 150px;
+      }
+
+      @include breakpoint(md) {
+        width: 174px;
+      }
+
+      .image{
+        left: 50%;
+        border-radius: 150px;
+        height: 80px;
+        overflow: hidden;
+        position: relative;
+        width: 80px;
+        margin-left: -40px;
+
+        @media (min-width: 768px) {
+          width: 140px;
+          height: 140px;
+          margin-left: -70px;
+        }
+
+        @include breakpoint(md) {
+          width: 150px;
+          height: 150px;
+          margin-left: -75px;
+        }
+
+        img{
+          left: 50%;
+          margin-left: -52px;
+          max-width: none;
+          position: absolute;
+          width: 100px;
+
+          @media (min-width: 768px) {
+            width: 140px;
+            margin-left: -70px;
+          }
+
+          @include breakpoint(md) {
+            width: 200px;
+            margin-left: -104px;
+          }
+        }
+      }
     }
   }
-
 }
+
 
 .legend {
   list-style: none;
@@ -2088,6 +2223,12 @@ body {
       width: 30px;
       border-radius: 50%;
       margin-right: 10px;
+    }
+
+    &:first-child{
+      &:before{
+        box-shadow: 0 0 2px #ccc;
+      }
     }
     
     &.free:before {

@@ -1037,11 +1037,11 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
           $.Alert('Not enough credits');
           return;
         } else {
-          angular.element('#seat' + number).toggleClass('selected');
+          angular.element(event.target).toggleClass('selected');
           seats.push(number);
         }
       } else {
-        angular.element('#seat' + number).toggleClass('selected');
+        angular.element(event.target).toggleClass('selected');
         seats.splice(seat_index, 1);
       }
     } else {
