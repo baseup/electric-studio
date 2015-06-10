@@ -153,7 +153,7 @@ def buy(self):
             user_packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
             if user_packages:
                 for upack in user_packages:
-                    if pp_tx in upack.trans_info:
+                    if upack.trans_info and pp_tx in upack.trans_info:
                         self.redirect('/#/account?s=exists#packages')
                         return;
             
@@ -417,7 +417,7 @@ def add_access_types(self):
         yield a.delete()
 
     analytics = Privilege(module='analytics', actions=['read'])
-    accounts = Privilege(module='accounts', actions=['create', 'update','read', 'freeze', 'unfreeze', 'delete', 'update_expiration', 'export_data', 'manual_buy'])
+    accounts = Privilege(module='accounts', actions=['create', 'update','read', 'freeze', 'unfreeze', 'delete', 'update_expiration', 'export_data', 'manual_buy', 'complimentary_class'])
     packages = Privilege(module='packages', actions=['read', 'create','update_expiration', 'update', 'delete'])
     schedules = Privilege(module='schedules', actions=['create', 'read', 'update', 'delete', 'move_bike'])
     users = Privilege(module='users', actions=['create', 'read', 'update', 'delete'])
@@ -427,6 +427,9 @@ def add_access_types(self):
     settings = Privilege(module='settings', actions=['read', 'block_bike'])
 
     staffAccessType = AccessType(admin_type='Staff')
+    staffAccessType.privileges = [Privilege(module='accounts', actions=['create','update','read','manual_buy']),
+                                  schedules
+                                  ]
     yield staffAccessType.save()
 
     staffAccessType = AccessType(admin_type='Instructor')
