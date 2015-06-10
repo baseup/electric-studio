@@ -39,7 +39,9 @@
           <input type="hidden" name="return" value="{{ redirectUrl }}?pid={{ package._id }}&success=True">
           <input type="hidden" name="cancel_return" value="{{ redirectUrl }}?success=False">
           <input type="hidden" name="cbt" value="Return to Electric Studio">
-          <input class="button primary small" ng-click="buyPackage($event, $index)" value = "Buy" class = "button" type = "button">
+
+          <input ng-if="!package.special_package" class="button primary small" ng-click="buyPackage($event, $index)" value = "Buy" class = "button" type = "button">
+          <i ng-if="package.special_package">Call studio directly</i>
         </form>
       </section>
       <div class="faq">
