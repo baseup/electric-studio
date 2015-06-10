@@ -181,7 +181,7 @@ def buy(self):
 
                         pack_name = package.name;
                         if not pack_name:
-                            pack_name = package.credits + ' Ride' + ('s' if package.credits > 1 else '')
+                            pack_name = str(package.credits) + ' Ride' + ('s' if package.credits > 1 else '')
 
                         user = (yield User.objects.get(user._id)).serialize()
                         site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
@@ -427,9 +427,7 @@ def add_access_types(self):
     settings = Privilege(module='settings', actions=['read', 'block_bike'])
 
     staffAccessType = AccessType(admin_type='Staff')
-    staffAccessType.privileges = [Privilege(module='accounts', actions=['create','update','read','manual_buy']),
-                                  schedules
-                                  ]
+    staffAccessType.privileges = [Privilege(module='accounts', actions=['create','update','read','manual_buy']),schedules]
     yield staffAccessType.save()
 
     staffAccessType = AccessType(admin_type='Instructor')

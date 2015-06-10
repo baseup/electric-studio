@@ -378,7 +378,7 @@
         <li>
            <div class="account__item box--bordered box--white space--bottom cf">
               <div class="pad">
-                <b class="h--small">{{ newPackage.name }}</b>
+                <b class="h--small">{{ newPackage.name || newPackage.credits + ' Ride' + (newPackage.credits > 1 ? 's' : '' ) }}</b>
                 <br/><br/>
                 <span class="h small ">Price: {{ newPackage.fee }} Php</span><br>
                 <span class="h small ">No. of Rides: {{ newPackage.credits }} </span><br>
@@ -394,7 +394,7 @@
         <input type="hidden" name="bn" value="PP-BuyNowBF">
         <input type="hidden" name="rm" value="2">
         <input type="hidden" name="business" value="ogsmelvin05-facilitator@gmail.com">
-        <input type="hidden" name="item_name" value="{{ newPackage.name }}">
+        <input type="hidden" name="item_name" value="{{ newPackage.name  || newPackage.credits + ' Ride' + (newPackage.credits > 1 ? 's' : '') }}">
         <input type="hidden" name="item_number" value="{{ newPackage._id }}">
         <input type="hidden" name="amount" value="{{ newPackage.fee }}">
 
