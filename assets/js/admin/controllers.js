@@ -281,8 +281,8 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   PackageService.query(function (packages) {
     $scope.packages = packages;
     angular.forEach(packages, function (pack) {
-      select.addOption({ value: pack._id, text: pack.name });
-      selectBuy.addOption({ value: pack._id, text: pack.name });
+      select.addOption({ value: pack._id, text: pack.name  || pack.credits + ' Ride' + (pack.credits > 1 ? 's' : '' ) });
+      selectBuy.addOption({ value: pack._id, text: pack.name  || pack.credits + ' Ride' + (pack.credits > 1 ? 's' : '' )});
     });
   });
 
