@@ -19,8 +19,12 @@
               <input class="text-input" ng-model="updatePackage.description">
             </div>
             <div class="space--bottom float--left space--right">
-              <span class="label">Firs Timer Package</span>
+              <span class="label">First Timer Package</span>
               <input class="text-input" type="checkbox" ng-model="updatePackage.first_timer">
+            </div>
+            <div class="space--bottom float--left space--right">
+              <span class="label">Exclusive on Studio</span>
+              <input class="text-input" type="checkbox" ng-model="updatePackage.special_package">
             </div>
             <div class="space--bottom float--left space--right">
               <span class="label">Number of Rides</span>
@@ -86,10 +90,11 @@
           <span class="label">Description (Optional)</span>
           <input class="text-input" ng-model="newPackage.description">
         </div>
-        <div class="space--bottom float--left space--right">
-          <span class="label">Firs Timer Package</span>
+        <div class="space--bottom float--left">
+          <span class="label">First Timer Package</span>
           <input class="text-input" type="checkbox" ng-model="newPackage.first_timer">
         </div>
+
         <div class="space--bottom float--left space--right">
           <span class="label">Number of Rides</span>
           <input class="text-input" ng-model="newPackage.credits">
@@ -101,6 +106,10 @@
         <div class="space--bottom float--left space--right">
           <span class="label">Expiration</span>
           <input class="text-input" value="30" ng-model="newPackage.expiration"> Days
+        </div>
+        <div class="space--bottom float--left">
+          <span class="label">Exclusive on Studio</span>
+          <input class="text-input" type="checkbox" ng-model="newPackage.special_package">
         </div>
       </div>
       <button ng-if="getAccess('packages', 'create')" class="btn btn--medium btn--primary space--top modal-close" ng-click="addPackage()">Add</button>

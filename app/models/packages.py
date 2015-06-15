@@ -10,7 +10,8 @@ class Package(Model):
     description = StringField()
     expiration = IntField(required=False, default=30)
     credits = IntField(required=True)
-    first_timer = BooleanField(default=False);
+    first_timer = BooleanField(default=False)
+    special_package = BooleanField(default=False)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 
