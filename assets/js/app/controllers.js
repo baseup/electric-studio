@@ -975,7 +975,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       $scope.instructor = sched.schedule.instructor;
     });
 
-    $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() + ', ' + sched.date.getFullYear();
+    $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() ;
     $scope.daySched = days[sched.date.getDay()];
     $scope.timeSched = sched.schedule.start;
     $scope.sched = sched.schedule;

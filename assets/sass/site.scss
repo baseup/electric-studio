@@ -1786,9 +1786,17 @@ body {
     padding: 10px;
     line-height: 1.4em;
     color: $color-text-light;
+    position: relative;
 
     button {
       visibility: hidden;
+
+      @include breakpoint(md) {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50% ,-50%);
+      }
     }
     
     &.unavailable {
@@ -1810,6 +1818,12 @@ body {
 
       button {
         visibility: visible;
+      }
+
+      span{
+        @include breakpoint(md) {
+          opacity: 0.5
+        }
       }
     }
     
@@ -1923,15 +1937,6 @@ body {
         }
       }
     } 
-  }
-
-  .fake-center {
-    @include breakpoint(md) {
-      max-width: 500px;
-      margin: 0 auto;
-      position: relative;
-      left: -27px;
-    }
   } 
 }
 
@@ -2055,7 +2060,7 @@ body {
     }
 
     @include breakpoint(md) {
-      width: 934px;
+      width: 920px;
 
       &:first-child{
         margin-top: 60px;
@@ -2162,7 +2167,7 @@ body {
       }
 
       @include breakpoint(md) {
-        width: 200px;
+        width: 300px;
       }
 
       .image{
