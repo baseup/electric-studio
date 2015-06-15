@@ -562,7 +562,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
         return;
       }
 
-      $.Confirm('Reminder: After payment done, Please let paypal redirect back to our site to make sure your rides will be credited on our system', function () {
+      $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
         angular.element('#payForm-' + index).submit();
       });
     });
