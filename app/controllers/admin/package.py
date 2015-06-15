@@ -19,9 +19,11 @@ def create(self):
                           expiration=data['expiration'],
                           credits=data['credits'])
         if 'name' in data:
-            packages.name = data['name']
+            package.name = data['name']
         if 'first_timer' in data: 
             package.first_timer = bool(data['first_timer'])
+        if 'special_package' in data: 
+            package.special_package = bool(data['special_package'])
         if 'description' in data:
             package.description = data['description']
         package = yield package.save()
@@ -41,6 +43,7 @@ def update(self, id):
         package.expiration = data['expiration']
         package.credits = data['credits']
         package.first_timer = bool(data['first_timer']);
+        package.special_package = bool(data['special_package']);
         package = yield package.save()
     except:
         value = sys.exc_info()[1]

@@ -54,7 +54,7 @@
 
               <dl ng-if="user.status != 'Frozen'">
                 <dt>Class Package</dt>
-                <a  ng-if="user.status != 'Deactivated'" title="Buy Package" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
+                <a  ng-if="getAccess('accounts', 'manual_buy') && user.status != 'Deactivated' && user.status != 'Unverified'" title="Buy Package" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
                 <dd class="">{{ user.credits }} Classes Left</dd>
               <!-- <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd> -->
               </dl>
@@ -68,7 +68,7 @@
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a ng-if="getAccess('accounts', 'update') && user.status != 'Deactivated'" title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
+            <a ng-if="getAccess('accounts', 'complimentary_class') && user.status != 'Deactivated' && user.status != 'Unverified'" title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
               <i class="fa fa-plus"></i> Class
             </a>
             <ul class="nav float--right">
@@ -139,6 +139,9 @@
       <div class="one-whole float--left space--bottom">
         <span class="label">Email</span>
         <input ng-model="newAccount.email" class="text-input">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <input type="checkbox" ng-model="newAccount.no_email" /> Do not send email verification
       </div>
       <div class="float--left space--bottom">
         <span class="label">Password</span>
@@ -242,6 +245,7 @@
               <th>Instructor</th>
               <th>Status</th>
               <th>Seat</th>
+              <th>Notes</th>
               <th>Create Date</th>
               <th>Action</th>
             </tr>
@@ -253,6 +257,7 @@
               <td>{{ sched.schedule.instructor.admin.first_name }} {{ sched.schedule.instructor.admin.last_name }}</td>
               <td>{{ sched.status }}</td>
               <td>{{ sched.seat_number }}</td>
+              <td>{{ sched.notes }}</td>
               <td>{{ sched.create_at | formatDate }} {{ sched.create_at | formatTime }} </td>
               <td ng-if="getAccess('schedules', 'move_bike')">
                 <button ng-if="sched.status == 'waitlisted'" class="btn btn--small btn--primary" ng-click="cancelWaitlist($index, sched)">
@@ -373,7 +378,7 @@
         <li>
            <div class="account__item box--bordered box--white space--bottom cf">
               <div class="pad">
-                <b class="h--small">{{ newPackage.name }}</b>
+                <b class="h--small">{{ newPackage.name || newPackage.credits + ' Ride' + (newPackage.credits > 1 ? 's' : '' ) }}</b>
                 <br/><br/>
                 <span class="h small ">Price: {{ newPackage.fee }} Php</span><br>
                 <span class="h small ">No. of Rides: {{ newPackage.credits }} </span><br>
@@ -389,7 +394,7 @@
         <input type="hidden" name="bn" value="PP-BuyNowBF">
         <input type="hidden" name="rm" value="2">
         <input type="hidden" name="business" value="ogsmelvin05-facilitator@gmail.com">
-        <input type="hidden" name="item_name" value="{{ newPackage.name }}">
+        <input type="hidden" name="item_name" value="{{ newPackage.name  || newPackage.credits + ' Ride' + (newPackage.credits > 1 ? 's' : '') }}">
         <input type="hidden" name="item_number" value="{{ newPackage._id }}">
         <input type="hidden" name="amount" value="{{ newPackage.fee }}">
 

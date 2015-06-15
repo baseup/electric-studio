@@ -33,6 +33,7 @@
             <ul class="class-menu__holder">
               <li><a href="#/workouts">The Workouts</a></li>
               <li><a href="#/rates-and-packages">Rates &amp; Packages</a></li>
+              <li><a href="#/first-ride">What to expect</a></li>
               <li>
                 <a>Schedule</a>
                 <div class="sub-menu-holder">
@@ -110,7 +111,7 @@
         <input type="password" class="input-box" placeholder="Password" ng-model="login.password" required>
         <input type="submit" value="Log In" class="button primary" ng-click="signIn()">
         <br/>
-        <a ng-click="forgotPass()" >Forgot password ?</a> <a class="signup-toggle">/ Sign up</a>
+        <a ng-click="forgotPass()" >Forgot password ?</a> <a ng-click="showSignup()">/ Sign up</a>
       </form>
       <span class="close-btn">&times;</span>
     </div>  

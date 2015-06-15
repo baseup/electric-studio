@@ -259,7 +259,11 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     } else if (qstring.s == 'exists') {
       $.Alert('Transaction already exists');
     } else if (qstring.s == 'error') {
-      $.Alert('Transaction failed');
+      var msg = '';
+      if (qstring.msg) {
+        msg = ' : ' + qstring.msg; 
+      }
+      $.Alert('Transaction failed' + msg);
     }
     $location.search({ s: null, pname: null });
   }
@@ -277,8 +281,8 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   PackageService.query(function (packages) {
     $scope.packages = packages;
     angular.forEach(packages, function (pack) {
-      select.addOption({ value: pack._id, text: pack.name });
-      selectBuy.addOption({ value: pack._id, text: pack.name });
+      select.addOption({ value: pack._id, text: pack.name  || pack.credits + ' Ride' + (pack.credits > 1 ? 's' : '' ) });
+      selectBuy.addOption({ value: pack._id, text: pack.name  || pack.credits + ' Ride' + (pack.credits > 1 ? 's' : '' )});
     });
   });
 
@@ -316,7 +320,9 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
           $scope.users = users;
         });
 
-        $scope.sendEmailConfirmation($scope.newAccount);
+        if (!$scope.newAccount.no_email) {
+          $scope.sendEmailConfirmation($scope.newAccount);
+        }
         angular.element('#close-add-account').click();
         $scope.newAccount = {}
         $scope.registeringAccount = false;
