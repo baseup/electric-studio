@@ -848,6 +848,10 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         } 
       }
     });
+
+    UserService.query(function (users) {
+      $scope.users = users;
+    });
   }
   $scope.reloadDate();
 
@@ -898,7 +902,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
     var now = new Date();
     var dateParts = sched.date.split(/[^0-9]/);
-    var timeParts = sched.start.split(/[^0-9]/);
+    var timeParts = sched.end.split(/[^0-9]/);
     var date =  new Date(dateParts[0], dateParts[1]-1, dateParts[2], timeParts[3], timeParts[4], timeParts[5]);
     if (date < now)
       return true;
@@ -911,7 +915,11 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     if (!$scope.isCompleted(booking.schedule)) {
       $.Confirm('Are you sure on marking ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride as MISSED ? (THIS CANNOT BE UNDONE)', function () {
         $scope.books.splice(index, 1);
-        ClassService.delete({ scheduleId: booking._id, missed: true });
+        ClassService.delete({ scheduleId: booking._id, missed: true }, function () {
+          UserService.query(function (users) {
+            $scope.users = users;
+          });
+        });
       });
     } else {
       $.Notify({ content: 'Not allow to modify, This schedule is completed' });
@@ -924,7 +932,11 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         $.Prompt('Notes on cancelling ' + booking.user_id.first_name + ' ride', function (notes) {
           if (notes && notes.length > 0) {
             $scope.books.splice(index, 1);
-            ClassService.delete({ scheduleId: booking._id, notes: notes });
+            ClassService.delete({ scheduleId: booking._id, notes: notes }, function () {
+              UserService.query(function (users) {
+                $scope.users = users;
+              });  
+            });
           } else {
             $.Alert('Please provide a notes on cancelling schedules');
           }
@@ -937,10 +949,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   $scope.sendNewBook = function () {
 
-
-
     var now = new Date();
-    var parts = $scope.schedDetails.start.split(/[^0-9]/);
+    var parts = $scope.schedDetails.end.split(/[^0-9]/);
     var dTime =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
     var hours = dTime.getHours();
     var minutes = dTime.getMinutes();
@@ -1110,7 +1120,11 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     if (!$scope.isCompleted(wait.schedule)) {
       $.Confirm('Are you sure on cancelling ' + wait.user_id.first_name + ' waitlist ?', function () {
         $scope.waitList.splice(index, 1);
-        ClassService.delete({ scheduleId: wait._id });
+        ClassService.delete({ scheduleId: wait._id }, function () {
+          UserService.query(function (users) {
+            $scope.users = users;
+          });
+        });
       });
     } else {
       $.Notify({ content: 'Not allow to modify, This schedule is completed' });
