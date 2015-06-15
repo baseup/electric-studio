@@ -264,7 +264,19 @@ def schedule_migrate(self):
         sched.seats = 37
         sched.save()
 
+    schedules = yield BookedSchedule.objects.find_all();
+    for sched in schedules:
+        if type(sched.user_package) is not list:
+            sched.user_package = [str(sched.user_package._id)]
+        else: 
+            upacks = []
+            for upack in sched.user_package:
+                upacks.append(str(upack))
+            sched.user_package = upacks;
+        yield sched.save()
+
     self.redirect('/')
+
 
 def package_migrate(self):
 

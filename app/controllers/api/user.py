@@ -4,7 +4,9 @@ from motorengine.errors import InvalidDocumentError
 from app.helper import send_email_verification, send_email
 from app.models.users import User
 from app.models.schedules import BookedSchedule
+from app.models.packages import UserPackage
 from datetime import datetime
+from bson.objectid import ObjectId
 import tornado
 import json
 
@@ -105,12 +107,23 @@ def destroy(self, id):
             if scheds:
                 for i, sched in enumerate(scheds):
 
-                    if sched.user_package:
-                        sched.user_package.remaining_credits += 1
-                        yield sched.user_package.save()
+                    restore_credits = 1
+                    if sched.schedule.type == 'Electric Endurance':
+                        restore_credits = 2
 
                     if sched.status == 'waitlisted':
-                        user.credits += 1
+                        if sched.user_package:
+                            for upack in sched.user_package:
+                                user_pack = yield UserPackage.objects.get(ObjectId(upack))
+                                if len(sched.user_package) == 1:
+                                    user_pack.remaining_credits += restore_credits
+                                    yield user_pack.save()
+                                    break
+                                else:
+                                    user_pack.remaining_credits += 1
+                                    yield user_pack.save()
+
+                            user.credits += restore_credits
 
                     sched.status = 'cancelled'
                     yield sched.save()

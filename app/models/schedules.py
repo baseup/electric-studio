@@ -27,7 +27,7 @@ class BookedSchedule(Model):
     date = DateTimeField()
     user_id = ReferenceField(reference_document_type=User)
     schedule = ReferenceField(reference_document_type=InstructorSchedule)
-    user_package = ReferenceField(reference_document_type=UserPackage)
+    user_package = ListField(StringField())
     seat_number = IntField()
     status = StringField()
     notes = StringField(required=False)

@@ -7,6 +7,7 @@ from app.models.users import User
 from app.models.schedules import BookedSchedule
 from app.models.packages import UserPackage
 from app.helper import GMT8
+from bson.objectid import ObjectId
 
 @gen.coroutine
 def schedule_watcher():
@@ -32,7 +33,7 @@ def schedule_watcher():
                                             .find_all()
     if schedules:
         for i, sched in enumerate(schedules):
-            sched_date = datetime.combine(sched.date, sched.schedule.start.time())
+            sched_date = datetime.combine(sched.date, sched.schedule.end.time())
             sched_date = sched_date.replace(tzinfo=gmt8)
             if sched_date < datetime.now(tz=gmt8):
                 if sched.status == 'booked':
@@ -40,13 +41,25 @@ def schedule_watcher():
                     yield sched.save();
                 elif sched.status == 'waitlisted':
                     sched.status = 'cancelled';
+                    deduct_credits = 1
+                    if sched.schedule.type == 'Electric Endurance':
+                        deduct_credits = 2
                     if sched.user_package:
-                        sched.user_package.remaining_credits += 1
+                        if len(sched.user_package) == 1:
+                            upack = yield UserPackage.objects.get(ObjectId(sched.user_package[0]))
+                            upack.remaining_credits += deduct_credits
+                            yield upack.save()
+                        else:
+                            upack1 = yield UserPackage.objects.get(ObjectId(sched.user_package[0]))
+                            upack2 = yield UserPackage.objects.get(ObjectId(sched.user_package[1])) 
+                            upack1.remaining_credits += 1
+                            upack2.remaining_credits += 1
+                            yield upack1.save()
+                            yield upack2.save()
                     if sched.user_id:
                         user = yield User.objects.get(sched.user_id._id)
-                        user.credits += 1
+                        user.credits += deduct_credits
                         yield user.save()
-                        yield sched.user_package.save()
                         yield sched.save()
 
 # A function that runs before your Tornado app run.

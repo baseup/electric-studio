@@ -160,26 +160,26 @@ def update(self, id):
     self.finish()
 
 def destroy(self, id):
-    user = yield User.objects.get(id)
+    # user = yield User.objects.get(id)
 
-    scheds = yield BookedSchedule.objects.filter(user_id=user._id, status__ne='completed') \
-                                  .filter(status__ne='cancelled') \
-                                  .filter(status__ne='missed').find_all()
-    if scheds:
-        for i, sched in enumerate(scheds):
+    # scheds = yield BookedSchedule.objects.filter(user_id=user._id, status__ne='completed') \
+    #                               .filter(status__ne='cancelled') \
+    #                               .filter(status__ne='missed').find_all()
+    # if scheds:
+    #     for i, sched in enumerate(scheds):
 
-            if sched.user_package:
-                sched.user_package.remaining_credits += 1
-                yield sched.user_package.save()
+    #         if sched.user_package:
+    #             sched.user_package.remaining_credits += 1
+    #             yield sched.user_package.save()
 
-            if sched.status == 'waitlisted':
-                user.credits += 1
+    #         if sched.status == 'waitlisted':
+    #             user.credits += 1
 
-            sched.status = 'cancelled'
-            yield sched.save()
+    #         sched.status = 'cancelled'
+    #         yield sched.save()
 
-    user.status = 'Deleted'
-    user = yield user.save()
+    # user.status = 'Deleted'
+    # user = yield user.save()
     self.finish()
 
 
