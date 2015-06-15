@@ -264,6 +264,7 @@ body {
     a {
       color: inherit;
       cursor: pointer;
+      text-transform: uppercase;
 
       &.user-loggedin {
         text-transform: none;
@@ -1618,6 +1619,12 @@ body {
 
     li{
       margin-bottom: 20px;
+      font-size: 14px;
+
+      strong{
+        display: inline-block;
+        padding-bottom: 5px;
+      }
     }
   }
 
@@ -2155,7 +2162,7 @@ body {
       }
 
       @include breakpoint(md) {
-        width: 174px;
+        width: 200px;
       }
 
       .image{

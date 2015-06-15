@@ -26,6 +26,7 @@ body {
 a {
   @extend .brand-link;
   cursor: pointer;
+  text-transform: none;
   
   &:hover {
     color: darken($brand-color-primary, 10%);
