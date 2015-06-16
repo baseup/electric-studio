@@ -4,6 +4,7 @@ from app.models.schedules import BookedSchedule, InstructorSchedule
 from app.helper import send_email_booking, send_email_cancel, send_email_move, send_email
 from app.models.packages import UserPackage
 from app.models.users import User
+from bson.objectid import ObjectId
 
 from datetime import datetime, timedelta
 import tornado
@@ -56,9 +57,14 @@ def create(self):
             user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
             user = yield User.objects.get(user_id)
             if user.status != 'Frozen' and user.status != 'Unverified':
-                if user.credits > 0:
-                    sched = yield InstructorSchedule.objects.get(data['sched_id']);
-                    
+                
+                sched = yield InstructorSchedule.objects.get(data['sched_id']);
+
+                deduct_credits = 1
+                if sched.type == 'Electric Endurance':
+                    deduct_credits = 2
+
+                if user.credits > (deduct_credits - 1):    
                     seats = data['seats']
                     if user.credits < len(seats):
                         self.set_status(400)
@@ -97,24 +103,41 @@ def create(self):
                                               status=book_status);
                             
                         if book:
-                            user.credits -= 1
+
+                            user.credits -= deduct_credits
                             user_packages = yield UserPackage.objects.order_by("expire_date", direction=ASCENDING) \
                                                              .filter(user_id=user._id, remaining_credits__gt=0, status__ne='Expired').find_all()
+
+                            user_packs = []
                             if user_packages:
                                 has_valid_package = False
                                 for i, user_package in enumerate(user_packages):
                                     # check expiration
                                     expireDate = user_package.create_at + timedelta(days=user_package.expiration)
                                     if datetime.now() > expireDate:
-                                        continue;
+                                        continue
 
                                     has_valid_package = True
-                                    user_package.remaining_credits -= 1
-                                    book.user_package = user_package._id
+
+                                    if len(user_packs) > 0:
+                                        user_package.remaining_credits -= 1
+                                        yield user_package.save() 
+                                        user_packs.append(str(user_package._id))
+                                    else:
+                                        if user_package.remaining_credits >= deduct_credits:
+                                            user_package.remaining_credits -= deduct_credits
+                                            yield user_package.save() 
+                                            user_packs.append(str(user_package._id))
+                                        else:
+                                            user_package.remaining_credits -= 1
+                                            yield user_package.save() 
+                                            user_packs.append(str(user_package._id))
+                                            continue
+
+                                    book.user_package = user_packs
                                     
                                     yield book.save()
                                     user = yield user.save()
-                                    yield user_package.save() 
 
                                     serialized_user = (yield User.objects.get(user._id)).serialize()
                                     if book_status == 'booked':
@@ -176,15 +199,30 @@ def update(self, id):
             if 'status' in data:
                 book.status = data['status']
             yield book.save()
+
             if book and ('status' in data) and data['status'] == 'cancelled':
+
+                restore_credits = 1
+                if book.schedule.type == 'Electric Endurance':
+                    restore_credits = 2
+
                 user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
                 user = yield User.objects.get(user_id)
-                user.credits += 1
+                user.credits += restore_credits
                 user = yield user.save()
-                user_package = yield UserPackage.objects.get(book.user_package._id);
+                user_package = book.user_package
                 if user_package:
-                    user_package.remaining_credits += 1
-                    yield user_package.save()
+                    if len(user_package) == 1:
+                        upack = yield UserPackage.objects.get(ObjectId(user_package[0]))
+                        upack.remaining_credits += restore_credits
+                        yield upack.save()
+                    else:
+                        upack1 = yield UserPackage.objects.get(ObjectId(user_package[0]))
+                        upack2 = yield UserPackage.objects.get(ObjectId(user_package[1]))
+                        upack1.remaining_credits += 1
+                        upack2.remaining_credits += 1
+                        yield upack1.save()
+                        yield upack2.save()
 
                 if ref_book_status == 'waitlisted':
                     content = str(self.render_string('emails/waitlist_removed', 

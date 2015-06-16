@@ -106,13 +106,17 @@ def create(self):
                 self.finish()
                 return
 
-    user_package = yield UserPackage.objects \
+    deduct_credits = 1
+    if ins_sched.type == 'Electric Endurance':
+        deduct_credits = 2
+
+    user_packages = yield UserPackage.objects \
         .filter(user_id=obj_user_id, remaining_credits__gt=0, status__ne='Expired') \
         .order_by('expire_date', ASCENDING) \
         .find_all()
 
     user = yield User.objects.get(obj_user_id)
-    if not len(user_package) or (user and not user.credits):
+    if not len(user_packages) or (user and not user.credits):
         self.set_status(400)
         self.write('Insufficient credits')
         self.finish()
@@ -122,16 +126,27 @@ def create(self):
     if 'status' in data:
         sched_status = data['status']
 
-    user.credits -= 1
+    user.credits -= deduct_credits
     yield user.save()
 
-    user_package[0].remaining_credits -= 1
-    yield user_package[0].save()
+    user_packs = []
+    if user_packages[0].remaining_credits >= deduct_credits:
+        user_packages[0].remaining_credits -= deduct_credits
+        yield user_packages[0].save()
+        user_packs.append(str(user_packages[0]._id))
+    else:
+        user_packages[0].remaining_credits -= 1
+        user_packages[1].remaining_credits -= 1
+        yield user_packages[0].save()
+        yield user_packages[1].save()
+        user_packs.append(str(user_packages[0]._id))
+        user_packs.append(str(user_packages[1]._id))
+
 
     sched = BookedSchedule()
     sched.date = datetime.strptime(data['date'], '%Y-%m-%d')
     sched.schedule = ins_sched._id
-    sched.user_package = user_package[0]._id
+    sched.user_package = user_packs
     sched.user_id = ObjectId(data['user_id'])
     sched.status = sched_status
     if 'seat_number' in data:
@@ -235,14 +250,27 @@ def destroy(self, id):
 
         if notes:
             booked_schedule.notes = notes
-            
-        if booked_schedule.user_package:
-            booked_schedule.user_package.remaining_credits += 1
-            yield booked_schedule.user_package.save()
 
         if not missed:
+            restore_credits = 1
+            if booked_schedule.schedule.type == 'Electric Endurance':
+                restore_credits = 2
+
+            if booked_schedule.user_package:
+                if len(booked_schedule.user_package) == 1:
+                    upack = yield UserPackage.objects.get(ObjectId(booked_schedule.user_package[0]))
+                    upack.remaining_credits += restore_credits
+                    yield upack.save()
+                else:
+                    upack1 = yield UserPackage.objects.get(ObjectId(booked_schedule.user_package[0]))
+                    upack2 = yield UserPackage.objects.get(ObjectId(booked_schedule.user_package[1]))
+                    upack1.remaining_credits += 1
+                    upack2.remaining_credits += 1
+                    yield upack1.save()
+                    yield upack2.save()
+
             user = yield User.objects.get(booked_schedule.user_id._id)
-            user.credits += 1
+            user.credits += restore_credits
             yield user.save()
 
         yield booked_schedule.save()
@@ -283,11 +311,25 @@ def destroy(self, id):
             scheds = yield query.find_all()
             for i, wait in enumerate(scheds):
                 wait.status = 'cancelled'
+                restore_credits = 1
+                if wait.schedule.type == 'Electric Endurance':
+                    restore_credits = 2
+
                 if wait.user_package:
-                    wait.user_package.remaining_credits += 1
-                    yield wait.user_package.save()
+                    if len(wait.user_package) == 1:
+                        wait_upack = yield UserPackage.objects.get(ObjectId(wait.user_package[0]))
+                        wait_upack.remaining_credits += restore_credits
+                        yield wait_upack.save()
+                    else: 
+                        wait_upack1 = yield UserPackage.objects.get(ObjectId(wait.user_package[0]))
+                        wait_upack2 = yield UserPackage.objects.get(ObjectId(wait.user_package[1]))
+                        wait_upack1.remaining_credits += 1
+                        wait_upack2.remaining_credits += 1
+                        yield wait_upack1.save()
+                        yield wait_upack2.save()
+
                 user = yield User.objects.get(wait.user_id._id)
-                user.credits += 1
+                user.credits += restore_credits
                 yield user.save()
                 yield wait.save()
                 content = str(self.render_string('emails/waitlist_removed', 
