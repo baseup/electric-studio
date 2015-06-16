@@ -122,6 +122,8 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   var aboutUs = angular.element('#aboutus-section');
   var workouts = angular.element('#workouts-section');
   var firstRide = angular.element('#firstride-section');
+  var faq = angular.element('#faq');
+
   if (aboutUs.length) {
     var scrollableView = aboutUs.offset().top;
     angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
@@ -135,6 +137,10 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
   } 
   
+
+  if (faq.length) {;
+    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+  }
 });
 
 ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
@@ -562,7 +568,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
         return;
       }
 
-      $.Confirm('Reminder: After payment done, Please let paypal redirect back to our site to make sure your rides will be credited on our system', function () {
+      $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
         angular.element('#payForm-' + index).submit();
       });
     });
@@ -969,7 +975,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       $scope.instructor = sched.schedule.instructor;
     });
 
-    $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() + ', ' + sched.date.getFullYear();
+    $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() ;
     $scope.daySched = days[sched.date.getDay()];
     $scope.timeSched = sched.schedule.start;
     $scope.sched = sched.schedule;

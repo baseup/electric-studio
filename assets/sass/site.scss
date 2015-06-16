@@ -264,6 +264,7 @@ body {
     a {
       color: inherit;
       cursor: pointer;
+      text-transform: uppercase;
 
       &.user-loggedin {
         text-transform: none;
@@ -1190,6 +1191,7 @@ body {
   a {
     text-decoration: none;
     color: inherit;
+    text-transform: uppercase;
     
     &:hover {
       color: $brand-color-secondary;
@@ -1544,7 +1546,17 @@ body {
 
 /* Contacts */
 .contact {
-  
+
+  .info{
+    h2{
+      margin-top: 30px;
+      margin-bottom: 5px;
+
+      &:first-child{
+        margin-top: 15px;
+      }
+    }
+  }
   .social {
     list-style: none;
     padding: 0;
@@ -1563,6 +1575,8 @@ body {
       border-radius: 50%;
       background: #fff;
       color: $brand-color-primary;
+      font-size: 21px;
+      padding-left: 3px;
     }
   }
   
@@ -1618,6 +1632,12 @@ body {
 
     li{
       margin-bottom: 20px;
+      font-size: 14px;
+
+      strong{
+        display: inline-block;
+        padding-bottom: 5px;
+      }
     }
   }
 
@@ -1779,9 +1799,17 @@ body {
     padding: 10px;
     line-height: 1.4em;
     color: $color-text-light;
+    position: relative;
 
     button {
       visibility: hidden;
+
+      @include breakpoint(md) {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50% ,-50%);
+      }
     }
     
     &.unavailable {
@@ -1803,6 +1831,12 @@ body {
 
       button {
         visibility: visible;
+      }
+
+      span{
+        @include breakpoint(md) {
+          opacity: 0.5
+        }
       }
     }
     
@@ -1916,15 +1950,6 @@ body {
         }
       }
     } 
-  }
-
-  .fake-center {
-    @include breakpoint(md) {
-      max-width: 500px;
-      margin: 0 auto;
-      position: relative;
-      left: -27px;
-    }
   } 
 }
 
@@ -2048,7 +2073,11 @@ body {
     }
 
     @include breakpoint(md) {
-      width: 934px;
+      width: 920px;
+
+      &:first-child{
+        margin-top: 60px;
+      }
     }
     
     &:after {
@@ -2084,21 +2113,20 @@ body {
         }
 
         @media (min-width: 768px) {
-          width: 40px;
-          height: 40px;
-          line-height: 38px;
-          font-size: 16px;
-          margin: 3px 0;
+          width: 30px;
+          height: 30px;
+          line-height: 27px;
+          font-size: 12px;
+          margin: 5px;
         }
 
         @include breakpoint(md) {
           border-width: 3px;
-          font-size: 20px;
-          margin: 3px 1px;
-          font-size: 20px;
-          line-height: 60px;
-          height: 60px;
-          width: 60px;
+          margin: 8px;
+          font-size: 14px;
+          line-height: 40px;
+          height: 45px;
+          width: 45px;
         }
 
         &:hover{
@@ -2152,7 +2180,7 @@ body {
       }
 
       @include breakpoint(md) {
-        width: 174px;
+        width: 300px;
       }
 
       .image{
