@@ -704,7 +704,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
         return;
       }
 
-      if ($scope.loginUser && $scope.loginUser.credits <= 0) {
+      var deductCredits = 1;
+      if (sched.schedule.type == 'Electric Endurance') {
+        deductCredits = 2;
+      }
+
+      if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
         $.Alert('Insufficient Credits');
       } 
 
@@ -738,7 +743,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
     if (!$scope.chkSched(date, schedule)) {
 
-      if ($scope.loginUser && $scope.loginUser.credits <= 0) {
+      var deductCredits = 1;
+      if (schedule.type == 'Electric Endurance') {
+        deductCredits = 2;
+      }
+
+      if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
         $.Alert('Insufficient Credits');
       } 
 
@@ -1032,8 +1042,15 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     }
     if (!$scope.checkSeat(number)) {
       if (seat_index == -1) {
+
+        var deductCredits = 1;
+        if (sched.schedule.type == 'Electric Endurance') {
+          deductCredits = 2;
+        }
+
         if ($scope.loginUser && 
-            seats.length >= $scope.loginUser.credits) {
+            ((!seats.length && deductCredits > $scope.loginUser.credits) ||
+             (seats.length * deductCredits) >= $scope.loginUser.credits)) {
           $.Alert('Not enough credits');
           return;
         } else {
@@ -1078,7 +1095,12 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
         return;
       }
 
-      if ($scope.loginUser && $scope.loginUser.credits < seats.length) {
+      var deductCredits = 1;
+      if (sched.schedule.type == 'Electric Endurance') {
+        deductCredits = 2;
+      }
+
+      if ($scope.loginUser && $scope.loginUser.credits < (seats.length * deductCredits)) {
         $.Alert('Insufficient Credits, you only have ' + $scope.loginUser.credits);
         return;
       } 
