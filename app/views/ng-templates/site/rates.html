@@ -26,12 +26,12 @@
         </h2>
         <p class="price">PHP {{ package.fee | currency:'' }}</p>
         <p>Expires in {{ package.expiration }} days</p>
-        <form id="payForm-{{ $index }}" action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
+        <form id="payForm-{{ $index }}" action="https://www.paypal.com/ph/cgi-bin/webscr" method="post">
           <input type="hidden" name="cmd" value="_xclick"> 
           <input type="hidden" name="no_note" value = "0">
           <input type="hidden" name="bn" value="PP-BuyNowBF">
           <input type="hidden" name="rm" value="2">
-          <input type="hidden" name="business" value="ogsmelvin05-facilitator@gmail.com">
+          <input type="hidden" name="business" value="SpinsterWeb2">
           <input type="hidden" name="item_name" value="{{ package.name || package.credits + ' Ride' + (package.credits > 1 ? 's' : '') }}">
           <input type="hidden" name="item_number" value="{{ package._id }}">
           <input type="hidden" name="amount" value="{{ package.fee }}">
