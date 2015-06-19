@@ -628,7 +628,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
       var date = book.date.split(/[^0-9]/);
       var time = book.schedule.start.split(/[^0-9]/);
       var chkDate =  new Date(date[0], date[1]-1, date[2]-1, 17, 0, 0);
-      if (+today >= +chkDate) {
+      if (book.status == 'booked' && +today >= +chkDate) {
         $.Alert('This ride can no longer be cancelled. You can only cancel your booking until 5pm the day before your ride.')
         return;
       }
@@ -783,9 +783,9 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       cutOffchkDate.setHours(17, 0, 0);
 
       var cutOffMsg = '';
-      if (+today >= +cutOffchkDate) {
-        cutOffMsg = 'You can no longer cancel this ride once waitlisted. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.<br><br>';
-      }
+      // if (+today >= +cutOffchkDate) {
+      //   cutOffMsg = 'You can no longer cancel this ride once waitlisted. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.<br><br>';
+      // }
 
       var sched = {};
       sched.date = date;
