@@ -9,7 +9,9 @@ import json
 def find(self):
     transactions = yield UserProduct.objects.find_all()
     for i, transaction in enumerate(transactions):
-        product = transaction.product_id.to_dict()
+        product = None
+        if transaction.product_id != None:
+            product = transaction.product_id.to_dict()
         user = transaction.user_id.to_dict()
         del user['password']
         transaction = transaction.to_dict()
@@ -22,7 +24,9 @@ def find_one(self, id):
     transaction = yield UserProduct.objects.get(id)
     if transaction:
         user = transaction.user_id.to_dict()
-        product = transaction.product_id.to_dict()
+        product = None
+        if transaction.product_id != None:
+            product = transaction.product_id.to_dict()
         del user['password']
         transaction = transaction.to_dict()
         transaction['user_id'] = user
