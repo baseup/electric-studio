@@ -970,7 +970,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
 
     var seats = [];
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var days = ['Sunday','Monday','Tuesday','Friday','Thursday','Friday','Saturday'];
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
     $scope.resched = SharedService.get('resched');
     
