@@ -7,7 +7,7 @@ class User(Model):
     first_name = StringField(required=True)
     middle_name = StringField(required=False)
     last_name = StringField(required=True)
-    email = EmailField(required=True)
+    email = EmailField(required=True, unique=True)
     password = StringField(required=True)
     gender = StringField(max_length=5)
     birthdate = DateTimeField(required=False)
