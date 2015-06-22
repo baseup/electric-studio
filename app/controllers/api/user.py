@@ -52,6 +52,8 @@ def create(self):
             value = sys.exc_info()[1]
             self.set_status(403)
             str_value = str(value)
+            if 'The index "caused" was violated ' in str_value:
+                str_value = 'Email already in used'
             self.write(str_value)
     self.finish()
 

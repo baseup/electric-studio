@@ -64,7 +64,7 @@ def create(self):
             user = User(first_name=data['first_name'], 
                         # middle_name=data['middle_name'],
                         last_name=data['last_name'],
-                        email=data['email'],
+                        email=data['email'].lower(),
                         password=password,
                         status='Unverified',
                         credits=0)
@@ -77,6 +77,8 @@ def create(self):
             value = sys.exc_info()[1]
             self.set_status(403)
             str_value = str(value)
+            if 'The index "caused" was violated ' in str_value:
+                str_value = 'Email already in used'
             self.write(str_value)
     self.finish()
 
