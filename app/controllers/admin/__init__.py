@@ -101,16 +101,18 @@ def buy(self):
             }
 
             user_packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
-            if user_packages:
-                for upack in user_packages:
-                    if upack.trans_info and pp_tx in upack.trans_info:
-                        self.redirect('/admin/#/accounts?s=exists#packages')
-                        return
-         
             try: 
                 pid = self.get_argument('pid');
                 package = yield Package.objects.get(pid)
                 if pid:
+                    if user_packages:
+                        for upack in user_packages:
+                            if upack.trans_info and pp_tx in upack.trans_info:
+                                self.redirect('/admin/#/accounts?s=exists#packages')
+                                return
+                            if package.first_timer and upack.package_ft:
+                                self.redirect('/admin/#/accounts?s=exists#packages')
+                                return
                     if user.status != 'Frozen' and user.status != 'Unverified':
                         transaction = UserPackage()
                         transaction.user_id = user._id
