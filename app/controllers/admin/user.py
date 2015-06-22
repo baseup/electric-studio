@@ -75,7 +75,6 @@ def create(self):
             user = yield user.save()
         except:
             value = sys.exc_info()[1]
-            print(value);
             self.set_status(403)
             str_value = str(value)
             if 'The index "caused" was violated ' in str_value:
