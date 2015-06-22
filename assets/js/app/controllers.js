@@ -585,16 +585,18 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService
   angular.element('.imgmap a').click(function () {
    var id = angular.element(this).data('target'),
        target = angular.element('#'+id) ? angular.element('#'+id) : angular.element('#'+id.toUpperCase());
+
+	   if(target && target.length){
+	       angular.element('html, body').animate({
+	         scrollTop : target.offset().top
+	       });
     
-    angular.element('html, body').animate({
-      scrollTop : target.offset().top
-    });
-    
-    target.find('.image').addClass('focus');
+	       target.find('.image').addClass('focus');
         
-    $timeout(function () {
-      target.find('.image').removeClass('focus');
-    }, 2000);
+	       $timeout(function () {
+	         target.find('.image').removeClass('focus');
+	       }, 2000);
+	   }
     
   });
 });
