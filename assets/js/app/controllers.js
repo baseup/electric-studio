@@ -584,7 +584,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService
 
   angular.element('.imgmap a').click(function () {
    var id = angular.element(this).data('target'),
-       target = angular.element('#'+id) ? angular.element('#'+id) : angular.element('#'+id.toUpperCase());
+       target = angular.element('#'+id).length ? angular.element('#'+id) : angular.element('#'+id.toUpperCase());
 
 	   if(target && target.length){
 	       angular.element('html, body').animate({
