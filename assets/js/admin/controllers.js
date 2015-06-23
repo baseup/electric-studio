@@ -678,12 +678,17 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     }
   }
 
-  $scope.missedBooking = function (booking) {
-    $.Confirm('Are you sure on marking ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride as MISSED ? (THIS CANNOT BE UNDONE)', function () {
-      ClassService.delete({ scheduleId: booking._id, missed: true }, function () {
-        $scope.filterSchedDate($scope.selectedAccount);
-      });
-    });
+  $scope.missedModal = function(booking){
+    $scope.selectedBook = booking;
+    angular.element('#missed-booking-modal').Modal();    
+  }
+
+  $scope.missedBooking = function () {
+     $.Confirm('Are you sure on marking ' + $scope.selectedBook.user_id.first_name + ' ' + $scope.selectedBook.user_id.last_name + ' ride as MISSED ? (THIS CANNOT BE UNDONE)', function () {
+       ClassService.delete({ scheduleId: $scope.selectedBook._id, missed: true, notes:$scope.missedNotes }, function () {
+          $scope.filterSchedDate($scope.selectedAccount);
+       });
+     });
   }
 
   $scope.cancelBooking = function (booking) {
@@ -870,7 +875,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     return 0;
   }
 
-  UserService.query(function (users) {
+  UserService.query({frozen: false}, function (users) {
     $scope.users = users;
     var select = angular.element('#select-user-id')[0].selectize;
     var selectWaitlist = angular.element('#select-waitlist-user')[0].selectize;
@@ -911,16 +916,25 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   }
 
-  $scope.missedBooking = function (booking, index) {
-    if (!$scope.isCompleted(booking.schedule)) {
-      $.Confirm('Are you sure on marking ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride as MISSED ? (THIS CANNOT BE UNDONE)', function () {
+  $scope.missedModal = function(booking, index){
+    $scope.selectedBook = booking;
+    $scope.spliceIndex = index;
+    angular.element('#missed-booking-modal').Modal();    
+  }
+
+  $scope.missedBooking = function () {
+    if (!$scope.isCompleted($scope.selectedBook.schedule)) {
+      var index = $scope.spliceIndex;
+      var notes = $scope.missedNotes;
+     $.Confirm('Are you sure on marking ' + $scope.selectedBook.user_id.first_name + ' ' + $scope.selectedBook.user_id.last_name + ' ride as MISSED ? (THIS CANNOT BE UNDONE)', function () {
+      ClassService.delete({ scheduleId: $scope.selectedBook._id, missed: true, notes: notes }, function () {
         $scope.books.splice(index, 1);
-        ClassService.delete({ scheduleId: booking._id, missed: true }, function () {
-          UserService.query(function (users) {
-            $scope.users = users;
-          });
+        UserService.query(function (users) {
+          $scope.users = users;
         });
       });
+     });
+
     } else {
       $.Notify({ content: 'Not allow to modify, This schedule is completed' });
     }
@@ -928,6 +942,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   $scope.cancelBooking = function (booking, index) {
     if (!$scope.isCompleted(booking.schedule)) {
+
       $.Confirm('Are you sure on cancelling ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride ?', function () {
         $.Prompt('Notes on cancelling ' + booking.user_id.first_name + ' ride', function (notes) {
           if (notes && notes.length > 0) {
@@ -1022,6 +1037,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
             $scope.selectedRider = {};
             angular.element('#select-user-id')[0].selectize.setValue('');
             angular.element('#book-ride-modal').Modal();
+
           } else {
             $.Alert('No available seats');
           }

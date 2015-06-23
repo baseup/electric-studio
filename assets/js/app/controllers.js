@@ -634,7 +634,6 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
         $.Alert('This ride can no longer be cancelled. You can only cancel your booking until 5pm the day before your ride.')
         return;
       }
-
       $.Confirm('Are you sure you want to cancel?', function () {
         var data = {};
         data.status = 'cancelled';

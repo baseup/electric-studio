@@ -12,11 +12,13 @@ import tornado
 import json
 
 def find(self):
-    deactivated = self.get_query_argument('deactivated');
-
+    deactivated = self.get_query_argument('deactivated')
+    frozen = self.get_query_argument('frozen')
     query = User.objects.filter(status__ne='Deleted')
     if not deactivated:
         query.filter(status__ne='Deactivated')
+    if frozen != None:
+        query.filter(status__ne='Frozen')
 
     users = yield query.order_by('update_at',direction=DESCENDING).find_all()
     self.render_json(users)

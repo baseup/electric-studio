@@ -70,7 +70,7 @@
                   </a>
                 </li>
                 <li>
-                  <a title="Mark as Missed" ng-click="missedBooking(book, $index)" class="option-booking">
+                  <a title="Mark as Missed" ng-click="missedModal(book, $index)" class="option-booking">
                     <i class="fa fa-clock-o"></i>
                   </a>
                 </li>
@@ -193,6 +193,18 @@
     </div>
   </div>  
 
+<!-- missed class -->
+<!-- missed class -->
+  <div class="modal" data-modal="missed-booking" id="missed-booking-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom"></h3>
+      <h3 class="h--medium brand-color space--bottom">Missed Ride: {{ selectedBook.user_id.first_name }} {{ selectedBook.user_id.last_name }}</h3>
+      <span class="label">Notes:</span>
+      <input ng-model="missedNotes" class="text-input">
+      <button type="button" class="btn btn--primary btn--medium space--top modal-close" ng-click="missedBooking()">MARK AS MISSED</button>
+    </div>
+  </div>
   <!-- move to class -->
   <div id="move-to-class-modal" class="modal" data-modal="move-to-class" >
     <div class="modal__box pad">
