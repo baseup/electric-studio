@@ -4,12 +4,17 @@ from app.models.users import User
 from app.helper import send_email
 from motorengine.errors import *
 from datetime import datetime, timedelta
+from app.helper import GMT8
 
 import tornado.escape
 import sys
 
+gmt8 = GMT8()
+
 def find(self):
     transactions = yield UserPackage.objects.order_by('create_at', direction=DESCENDING).find_all()
+    for i, trans in enumerate(transactions):
+        transactions[i].create_at = transactions[i].create_at.replace(tzinfo=gmt8);
     self.render_json(transactions)
 
 def create(self):

@@ -37,9 +37,13 @@ def find_one(self, id):
 
         books = yield BookedSchedule.objects.filter(user_id=user._id, date__gte=from_date, date__lte=to_date) \
                                             .order_by('date', direction=ASCENDING).find_all()
+        for i, book in enumerate(books):
+            books[i].create_at = books[i].create_at.replace(tzinfo=gmt8);
         json_user['books'] = to_json_serializable(books)
     else:
         packages = yield UserPackage.objects.filter(user_id=user._id).order_by('expire_date').find_all()
+        for i, package in enumerate(packages):
+            packages[i].create_at = packages[i].create_at.replace(tzinfo=gmt8);
         json_user['packages'] = to_json_serializable(packages)
 
     self.write(to_json(json_user))

@@ -27,6 +27,9 @@ def find(self):
             transactions = yield UserPackage.objects.order_by("update_at", direction=DESCENDING) \
                                                     .filter(user_id=user._id) \
                                                     .skip(transPage * 10).limit(10).find_all()
+                                                    
+            for i, trans in enumerate(transactions):
+                transactions[i].create_at = transactions[i].create_at.replace(tzinfo=gmt8);
 
             self.render_json({
                 'schedules' : schedules,
