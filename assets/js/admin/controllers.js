@@ -1954,6 +1954,21 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
 
 ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService) {
 
+  $scope.resetTotals = function () {
+    $scope.totalSeats = 0;
+    $scope.totalReserved = 0;
+    $scope.stats = angular.copy($scope.stats);
+  }
+
+  $scope.setTotal = function (stat, index) {
+    if (!index) {
+      $scope.totalSeats = 0;
+      $scope.totalReserved = 0;
+    }
+    $scope.totalSeats += stat.seats - $scope.blockedBikes.length;
+    $scope.totalReserved += stat.books.length;
+  }
+
   $scope.stats = StatisticService.query();
   $scope.stats.$promise.then(function (data) {
     $scope.stats = data;
@@ -2089,7 +2104,7 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
 
   InstructorService.query(function (instructors) {
     var select = angular.element('#search-instructor')[0].selectize;
-
+    select.addOption({ value: '', text: 'All' });
     angular.forEach(instructors, function (ins) {
       if (ins) select.addOption({ value: ins._id, text: ins.admin.first_name + ' ' + ins.admin.last_name });
     });
