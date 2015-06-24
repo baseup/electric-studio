@@ -1194,7 +1194,11 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       $.Alert('Please select a valid schedule');
       return;
     }
-    window.location = '/admin/export/download-bookings?sched_id=' + $scope.newBook.sched_id;
+    if ($scope.books && $scope.books.length) {
+      window.location = '/admin/export/download-bookings?sched_id=' + $scope.newBook.sched_id;
+    } else {
+      $.Notify({ content: 'No booked schedule found'});
+    }
   }
 
   $scope.isBlocked = function (seat) {
