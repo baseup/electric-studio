@@ -466,6 +466,18 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   }
 
   $scope.buyPackageModal = function (user) {
+  var select = angular.element('#select-add-package')[0].selectize;
+  var selectBuy = angular.element('#select-buy-package')[0].selectize;
+
+    PackageService.query({buyer_id: user._id}, function (packages) {
+      $scope.packages = packages;
+      selectBuy.clearOptions();
+      select.clearOptions();
+      angular.forEach(packages, function (pack) {
+        select.addOption({ value: pack._id, text: pack.name  || pack.credits + ' Ride' + (pack.credits > 1 ? 's' : '' ) });
+        selectBuy.addOption({ value: pack._id, text: pack.name  || pack.credits + ' Ride' + (pack.credits > 1 ? 's' : '' )});
+      });
+    }); 
 
     var port = '';
     if (window.location.port)
