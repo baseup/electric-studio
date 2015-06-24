@@ -10,12 +10,13 @@ from dateutil.relativedelta import relativedelta
 def download_bookings(self):
     sched_id = self.get_query_argument('sched_id')
     if sched_id:
-        sched = yield InstructorSchedule.objects.get(self.get_argument('sched_id')); 
-        bookings = yield BookedSchedule.objects.filter(schedule=sched._id).find_all()
+        sched = yield InstructorSchedule.objects.get(self.get_argument('sched_id'))
+        query = BookedSchedule.objects.order_by('seat_number', direction=ASCENDING)
+        bookings = yield query.filter(schedule=sched._id, status__ne='cancelled').find_all()
 
         filename = 'bookings-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
         with open(filename, 'w') as csvfile:
-            fieldnames = ['first_name', 'last_name', 'seat number', 'status', 'date', 'start', 'end', 'client signature']
+            fieldnames = ['first_name', 'last_name', 'seat number', 'status', 'date', 'client signature']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
             for b in bookings:
@@ -25,8 +26,8 @@ def download_bookings(self):
                     'seat number': b.seat_number,
                     'status': b.status,
                     'date': b.date.strftime('%Y-%m-%d'),
-                    'start': b.schedule.start.strftime('%I:%M %p'),
-                    'end': b.schedule.end.strftime('%I:%M %p'),
+                    # 'start': b.schedule.start.strftime('%I:%M %p'),
+                    # 'end': b.schedule.end.strftime('%I:%M %p'),
                     'client signature': ''
                 })
 

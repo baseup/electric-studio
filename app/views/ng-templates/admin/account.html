@@ -104,8 +104,7 @@
       <input ng-model="frozeReason" class="text-input">
       <button type="button" class="btn btn--primary btn--medium space--top modal-close" ng-click="freezeAccount()">Freeze Account</button>
     </div>
-  </div>
-
+  </div>  
   <div class="modal" data-modal="security-check" id="security-check-modal">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
@@ -270,7 +269,7 @@
                     </a>&nbsp;&nbsp;&nbsp;
                   </li>
                   <li>
-                    <a title="Mark as Missed" ng-click="missedBooking(sched)">
+                    <a title="Mark as Missed" ng-click="missedModal(sched)">
                       <i class="fa fa-clock-o"></i>
                     </a>&nbsp;&nbsp;&nbsp;
                   </li>
@@ -314,7 +313,18 @@
       <button ng-if="getAccess('schedules', 'move_bike')" class="btn btn--primary btn--medium space--top modal-close" ng-click="moveBike()">Switch</button>
     </div>
   </div>
-
+<!-- missed class -->
+  <div class="modal" data-modal="missed-booking" id="missed-booking-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom"></h3>
+      <h3 class="h--medium brand-color space--bottom">Missed Ride: {{ selectedBook.user_id.first_name }} {{ selectedBook.user_id.last_name }}</h3>
+      <span class="label">Notes:</span>
+      <input ng-model="missedNotes" class="text-input">
+      <button type="button" class="btn btn--primary btn--medium space--top modal-close" ng-click="missedBooking()">MARK AS MISSED</button>
+    </div>
+  </div>
+  
   <!-- modal account summary -->
   <div class="modal" data-modal="account-summary" id="account-summary-modal">
     <div class="modal__box pad" style="max-width: 80%">
