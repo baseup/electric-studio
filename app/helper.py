@@ -4,6 +4,7 @@ from app.settings import MANDRILL_API_KEY, EMAIL_SENDER, EMAIL_SENDER_NAME
 
 import mandrill
 import sys
+import pytz
 
 class GMT8(tzinfo):
     def utcoffset(self, dt):
@@ -19,6 +20,15 @@ class GMT8(tzinfo):
             return timedelta(0)
     def tzname(self,dt):
         return "GMT +8"
+
+def create_at_gmt8(records):
+    if records:
+        gmt8 = GMT8()
+        for i, record in enumerate(records):
+            if records[i].create_at:
+                records[i].create_at = records[i].create_at.replace(tzinfo=pytz.utc)
+                records[i].create_at = records[i].create_at.astimezone(tz=gmt8)
+    return records;
 
 def mongo_to_dict(obj):
     return_data = []

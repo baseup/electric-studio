@@ -2,10 +2,8 @@ from motorengine import DESCENDING
 from app.models.packages import UserPackage, Package
 from app.models.schedules import BookedSchedule
 from app.models.users import User
-from app.helper import GMT8
+from app.helper import create_at_gmt8
 import tornado.escape
-
-gmt8 = GMT8()
 
 def find(self):
     if self.get_secure_cookie('loginUserID'):
@@ -31,8 +29,7 @@ def find(self):
                                                     .filter(user_id=user._id) \
                                                     .skip(transPage * 10).limit(10).find_all()
 
-            for i, trans in enumerate(transactions):
-                transactions[i].create_at = transactions[i].create_at.replace(tzinfo=gmt8);
+            transactions = create_at_gmt8(transactions)
 
             self.render_json({
                 'schedules' : schedules,
