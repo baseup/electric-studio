@@ -24,18 +24,26 @@
         <div class="class-search pad cf">
           <div class="float--left space--right">
             <span class="label">Instructor</span>
-            <select class="select" id="search-instructor" ng-model="searchIns">
-              <option value="">Select Instructor</option>
+            <select class="select" ng-change="resetTotals()" id="search-instructor" ng-model="searchIns">
+              <option value="">All</option>
             </select><br/>
             <!-- <input type="checkbox" id="checkAS"/> With available seat -->
           </div>
           <div class="float--left space--left">
             <span class="label">Option</span>
-            <select class="select" ng-change="changeOp()" ng-model="selectedOption"> 
+            <select class="select" ng-change="resetTotals()" ng-model="selectedOption"> 
               <option value="all">All</option>
               <option value="withAvailable">With Available Seats Only</option>
               <option value="withWaitlisted">With Waitlisted Seats Only</option>
             </select>
+          </div>
+          <div class="float--right space--left">
+            <span class="lable">Total Reserved</span>
+            <h4 class="h small">{{ totalReserved }}</h4>
+          </div>
+          <div class="float--right space--left">
+            <span class="lable">Total Seats</span>
+            <h4 class="h small">{{ totalSeats }}</h4>
           </div>
         </div>
 
@@ -54,7 +62,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="stat in stats | search:'instructor._id':searchIns | filter:withAvailableSeats">
+              <tr ng-init="setTotal(stat, $index)" ng-repeat="stat in stats | search:'instructor._id':searchIns | filter:withAvailableSeats">
                 <td>{{ stat.date | formatDate }} {{ stat.start | formatTime }}</td>
                 <td>{{ stat.type }}</td>
                 <td>{{ stat.instructor.admin.first_name }} {{ stat.instructor.admin.last_name }}</td>
@@ -62,7 +70,9 @@
                   <span ng-if="isCompleted(stat)">Completed</span>
                   <span ng-if="!isCompleted(stat)">Available</span>
                 </td>
-                <td><a ng-click="viewBikeMap(stat)">{{ stat.seats - blockedBikes.length }}</a></td>
+                <td>
+                  <a ng-click="viewBikeMap(stat)">{{ stat.seats - blockedBikes.length }}</a>
+                </td>
                 <td>
                   <span ng-if="stat.books.length <= stat.seats">{{ stat.seats - blockedBikes.length - stat.books.length }}</span>
                   <span ng-if="stat.books.length > stat.seats">0</span>
