@@ -8,8 +8,11 @@ from app.models.schedules import BookedSchedule
 from hurricane.helpers import to_json, to_json_serializable
 from datetime import datetime, timedelta
 from app.helper import send_email
+from app.helper import GMT8
 import tornado
 import json
+
+gmt8 = GMT8()
 
 def find(self):
     deactivated = self.get_query_argument('deactivated')
