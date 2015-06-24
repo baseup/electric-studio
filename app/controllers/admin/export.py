@@ -12,24 +12,38 @@ def download_bookings(self):
     if sched_id:
         sched = yield InstructorSchedule.objects.get(self.get_argument('sched_id'))
         query = BookedSchedule.objects.order_by('seat_number', direction=ASCENDING)
-        bookings = yield query.filter(schedule=sched._id, status__ne='cancelled').find_all()
+        bookings = yield query.filter(schedule=sched._id, status='booked').find_all()
+
+        bikeMap = {}
+        for b in bookings:
+            bikeMap[b.seat_number] = b
 
         filename = 'bookings-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
         with open(filename, 'w') as csvfile:
-            fieldnames = ['first_name', 'last_name', 'seat number', 'status', 'date', 'client signature']
+            fieldnames = ['Bike Number', 'First', 'Last', 'Signature']
+            sched_writer = csv.writer(csvfile)
+            sched_writer.writerow([bookings[0].date.strftime('%A, %B %d, %Y')])
+            sched_writer.writerow([bookings[0].schedule.instructor.admin.first_name.upper()])
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
             writer.writeheader()
-            for b in bookings:
-                writer.writerow({
-                    'first_name': b.user_id.first_name,
-                    'last_name': b.user_id.last_name,
-                    'seat number': b.seat_number,
-                    'status': b.status,
-                    'date': b.date.strftime('%Y-%m-%d'),
-                    # 'start': b.schedule.start.strftime('%I:%M %p'),
-                    # 'end': b.schedule.end.strftime('%I:%M %p'),
-                    'client signature': ''
-                })
+
+            for i in range(1, 38):
+                if i in bikeMap:
+                    writer.writerow({
+                        'Bike Number': i,
+                        'First': bikeMap[i].user_id.first_name,
+                        'Last': bikeMap[i].user_id.last_name,
+                        'Signature': ''
+                    })
+                else:
+                    writer.writerow({
+                        'Bike Number': i,
+                        'First': '',
+                        'Last': '',
+                        'Signature': ''
+                    })
+
 
         buf_size = 4096
         self.set_header('Content-Type', 'application/octet-stream')
