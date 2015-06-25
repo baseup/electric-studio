@@ -2083,19 +2083,19 @@ body {
 
   .formation {
     text-align: center;
-    margin: 0 -10px;
+    margin: 0 auto;
+    width: 280px;
 
     @media (min-width: 360px) {
-      width: 350px;
-      margin: 0 auto;
+      width: 310px;
     }
 
     @media (min-width: 768px) {
-      width: 626px;
+      width: 616px;
     }
 
     @include breakpoint(md) {
-      width: 920px;
+      width: 910px;
 
       &:first-child{
         margin-top: 60px;
@@ -2110,12 +2110,18 @@ body {
 
     .seats{
       max-width: 100%;
+      &:after{
+        content: '';
+        display: block;
+        clear: both;
+      }
 
       span{
+        float: left;
         border: solid 1px transparent;
-        font-size: 11px;
-        height: 19px;
-        width: 19px;
+        font-size: 8px;
+        height: 18px;
+        width: 18px;
         background: #fff none repeat scroll 0 0;
         border-radius: 50%;
         color: #666;
@@ -2123,23 +2129,22 @@ body {
         display: inline-block;
         font-weight: bold;
         text-align: center;
-        margin: 2px -1px;
+        margin: 2px 1px;
         transition: all 1000ms;
         cursor: pointer;
         padding-left: 2px;
         line-height: 16px;
 
         @media (min-width: 360px) {
-          width: 20px;
-          height: 20px;
+          margin: 3px 2px;
         }
 
         @media (min-width: 768px) {
-          width: 30px;
-          height: 30px;
-          line-height: 27px;
+          width: 32px;
+          height: 32px;
+          line-height: 30px;
           font-size: 12px;
-          margin: 5px;
+          margin: 5px 6px;
         }
 
         @include breakpoint(md) {
@@ -2174,18 +2179,22 @@ body {
     }
 
     .front {
-      width: 58px;
+      width: 40px;
       display: inline-block;
       position: relative;
       vertical-align: middle;
       margin-bottom: 10px;
 
+      @media (min-width: 360px) {
+        width: 44px;
+      }
+
       @media (min-width: 768px) {
-        width: 120px;
+        width: 88px;
       }
 
       @include breakpoint(md) {
-        width: 174px;
+        width: 130px;
         margin-bottom: 30px;
       }
     }
@@ -2196,14 +2205,14 @@ body {
 
     .instructor{
       text-align: center;
-      width: 100px;
+      width: 150px;
 
       @media (min-width: 768px) {
-        width: 150px;
+        width: 270px;
       }
 
       @include breakpoint(md) {
-        width: 300px;
+        width: 328px;
       }
 
       .image{
