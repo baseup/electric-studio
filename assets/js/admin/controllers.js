@@ -269,9 +269,6 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   }
 
   $scope.newCredits = {};
-
-
-
   UserService.query({ deactivated: true}, function (users) {
     $scope.users = users;
   });
@@ -285,6 +282,32 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
       selectBuy.addOption({ value: pack._id, text: pack.name  || pack.credits + ' Ride' + (pack.credits > 1 ? 's' : '' )});
     });
   });
+
+  $scope.searchingAccount = false;
+  $scope.searchAccount = function () {
+    if ($scope.searchText && !$scope.searchingAccount) {
+      $scope.searchingAccount = true;
+      $timeout(function () {
+        UserService.query({ deactivated: true, search: $scope.searchText }, function (users) {
+          $scope.users = users;
+          $scope.searchingAccount = false;
+        }, function () { $scope.searchingAccount = false });
+      }, 100);
+    }
+  }
+
+  $scope.loadingAccounts = false;
+  $scope.loadMoreAccounts = function () {
+    if (!$scope.loadingAccounts) {
+      $scope.loadingAccounts = true;
+      // $timeout(function () {
+        UserService.query({ deactivated: true, search: $scope.searchText, skip: $scope.users.length }, function (users) {
+          $scope.users = $scope.users.concat(users);
+          $scope.loadingAccounts = false;
+        }, function () { $scope.loadingAccounts = false });
+      // }, 100);
+    }
+  }
 
   $scope.showAddAccount = function () {
     angular.element('#add-account-modal').Modal();
@@ -1964,7 +1987,7 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
     }
     return null;
   }
-  
+
 });
 
 ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService) {

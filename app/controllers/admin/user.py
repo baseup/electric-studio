@@ -9,15 +9,32 @@ from hurricane.helpers import to_json, to_json_serializable
 from datetime import datetime, timedelta
 from app.helper import send_email
 from app.helper import create_at_gmt8
+from motorengine import Q
 import tornado
 import json
 
 def find(self):
+    str_skip = self.get_query_argument('skip');
     deactivated = self.get_query_argument('deactivated')
-    query = User.objects.filter(status__ne='Deleted')
+    search = self.get_query_argument('search');
+    query = User.objects.order_by('update_at',direction=DESCENDING).filter(status__ne='Deleted')
+
     if not deactivated:
         query.filter(status__ne='Deactivated')
-    users = yield query.order_by('update_at',direction=DESCENDING).find_all()
+    else:
+        if search:
+            q = { '$regex' : '.*' + search + '.*', '$options' : 'i' }
+            arg = Q(first_name=q) | Q(last_name=q) | Q(email=q)
+            query.filter(arg)
+
+        skip_val = 0
+        if str_skip:
+            skip_val = int(str_skip)
+
+        query.skip(skip_val).limit(30)
+        
+    users = yield query.find_all()
+
     self.render_json(users)
 
 def find_one(self, id):
