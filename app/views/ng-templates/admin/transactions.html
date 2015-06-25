@@ -10,8 +10,8 @@
 
       <div class="class-search pad cf">
         <span class="label">Search</span>
-        <div class="bp-md-one-fourth float--left space--bottom space--right">
-          <input class="text-input" ng-model="searchTrans" placeholder="Enter Name or Email">
+        <div class="bp-md-one-third float--left space--bottom space--right">
+          <input class="text-input" ng-model="searchTrans" placeholder="Enter Name, Email or Transaction">
         </div>
         <div class="float--left">
           <select class="select" id="search-trans-package" ng-model="searchPac">
@@ -24,6 +24,7 @@
         <table class="data-table">
           <thead>
             <tr>
+              <th>Transaction</th>
               <th>Name</th>
               <th>Email</th>
               <th>Package Name</th>
@@ -35,7 +36,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="transaction in transactions | search:'user_id.first_name+ +user_id.last_name,user_id.email':searchTrans | search:'package_id._id':searchPac">
+            <tr ng-repeat="transaction in transactions | search:'trans_info.transaction,user_id.first_name+ +user_id.last_name,user_id.email':searchTrans | search:'package_id._id':searchPac">
+              <td>{{ getTransId(transaction) }}</td>
               <td>{{ transaction.user_id.first_name }} {{ transaction.user_id.last_name }}</td>
               <td>{{ transaction.user_id.email }} </td>
               <td>

@@ -1950,6 +1950,21 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
       if (pack) select.addOption({ value: pack._id, text: pack.name });
     });
   });
+
+  $scope.getTransId = function (pac) {
+    if (pac.trans_info) {
+      if (!(pac.trans_info instanceof Object)) {
+        var transInfo = pac.trans_info.replace(/'/g, '"');
+        var trans = JSON.parse(transInfo);
+        pac.trans_info = trans;
+        return trans.transaction;
+      } else {
+        return pac.trans_info.transaction;
+      }
+    }
+    return null;
+  }
+  
 });
 
 ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService) {
