@@ -2211,10 +2211,6 @@ body {
         width: 270px;
       }
 
-      @include breakpoint(md) {
-        width: 328px;
-      }
-
       .image{
         left: 50%;
         border-radius: 150px;
