@@ -347,7 +347,7 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
       }
 
       if ($scope.pass.password != $scope.pass.confirm_password) {
-        $.Alert("Retype Password didn't match");
+        $.Alert("Passwords did not match.");
         return;
       }
 
@@ -364,7 +364,7 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
 
       UserService.update({ userId: id }, account).$promise.then(addSuccess, addFail);
     } else {
-      $.Alert('Input passwords cannot be empty.');
+      $.Alert('Password is required.');
     }
   }
 
@@ -373,7 +373,7 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
       var user = {};
       user.email = $scope.forgotPassEmail;
       var sendEmailSuccess = function () {
-        $.Alert('Successfully sent email for reset password confirmation');
+        $.Alert('Successfully sent email to reset password.');
       }
 
       var sendEmailFailed = function (error) {
@@ -384,7 +384,7 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
                       .$promise.then(sendEmailSuccess, sendEmailFailed);
       $scope.forgotPassEmail = null;
     } else {
-      $.Alert('Input email address cannot be empty.');
+      $.Alert('Email address is required.');
     }
   }
 });
@@ -394,9 +394,9 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
   var qstring = $location.search();
   if (qstring.s) {
     if (qstring.s == 'success' && qstring.pname) {
-      $.Alert('Success! You have bought ' + qstring.pname);
+      $.Alert('Success! You have just purchased ' + qstring.pname + '.');
     } else if (qstring.s == 'exists') {
-      $.Alert('Transaction already exists');
+      $.Alert('Transaction already exists.');
     }
     $location.search({ s: null, pname: null });
   }
@@ -439,7 +439,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
           $scope.user = $scope.loginUser;
           $scope.isVerified = true;
         }
-        $.Alert('Successfully updated user info')
+        $.Alert('Successfully updated user information.')
       }
       var addFail = function (error) {
         $.Alert(error.data);
@@ -457,16 +457,16 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
       if ($scope.pass && $scope.pass.current_password) {
 
         if ($scope.pass.password && $scope.pass.password.length < 6) {
-          $.Alert('Password should be atleast more than 5 characters');
+          $.Alert('Password must be at least 6 characters.');
           return;
         }
 
         if ($scope.pass.password != $scope.pass.confirm_password) {
-          $.Alert("Retype Password didn't match");
+          $.Alert("Passwords did not match.");
           return;
         }
         var addSuccess = function () {
-          $.Alert('Successfully updated your password');
+          $.Alert('Successfully updated password.');
           $scope.pass = null;
         }
         var addFail = function (error) {
@@ -513,7 +513,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
       $.Confirm('Are you sure you want to delete your account?' , function () {
         $.Prompt('User Password', function (password) {
           UserService.delete({ userId: user._id, pass: password }, function () {
-            $.Alert('Account successfully deactivated');
+            $.Alert('Account successfully deleted.');
             $scope.logout();
           }, function (error){ $.Alert(error.data); });
         }, true);
@@ -564,7 +564,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
       }
 
       if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
-        $.Alert('User is Unverified, Please check your email');
+        $.Alert('Account is not verified, Please check your email to verify account.');
         return;
       }
 
@@ -707,7 +707,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       }
 
       if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
-        $.Alert('User is Unverified, Please check your email');
+        $.Alert('Account is not verified, Please check your email to verify account.');
         return;
       }
 
@@ -717,7 +717,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       }
 
       if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
-        $.Alert('Insufficient Credits');
+        $.Alert('Not enough credits.');
       } 
 
       var book = {};
@@ -732,7 +732,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
           SharedService.clear('resched');
         }
 
-        $.Alert('You have beed added to waitlist');
+        $.Alert('You have been added to the waitlist');
         $scope.reloadUser();
         window.location = '/#/reserved'
         window.location.reload();
@@ -756,7 +756,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       }
 
       if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
-        $.Alert('Insufficient Credits');
+        $.Alert('Not enough credits.');
       } 
 
       var today = new Date();
@@ -1093,12 +1093,12 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       }
 
       if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
-        $.Alert('User is Unverified, Please check your email');
+        $.Alert('Account is not verified, Please check your email to verify account.');
         return;
       }
 
       if (!$scope.forWaitlist && seats.length == 0) {
-        $.Alert('Please pick a bike');
+        $.Alert('Please select your bike.');
         return;
       }
 
@@ -1108,7 +1108,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       }
 
       if ($scope.loginUser && $scope.loginUser.credits < (seats.length * deductCredits)) {
-        $.Alert('Insufficient Credits, you only have ' + $scope.loginUser.credits);
+        $.Alert('Not enough credits, you only have ' + $scope.loginUser.credits);
         return;
       } 
 
@@ -1124,7 +1124,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       book.sched_id = sched.schedule._id;
       var str_seats = seats.sort(function(a, b){return a-b}) + '';
       str_seats = str_seats.replace(/,/g, ', ');
-      var confirm_message = 'You’re about to book bike'+ (seats.length > 1 ? 's' : '') + ' # ' + str_seats + 
+      var confirm_message = 'You are about to book bike'+ (seats.length > 1 ? 's' : '') + ' # ' + str_seats + 
                             ' for ' + $scope.daySched + ', ' + $scope.dateSched + '.';
       var cutOffMsg = '';                     
       if (+today >= +cutOffchkDate) {
@@ -1146,9 +1146,9 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
           }
 
           if ($scope.forWaitlist) {
-            $.Alert('You have beed added to waitlist');
+            $.Alert('You have been added to the waitlist');
           } else {  
-            $.Alert('You have successfully booked a ride');
+            $.Alert('You have successfully booked a ride.');
           }
           UserService.get(function (user) {
             $scope.reloadUser();
