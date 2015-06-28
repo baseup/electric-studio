@@ -863,8 +863,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
     curWeekMonday.setHours(hours, minutes, 0, 0);
 
-    console.log(now);
-
     if ($scope.weekRelease &&
         $scope.weekRelease.updateWeek < now && 
         (now > $scope.weekRelease.date && now.getDay() == 0 && date > curWeekMonday) ||
