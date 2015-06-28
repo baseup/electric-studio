@@ -665,7 +665,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       updateAt.setDate(updateAt.getDate() - updateAt.getDay() + 7);
 
       var date = new Date()
-      date.setDate(date.getDate() - date.getDay() + days[data.day])
+      var dDay = date.getDay();
+      if (!dDay) {
+        dDay = dDay + 7;
+      }
+      date.setDate(date.getDate() - dDay + days[data.day])
       var time = data.time.split(':')
       date.setHours(time[0], time[1], 0 , 0);
       $scope.weekRelease.date = date;
@@ -837,6 +841,9 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     }
   }
 
+  var curWeekMonday = new Date();
+  curWeekMonday.setDate(curWeekMonday.getDate() - curWeekMonday.getDay() + 1);  
+
   $scope.chkSched = function (date, sched) {
 
     var now = new Date();
@@ -854,10 +861,16 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     if (date > nextMonday) 
       return true;
 
+    curWeekMonday.setHours(hours, minutes, 0, 0);
+
+    console.log(now);
+
     if ($scope.weekRelease &&
         $scope.weekRelease.updateWeek < now && 
-        now < $scope.weekRelease.date) 
+        (now > $scope.weekRelease.date && now.getDay() == 0 && date > curWeekMonday) ||
+        (now < $scope.weekRelease.date && date > $scope.weekRelease.date && !(+date === +curWeekMonday))) {
       return true;
+    }
 
 
     return false;
