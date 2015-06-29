@@ -313,7 +313,7 @@ body {
       left: auto;
       right: -100px;
       width: 200px;
-      padding-top: 74px;
+      padding-top: 76px;
     }
   }
   
@@ -333,7 +333,10 @@ body {
     }
   }
   
-  .account-menu__holder { @extend .menu-holder; }
+  .account-menu__holder { 
+    @extend .menu-holder;
+    padding: 0 !important;
+  }
   
 }
 
@@ -356,7 +359,7 @@ body {
       left: -55px;
       right: auto;
       width: 220px;
-      padding-top: 38px;
+      padding-top: 40px;
       z-index: 9;
     }
   }
@@ -404,6 +407,7 @@ body {
   .sub-menu-holder{
     display: none;
     padding-left: 30px;
+    border-left: solid 2px rgba(0,0,0,0.2);
 
     ul.submenu{
         list-style: none;
