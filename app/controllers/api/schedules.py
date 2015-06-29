@@ -31,7 +31,8 @@ def find(self):
 
     now = datetime.now(tz=gmt8)
     dDay = now.weekday()
-    cur_mon = now + timedelta(days=-dDay)
+    next_mon = now + timedelta(days=-dDay + 1, weeks=1)
+    next_mon = next_mon.replace(tzinfo=gmt8)
 
     release_date = now + timedelta(days=-dDay + days[week_release['day']])
     release_date = release_date.replace(hour=int(rtime[0]), minute=int(rtime[1]), second=0, tzinfo=gmt8)
@@ -44,7 +45,9 @@ def find(self):
     for m in mon:
 
         mon_date = date.replace(hour=m.start.hour, minute=m.start.minute, second=0, tzinfo=gmt8)
-        if updateWeek < now and (now < release_date and mon_date > release_date) or (now > release_date and mon_date > next_release):
+        if (mon_date < now or mon_date > next_mon):
+            sched_releases[str(m._id)] = False
+        elif updateWeek < now and (now < release_date and mon_date > release_date) or (now > release_date and mon_date > next_release):
             sched_releases[str(m._id)] = False
         else:
             sched_releases[str(m._id)] = True
@@ -59,7 +62,9 @@ def find(self):
     for t in tue:
 
         tue_date = date.replace(hour=t.start.hour, minute=t.start.minute, second=0, tzinfo=gmt8)
-        if updateWeek < now and (now < release_date and tue_date > release_date) or (now > release_date and tue_date > next_release):
+        if (tue_date < now or tue_date > next_mon):
+            sched_releases[str(t._id)] = False
+        elif updateWeek < now and (now < release_date and tue_date > release_date) or (now > release_date and tue_date > next_release):
             sched_releases[str(t._id)] = False
         else:
             sched_releases[str(t._id)] = True
@@ -74,7 +79,9 @@ def find(self):
     for w in wed:
 
         wednes_date = date.replace(hour=w.start.hour, minute=w.start.minute, second=0, tzinfo=gmt8)
-        if updateWeek < now and (now < release_date and wednes_date > release_date) or (now > release_date and wednes_date > next_release):
+        if (wednes_date < now or wednes_date > next_mon):
+            sched_releases[str(w._id)] = False
+        elif updateWeek < now and (now < release_date and wednes_date > release_date) or (now > release_date and wednes_date > next_release):
             sched_releases[str(w._id)] = False
         else:
             sched_releases[str(w._id)] = True
@@ -89,7 +96,9 @@ def find(self):
     for th in thu:
 
         thurs_date = date.replace(hour=th.start.hour, minute=th.start.minute, second=0, tzinfo=gmt8)
-        if updateWeek < now and (now < release_date and thurs_date > release_date) or (now > release_date and thurs_date > next_release):
+        if (thurs_date < now or thurs_date > next_mon):
+            sched_releases[str(th._id)] = False
+        elif updateWeek < now and (now < release_date and thurs_date > release_date) or (now > release_date and thurs_date > next_release):
             sched_releases[str(th._id)] = False
         else:
             sched_releases[str(th._id)] = True
@@ -104,7 +113,9 @@ def find(self):
     for f in fri:
 
         fri_date = date.replace(hour=f.start.hour, minute=f.start.minute, second=0, tzinfo=gmt8)
-        if updateWeek < now and (now < release_date and fri_date > release_date) or (now > release_date and fri_date > next_release):
+        if (fri_date < now or fri_date > next_mon):
+            sched_releases[str(f._id)] = False
+        elif updateWeek < now and (now < release_date and fri_date > release_date) or (now > release_date and fri_date > next_release):
             sched_releases[str(f._id)] = False
         else:
             sched_releases[str(f._id)] = True
@@ -119,7 +130,9 @@ def find(self):
     for s in sat:
 
         sat_date = date.replace(hour=s.start.hour, minute=s.start.minute, second=0, tzinfo=gmt8)
-        if updateWeek < now and (now < release_date and sat_date > release_date) or (now > release_date and sat_date > next_release):
+        if (sat_date < now or sat_date > next_mon):
+            sched_releases[str(s._id)] = False
+        elif updateWeek < now and (now < release_date and sat_date > release_date) or (now > release_date and sat_date > next_release):
             sched_releases[str(s._id)] = False
         else:
             sched_releases[str(s._id)] = True
@@ -134,7 +147,9 @@ def find(self):
     for su in sun:
 
         sun_date = date.replace(hour=su.start.hour, minute=su.start.minute, second=0, tzinfo=gmt8)
-        if updateWeek < now and (now < release_date and sun_date > release_date) or (now > release_date and sun_date > next_release):
+        if (sun_date < now or sun_date > next_mon):
+            sched_releases[str(su._id)] = False
+        elif updateWeek < now and (now < release_date and sun_date > release_date) or (now > release_date and sun_date > next_release):
             sched_releases[str(su._id)] = False
         else:
             sched_releases[str(su._id)] = True
@@ -149,7 +164,9 @@ def find(self):
     for n in nmon:
 
         nmon_date = date.replace(hour=n.start.hour, minute=n.start.minute, second=0, tzinfo=gmt8)
-        if updateWeek < now and (now < release_date and nmon_date > release_date) or (now > release_date and nmon_date > next_release):
+        if (nmon_date < now or nmon_date > next_mon):
+            sched_releases[str(n._id)] = False
+        elif updateWeek < now and (now < release_date and nmon_date > release_date) or (now > release_date and nmon_date > next_release):
             sched_releases[str(n._id)] = False
         else:
             sched_releases[str(n._id)] = True

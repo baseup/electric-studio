@@ -821,21 +821,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
   $scope.chkSched = function (date, sched) {
 
-    var now = new Date();
-    var parts = sched.start.split(/[^0-9]/);
-    var dTime =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
-    var hours = dTime.getHours();
-    var minutes = dTime.getMinutes();
-    date.setHours(hours, minutes, 0, 0);
-    if (date < now)
-      return true;
-
-    var nextMonday = new Date(now);
-    nextMonday.setDate(nextMonday.getDate() - nextMonday.getDay() + 8);
-    nextMonday.setHours(23, 59, 59);
-    if (date > nextMonday) 
-      return true;
-
     if (!$scope.schedules.releases[sched._id])
       return true;
 
