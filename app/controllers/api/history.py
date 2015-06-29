@@ -2,6 +2,7 @@ from motorengine import DESCENDING
 from app.models.packages import UserPackage, Package
 from app.models.schedules import BookedSchedule
 from app.models.users import User
+from app.helper import create_at_gmt8
 import tornado.escape
 
 def find(self):
@@ -27,6 +28,8 @@ def find(self):
             transactions = yield UserPackage.objects.order_by("update_at", direction=DESCENDING) \
                                                     .filter(user_id=user._id) \
                                                     .skip(transPage * 10).limit(10).find_all()
+
+            transactions = create_at_gmt8(transactions)
 
             self.render_json({
                 'schedules' : schedules,

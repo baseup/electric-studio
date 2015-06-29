@@ -3,6 +3,7 @@ from motorengine.errors import InvalidDocumentError
 from app.models.packages import Package, UserPackage
 from app.models.users import User
 from bson.objectid import ObjectId
+from app.helper import create_at_gmt8
 import tornado
 import json
     
@@ -15,6 +16,7 @@ def find(self):
         user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
         transactions = yield UserPackage.objects.order_by('expire_date') \
                                                 .filter(user_id=ObjectId(user_id), remaining_credits__gt=0, status__ne='Expired').find_all()
+        transactions = create_at_gmt8(transactions)
         self.render_json(transactions)
 
 def find_one(self, id):

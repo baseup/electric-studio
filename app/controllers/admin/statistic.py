@@ -10,7 +10,7 @@ def find(self):
     startDate = self.get_query_argument('fromDate')
     endDate = self.get_query_argument('toDate')
     
-    fromDate = datetime.now()
+    fromDate = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
     if startDate:
         fromDate = datetime.strptime(startDate, '%Y-%m-%d')
     toDate = datetime.now() + timedelta(days=7)

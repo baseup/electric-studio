@@ -4,12 +4,14 @@ from app.models.users import User
 from app.helper import send_email
 from motorengine.errors import *
 from datetime import datetime, timedelta
+from app.helper import create_at_gmt8
 
 import tornado.escape
 import sys
 
 def find(self):
     transactions = yield UserPackage.objects.order_by('create_at', direction=DESCENDING).find_all()
+    transactions = create_at_gmt8(transactions)
     self.render_json(transactions)
 
 def create(self):

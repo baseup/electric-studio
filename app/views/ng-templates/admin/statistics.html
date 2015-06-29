@@ -24,18 +24,26 @@
         <div class="class-search pad cf">
           <div class="float--left space--right">
             <span class="label">Instructor</span>
-            <select class="select" id="search-instructor" ng-model="searchIns">
-              <option value="">Select Instructor</option>
+            <select class="select" ng-change="resetTotals()" id="search-instructor" ng-model="searchIns">
+              <option value="">All</option>
             </select><br/>
             <!-- <input type="checkbox" id="checkAS"/> With available seat -->
           </div>
           <div class="float--left space--left">
             <span class="label">Option</span>
-            <select class="select" ng-change="changeOp()" ng-model="selectedOption"> 
+            <select class="select" ng-change="resetTotals()" ng-model="selectedOption"> 
               <option value="all">All</option>
               <option value="withAvailable">With Available Seats Only</option>
               <option value="withWaitlisted">With Waitlisted Seats Only</option>
             </select>
+          </div>
+          <div class="float--right space--left">
+            <span class="lable">Total Reserved</span>
+            <h4 class="h small">{{ totalReserved }}</h4>
+          </div>
+          <div class="float--right space--left">
+            <span class="lable">Total Seats</span>
+            <h4 class="h small">{{ totalSeats }}</h4>
           </div>
         </div>
 
@@ -54,7 +62,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="stat in stats | search:'instructor._id':searchIns | filter:withAvailableSeats">
+              <tr ng-init="setTotal(stat, $index)" ng-repeat="stat in stats | search:'instructor._id':searchIns | filter:withAvailableSeats">
                 <td>{{ stat.date | formatDate }} {{ stat.start | formatTime }}</td>
                 <td>{{ stat.type }}</td>
                 <td>{{ stat.instructor.admin.first_name }} {{ stat.instructor.admin.last_name }}</td>
@@ -62,7 +70,9 @@
                   <span ng-if="isCompleted(stat)">Completed</span>
                   <span ng-if="!isCompleted(stat)">Available</span>
                 </td>
-                <td><a ng-click="viewBikeMap(stat)">{{ stat.seats - blockedBikes.length }}</a></td>
+                <td>
+                  <a ng-click="viewBikeMap(stat)">{{ stat.seats - blockedBikes.length }}</a>
+                </td>
                 <td>
                   <span ng-if="stat.books.length <= stat.seats">{{ stat.seats - blockedBikes.length - stat.books.length }}</span>
                   <span ng-if="stat.books.length > stat.seats">0</span>
@@ -93,64 +103,65 @@
       </div>
 
       <div class="class">
-        <table class="seats">
-          <tr>
-            <td ng-class="{ unavailable: checkSeat(1), hidden: 1 > selectedStat.seats, blocked: isBlocked(1) }"><span>1</span></td>
-            <td ng-class="{ unavailable: checkSeat(2), hidden: 2 > selectedStat.seats, blocked: isBlocked(2) }"><span>2</span></td>
-            <td ng-class="{ unavailable: checkSeat(3), hidden: 3 > selectedStat.seats, blocked: isBlocked(3) }"><span>3</span></td>
-            <td ng-class="{ unavailable: checkSeat(4), hidden: 4 > selectedStat.seats, blocked: isBlocked(4) }"><span>4</span></td>
-            <td ng-class="{ unavailable: checkSeat(5), hidden: 5 > selectedStat.seats, blocked: isBlocked(5) }"><span>5</span></td>
-            <td ng-class="{ unavailable: checkSeat(6), hidden: 6 > selectedStat.seats, blocked: isBlocked(6) }"><span>6</span></td>
-            <td ng-class="{ unavailable: checkSeat(7), hidden: 7 > selectedStat.seats, blocked: isBlocked(7) }"><span>7</span></td>
-            <td ng-class="{ unavailable: checkSeat(8), hidden: 8 > selectedStat.seats, blocked: isBlocked(8) }"><span>8</span></td>
-          </tr>
-          <tr>
-            <td ng-class="{ unavailable: checkSeat(9), hidden: 9 > selectedStat.seats, blocked: isBlocked(9) }"><span>9</span></td>
-            <td ng-class="{ unavailable: checkSeat(10), hidden: 10 > selectedStat.seats, blocked: isBlocked(10) }"><span>10</span></td>
-            <td ng-class="{ unavailable: checkSeat(11), hidden: 11 > selectedStat.seats, blocked: isBlocked(11) }"><span>11</span></td>
-            <td ng-class="{ unavailable: checkSeat(12), hidden: 12 > selectedStat.seats, blocked: isBlocked(12) }"><span>12</span></td>
-            <td ng-class="{ unavailable: checkSeat(13), hidden: 13 > selectedStat.seats, blocked: isBlocked(13) }"><span>13</span></td>
-            <td ng-class="{ unavailable: checkSeat(14), hidden: 14 > selectedStat.seats, blocked: isBlocked(14) }"><span>14</span></td>
-            <td ng-class="{ unavailable: checkSeat(15), hidden: 15 > selectedStat.seats, blocked: isBlocked(15) }"><span>15</span></td>
-            <td ng-class="{ unavailable: checkSeat(16), hidden: 16 > selectedStat.seats, blocked: isBlocked(16) }"><span>16</span></td>
-          </tr>
-          <tr>
-            <td ng-class="{ unavailable: checkSeat(17), hidden: 17 > selectedStat.seats, blocked: isBlocked(17) }"><span>17</span></td>
-            <td ng-class="{ unavailable: checkSeat(18), hidden: 18 > selectedStat.seats, blocked: isBlocked(18) }"><span>18</span></td>
-            <td ng-class="{ unavailable: checkSeat(19), hidden: 19 > selectedStat.seats, blocked: isBlocked(19) }"><span>19</span></td>
-            <td ng-class="{ unavailable: checkSeat(20), hidden: 20 > selectedStat.seats, blocked: isBlocked(20) }"><span>20</span></td>
-            <td ng-class="{ unavailable: checkSeat(21), hidden: 21 > selectedStat.seats, blocked: isBlocked(21) }"><span>21</span></td>
-            <td ng-class="{ unavailable: checkSeat(22), hidden: 22 > selectedStat.seats, blocked: isBlocked(22) }"><span>22</span></td>
-            <td ng-class="{ unavailable: checkSeat(23), hidden: 23 > selectedStat.seats, blocked: isBlocked(23) }"><span>23</span></td>
-            <td ng-class="{ unavailable: checkSeat(24), hidden: 24 > selectedStat.seats, blocked: isBlocked(24) }"><span>24</span></td>
-          </tr>
-          <tr>
-            <td ng-class="{ unavailable: checkSeat(25), hidden: 25 > selectedStat.seats, blocked: isBlocked(25) }"><span>25</span></td>
-            <td ng-class="{ unavailable: checkSeat(26), hidden: 26 > selectedStat.seats, blocked: isBlocked(26) }"><span>26</span></td>
-            <td ng-class="{ unavailable: checkSeat(27), hidden: 27 > selectedStat.seats, blocked: isBlocked(27) }"><span>27</span></td>
-            <td class="hidden"><span></span></td>
-            <td ng-class="{ unavailable: checkSeat(28), hidden: 28 > selectedStat.seats, blocked: isBlocked(28) }"><span>28</span></td>
-            <td ng-class="{ unavailable: checkSeat(29), hidden: 29 > selectedStat.seats, blocked: isBlocked(29) }"><span>29</span></td>
-            <td ng-class="{ unavailable: checkSeat(30), hidden: 30 > selectedStat.seats, blocked: isBlocked(30) }"><span>30</span></td>
-            <td ng-class="{ unavailable: checkSeat(31), hidden: 31 > selectedStat.seats, blocked: isBlocked(31) }"><span>31</span></td>
-          </tr>
-          <tr>
-            <td ng-class="{ unavailable: checkSeat(32), hidden: 32 > selectedStat.seats, blocked: isBlocked(32) }"><span>32</span></td>
-            <td ng-class="{ unavailable: checkSeat(33), hidden: 33 > selectedStat.seats, blocked: isBlocked(33) }"><span>33</span></td>
-            <td ng-class="{ unavailable: checkSeat(34), hidden: 34 > selectedStat.seats, blocked: isBlocked(34) }"><span>34</span></td>
-            <td class="hidden"><span></span></td>
-            <td class="hidden"><span></span></td>
-            <td ng-class="{ unavailable: checkSeat(35), hidden: 35 > selectedStat.seats, blocked: isBlocked(35) }"><span>35</span></td>
-            <td ng-class="{ unavailable: checkSeat(36), hidden: 36 > selectedStat.seats, blocked: isBlocked(36) }"><span>36</span></td>
-            <td ng-class="{ unavailable: checkSeat(37), hidden: 37 > selectedStat.seats, blocked: isBlocked(37) }"><span>37</span></td>
-          </tr>
-        </table>
-        
-        <div class="class-instructor">
-          <div class="image">
-            <img src="{{ selectedStat.instructor.image ? '/assets/' + selectedStat.instructor.image : 'http://placehold.it/350x150' }}">
+        <div class="formation">
+          <div class="front seats">
+            <span  ng-class="{ unavailable: checkSeat(24), hidden: 24 > sched.seats, blocked: isBlocked(24) }">24</span>
+            <span  ng-class="{ unavailable: checkSeat(21), hidden: 21 > sched.seats, blocked: isBlocked(21) }">21</span>
+            <span  ng-class="{ unavailable: checkSeat(23), hidden: 23 > sched.seats, blocked: isBlocked(23) }">23</span>
+            <span  ng-class="{ unavailable: checkSeat(20), hidden: 20 > sched.seats, blocked: isBlocked(20) }">20</span>
+            <span  ng-class="{ unavailable: checkSeat(22), hidden: 22 > sched.seats, blocked: isBlocked(22) }">22</span>
+            <span  ng-class="{ unavailable: checkSeat(19), hidden: 19 > sched.seats, blocked: isBlocked(19) }">19</span>
           </div>
-          <h3 class="h small center primary">{{ selectedStat.instructor.admin.first_name }}</h3>
+          <div class="front seats instructor">
+            <div class="image">
+              <img src="{{ selectedStat.instructor.image ? '/assets/' + selectedStat.instructor.image : 'http://placehold.it/350x150' }}">
+            </div>
+            <h3 class="h small primary">{{ selectedStat.instructor.admin.first_name }}</h3>
+          </div>
+          <div class="front seats">
+            <span ng-class="{ unavailable: checkSeat(16), hidden: 16 > sched.seats, blocked: isBlocked(16) }">16</span>
+            <span ng-class="{ unavailable: checkSeat(18), hidden: 18 > sched.seats, blocked: isBlocked(18) }">18</span>
+            <span ng-class="{ unavailable: checkSeat(15), hidden: 15 > sched.seats, blocked: isBlocked(15) }">15</span>
+            <span ng-class="{ unavailable: checkSeat(17), hidden: 17 > sched.seats, blocked: isBlocked(17) }">17</span>
+          </div>
+        </div>
+
+        <div class="formation">
+          <div class="back seats">
+            <span ng-class="{ unavailable: checkSeat(14), hidden: 14 > sched.seats, blocked: isBlocked(14) }">14</span>
+            <span ng-class="{ unavailable: checkSeat(13), hidden: 13 > sched.seats, blocked: isBlocked(13) }">13</span>
+            <span ng-class="{ unavailable: checkSeat(12), hidden: 12 > sched.seats, blocked: isBlocked(12) }">12</span>
+            <span ng-class="{ unavailable: checkSeat(11), hidden: 11 > sched.seats, blocked: isBlocked(11) }">11</span>
+            <span ng-class="{ unavailable: checkSeat(10), hidden: 10 > sched.seats, blocked: isBlocked(10) }">10</span>
+            <span ng-class="{ unavailable: checkSeat(9), hidden: 9 > sched.seats, blocked: isBlocked(9) }">9</span>
+            <span ng-class="{ unavailable: checkSeat(8), hidden: 8 > sched.seats, blocked: isBlocked(8) }">8</span>
+            <span ng-class="{ unavailable: checkSeat(7), hidden: 7 > sched.seats, blocked: isBlocked(7) }">7</span>
+            <span ng-class="{ unavailable: checkSeat(6), hidden: 6 > sched.seats, blocked: isBlocked(6) }">6</span>
+            <span ng-class="{ unavailable: checkSeat(5), hidden: 5 > sched.seats, blocked: isBlocked(5) }">5</span>
+            <span ng-class="{ unavailable: checkSeat(4), hidden: 4 > sched.seats, blocked: isBlocked(4) }">4</span>
+            <span ng-class="{ unavailable: checkSeat(3), hidden: 3 > sched.seats, blocked: isBlocked(3) }">3</span>
+            <span ng-class="{ unavailable: checkSeat(2), hidden: 2 > sched.seats, blocked: isBlocked(2) }">2</span>
+            <span ng-class="{ unavailable: checkSeat(1), hidden: 1 > sched.seats, blocked: isBlocked(1) }">1</span>
+          </div>
+
+           <div class="back seats">
+            <span ng-class="{ unavailable: checkSeat(34), hidden: 34 > sched.seats, blocked: isBlocked(34) }">34</span>
+            <span ng-class="{ unavailable: checkSeat(33), hidden: 33 > sched.seats, blocked: isBlocked(33) }">33</span>
+            <span ng-class="{ unavailable: checkSeat(32), hidden: 32 > sched.seats, blocked: isBlocked(32) }">32</span>
+            <span ng-class="{ unavailable: checkSeat(31), hidden: 31 > sched.seats, blocked: isBlocked(31) }">31</span>
+            <span ng-class="{ unavailable: checkSeat(30), hidden: 30 > sched.seats, blocked: isBlocked(30) }">30</span>
+            <span ng-class="{ unavailable: checkSeat(29), hidden: 29 > sched.seats, blocked: isBlocked(29) }">29</span>
+            <span ng-class="{ unavailable: checkSeat(28), hidden: 28 > sched.seats, blocked: isBlocked(28) }">28</span>
+            <span ng-class="{ unavailable: checkSeat(27), hidden: 27 > sched.seats, blocked: isBlocked(27) }">27</span>
+            <span ng-class="{ unavailable: checkSeat(26), hidden: 26 > sched.seats, blocked: isBlocked(26) }">26</span>
+            <span ng-class="{ unavailable: checkSeat(25), hidden: 25 > sched.seats, blocked: isBlocked(25) }">25</span>
+          </div>
+
+          <div class="back seats">
+            <span ng-class="{ unavailable: checkSeat(37), hidden: 37 > sched.seats, blocked: isBlocked(37) }">37</span>
+            <span ng-class="{ unavailable: checkSeat(36), hidden: 36 > sched.seats, blocked: isBlocked(36) }">36</span>
+            <span ng-class="{ unavailable: checkSeat(35), hidden: 35 > sched.seats, blocked: isBlocked(35) }">35</span>
+          </div>
         </div>
       </div>
     </div>

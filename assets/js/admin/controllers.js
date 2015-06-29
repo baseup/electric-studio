@@ -269,9 +269,6 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   }
 
   $scope.newCredits = {};
-
-
-
   UserService.query({ deactivated: true}, function (users) {
     $scope.users = users;
   });
@@ -285,6 +282,32 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
       selectBuy.addOption({ value: pack._id, text: pack.name  || pack.credits + ' Ride' + (pack.credits > 1 ? 's' : '' )});
     });
   });
+
+  $scope.searchingAccount = false;
+  $scope.searchAccount = function () {
+    if ($scope.searchText && !$scope.searchingAccount) {
+      $scope.searchingAccount = true;
+      $timeout(function () {
+        UserService.query({ deactivated: true, search: $scope.searchText }, function (users) {
+          $scope.users = users;
+          $scope.searchingAccount = false;
+        }, function () { $scope.searchingAccount = false });
+      }, 100);
+    }
+  }
+
+  $scope.loadingAccounts = false;
+  $scope.loadMoreAccounts = function () {
+    if (!$scope.loadingAccounts) {
+      $scope.loadingAccounts = true;
+      // $timeout(function () {
+        UserService.query({ deactivated: true, search: $scope.searchText, skip: $scope.users.length }, function (users) {
+          $scope.users = $scope.users.concat(users);
+          $scope.loadingAccounts = false;
+        }, function () { $scope.loadingAccounts = false });
+      // }, 100);
+    }
+  }
 
   $scope.showAddAccount = function () {
     angular.element('#add-account-modal').Modal();
@@ -1950,9 +1973,39 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
       if (pack) select.addOption({ value: pack._id, text: pack.name });
     });
   });
+
+  $scope.getTransId = function (pac) {
+    if (pac.trans_info) {
+      if (!(pac.trans_info instanceof Object)) {
+        var transInfo = pac.trans_info.replace(/'/g, '"');
+        var trans = JSON.parse(transInfo);
+        pac.trans_info = trans;
+        return trans.transaction;
+      } else {
+        return pac.trans_info.transaction;
+      }
+    }
+    return null;
+  }
+
 });
 
 ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService) {
+
+  $scope.resetTotals = function () {
+    $scope.totalSeats = 0;
+    $scope.totalReserved = 0;
+    $scope.stats = angular.copy($scope.stats);
+  }
+
+  $scope.setTotal = function (stat, index) {
+    if (!index) {
+      $scope.totalSeats = 0;
+      $scope.totalReserved = 0;
+    }
+    $scope.totalSeats += stat.seats - $scope.blockedBikes.length;
+    $scope.totalReserved += stat.books.length;
+  }
 
   $scope.stats = StatisticService.query();
   $scope.stats.$promise.then(function (data) {
@@ -2089,7 +2142,7 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
 
   InstructorService.query(function (instructors) {
     var select = angular.element('#search-instructor')[0].selectize;
-
+    select.addOption({ value: '', text: 'All' });
     angular.forEach(instructors, function (ins) {
       if (ins) select.addOption({ value: ins._id, text: ins.admin.first_name + ' ' + ins.admin.last_name });
     });
