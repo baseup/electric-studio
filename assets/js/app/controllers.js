@@ -542,7 +542,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
   if (window.location.port)
     port = ':' + window.location.port;
 
-  $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/buy';
+  $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port;
 
   $scope.buyPackage = function (event, index) {
 

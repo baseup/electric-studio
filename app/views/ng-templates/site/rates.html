@@ -36,8 +36,9 @@
           <input type="hidden" name="item_number" value="{{ package._id }}">
           <input type="hidden" name="amount" value="{{ package.fee }}">
           <input type="hidden" name="currency_code" value="PHP">
-          <input type="hidden" name="return" value="{{ redirectUrl }}?pid={{ package._id }}&success=True">
-          <input type="hidden" name="cancel_return" value="{{ redirectUrl }}?success=False">
+          <input type="hidden" name="ipn_notification_url" value="{{ redirectUrl }}/admin/ipn?pid={{ package._id }}&success=True">
+          <input type="hidden" name="return" value="{{ redirectUrl }}/buy?pid={{ package._id }}&success=True">
+          <input type="hidden" name="cancel_return" value="{{ redirectUrl }}/buy?success=False">
           <input type="hidden" name="cbt" value="Return to Electric Studio">
 
           <input ng-if="!package.special_package" class="button primary small" ng-click="buyPackage($event, $index)" value = "Buy" class = "button" type = "button">
