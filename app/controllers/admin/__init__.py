@@ -120,7 +120,7 @@ def buy(self):
                 'at' : PDT_TOKEN,
             })
 
-            url = 'https://www.sandbox.paypal.com/cgi-bin/webscr'
+            url = 'https://www.paypal.com/cgi-bin/webscr'
             pp_request = HTTPRequest(url=url, method='POST', body=post_body, validate_cert=False)
             pp_response = yield AsyncHTTPClient().fetch(pp_request)
             pp_data = pp_response.body.decode('UTF-8')
@@ -203,7 +203,7 @@ def ipn(self):
             else:
                 data = {
                     'transaction' : tx,
-                    'status' : ipn_data['status'],
+                    'status' : ipn_data['payment_status'],
                     'amount' : ipn_data['mc_gross'],
                     'curency' : ipn_data['mc_currency'],
                     'cm' : ipn_data['transaction_subject'],
