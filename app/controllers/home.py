@@ -129,6 +129,17 @@ def buy(self):
         self.redirect('/#/rates?s=error')
     else:
         if success == 'True':
+
+            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+            user = yield User.objects.get(user_id)
+
+            pid = self.get_argument('pid');
+            package = yield Package.objects.get(pid)
+
+            pack_name = package.name;
+            if not pack_name:
+                pack_name = str(package.credits) + ' Ride' + ('s' if package.credits > 1 else '')
+
             pp_tx = self.get_query_argument('tx')
             pp_st = self.get_query_argument('st')
             pp_amt = self.get_query_argument('amt')
@@ -141,13 +152,25 @@ def buy(self):
                 self.redirect('/#/rates?s=error')
                 return
 
+            trans_filter = { '$regex' : '.*' + pp_tx + '.*', '$options' : 'i' }
+            trans_exists = yield UserPackage.objects.filter(user_id=user._id, trans_info=trans_filter).count()
+            has_ft = yield UserPackage.objects.filter(user_id=user._id, package_ft=True).count()
+
+            if trans_exists > 0:
+                self.redirect('/#/account?pname=' + pack_name + '&s=success#packages')
+                return
+
+            if package.first_timer and has_ft > 0:
+                self.redirect('/#/account?s=exists#packages')
+                return
+
             post_body = urllib.parse.urlencode({
                 'cmd' : '_notify-synch',
                 'tx' : pp_tx,
                 'at' : PDT_TOKEN,
             })
 
-            url = 'https://www.paypal.com/cgi-bin/webscr'
+            url = 'https://www.sandbox.paypal.com/cgi-bin/webscr'
             pp_request = HTTPRequest(url=url, method='POST', body=post_body, validate_cert=False)
             pp_response = yield AsyncHTTPClient().fetch(pp_request)
             pp_data = pp_response.body.decode('UTF-8')
@@ -165,23 +188,8 @@ def buy(self):
                     'paypal_data' : pp_data
                 }
 
-                user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-                user = yield User.objects.get(user_id)
-                user_packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
-
                 try: 
-                    pid = self.get_argument('pid');
-                    package = yield Package.objects.get(pid)
-                    if pid:
-                        if user_packages:
-                            for upack in user_packages:
-                                if upack.trans_info and pp_tx in upack.trans_info:
-                                    self.redirect('/#/account?s=exists#packages')
-                                    return
-                                if package.first_timer and upack.package_ft:
-                                    self.redirect('/#/account?s=exists#packages')
-                                    return
-                                    
+                    if pid:           
                         if user.status != 'Frozen' and user.status != 'Unverified':
                             transaction = UserPackage()
                             transaction.user_id = user._id
@@ -198,10 +206,6 @@ def buy(self):
 
                             transaction = yield transaction.save()
                             user = yield user.save()
-
-                            pack_name = package.name;
-                            if not pack_name:
-                                pack_name = str(package.credits) + ' Ride' + ('s' if package.credits > 1 else '')
 
                             user = (yield User.objects.get(user._id)).serialize()
                             site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'

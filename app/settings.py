@@ -110,3 +110,7 @@ DATABASE = {
 MANDRILL_API_KEY = 'LJCBoJpHFF7ZRrFqgu9Q2g'
 EMAIL_SENDER = 'electric@electricstudio.ph'
 EMAIL_SENDER_NAME = 'Electric Studio'
+
+#Paypal
+PAYPAL_ACCOUNT = 'ogsmelvin05-facilitator@gmail.com'
+PDT_TOKEN = 'GCxbIb0meX6eoIv9fYtJFvQ26u-L2buNGwP47EJZMLiomyKFbXeofypRZHq'
