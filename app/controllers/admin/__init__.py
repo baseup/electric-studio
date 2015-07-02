@@ -107,7 +107,7 @@ def buy(self):
             trans_exists = yield UserPackage.objects.filter(user_id=user._id, trans_info=trans_filter).count()
             has_ft = yield UserPackage.objects.filter(user_id=user._id, package_ft=True).count()
             if trans_exists > 0:
-                self.redirect('/admin/#/accounts?pname=' + pack_name + '&u=' + user['first_name'] + ' ' + user['last_name'] + '&s=success')
+                self.redirect('/admin/#/accounts?pname=' + pack_name + '&u=' + user.first_name + ' ' + user.last_name + '&s=success')
                 return
 
             if package.first_timer and has_ft > 0:
@@ -191,9 +191,9 @@ def ipn(self):
     uid = ipn_data['transaction_subject']
     pid = ipn_data['item_number']
     error = None
-    if tx and uid:
-        user = yield User.objects.get(ObjectId(uid))
-        package = yield Package.objects.get(pid)
+    user = yield User.objects.get(ObjectId(uid))
+    package = yield Package.objects.get(pid)
+    if tx and user and package:
         trans_filter = { '$regex' : '.*' + tx + '.*', '$options' : 'i' }
         trans_exists = yield UserPackage.objects.filter(user_id=user._id, trans_info=trans_filter).count()
         has_ft = yield UserPackage.objects.filter(user_id=user._id, package_ft=True).count()
