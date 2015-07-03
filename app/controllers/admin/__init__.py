@@ -7,10 +7,14 @@ from bson.objectid import ObjectId
 from datetime import timedelta
 from app.models.access import AccessType
 from hurricane.helpers import to_json, to_json_serializable
+from app.settings import PDT_TOKEN
+from tornado.httpclient import HTTPRequest, AsyncHTTPClient
+
 import sys
 import tornado
 import json
 import base64
+import urllib.parse
 
 def index(self):
     self.render('admin', user=self.get_secure_cookie('admin'))
@@ -76,6 +80,14 @@ def buy(self):
 
         user_id = self.get_argument('uid')
         user = yield User.objects.get(user_id)
+
+        pid = self.get_argument('pid');
+        package = yield Package.objects.get(pid)
+
+        pack_name = package.name;
+        if not pack_name:
+            pack_name = str(package.credits) + ' Ride' + ('s' if package.credits > 1 else '')
+
         error = None
         if user:
 
@@ -90,63 +102,76 @@ def buy(self):
                 self.set_status(403)
                 self.redirect('/admin/#/accounts?s=error')
                 return
+
+            trans_filter = { '$regex' : '.*' + pp_tx + '.*', '$options' : 'i' }
+            trans_exists = yield UserPackage.objects.filter(user_id=user._id, trans_info=trans_filter).count()
+            has_ft = yield UserPackage.objects.filter(user_id=user._id, package_ft=True).count()
+            if trans_exists > 0:
+                self.redirect('/admin/#/accounts?pname=' + pack_name + '&u=' + user.first_name + ' ' + user.last_name + '&s=success')
+                return
+
+            if package.first_timer and has_ft > 0:
+                self.redirect('/admin/#/accounts?s=exists#packages')
+                return
+
+            post_body = urllib.parse.urlencode({
+                'cmd' : '_notify-synch',
+                'tx' : pp_tx,
+                'at' : PDT_TOKEN,
+            })
+
+            url = 'https://www.paypal.com/cgi-bin/webscr'
+            pp_request = HTTPRequest(url=url, method='POST', body=post_body, validate_cert=False)
+            pp_response = yield AsyncHTTPClient().fetch(pp_request)
+            pp_data = pp_response.body.decode('UTF-8')
+            if 'SUCCESS' in pp_data:
+                pp_data = pp_data[7:]
+                pp_data = urllib.parse.unquote(pp_data)
      
-            data = {
-                'transaction' : pp_tx,
-                'status' : pp_st,
-                'amount' : pp_amt,
-                'curency' : pp_cc,
-                'cm' : pp_cm,
-                'item_number' : pp_item
-            }
+                data = {
+                    'transaction' : pp_tx,
+                    'status' : pp_st,
+                    'amount' : pp_amt,
+                    'curency' : pp_cc,
+                    'cm' : pp_cm,
+                    'item_number' : pp_item,
+                    'paypal_data' : pp_data
+                }
 
-            user_packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
-            try: 
-                pid = self.get_argument('pid');
-                package = yield Package.objects.get(pid)
-                if pid:
-                    if user_packages:
-                        for upack in user_packages:
-                            if upack.trans_info and pp_tx in upack.trans_info:
-                                self.redirect('/admin/#/accounts?s=exists#packages')
-                                return
-                            if package.first_timer and upack.package_ft:
-                                self.redirect('/admin/#/accounts?s=exists#packages')
-                                return
-                    if user.status != 'Frozen' and user.status != 'Unverified':
-                        transaction = UserPackage()
-                        transaction.user_id = user._id
-                        transaction.package_id = package._id
-                        transaction.package_name = package.name
-                        transaction.package_fee = package.fee
-                        transaction.package_ft = package.first_timer
-                        transaction.credit_count = package.credits
-                        transaction.remaining_credits = package.credits
-                        transaction.expiration = package.expiration
-                        transaction.trans_info = str(data)
-                        user.credits += package.credits
+                try:
+                    if pid:
+                        if user.status != 'Frozen' and user.status != 'Unverified':
+                            transaction = UserPackage()
+                            transaction.user_id = user._id
+                            transaction.package_id = package._id
+                            transaction.package_name = package.name
+                            transaction.package_fee = package.fee
+                            transaction.package_ft = package.first_timer
+                            transaction.credit_count = package.credits
+                            transaction.remaining_credits = package.credits
+                            transaction.expiration = package.expiration
+                            transaction.trans_info = str(data)
+                            user.credits += package.credits
 
-                        transaction = yield transaction.save()
-                        user = yield user.save()
+                            transaction = yield transaction.save()
+                            user = yield user.save()
 
-                        pack_name = package.name;
-                        if not pack_name:
-                            pack_name = str(package.credits) + ' Ride' + ('s' if package.credits > 1 else '')
+                            user = (yield User.objects.get(user._id)).serialize()
+                            site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                            exp_date = transaction.create_at + timedelta(days=transaction.expiration)
+                            content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
+                            yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
 
-                        user = (yield User.objects.get(user._id)).serialize()
-                        site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
-                        exp_date = transaction.create_at + timedelta(days=transaction.expiration)
-                        content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
-                        yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
-
-                        self.redirect('/admin/#/accounts?pname=' + pack_name + '&u=' + user['first_name'] + ' ' + user['last_name'] + '&s=success')
+                            self.redirect('/admin/#/accounts?pname=' + pack_name + '&u=' + user['first_name'] + ' ' + user['last_name'] + '&s=success')
+                        else:
+                            error = 'Invalid User Status'
                     else:
-                        error = 'Invalid User Status'
-                else:
-                    error = 'Package not found'
-            except:
-                value = sys.exc_info()[1]
-                error = str(value)
+                        error = 'Package not found'
+                except:
+                    value = sys.exc_info()[1]
+                    error = str(value)
+            else:
+                error = pp_data.replace('\n',' : ');
         else:
             error = 'User not found'
 
@@ -154,4 +179,81 @@ def buy(self):
             self.redirect('/admin/#/accounts?s=error&msg=' + error)
     else:
         self.redirect('/admin/#/accounts')
+
+def ipn(self):
+
+    data = tornado.escape.url_unescape(self.request.body)
+    ipn_data = urllib.parse.parse_qs(data)
+    for k in ipn_data.keys():
+        ipn_data[k] = ipn_data[k][0]
+
+    tx = ipn_data['txn_id']
+    uid = ipn_data['transaction_subject']
+    pid = ipn_data['item_number']
+    error = None
+    user = yield User.objects.get(ObjectId(uid))
+    package = yield Package.objects.get(pid)
+    if tx and user and package:
+        trans_filter = { '$regex' : '.*' + tx + '.*', '$options' : 'i' }
+        trans_exists = yield UserPackage.objects.filter(user_id=user._id, trans_info=trans_filter).count()
+        has_ft = yield UserPackage.objects.filter(user_id=user._id, package_ft=True).count()
+        if trans_exists <= 0:
+            if package.first_timer and has_ft > 0:
+                error = 'User already has first_timer package'
+            else:
+                data = {
+                    'transaction' : tx,
+                    'status' : ipn_data['payment_status'],
+                    'amount' : ipn_data['mc_gross'],
+                    'curency' : ipn_data['mc_currency'],
+                    'cm' : ipn_data['transaction_subject'],
+                    'item_number' : pid,
+                    'paypal_data' : ipn_data
+                }
+
+                try: 
+                    if pid:
+                        if user.status != 'Frozen' and user.status != 'Unverified':
+                            transaction = UserPackage()
+                            transaction.user_id = user._id
+                            transaction.package_id = package._id
+                            transaction.package_name = package.name
+                            transaction.package_fee = package.fee
+                            transaction.package_ft = package.first_timer
+                            transaction.credit_count = package.credits
+                            transaction.remaining_credits = package.credits
+                            transaction.expiration = package.expiration
+                            transaction.trans_info = str(data)
+                            user.credits += package.credits
+
+                            transaction = yield transaction.save()
+                            user = yield user.save()
+
+                            pack_name = package.name;
+                            if not pack_name:
+                                pack_name = str(package.credits) + ' Ride' + ('s' if package.credits > 1 else '')
+
+                            user = (yield User.objects.get(user._id)).serialize()
+                            site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                            exp_date = transaction.create_at + timedelta(days=transaction.expiration)
+                            content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
+                            yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
+
+                        else:
+                            error = 'Invalid User Status'
+                    else:
+                        error = 'Package not found'
+                except:
+                    value = sys.exc_info()[1]
+                    error = str(value)
+        else:
+            error = 'Transation ' + tx + ' already exists';
+    else:
+        error = str(ipn_data)
+
+    if error:
+        print('IPN Error: ' + error)
+
+    self.finish()
+
 

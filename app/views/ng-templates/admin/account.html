@@ -407,6 +407,7 @@
         <input type="hidden" name="no_note" value = "0">
         <input type="hidden" name="bn" value="PP-BuyNowBF">
         <input type="hidden" name="rm" value="2">
+        <input type="hidden" name="custom" value="{{ selectedAccount._id }}">
         <input type="hidden" name="business" value="electric@electricstudio.ph">
         <input type="hidden" name="item_name" value="{{ newPackage.name  || newPackage.credits + ' Ride' + (newPackage.credits > 1 ? 's' : '') }}">
         <input type="hidden" name="item_number" value="{{ newPackage._id }}">
@@ -425,8 +426,9 @@
         <input type="hidden" name="night_phone_c" value="{{ selectedAccount.billing.phone_c }}"> -->
 
         <input type="hidden" name="currency_code" value="PHP">
-        <input type="hidden" name="return" value="{{ redirectUrl }}?pid={{ newPackage._id }}&uid={{ selectedAccount._id }}&success=True">
-        <input type="hidden" name="cancel_return" value="{{ redirectUrl }}?success=False">
+        <input type="hidden" name="ipn_notification_url" value="{{ redirectUrl }}/ipn?pid={{ newPackage._id }}&uid={{ selectedAccount._id }}&success=True">
+        <input type="hidden" name="return" value="{{ redirectUrl }}/buy?pid={{ newPackage._id }}&uid={{ selectedAccount._id }}&success=True">
+        <input type="hidden" name="cancel_return" value="{{ redirectUrl }}/buy?success=False">
         <input type="hidden" name="cbt" value="Return to Electric Studio">
       </form>
      

@@ -74,6 +74,7 @@ routes.prefix('/admin', [
     ('post', '/login', 'admin.login'),
     ('get', '/logout', 'admin.logout'),
     ('get', '/privileges', 'admin.privileges'),
+    ('post', '/ipn', 'admin.ipn'),
 
     ('resource', '/security', 'admin.security'),
     ('resource', '/setting', 'admin.setting'),

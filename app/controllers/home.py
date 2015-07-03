@@ -7,12 +7,15 @@ from app.models.admins import Instructor, Admin, Setting, Branch
 from app.models.access import AccessType, Privilege
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
+from app.settings import PDT_TOKEN
+from tornado.httpclient import HTTPRequest, AsyncHTTPClient
 
 import hashlib
 import sys
 import tornado
 import json
 import base64
+import urllib.parse
 
 def index(self):
     user_credits = 0;
@@ -126,6 +129,17 @@ def buy(self):
         self.redirect('/#/rates?s=error')
     else:
         if success == 'True':
+
+            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+            user = yield User.objects.get(user_id)
+
+            pid = self.get_argument('pid');
+            package = yield Package.objects.get(pid)
+
+            pack_name = package.name;
+            if not pack_name:
+                pack_name = str(package.credits) + ' Ride' + ('s' if package.credits > 1 else '')
+
             pp_tx = self.get_query_argument('tx')
             pp_st = self.get_query_argument('st')
             pp_amt = self.get_query_argument('amt')
@@ -138,70 +152,81 @@ def buy(self):
                 self.redirect('/#/rates?s=error')
                 return
 
-            data = {
-                'transaction' : pp_tx,
-                'status' : pp_st,
-                'amount' : pp_amt,
-                'curency' : pp_cc,
-                'cm' : pp_cm,
-                'item_number' : pp_item
-            }
+            trans_filter = { '$regex' : '.*' + pp_tx + '.*', '$options' : 'i' }
+            trans_exists = yield UserPackage.objects.filter(user_id=user._id, trans_info=trans_filter).count()
+            has_ft = yield UserPackage.objects.filter(user_id=user._id, package_ft=True).count()
 
-            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-            user = yield User.objects.get(user_id)
-            user_packages = yield UserPackage.objects.filter(user_id=user._id).find_all()
+            if trans_exists > 0:
+                self.redirect('/#/account?pname=' + pack_name + '&s=success#packages')
+                return
 
-            try: 
-                pid = self.get_argument('pid');
-                package = yield Package.objects.get(pid)
-                if pid:
-                    if user_packages:
-                        for upack in user_packages:
-                            if upack.trans_info and pp_tx in upack.trans_info:
-                                self.redirect('/#/account?s=exists#packages')
-                                return
-                            if package.first_timer and upack.package_ft:
-                                self.redirect('/#/account?s=exists#packages')
-                                return
-                                
-                    if user.status != 'Frozen' and user.status != 'Unverified':
-                        transaction = UserPackage()
-                        transaction.user_id = user._id
-                        transaction.package_id = package._id
-                        transaction.package_name = package.name
-                        transaction.package_fee = package.fee
-                        transaction.package_ft = package.first_timer
-                        transaction.credit_count = package.credits
-                        transaction.remaining_credits = package.credits
-                        transaction.expiration = package.expiration
-                        transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
-                        transaction.trans_info = str(data)
-                        user.credits += package.credits
+            if package.first_timer and has_ft > 0:
+                self.redirect('/#/account?s=exists#packages')
+                return
 
-                        transaction = yield transaction.save()
-                        user = yield user.save()
+            post_body = urllib.parse.urlencode({
+                'cmd' : '_notify-synch',
+                'tx' : pp_tx,
+                'at' : PDT_TOKEN,
+            })
 
-                        pack_name = package.name;
-                        if not pack_name:
-                            pack_name = str(package.credits) + ' Ride' + ('s' if package.credits > 1 else '')
+            url = 'https://www.paypal.com/cgi-bin/webscr'
+            pp_request = HTTPRequest(url=url, method='POST', body=post_body, validate_cert=False)
+            pp_response = yield AsyncHTTPClient().fetch(pp_request)
+            pp_data = pp_response.body.decode('UTF-8')
+            if 'SUCCESS' in pp_data:
+                pp_data = pp_data[7:]
+                pp_data = urllib.parse.unquote(pp_data)
 
-                        user = (yield User.objects.get(user._id)).serialize()
-                        site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
-                        exp_date = transaction.create_at + timedelta(days=transaction.expiration)
-                        content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
-                        yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
+                data = {
+                    'transaction' : pp_tx,
+                    'status' : pp_st,
+                    'amount' : pp_amt,
+                    'curency' : pp_cc,
+                    'cm' : pp_cm,
+                    'item_number' : pp_item,
+                    'paypal_data' : pp_data
+                }
 
-                        self.redirect('/#/account?pname=' + pack_name + '&s=success#packages')
+                try: 
+                    if pid:           
+                        if user.status != 'Frozen' and user.status != 'Unverified':
+                            transaction = UserPackage()
+                            transaction.user_id = user._id
+                            transaction.package_id = package._id
+                            transaction.package_name = package.name
+                            transaction.package_fee = package.fee
+                            transaction.package_ft = package.first_timer
+                            transaction.credit_count = package.credits
+                            transaction.remaining_credits = package.credits
+                            transaction.expiration = package.expiration
+                            transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
+                            transaction.trans_info = str(data)
+                            user.credits += package.credits
+
+                            transaction = yield transaction.save()
+                            user = yield user.save()
+
+                            user = (yield User.objects.get(user._id)).serialize()
+                            site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                            exp_date = transaction.create_at + timedelta(days=transaction.expiration)
+                            content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
+                            yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
+
+                            self.redirect('/#/account?pname=' + pack_name + '&s=success#packages')
+                        else:
+                            self.set_status(403)
+                            self.redirect('/#/rates?s=error')
                     else:
                         self.set_status(403)
                         self.redirect('/#/rates?s=error')
-                else:
+                except:
+                    value = sys.exc_info()[1]
                     self.set_status(403)
-                    self.redirect('/#/rates?s=error')
-            except:
-                value = sys.exc_info()[1]
-                self.set_status(403)
-                self.write(str(value))  
+                    self.write(str(value))  
+            else:
+                self.redirect('/#/rates?s=error')
+                print(pp_data)
         else:
             self.redirect('/#/rates?s=error')
 

@@ -107,6 +107,10 @@ DATABASE = {
     }
 }
 
-MANDRILL_API_KEY = 'LJCBoJpHFF7ZRrFqgu9Q2g'
+MANDRILL_API_KEY = 'r8ovQf1MdI8L7Xlig-hNNA'
 EMAIL_SENDER = 'electric@electricstudio.ph'
 EMAIL_SENDER_NAME = 'Electric Studio'
+
+#Paypal
+PAYPAL_ACCOUNT = 'electric@electricstudio.ph'
+PDT_TOKEN = 'Wm9hXC14j7em4ABlNedDxq2AiwTTmcHXMTSyYrUxejrwWCdnRcZzvUrudQS'

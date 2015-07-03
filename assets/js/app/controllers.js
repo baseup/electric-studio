@@ -542,7 +542,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
   if (window.location.port)
     port = ':' + window.location.port;
 
-  $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/buy';
+  $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port;
 
   $scope.buyPackage = function (event, index) {
 
@@ -654,28 +654,6 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 
 ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService) {
   $scope.resched = SharedService.get('resched');
-
-  var days = { 'mon' : 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6, 'sun': 7 };
-  $scope.weekRelease = {};
-  SettingService.getWeekRelease(function (data) {
-    if (data && data.time && data.day) {
-
-      var parts = data.date.split(/[^0-9]/);
-      var updateAt = new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
-      updateAt.setDate(updateAt.getDate() - updateAt.getDay() + 7);
-
-      var date = new Date()
-      var dDay = date.getDay();
-      if (!dDay) {
-        dDay = dDay + 7;
-      }
-      date.setDate(date.getDate() - dDay + days[data.day])
-      var time = data.time.split(':')
-      date.setHours(time[0], time[1], 0 , 0);
-      $scope.weekRelease.date = date;
-      $scope.weekRelease.updateWeek = updateAt;
-    }
-  });
 
   $scope.blockedBikes = {};
   SettingService.getBlockedBikes(function (bikes) {
@@ -841,35 +819,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     }
   }
 
-  var curWeekMonday = new Date();
-  curWeekMonday.setDate(curWeekMonday.getDate() - curWeekMonday.getDay() + 1);  
-
   $scope.chkSched = function (date, sched) {
 
-    var now = new Date();
-    var parts = sched.start.split(/[^0-9]/);
-    var dTime =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
-    var hours = dTime.getHours();
-    var minutes = dTime.getMinutes();
-    date.setHours(hours, minutes, 0, 0);
-    if (date < now)
+    if (!$scope.schedules.releases[sched._id])
       return true;
-
-    var nextMonday = new Date(now);
-    nextMonday.setDate(nextMonday.getDate() - nextMonday.getDay() + 8);
-    nextMonday.setHours(23, 59, 59);
-    if (date > nextMonday) 
-      return true;
-
-    curWeekMonday.setHours(hours, minutes, 0, 0);
-
-    if ($scope.weekRelease &&
-        $scope.weekRelease.updateWeek < now && 
-        (now > $scope.weekRelease.date && now.getDay() == 0 && date > curWeekMonday) ||
-        (now < $scope.weekRelease.date && date > $scope.weekRelease.date && !(+date === +curWeekMonday))) {
-      return true;
-    }
-
 
     return false;
   }
@@ -966,7 +919,8 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     var pWeek = new Date($scope.monDate);
     pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 6);
 
-    var now = new Date();
+    var nowParts = $scope.schedules.now.split(/[^0-9]/);
+    var now = new Date(nowParts[0], nowParts[1]-1, nowParts[2],  nowParts[3],  nowParts[4], nowParts[5]);
 
     if (((now - pWeek) / (24 * 60 * 60 * 1000)) < 7) {
       $scope.getWeek(pWeek);

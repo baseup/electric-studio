@@ -506,7 +506,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     if (window.location.port)
       port = ':' + window.location.port;
 
-    $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/admin/buy';
+    $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port +'/admin';
 
     //chkSecurity(function () {
       $scope.selectedAccount = user;
