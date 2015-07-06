@@ -650,9 +650,9 @@
                 <table align="left" border="0" cellpadding="0" cellspacing="0" width="600" class="mcnTextContentContainer">
                     <tbody><tr>
                         
-                        <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;">
+                        <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right: 18px; padding-bottom: 0px; padding-left: 18px;">
                         
-                            <h1 style="color:#ff8f1c!important;padding:15px 5% 0; font-size:2.2em;"><span style="font-family:Arial, Helvetica, sans-serif">Your next ride is on the house.</span></h1>
+                            <h1 style="margin-bottom: 0px;color:#ff8f1c!important;padding:15px 5% 0px; font-size:2.2em;"><span style="font-family:Arial, Helvetica, sans-serif">Your next ride is on us!</span></h1>
                         </td>
                     </tr>
                 </tbody></table>
@@ -668,13 +668,19 @@
                 <table align="left" border="0" cellpadding="0" cellspacing="0" width="600" class="mcnTextContentContainer">
                     <tbody><tr>
                         
-                        <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;">
+                        <td valign="top" class="mcnTextContent" style="padding-top:0px; padding-right: 18px; padding-bottom: 0px; padding-left: 18px;">
                         
-                            <div style="padding:10px 5% 30px;font-size:14px; color:#757575!important;">
-<h2 style="font-weight:normal; font-size:16px; color:#757575!important;margin-bottom:30px;"><span style="font-family:Arial, Helvetica, sans-serif"><span style="font-size:18px">We've added a complimentary ride to your account. Your free ride is valid for {{ expiration }} days. See you on the bike!</span></span></h2>
+                            <div style="padding:5px 5% 30px;font-size:14px; color:#757575!important;">
+<h2 style="font-weight:normal; font-size:16px; color:#757575!important;margin-bottom:30px;"><span style="font-family:Arial, Helvetica, sans-serif"><span style="font-size:18px">We've added {{ credits }} complimentary 
+  {% if int(credits) > 1 %}
+    rides
+  {% else %}
+    ride
+  {% end %} 
+  to your account. Your free ride is valid for {{ expiration }} days. See you on the bike!</span></span></h2>
 
 
-<p style="font-size:0.8em;margin-top:30px;"><span style="font-size:12px"><span style="font-family:Arial, Helvetica, sans-serif"><span style="color:#757575">Any comments or questions drop us a line </span><a href="mailto:letsride@electricstudio.ph." style="color:#ff8f1c;">letsride@electricstudio.ph</a>.</span></span></p>
+<p style="font-size:0.8em;margin-top:30px;"><span style="font-size:12px"><span style="font-family:Arial, Helvetica, sans-serif"><span style="color:#757575">Any comments or questions drop us a line </span><a href="mailto:letsride@electricstudio.ph." style="color:#ff8f1c;text-decoration:none;">letsride@electricstudio.ph</a>.</span></span></p>
 </div>
 
 </table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonBlock">
@@ -723,7 +729,7 @@
     <a style="text-decoration:none;" href="http://instagram.com/teamelectricph/">
       <img style="width:40px;padding:0 5px;" src="https://gallery.mailchimp.com/d0d6c651d68c55bc08c5bdfbf/images/9730b400-8be5-4b0a-82a5-92dde09dd0c6.png">
     </a>
-    <a style="text-decoration:none;" href="https://twitter.com/">
+    <a style="text-decoration:none;" href="https://twitter.com/teamelectricph">
       <img style="width:40px;padding:0 5px;" src="https://gallery.mailchimp.com/d0d6c651d68c55bc08c5bdfbf/images/035a73e3-741e-4d41-ba65-f304a055f218.png">
     </a>
 </div>
