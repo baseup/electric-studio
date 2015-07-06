@@ -919,7 +919,8 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     var pWeek = new Date($scope.monDate);
     pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 6);
 
-    var now = new Date();
+    var nowParts = $scope.schedules.now.split(/[^0-9]/);
+    var now = new Date(nowParts[0], nowParts[1]-1, nowParts[2],  nowParts[3],  nowParts[4], nowParts[5]);
 
     if (((now - pWeek) / (24 * 60 * 60 * 1000)) < 7) {
       $scope.getWeek(pWeek);

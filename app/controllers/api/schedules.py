@@ -185,7 +185,8 @@ def find(self):
         'sun' : sun,
         'nmon' : nmon,
         'counts' : counts,
-        'releases' : sched_releases
+        'releases' : sched_releases,
+        'now' : str(now)
     }
 
     self.render_json(scheds)
