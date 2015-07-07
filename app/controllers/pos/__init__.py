@@ -31,29 +31,34 @@ def buy(self):
         if user:
             if user.status !='Frozen' and user.status !='Unverified' and user.status != 'Deactivated':
                 if package:
-                    transaction = UserPackage()
-                    transaction.user_id = user._id
-                    transaction.package_id = package._id
-                    transaction.package_name = package.name
-                    transaction.package_fee = package.fee
-                    transaction.credit_count = package.credits
-                    transaction.remaining_credits = package.credits
-                    transaction.expiration = package.expiration
-                    transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
-                    transaction.trans_info = ''
-                    user.credits += package.credits
+                    ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user._id), package_ft=True).count()) 
+                    if ft_package_count > 0 and package.first_timer:
+                        message = 'Invalid transaction: User already have a first_timer package'
+                    else:
+                        transaction = UserPackage()
+                        transaction.user_id = user._id
+                        transaction.package_id = package._id
+                        transaction.package_name = package.name
+                        transaction.package_fee = package.fee
+                        transaction.package_ft = package.first_timer
+                        transaction.credit_count = package.credits
+                        transaction.remaining_credits = package.credits
+                        transaction.expiration = package.expiration
+                        transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
+                        transaction.trans_info = ''
+                        user.credits += package.credits
 
-                    transaction = yield transaction.save()
-                    user = yield user.save()
+                        transaction = yield transaction.save()
+                        user = yield user.save()
 
-                    user = (yield User.objects.get(user._id)).serialize()
-                    site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
-                    exp_date = transaction.create_at + timedelta(days=transaction.expiration)
+                        user = (yield User.objects.get(user._id)).serialize()
+                        site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                        exp_date = transaction.create_at + timedelta(days=transaction.expiration)
 
-                    # content = str(self.render_string('emails/buy', user=user, site=site_url, package=package.name, expire_date=exp_date.strftime('%B. %d, %Y')), 'UTF-8')
-                    # yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
+                        # content = str(self.render_string('emails/buy', user=user, site=site_url, package=package.name, expire_date=exp_date.strftime('%B. %d, %Y')), 'UTF-8')
+                        # yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
 
-                    self.render_json(transaction)
+                        self.render_json(transaction)
                 else:
                     message = 'Invalid transaction: No package found with this id ' + package_id
             else:
