@@ -618,10 +618,15 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   $scope.getTransId = function (pac) {
     if (pac.trans_info) {
       if (!(pac.trans_info instanceof Object)) {
-        var transInfo = pac.trans_info.replace(/'/g, '"');
-        var trans = JSON.parse(transInfo);
-        pac.trans_info = trans;
-        return trans.transaction;
+        try {
+          var transInfo = pac.trans_info.replace(/\"/g, '');
+          transInfo = transInfo.replace(/'/g, '"');
+          var trans = JSON.parse(transInfo);
+          pac.trans_info = trans;
+          return trans.transaction;
+        } catch (e) {
+          return 'Err: Transaction ID';
+        }
       } else {
         return pac.trans_info.transaction;
       }
@@ -1977,10 +1982,15 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
   $scope.getTransId = function (pac) {
     if (pac.trans_info) {
       if (!(pac.trans_info instanceof Object)) {
-        var transInfo = pac.trans_info.replace(/'/g, '"');
-        var trans = JSON.parse(transInfo);
-        pac.trans_info = trans;
-        return trans.transaction;
+        try {
+          var transInfo = pac.trans_info.replace(/\"/g, '');
+          var transInfo = transInfo.replace(/'/g, '"');
+          var trans = JSON.parse(transInfo);
+          pac.trans_info = trans;
+          return trans.transaction;
+        } catch (e) {
+          return 'Err: Transaction ID';
+        }
       } else {
         return pac.trans_info.transaction;
       }
