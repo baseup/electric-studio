@@ -608,11 +608,32 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   // }
   
   $scope.accountSummary = function (user) {
+    $scope.currentPage = 0;
     $scope.selectedAccount = user;
     UserService.get({ userId: user._id }, function (summary) {
       $scope.selectedAccount = summary;
     });
     angular.element('#account-summary-modal').Modal();
+  }
+
+  $scope.prevPage = function (event) {
+    if ($scope.currentPage > 0) {
+      $scope.currentPage -=1;    
+      UserService.get({ userId: $scope.selectedAccount._id, page: $scope.currentPage }, function (summary) {
+        $scope.selectedAccount = summary;
+      });
+    }
+    event.preventDefault();
+  }
+
+  $scope.nextPage = function (event) {    
+    UserService.get({ userId: $scope.selectedAccount._id, page: $scope.currentPage+1 }, function (summary) {
+      if(summary.packages.length > 0){
+        $scope.selectedAccount = summary;
+        $scope.currentPage+=1;
+      }
+    });
+    event.preventDefault();
   }
 
   $scope.getTransId = function (pac) {
@@ -633,6 +654,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     }
     return null;
   }
+
 
   var from_input = angular.element('#input_from').pickadate({
       format: 'yyyy-mm-dd',
@@ -1966,6 +1988,8 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
 
 ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, PackageService) {
 
+  $scope.currentPage = 0;
+  $scope.hasNext = true;
   $scope.transactions = TransactionService.query();
   $scope.transactions.$promise.then(function (data) {
     $scope.transactions = data;
@@ -1998,6 +2022,27 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
     return null;
   }
 
+    $scope.prevPage = function (event) {
+      if ($scope.currentPage > 0) {
+        $scope.currentPage -=1;    
+        $scope.transactions = TransactionService.query({ page : $scope.currentPage });
+        $scope.transactions.$promise.then(function (data) {
+          $scope.transactions = data;
+        });
+      }
+      event.preventDefault();
+    }
+
+    $scope.nextPage = function (event) {    
+      $scope.transactions = TransactionService.query({ page : $scope.currentPage+1 });
+      $scope.transactions.$promise.then(function (data) {
+        if(data.length > 0){
+          $scope.transactions = data;
+          $scope.currentPage += 1; 
+        }
+      }); 
+      event.preventDefault();
+    }
 });
 
 ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService) {

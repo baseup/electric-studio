@@ -58,7 +58,15 @@ def find_one(self, id):
         books = create_at_gmt8(books)
         json_user['books'] = to_json_serializable(books)
     else:
-        packages = yield UserPackage.objects.filter(user_id=user._id).order_by('expire_date').find_all()
+        page = 0
+        pages = yield UserPackage.objects.filter(user_id=user._id).order_by('expire_date').count();
+        packages = []
+        if self.get_query_argument('page'):
+            page = int(self.get_query_argument('page'))
+        if ((pages - (page * 10)) > 0):
+            packages = yield UserPackage.objects.filter(user_id=user._id).order_by('expire_date') \
+                    .skip(page * 10).limit(10).find_all()
+        
         packages = create_at_gmt8(packages)
         json_user['packages'] = to_json_serializable(packages)
 
