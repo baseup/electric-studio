@@ -13,7 +13,7 @@ from bson.objectid import ObjectId
 def schedule_watcher():
     gmt8 = GMT8()
     now = datetime.now(tz=gmt8)
-    user_packages = yield UserPackage.objects.filter(status__ne='Expired').find_all()
+    user_packages = yield UserPackage.objects.filter(exp_date__lte=now,status__ne='Expired').find_all()
     if user_packages:
         for user_pack in user_packages:
             expire_date = user_pack.create_at + timedelta(days=user_pack.expiration)
@@ -31,6 +31,7 @@ def schedule_watcher():
                                             .filter(status__ne='cancelled') \
                                             .filter(status__ne='missed') \
                                             .find_all()
+
     if schedules:
         for i, sched in enumerate(schedules):
             sched_date = datetime.combine(sched.date, sched.schedule.end.time())
