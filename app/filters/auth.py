@@ -3,6 +3,11 @@ from tornado.web import *
 from app.auth import auth_token
 from app.models.access import AccessType
 from app.models.admins import Admin
+from app.settings import MAINTENANCE
+
+def landing(self):
+    if MAINTENANCE:
+        self.redirect('/maintenance')        
 
 def admin(self):
     if not self.get_secure_cookie('admin'):

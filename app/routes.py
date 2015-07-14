@@ -2,6 +2,7 @@ from hurricane.web import RouteProvider
 routes = RouteProvider()
 
 routes.when('admin.index', 'auth.admin')
+routes.when('home.index', 'auth.landing')   
 
 # filters for pos api
 routes.when('pos.buy', 'auth.api')
@@ -51,6 +52,7 @@ routes.get('/verify', 'home.verify')
 routes.post('/verify', 'home.verify')
 routes.get('/fpass', 'home.forgot_password')
 routes.post('/fpass', 'home.forgot_password')
+routes.get('/maintenance', 'home.maintenance')
 routes.post('/user/login', 'home.login')
 routes.get('/user/logout', 'home.logout')
 routes.post('/upload/instructor', 'upload.instructor')

@@ -25,6 +25,9 @@ def index(self):
         user_credits = user.credits
     self.render('index', loginUser=self.get_secure_cookie('loginUser'), credits=user_credits)
 
+def maintenance(self):
+    self.render('maintenance')
+
 def login(self):
     email = self.get_argument('email')
     passWord = self.get_argument('password')

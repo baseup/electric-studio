@@ -97,6 +97,7 @@ ENABLE_LOGS = True
 # LOG_PATH = 'logs'
 
 # MotorEngine Configuration
+DATABASE_LIMIT = 1000
 DATABASE = {
     'default': {
         'db': 'elstudio_db',
@@ -114,3 +115,6 @@ EMAIL_SENDER_NAME = 'Electric Studio'
 #Paypal
 PAYPAL_ACCOUNT = 'electric@electricstudio.ph'
 PDT_TOKEN = 'Wm9hXC14j7em4ABlNedDxq2AiwTTmcHXMTSyYrUxejrwWCdnRcZzvUrudQS'
+
+#ENV
+MAINTENANCE = True
