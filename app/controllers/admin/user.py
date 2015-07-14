@@ -31,7 +31,7 @@ def find(self):
         if str_skip:
             skip_val = int(str_skip)
 
-        query.skip(skip_val).limit(30)
+        query.skip(skip_val).limit(15)
         
     users = yield query.find_all()
 

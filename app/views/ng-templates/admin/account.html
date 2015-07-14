@@ -96,7 +96,7 @@
     </div>
     <div class="center">
       <i ng-show="loadingAccounts">loading accounts .. </i>
-      <button ng-show="users.length % 30 == 0 && !loadingAccounts" class="btn btn--small btn--primary" ng-click="loadMoreAccounts()">Load More</button>
+      <button ng-show="users.length % 15 == 0 && !loadingAccounts" class="btn btn--small btn--primary" ng-click="loadMoreAccounts()">Load More</button>
     </div>
   </div>
 
