@@ -21,13 +21,13 @@ def find(self):
         user = user.to_dict()
         del user['password']
         users[i] = user 
-    
-    self.render_json({
-        'users' : users,
-        'total_records' : count,
-        'page_number' : page + 1,
-        'request_limit' : DATABASE_LIMIT
-    })
+    self.render_json(users)
+    # self.render_json({
+    #     'users' : users,
+    #     'total_records' : count,
+    #     'page_number' : page + 1,
+    #     'request_limit' : DATABASE_LIMIT
+    # })
 
 def find_one(self, id):
     user = yield User.objects.get(id)

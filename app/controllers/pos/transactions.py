@@ -28,13 +28,14 @@ def find(self):
         transaction['user_id'] = user
         transaction['package_id'] = product
         transactions[i] = transaction
-    
-    self.render_json({
-        'transactions' : transactions,
-        'total_records' : count,
-        'page_number' : page + 1,
-        'request_limit' : DATABASE_LIMIT
-    })
+
+    self.render_json(transactions)
+    # self.render_json({
+    #     'transactions' : transactions,
+    #     'total_records' : count,
+    #     'page_number' : page + 1,
+    #     'request_limit' : DATABASE_LIMIT
+    # })
 
 def find_one(self, id):
     transaction = yield UserPackage.objects.get(id)
