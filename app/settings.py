@@ -110,7 +110,7 @@ DATABASE = {
 MANDRILL_API_KEY = 'r8ovQf1MdI8L7Xlig-hNNA'
 EMAIL_SENDER = 'electric@electricstudio.ph'
 EMAIL_SENDER_NAME = 'Electric Studio'
-
+DATABASE_LIMIT = 1000
 #Paypal
 PAYPAL_ACCOUNT = 'electric@electricstudio.ph'
 PDT_TOKEN = 'Wm9hXC14j7em4ABlNedDxq2AiwTTmcHXMTSyYrUxejrwWCdnRcZzvUrudQS'
