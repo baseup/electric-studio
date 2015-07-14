@@ -17,6 +17,9 @@
   
   <div id="rates-section" class="content bg-gray parts-5 rates-info" ng-controller="RatesCtrl">
     <div class="wrapper">
+      <span class="h small primary center" ng-show="loadingPackages">
+        <i class="fa fa-spinner"></i> Loading packages ... 
+      </span>
       <section ng-repeat="package in packages">
         <p>{{ package.description || '&nbsp;' }}</p>
         <h2>

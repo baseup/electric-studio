@@ -533,9 +533,11 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
     $location.search('s', null);
   }
 
+  $scope.loadingPackages = true;
   $scope.packages = PackageService.query();
   $scope.packages.$promise.then(function (data) {
     $scope.packages = data;
+    $scope.loadingPackages = false;
   });
 
   var port = '';
@@ -887,22 +889,27 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     $scope.nmonDate = n_mon;
 
     $scope.schedules = ScheduleService.query({ date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate() });
+    $scope.loadingSchedules = true;
     $scope.schedules.$promise.then(function (data) {
       $scope.schedules = data;
+      $scope.loadingSchedules = false;
     });
 
   }
 
   $scope.isFull = function (sched) {
-    var seats = sched.seats;
-    for (var k in $scope.blockedBikes) {
-      var key = parseInt(k)
-      if (key && key <= sched.seats) {
-        seats -= 1;
+
+    if (!$scope.chkSched(null, sched)) {
+      var seats = sched.seats;
+      for (var k in $scope.blockedBikes) {
+        var key = parseInt(k)
+        if (key && key <= sched.seats) {
+          seats -= 1;
+        }
       }
-    }
-    if ($scope.schedules.counts[sched._id].books >= seats || $scope.schedules.counts[sched._id].waitlist > 0) {
-      return true;
+      if ($scope.schedules.counts[sched._id].books >= seats || $scope.schedules.counts[sched._id].waitlist > 0) {
+        return true;
+      }
     }
     return false;
   }

@@ -52,9 +52,10 @@ def find(self):
         else:
             sched_releases[str(m._id)] = True
 
-        book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=m._id).count())
-        waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=m._id).count())
-        counts[str(m._id)] = { 'books': book_count, 'waitlist': waitlist_count }
+        if mon_date > now:
+            book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=m._id).count())
+            waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=m._id).count())
+            counts[str(m._id)] = { 'books': book_count, 'waitlist': waitlist_count }
     #tuesday
     date += timedelta(days=1)
     tue = yield InstructorSchedule.objects.filter(date=date) \
@@ -69,9 +70,10 @@ def find(self):
         else:
             sched_releases[str(t._id)] = True
 
-        book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=t._id).count())
-        waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=t._id).count())
-        counts[str(t._id)] = { 'books': book_count, 'waitlist': waitlist_count }
+        if tue_date > now:
+            book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=t._id).count())
+            waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=t._id).count())
+            counts[str(t._id)] = { 'books': book_count, 'waitlist': waitlist_count }
     #wednesday
     date += timedelta(days=1)
     wed = yield InstructorSchedule.objects.filter(date=date) \
@@ -86,9 +88,10 @@ def find(self):
         else:
             sched_releases[str(w._id)] = True
 
-        book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=w._id).count())
-        waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=w._id).count())
-        counts[str(w._id)] = { 'books': book_count, 'waitlist': waitlist_count }
+        if wednes_date > now:
+            book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=w._id).count())
+            waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=w._id).count())
+            counts[str(w._id)] = { 'books': book_count, 'waitlist': waitlist_count }
     #thursday
     date += timedelta(days=1)
     thu = yield InstructorSchedule.objects.filter(date=date) \
@@ -103,9 +106,10 @@ def find(self):
         else:
             sched_releases[str(th._id)] = True
 
-        book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=th._id).count())
-        waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=th._id).count())
-        counts[str(th._id)] = { 'books': book_count, 'waitlist': waitlist_count }
+        if thurs_date > now:
+            book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=th._id).count())
+            waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=th._id).count())
+            counts[str(th._id)] = { 'books': book_count, 'waitlist': waitlist_count }
     #friday
     date += timedelta(days=1)
     fri = yield InstructorSchedule.objects.filter(date=date) \
@@ -120,9 +124,10 @@ def find(self):
         else:
             sched_releases[str(f._id)] = True
 
-        book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=f._id).count())
-        waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=f._id).count())
-        counts[str(f._id)] = { 'books': book_count, 'waitlist': waitlist_count }
+        if fri_date > now:
+            book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=f._id).count())
+            waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=f._id).count())
+            counts[str(f._id)] = { 'books': book_count, 'waitlist': waitlist_count }
     #saturday
     date += timedelta(days=1)
     sat = yield InstructorSchedule.objects.filter(date=date) \
@@ -137,9 +142,10 @@ def find(self):
         else:
             sched_releases[str(s._id)] = True
 
-        book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=s._id).count())
-        waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=s._id).count())
-        counts[str(s._id)] = { 'books': book_count, 'waitlist': waitlist_count }
+        if sat_date > now:
+            book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=s._id).count())
+            waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=s._id).count())
+            counts[str(s._id)] = { 'books': book_count, 'waitlist': waitlist_count }
     #sunday
     date += timedelta(days=1)
     sun = yield InstructorSchedule.objects.filter(date=date) \
@@ -154,9 +160,10 @@ def find(self):
         else:
             sched_releases[str(su._id)] = True
 
-        book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=su._id).count())
-        waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=su._id).count())
-        counts[str(su._id)] = { 'books': book_count, 'waitlist': waitlist_count }
+        if sun_date > now:
+            book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=su._id).count())
+            waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=su._id).count())
+            counts[str(su._id)] = { 'books': book_count, 'waitlist': waitlist_count }
     #next moday
     date += timedelta(days=1)
     nmon = yield InstructorSchedule.objects.filter(date=date) \
@@ -171,9 +178,10 @@ def find(self):
         else:
             sched_releases[str(n._id)] = True
 
-        book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=n._id).count())
-        waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=n._id).count())
-        counts[str(n._id)] = { 'books': book_count, 'waitlist': waitlist_count }
+        if nmon_date > now:
+            book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=n._id).count())
+            waitlist_count = (yield BookedSchedule.objects.filter(status='waitlisted', schedule=n._id).count())
+            counts[str(n._id)] = { 'books': book_count, 'waitlist': waitlist_count }
 
     scheds = { 
         'mon' : mon, 
