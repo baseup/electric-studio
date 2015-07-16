@@ -58,6 +58,8 @@ routes.get('/user/logout', 'home.logout')
 routes.post('/upload/instructor', 'upload.instructor')
 routes.post('/upload/images', 'upload.images')
 
+routes.get('/sync_user_packages', 'home.sync_package')
+
 # to be remove
 routes.get('/add_default_sudopass', 'home.add_default_sudopass')
 routes.get('/add_regular_schedules', 'home.add_regular_schedule')

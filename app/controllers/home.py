@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 from app.settings import PDT_TOKEN
 from tornado.httpclient import HTTPRequest, AsyncHTTPClient
+from app.helper import GMT8
 
 import hashlib
 import sys
@@ -307,6 +308,47 @@ def schedule_migrate(self):
 
     self.redirect('/')
 
+def sync_package(self): 
+
+    gmt8 = GMT8()
+    users = yield User.objects.limit((yield User.objects.count())).find_all();
+    now = datetime.now(tz=gmt8)
+    summary = ''
+    for user in users:
+        user_packs = yield UserPackage.objects.filter(user_id=user._id).find_all()
+        credits = 0;
+        summary += 'Updating ' + user.email + '<br/>'
+        summary += '-- has ' + str(len(user_packs)) + ' user_package<br/>'
+        for upack in user_packs:
+
+            if upack.package_id:
+                if upack.expiration != upack.package_id.expiration:
+                    summary += '-- updating expiration from ' + str(upack.expiration) + ' to ' + str(upack.package_id.expiration) + '<br/>'
+                    upack.expiration = upack.package_id.expiration
+
+            books = yield BookedSchedule.objects.filter(status__ne="cancelled", user_package=[str(upack._id)]).find_all();
+            summary += '-- has ' + str(len(books)) + ' bookings made<br/>'
+            if upack.remaining_credits > upack.credit_count:
+                summary += '-- updating (' + str(upack._id) + ') remaining credits from ' + str(upack.remaining_credits) + ' to ' + str(upack.credit_count - len(books)) + '<br/>'                                        
+                upack.remaining_credits = upack.credit_count - len(books);
+
+            summary += '-- updating expire date from ' + str(upack.expire_date) + ' to ' + str(upack.create_at + timedelta(days=upack.expiration)) + '<br/>'
+            upack.expire_date = upack.create_at + timedelta(days=upack.expiration)
+
+            if upack.expire_date.replace(tzinfo=gmt8) > now:
+                upack.status = 'Active'
+
+            yield upack.save()
+
+            if upack.status != 'Expired':
+                credits += upack.remaining_credits
+
+        summary += '-- updating user credits from ' + str(user.credits) + ' to ' + str(credits) + '<br/>'                    
+        user.credits = credits
+        yield user.save()
+
+    self.write(summary)
+    self.finish()
 
 def package_migrate(self):
 
