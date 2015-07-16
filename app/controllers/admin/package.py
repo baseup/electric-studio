@@ -24,41 +24,53 @@ def find_one(self, id):
 def create(self):
 
     data = tornado.escape.json_decode(self.request.body)
-    try:
-        package = Package(fee=data['fee'],
-                          expiration=data['expiration'],
-                          credits=data['credits'])
-        if 'name' in data:
-            package.name = data['name']
-        if 'first_timer' in data: 
-            package.first_timer = bool(data['first_timer'])
-        if 'special_package' in data: 
-            package.special_package = bool(data['special_package'])
-        if 'description' in data:
-            package.description = data['description']
-        package = yield package.save()
-    except:
-        value = sys.exc_info()[1]
+    exp = int(data['expiration'])
+    if exp and exp > 0:
+        try:
+            package = Package(fee=data['fee'],
+                              expiration=exp,
+                              credits=data['credits'])
+            if 'name' in data:
+                package.name = data['name']
+            if 'first_timer' in data: 
+                package.first_timer = bool(data['first_timer'])
+            if 'special_package' in data: 
+                package.special_package = bool(data['special_package'])
+            if 'description' in data:
+                package.description = data['description']
+            package = yield package.save()
+        except:
+            value = sys.exc_info()[1]
+            self.set_status(403)
+            self.write(str(value))
+    else:
         self.set_status(403)
-        self.write(str(value))
+        self.write('Invalid expiration')
+
     self.finish()
+
 
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
-    try:
-        package = yield Package.objects.get(id)
-        package.name = data['name']
-        package.fee = data['fee']
-        package.description = data['description']
-        package.expiration = data['expiration']
-        package.credits = data['credits']
-        package.first_timer = bool(data['first_timer']);
-        package.special_package = bool(data['special_package']);
-        package = yield package.save()
-    except:
-        value = sys.exc_info()[1]
+    exp = int(data['expiration'])
+    if exp and exp > 0:
+        try:
+            package = yield Package.objects.get(id)
+            package.name = data['name']
+            package.fee = data['fee']
+            package.description = data['description']
+            package.expiration = data['expiration']
+            package.credits = data['credits']
+            package.first_timer = bool(data['first_timer']);
+            package.special_package = bool(data['special_package']);
+            package = yield package.save()
+        except:
+            value = sys.exc_info()[1]
+            self.set_status(403)
+            self.write(str(value))
+    else:
         self.set_status(403)
-        self.write(str(value))
+        self.write('Invalid expiration')
     self.finish()
 
 def destroy(self, id):

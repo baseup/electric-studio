@@ -87,18 +87,6 @@ services.factory('PackageService', function($resource) {
     query: {
       method: 'GET',
       isArray: true
-    },
-    update: {
-      method: 'PUT',
-      isArray: false
-    },
-    create: {
-      method: 'POST',
-      isArray: false
-    },
-    delete: {
-      method: 'DELETE',
-      isArray: false
     }
   });
 });
