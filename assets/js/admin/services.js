@@ -142,6 +142,10 @@ services.factory('TransactionService', function ($resource) {
       method: 'GET',
       isArray: true
     },
+    get: {
+      method: 'GET',
+      isArray: false
+    },
     update: {
       method: 'PUT',
       isArray: false

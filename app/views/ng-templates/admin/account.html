@@ -360,10 +360,15 @@
             <td>{{ getTransId(pack) }}</td>
             <td>{{ pack.package_name || (pack.is_free ? 'Free' : pack.credit_count + ' Ride' + (pack.credit_count > 1 ? 's' : '')) }} </td>
             <td>{{ pack.credit_count }}</td>
-            <td>{{ pack.remaining_credits }}</td>
+            <td>
+              {{ pack.remaining_credits }}
+              <a ng-if="getAccess('accounts', 'update_expiration')" ng-click="changeCredits(pack)"><i class="fa fa-edit"></i></a>
+            </td>
             <td>
               {{ pack.create_at | addDay:pack.expiration | formatDate }}
-              <a ng-if="getAccess('accounts', 'update_expiration')" ng-click="extendPackageExpiry(pack)"><i class="fa fa-plus-square"></i></a>
+              <a ng-if="getAccess('accounts', 'update_expiration')" ng-click="extendPackageExpiry(pack)">
+                <i class="fa fa-plus-square"></i>
+              </a>
             </td>
             <td>{{ pack.notes }}</td>
             <td>{{ pack.create_at | formatDate }}</td>
@@ -375,6 +380,37 @@
         <li><a ng-click="prevPage($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
         <li><a ng-click="nextPage($event)">Next <i class="fa fa-angle-right"></i></a></li>
       </ul>
+    </div>
+  </div>
+
+  <div id="update-credits-modal" class="modal" data-modal="update-credits">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Change Credits</h3>
+
+      <div class="user-select space--bottom">
+        <span class="label">Package</span>
+        <h4 class="h-small">
+          {{ selectedUPack.package_name || (selectedUPack.is_free ? 'Free' : selectedUPack.credit_count + ' Ride' + (selectedUPack.credit_count > 1 ? 's' : '')) }}
+        </h4>
+      </div>
+
+       <div class="cf">   
+        <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
+          <span class="label">Current Credits</span>
+          <h4 class="h-small">{{ selectedUPack.remaining_credits }} / {{ selectedUPack.credit_count  }}</h4>
+        </div>
+        <div class="space--bottom bp-md-one-third float--left">
+          <span class="label">Change to</span>
+          <select class="select" id="set-credits" ng-model="selectedCredits">
+            <option value="">Select Credits</option>
+          </select>
+        </div>
+      </div>
+
+      <button ng-if="getAccess('accounts', 'update_expiration')" class="btn btn--primary btn--medium space--top modal-close" ng-click="setCredits()">Change</button><br><br>
+
+      <span class="alert alert-info">Notice: You can only change credit up to remaining credits that is not used for booking </span>
     </div>
   </div>
 

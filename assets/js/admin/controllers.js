@@ -694,6 +694,40 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     }
   });  
 
+  $scope.changeCredits = function (userPack) {
+    TransactionService.get({ transactionId: userPack._id, book_count: true }, function(bookCount) {
+
+      var numCredits = userPack.credit_count - bookCount[0];
+      if (numCredits > 0) {
+        $scope.selectedUPack = userPack;
+        var selectize = angular.element('#set-credits')[0].selectize;
+        selectize.settings.sortField = 'text';
+        selectize.settings.sortDirection = 'desc';
+
+        for (var i = numCredits; i >= 0 ; i--)
+          selectize.addOption({ value: i, text: i });
+        angular.element('#update-credits-modal').Modal();
+      } else {
+        $.Alert("All credits already been used for booking");
+      }
+    });
+  }
+
+  $scope.setCredits = function () {
+    if ($scope.selectedCredits != undefined && $scope.selectedCredits != null) {
+      var confirm_msg = 'Are you sure to change credit from (' + $scope.selectedUPack.remaining_credits + ') to ' + $scope.selectedCredits + '?';
+      $.Confirm(confirm_msg, function () {
+        TransactionService.update({ transactionId: $scope.selectedUPack._id}, { credit_change: parseInt($scope.selectedCredits) }, function () {
+          UserService.get({ userId: $scope.selectedUPack.user_id._id }, function (summary) {
+            $scope.selectedAccount = summary;
+          });
+        }, function (error) { $.Alert(error.data); })
+      });
+    } else {
+      $.Alert('Please select bike to switch')
+    }
+  }
+
   $scope.extendPackageExpiry = function (userpackage) {
     $.Prompt('Extend expiration by how many days ?', function (days) {
       if (parseInt(days)) {
