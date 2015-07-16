@@ -126,6 +126,7 @@ def buy(self):
             pp_data = pp_response.body.decode('UTF-8')
             if 'SUCCESS' in pp_data:
                 pp_data = pp_data[7:]
+                pp_data = pp_data.replace("'",'')
                 pp_data = urllib.parse.unquote(pp_data)
      
                 data = {
@@ -186,6 +187,8 @@ def ipn(self):
     ipn_data = urllib.parse.parse_qs(data)
     for k in ipn_data.keys():
         ipn_data[k] = ipn_data[k][0]
+        if ipn_data[k]: 
+            ipn_data[k] = ipn_data[k].replace("'",'')
 
     tx = ipn_data['txn_id']
     uid = ipn_data['transaction_subject']

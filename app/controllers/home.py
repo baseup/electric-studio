@@ -180,6 +180,7 @@ def buy(self):
             pp_data = pp_response.body.decode('UTF-8')
             if 'SUCCESS' in pp_data:
                 pp_data = pp_data[7:]
+                pp_data = pp_data.replace("'",'')
                 pp_data = urllib.parse.unquote(pp_data)
 
                 data = {
@@ -317,37 +318,66 @@ def sync_package(self):
     for user in users:
         user_packs = yield UserPackage.objects.filter(user_id=user._id).find_all()
         credits = 0;
-        summary += 'Updating ' + user.email + '<br/>'
+        summary += 'Checking ' + user.email + '<br/>'
         summary += '-- has ' + str(len(user_packs)) + ' user_package<br/>'
+        transIds = {}
         for upack in user_packs:
 
             if upack.package_id:
                 if upack.expiration != upack.package_id.expiration:
-                    summary += '-- updating expiration from ' + str(upack.expiration) + ' to ' + str(upack.package_id.expiration) + '<br/>'
+                    summary += '--[' + str(upack._id) + '] updating expiration from ' + str(upack.expiration) + ' to ' + str(upack.package_id.expiration) + '<br/>'
                     upack.expiration = upack.package_id.expiration
 
             books = yield BookedSchedule.objects.filter(status__ne="cancelled", user_package=[str(upack._id)]).find_all();
-            summary += '-- has ' + str(len(books)) + ' bookings made<br/>'
+            summary += '--[' + str(upack._id) + '] has ' + str(len(books)) + ' bookings made<br/>'
             if upack.remaining_credits > upack.credit_count:
-                summary += '-- updating (' + str(upack._id) + ') remaining credits from ' + str(upack.remaining_credits) + ' to ' + str(upack.credit_count - len(books)) + '<br/>'                                        
+                summary += '--[' + str(upack._id) + '] updating (' + str(upack._id) + ') remaining credits from ' + str(upack.remaining_credits) + ' to ' + str(upack.credit_count - len(books)) + '<br/>'                                        
                 upack.remaining_credits = upack.credit_count - len(books);
 
-            summary += '-- updating expire date from ' + str(upack.expire_date) + ' to ' + str(upack.create_at + timedelta(days=upack.expiration)) + '<br/>'
-            upack.expire_date = upack.create_at + timedelta(days=upack.expiration)
+            if upack.expire_date != upack.create_at + timedelta(days=upack.expiration):
+                summary += '--[' + str(upack._id) + '] updating expire date from ' + str(upack.expire_date) + ' to ' + str(upack.create_at + timedelta(days=upack.expiration)) + '<br/>'
+                upack.expire_date = upack.create_at + timedelta(days=upack.expiration)
 
             if upack.expire_date.replace(tzinfo=gmt8) > now:
                 upack.status = 'Active'
 
             yield upack.save()
 
-            if upack.status != 'Expired':
+            package_deleted = False
+            if upack.trans_info:
+                try:
+                    trans = tornado.escape.json_decode(upack.trans_info.replace('"', '').replace("'",'"'));
+                    if trans['transaction'] in transIds:
+                        summary += '--[' + str(upack._id) + '] deleting duplicate transaction ' + trans['transaction'] + ' with ' + str(transIds[trans['transaction']]) + '<br/>'
+                        if len(books) == 0:
+                            yield upack.delete()
+                            package_deleted = True
+                        else:
+                            summary += '--[' + str(upack._id) + '] Warning duplicate transaction not deleted because it has : ' + str(len(books)) + ' booking<br>'
+                    else:
+                        transIds[trans['transaction']] = upack._id
+                except:
+                    value = sys.exc_info()[1]
+                    summary += '--[' + str(upack._id) + '] Warning error on retrieving transaction: ' + str(value) + '<br>'
+                    summary += '---- transaction: ' + str(upack.trans_info) + '<br>'
+
+            if (not package_deleted) and upack.status != 'Expired':
                 credits += upack.remaining_credits
 
-        summary += '-- updating user credits from ' + str(user.credits) + ' to ' + str(credits) + '<br/>'                    
-        user.credits = credits
-        yield user.save()
+        if user.credits != credits:
+            summary += '-- updating user credits from ' + str(user.credits) + ' to ' + str(credits) + '<br/>'                    
+            user.credits = credits
+            yield user.save()
 
-    self.write(summary)
+    to = {
+        "email" : "melvin@greenlemon.co",
+        "first_name" : "melvin",
+        "last_name" : "maron"
+     }
+
+    yield self.io.async_task(send_email, user=to, content=summary, subject='Sync Package Summary')
+
+    self.write(summary);
     self.finish()
 
 def package_migrate(self):
