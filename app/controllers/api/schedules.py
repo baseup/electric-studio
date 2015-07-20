@@ -173,7 +173,7 @@ def find(self):
         nmon_date = date.replace(hour=n.start.hour, minute=n.start.minute, second=0, tzinfo=gmt8)
         if (nmon_date < now or nmon_date > next_mon):
             sched_releases[str(n._id)] = False
-        elif updateWeek < now and (now < release_date and nmon_date > release_date) or (now > release_date and nmon_date > next_release):
+        elif updateWeek < now and (now < release_date and date.replace(tzinfo=gmt8) > release_date) or (now > release_date and date.replace(tzinfo=gmt8) > next_release):
             sched_releases[str(n._id)] = False
         else:
             sched_releases[str(n._id)] = True
