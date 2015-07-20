@@ -37,7 +37,7 @@ def find(self):
     release_date = now + timedelta(days=-dDay + days[week_release['day']])
     release_date = release_date.replace(hour=int(rtime[0]), minute=int(rtime[1]), second=0, tzinfo=gmt8)
 
-    next_release = release_date + timedelta(weeks=1, days=1);
+    next_release = release_date + timedelta(weeks=1);
     
     # monday
     mon = yield InstructorSchedule.objects.filter(date=date) \
@@ -47,7 +47,7 @@ def find(self):
         mon_date = date.replace(hour=m.start.hour, minute=m.start.minute, second=0, tzinfo=gmt8)
         if (mon_date < now or mon_date > next_mon):
             sched_releases[str(m._id)] = False
-        elif updateWeek < now and (now < release_date and date.replace(tzinfo=gmt8) > release_date) or (now > release_date and mon_date > next_release):
+        elif updateWeek < now and (now < release_date and date.replace(tzinfo=gmt8) > release_date) or (now > release_date and date.replace(tzinfo=gmt8) > next_release):
             sched_releases[str(m._id)] = False
         else:
             sched_releases[str(m._id)] = True
