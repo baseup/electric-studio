@@ -171,7 +171,11 @@ def buy(self):
                         error = 'Package not found'
                 except:
                     value = sys.exc_info()[1]
-                    error = str(value)
+                    str_value = str(value)
+                    if 'The index "caused" was violated ' in str_value:
+                        self.redirect('/admin/#/accounts?pname=' + pack_name + '&u=' + user['first_name'] + ' ' + user['last_name'] + '&s=success')
+                    else:
+                        error = str_value
             else:
                 error = pp_data.replace('\n',' : ');
         else:

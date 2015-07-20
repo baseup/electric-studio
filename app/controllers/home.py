@@ -230,8 +230,11 @@ def buy(self):
                         self.redirect('/#/rates?s=error')
                 except:
                     value = sys.exc_info()[1]
-                    self.set_status(403)
-                    self.write(str(value))  
+                    str_value = str(value)
+                    if 'The index "caused" was violated ' in str_value:
+                        self.redirect('/#/account?pname=' + pack_name + '&s=success#packages')
+                    else:
+                        self.redirect('/#/rates?s=error')
             else:
                 self.redirect('/#/rates?s=error')
                 print(pp_data)
@@ -395,7 +398,7 @@ def sync_package(self):
     self.finish()
 
 def package_migrate(self):
-    
+
     # user_packages = yield UserPackage.objects.find_all()
     # count = 0;
     # summary = 'count ' + str(len(user_packages)) + '<br>'
