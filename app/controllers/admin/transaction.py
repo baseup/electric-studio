@@ -61,6 +61,7 @@ def create(self):
 
     trans.is_free = True
     trans.user_id = user._id
+    trans.trans_id = str(user._id) + datetime.now().strftime('%Y%m%d%H%M%S')
 
     try:
         yield trans.save()
@@ -110,8 +111,6 @@ def update(self, id):
 
             yield tran.user_id.save()
             tran = yield tran.save()
-            
-
     else:
         self.set_status(400)
         self.write('Transaction not found')

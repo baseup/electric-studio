@@ -151,6 +151,7 @@ def buy(self):
                             transaction.credit_count = package.credits
                             transaction.remaining_credits = package.credits
                             transaction.expiration = package.expiration
+                            transaction.trans_id = pp_tx
                             transaction.trans_info = str(data)
                             user.credits += package.credits
 

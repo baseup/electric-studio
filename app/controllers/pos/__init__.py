@@ -25,6 +25,7 @@ def buy(self):
     message, success, status = '', False, 400
     package_id = self.get_argument('package_id')
     user_id = self.get_argument('user_id')
+    trans_id = self.get_argument('trans_id')
     if user_id and package_id:
         package = yield Package.objects.get(package_id) 
         user = yield User.objects.get(user_id)
@@ -35,6 +36,9 @@ def buy(self):
                     if ft_package_count > 0 and package.first_timer:
                         message = 'Invalid transaction: User already have a first_timer package'
                     else:
+                        if not trans_id:
+                            trans_id = str(user._id) + datetime.now().strftime('%Y%m%d%H%M%S')
+
                         transaction = UserPackage()
                         transaction.user_id = user._id
                         transaction.package_id = package._id
@@ -45,6 +49,7 @@ def buy(self):
                         transaction.remaining_credits = package.credits
                         transaction.expiration = package.expiration
                         transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
+                        transaction.trans_id = trans_id
                         transaction.trans_info = ''
                         user.credits += package.credits
 
@@ -59,6 +64,7 @@ def buy(self):
                         # yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
 
                         self.render_json(transaction)
+                        return
                 else:
                     message = 'Invalid transaction: No package found with this id ' + package_id
             else:
@@ -101,6 +107,7 @@ def buy_product(self):
                     product = yield product.save()
 
                     self.render_json(transaction)
+                    return
                 else:
                     message = 'Invalid transaction: No product found with this id ' + product_id
             else:

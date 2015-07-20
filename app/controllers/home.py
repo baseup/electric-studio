@@ -83,13 +83,15 @@ def verify(self):
     else:
         data = tornado.escape.json_decode(self.request.body)
         if 'email' in data:
-            user = (yield User.objects.get(email=data['email'], status__ne='Deleted')).serialize()
-            url = self.request.protocol + '://' + self.request.host + '/verify?ticket=%s' % user['_id']
-            yield self.io.async_task(
-                send_email_verification,
-                user=user,
-                content=str(self.render_string('emails/registration', user=user, url=url), 'UTF-8')
-            )
+            user = yield User.objects.get(email=data['email'], status__ne='Deleted')
+            if user:
+                user = user.serialize()
+                url = self.request.protocol + '://' + self.request.host + '/verify?ticket=%s' % user['_id']
+                yield self.io.async_task(
+                    send_email_verification,
+                    user=user,
+                    content=str(self.render_string('emails/registration', user=user, url=url), 'UTF-8')
+                )
         self.finish()
 
 def forgot_password(self):
@@ -206,6 +208,7 @@ def buy(self):
                             transaction.remaining_credits = package.credits
                             transaction.expiration = package.expiration
                             transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
+                            transaction.trans_id = pp_tx
                             transaction.trans_info = str(data)
                             user.credits += package.credits
 
@@ -326,6 +329,8 @@ def sync_package(self):
             if upack.package_id:
                 if upack.expiration != upack.package_id.expiration:
                     summary += '--[' + str(upack._id) + '] updating expiration from ' + str(upack.expiration) + ' to ' + str(upack.package_id.expiration) + '<br/>'
+                    if int(upack.expiration) <= 0:
+                        upack.remaining_credits = 0
                     upack.expiration = upack.package_id.expiration
 
             books = yield BookedSchedule.objects.filter(status__ne="cancelled", user_package=[str(upack._id)]).find_all();
@@ -341,7 +346,7 @@ def sync_package(self):
             if upack.expire_date.replace(tzinfo=gmt8) > now:
                 upack.status = 'Active'
 
-            yield upack.save()
+            upack = yield upack.save()
 
             package_deleted = False
             if upack.trans_info:
@@ -356,12 +361,21 @@ def sync_package(self):
                             summary += '--[' + str(upack._id) + '] Warning duplicate transaction not deleted because it has : ' + str(len(books)) + ' booking<br>'
                     else:
                         transIds[trans['transaction']] = upack._id
+                        if not upack.trans_id:
+                            upack.trans_id = trans['transaction']
+                            summary += '---- set transaction id: ' + str(upack.trans_id) + '<br>'
                 except:
                     value = sys.exc_info()[1]
                     summary += '--[' + str(upack._id) + '] Warning error on retrieving transaction: ' + str(value) + '<br>'
                     summary += '---- transaction: ' + str(upack.trans_info) + '<br>'
+            else:
+                if not upack.trans_id:
+                    upack.trans_id = str(upack._id)
+                    summary += '---- set transaction id: ' + str(upack.trans_id) + '<br>'
 
-            if (not package_deleted) and upack.status != 'Expired':
+            upack = yield upack.save()
+
+            if not package_deleted and upack.status != 'Expired':
                 credits += upack.remaining_credits
 
         if user.credits != credits:
@@ -381,23 +395,43 @@ def sync_package(self):
     self.finish()
 
 def package_migrate(self):
+    
+    # user_packages = yield UserPackage.objects.find_all()
+    # count = 0;
+    # summary = 'count ' + str(len(user_packages)) + '<br>'
+    # for upack in user_packages:
+        # if upack.package_id:
+        #     if not upack.package_name:
+        #         upack.package_name = upack.package_id.name
+        #     if not upack.package_fee:
+        #         upack.package_fee = upack.package_id.fee
+        #     if not upack.package_ft:
+        #         upack.package_ft = upack.package_id.first_timer
+        # if not upack.trans_id:
+        #     if upack.trans_info and not upack.is_free:
+        #         try:
+        #             trans = tornado.escape.json_decode(upack.trans_info.replace('"', '').replace("'",'"'));
+        #             if trans['transaction']:
+        #                 upack.trans_id = trans['transaction']
+        #             else:
+        #                 upack.trans_id = str(upack._id) + datetime.now().strftime('%Y%m%d%H%M%S')
+        #         except:
+        #             value = sys.exc_info()[1]
+        #             print('Package Migrate Error (' + str(upack._id) + '): ' + str(value))
+        #     else:    
+        #         upack.trans_id = str(upack._id) + datetime.now().strftime('%Y%m%d%H%M%S')
 
-    packages = yield Package.objects.find_all()
-    for pack in packages:
-        pack.first_timer = False
-        yield pack.save()
+        #     count += 1
+        #     summary += str(count) + ' : ' + str(upack._id) + ' - ' + upack.trans_id + '<br>'
 
-    user_packages = yield UserPackage.objects.find_all()
-    for upack in user_packages:
-        if upack.package_id:
-            upack.package_name = upack.package_id.name
-            upack.package_fee = upack.package_id.fee
-            upack.package_ft = upack.package_id.first_timer
-        if not upack.expire_date:
-            upack.expire_date = upack.create_at + timedelta(days=upack.expiration)
-        if not upack.status:
-            upack.status = 'Active'
-        yield upack.save()
+        # if not upack.expire_date:
+        #     upack.expire_date = upack.create_at + timedelta(days=upack.expiration)
+        # if not upack.status:
+        #     upack.status = 'Active'
+    #     yield upack.save()
+
+    # self.write(summary)
+    # self.finish()
 
     self.redirect('/')
 
