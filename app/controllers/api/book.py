@@ -5,12 +5,13 @@ from app.helper import send_email_booking, send_email_cancel, send_email_move, s
 from app.models.packages import UserPackage
 from app.models.users import User
 from bson.objectid import ObjectId
-
 from datetime import datetime, timedelta
+from app.helper import Lock
+from tornado import gen
+
 import tornado
 import json
 import sys
-
 import tornado.escape
 
 def find(self):
@@ -50,6 +51,11 @@ def find_one(self, id):
     self.finish()
 
 def create(self):
+
+    while Lock.is_locked('book.create'):
+        yield gen.sleep(0.01)
+
+    Lock.lock('book.create')
 
     data = tornado.escape.json_decode(self.request.body)
     if self.get_secure_cookie('loginUserID'):
@@ -177,6 +183,7 @@ def create(self):
         self.set_status(403)
         self.write('Please log in to your Electric account.')
     self.finish()
+    Lock.unlock('book.create')
 
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)

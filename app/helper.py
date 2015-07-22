@@ -6,6 +6,24 @@ import mandrill
 import sys
 import pytz
 
+class Lock(object):
+    locker = {}
+
+    @staticmethod
+    def is_locked(key):
+        if not key in Lock.locker:
+            Lock.locker[key] = False
+        return Lock.locker[key]
+
+    @staticmethod
+    def lock(key):
+        Lock.locker[key] = True
+    
+    @staticmethod
+    def unlock(key):
+        Lock.locker[key] = False
+
+
 class GMT8(tzinfo):
     def utcoffset(self, dt):
         return timedelta(hours=7) + self.dst(dt)
