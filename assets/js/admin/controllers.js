@@ -760,7 +760,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   }
 
   $scope.moveBike = function () {
-    if ($scope.selectedBike) {
+    if ($scope.selectedBike && !isNaN($scope.selectedBike) && parseInt($scope.selectedBike) > 0 && parseInt($scope.selectedBike) < 38) {
       var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
       $.Confirm(confirm_msg, function () {
         ClassService.update({ scheduleId: $scope.selectedBook._id }, { move_to_seat : $scope.selectedBike }, function () {
@@ -770,7 +770,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
         });
       });
     } else {
-      $.Alert('Please select bike to switch')
+      $.Notify({ content: 'Invalid bike number' });
     }
   }
 
@@ -1185,7 +1185,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
 
   $scope.switchBike = function () {
-    if ($scope.selectedBike) {
+    if ($scope.selectedBike && !isNaN($scope.selectedBike) && parseInt($scope.selectedBike) > 0 && parseInt($scope.selectedBike) < 38) {
       var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
       $.Confirm(confirm_msg, function () {
         ClassService.update({ scheduleId: $scope.selectedBook._id }, { move_to_seat : $scope.selectedBike }, function () {
@@ -1195,7 +1195,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         });
       });
     } else {
-      $.Alert('Please select bike to switch')
+      $.Notify({ content: 'Invalid bike number' });
     }
   }
   
@@ -1221,11 +1221,16 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
 
   $scope.bookWaitList = function () {
-    ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number, waitlist: true }, function () {
-      $scope.reload();
-    }, function (error) {
-      $.Notify({ content: error.data });
-    });
+
+    if (!isNaN($scope.selectedWaitList.seat_number) && parseInt($scope.selectedWaitList.seat_number) > 0 && parseInt($scope.selectedWaitList.seat_number ) < 38) {
+      ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number, waitlist: true }, function () {
+        $scope.reload();
+      }, function (error) {
+        $.Notify({ content: error.data });
+      });
+    } else {
+      $.Notify({ content: 'Invalid bike number' });    
+    }
   }
   
   $scope.removeFromWaitlist = function (wait, index) {
