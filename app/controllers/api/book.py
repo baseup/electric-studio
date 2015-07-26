@@ -52,11 +52,7 @@ def find_one(self, id):
 
 def create(self):
 
-    while Lock.is_locked('book.create'):
-        yield gen.sleep(0.01)
-
-    Lock.lock('book.create')
-
+    lock_key = None
     data = tornado.escape.json_decode(self.request.body)
     if self.get_secure_cookie('loginUserID'):
         try:
@@ -100,6 +96,12 @@ def create(self):
 
                     elif book_status == 'waitlisted':
                         seats.append(0)
+
+                    lock_key = 'book.create_' + data['sched_id']
+                    while Lock.is_locked(lock_key):
+                        yield gen.sleep(0.01)
+
+                    Lock.lock(lock_key)
                     
                     for seat in seats:
                         book = BookedSchedule(user_id=user._id, 
@@ -183,7 +185,8 @@ def create(self):
         self.set_status(403)
         self.write('Please log in to your Electric account.')
     self.finish()
-    Lock.unlock('book.create')
+    if lock_key and Lock.is_locked(lock_key): 
+        Lock.unlock(lock_key)
 
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)

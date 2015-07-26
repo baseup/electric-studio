@@ -11,9 +11,9 @@ class Lock(object):
 
     @staticmethod
     def is_locked(key):
-        if not key in Lock.locker:
-            Lock.locker[key] = False
-        return Lock.locker[key]
+        if key in Lock.locker:
+            return Lock.locker[key]
+        return False
 
     @staticmethod
     def lock(key):
@@ -21,7 +21,8 @@ class Lock(object):
     
     @staticmethod
     def unlock(key):
-        Lock.locker[key] = False
+        if key in Lock.locker:
+            del Lock.locker[key]
 
 
 class GMT8(tzinfo):
