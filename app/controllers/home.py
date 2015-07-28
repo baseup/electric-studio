@@ -52,6 +52,71 @@ def login(self):
         self.write('Account doesn\'t exist')
     self.finish()
 
+def user_migration(self):
+    i = 0
+    for line in open("user-accounts.csv"):
+        d = line.split(",")
+        i+=1
+        print(" i " + str(i) + " " + d[2])
+        user = yield User.objects.get(email=d[2])
+        if not user:
+            user = User()
+            fullname = d[0].split(" ")
+            s = len(fullname)
+            user.first_name = fullname[0]
+            user.last_name = fullname[s -1]
+            user.email = d[2]
+            if d[1]:
+                user.phone_number = d[1]
+            user.status = d[3]
+            if d[6]:
+                user.credits = int(d[6])
+            else:
+                user.credits = 0
+            user.password = bcrypt.encrypt("password")
+
+            user = yield user.save()
+
+            if d[4]:
+                if int(d[4]) > 0:
+                    package = Package.objects.get(first_timer=True)
+                    transaction = UserPackage(user_id=user._id)
+
+                    package = yield Package.objects.get(first_timer=True)
+                    transaction.package_id = package._id
+                    transaction.package_name = package.name
+                    transaction.package_fee = package.fee
+                    transaction.package_ft = package.first_timer
+                    transaction.credit_count = package.credits
+                    transaction.remaining_credits = package.credits
+                    transaction.expiration = package.expiration   
+                    yield transaction.save()
+        else:
+            transactions = yield UserPackage.objects.filter(user_id=user._id, status__ne='Expired').find_all()
+            
+            if len(transactions) > 0:
+                if d[6]:
+                    outstanding_credit = int(d[6])
+                    for transaction in enumerate(transactions):
+                        if 'remaining_credits' in transaction:
+                            print("arrived here")
+                            if outstanding_credit <= transaction.remaining_credits:
+                                transaction.remaining_credits = transaction.remaining_credits - outstanding_credit
+                            else:
+                                transaction.remaining_credits = 0
+                                outstanding_credit = outstanding_credit - transaction.remaining_credits
+                            yield transaction.save() 
+                    user.credits = int(d[6])
+                else:
+                    user.credits = 0
+            else:
+                user.credits = 0
+            yield user.save()
+        yield gen.sleep(0.005)
+    print("Total records " + str(i))
+    self.finish()
+
+
 def logout(self):
     self.clear_cookie('loginUser')
     self.finish()
