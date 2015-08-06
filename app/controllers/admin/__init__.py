@@ -172,7 +172,7 @@ def buy(self):
                 except:
                     value = sys.exc_info()[1]
                     str_value = str(value)
-                    if 'The index "caused" was violated ' in str_value:
+                    if 'The index ' in str_value and ' was violated ' in str_value:
                         self.redirect('/admin/#/accounts?pname=' + pack_name + '&u=' + user['first_name'] + ' ' + user['last_name'] + '&s=success')
                     else:
                         error = str_value
