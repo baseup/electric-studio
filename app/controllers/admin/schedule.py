@@ -5,7 +5,7 @@ from datetime import datetime
 from bson.objectid import ObjectId
 from motorengine import DESCENDING, ASCENDING
 from app.helper import send_email, send_email_cancel, send_email_booking, send_email_move
-
+from app.helper import Lock
 import tornado.escape
 
 def find(self):
@@ -75,6 +75,8 @@ def find(self):
             })
 
 def create(self):
+
+    lock_key = None
     data = tornado.escape.json_decode(self.request.body)
     special_date = datetime.strptime(data['date'], '%Y-%m-%d')
 
@@ -86,6 +88,13 @@ def create(self):
     obj_user_id = ObjectId(data['user_id'])
     ins_sched = yield InstructorSchedule.objects.get(ObjectId(data['sched_id']))
     if not 'status' in data or data['status'] == 'booked':
+
+        lock_key = 'book.create_' + data['sched_id']
+        while Lock.is_locked(lock_key):
+            yield gen.sleep(0.01)
+
+        Lock.lock(lock_key)
+
         total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched._id).count()
 
         if total_booked >= ins_sched.seats:
@@ -175,6 +184,9 @@ def create(self):
 
     self.render_json(sched)
 
+    if lock_key and Lock.is_locked(lock_key): 
+        Lock.unlock(lock_key)
+
 def update(self, id):
 
     booked_schedule = yield BookedSchedule.objects.get(id)
@@ -187,7 +199,21 @@ def update(self, id):
     data = tornado.escape.json_decode(self.request.body)
 
     if 'move_to_seat' in data:
+        lock_key = None
         sched = yield InstructorSchedule.objects.get(booked_schedule.schedule._id)
+
+        seat_reserved = yield BookedSchedule.objects.filter(status='booked', seat_number=data['move_to_seat'], schedule=sched._id).count()
+        if seat_reserved > 0:
+            self.set_status(400)
+            self.write('Seat unavailable or reserved')
+            self.finish()
+            return
+
+        lock_key = 'book.create_' + str(sched._id)
+        while Lock.is_locked(lock_key):
+            yield gen.sleep(0.01)
+
+        Lock.lock(lock_key)
 
         if 'waitlist' in data:
             booked_schedule.status = 'booked'
@@ -216,6 +242,9 @@ def update(self, id):
                             time=sched.start.strftime('%I:%M %p')), 'UTF-8'),
                 user=user
             )
+
+        if lock_key and Lock.is_locked(lock_key): 
+            Lock.unlock(lock_key)
 
     else: 
         special_date = datetime.strptime(data['date'], '%Y-%m-%d')
