@@ -202,18 +202,18 @@ def update(self, id):
         lock_key = None
         sched = yield InstructorSchedule.objects.get(booked_schedule.schedule._id)
 
+        lock_key = 'book.create_' + str(sched._id)
+        while Lock.is_locked(lock_key):
+            yield gen.sleep(0.01)
+
+        Lock.lock(lock_key)
+
         seat_reserved = yield BookedSchedule.objects.filter(status='booked', seat_number=data['move_to_seat'], schedule=sched._id).count()
         if seat_reserved > 0:
             self.set_status(400)
             self.write('Seat unavailable or reserved')
             self.finish()
             return
-
-        lock_key = 'book.create_' + str(sched._id)
-        while Lock.is_locked(lock_key):
-            yield gen.sleep(0.01)
-
-        Lock.lock(lock_key)
 
         if 'waitlist' in data:
             booked_schedule.status = 'booked'

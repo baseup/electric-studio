@@ -67,6 +67,13 @@ def create(self):
                     deduct_credits = 2
 
                 if user.credits > (deduct_credits - 1):    
+
+                    lock_key = 'book.create_' + data['sched_id']
+                    while Lock.is_locked(lock_key):
+                        yield gen.sleep(0.01)
+
+                    Lock.lock(lock_key)
+                    
                     seats = data['seats']
                     if user.credits < len(seats):
                         self.set_status(400)
@@ -96,12 +103,6 @@ def create(self):
 
                     elif book_status == 'waitlisted':
                         seats.append(0)
-
-                    lock_key = 'book.create_' + data['sched_id']
-                    while Lock.is_locked(lock_key):
-                        yield gen.sleep(0.01)
-
-                    Lock.lock(lock_key)
                     
                     for seat in seats:
                         book = BookedSchedule(user_id=user._id, 
