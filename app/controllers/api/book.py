@@ -52,7 +52,7 @@ def find_one(self, id):
 
 def create(self):
 
-    lock_key = None
+    locked_keys = []
     data = tornado.escape.json_decode(self.request.body)
     if self.get_secure_cookie('loginUserID'):
         try:
@@ -68,17 +68,29 @@ def create(self):
 
                 if user.credits > (deduct_credits - 1):    
 
-                    lock_key = 'book.create_' + data['sched_id']
-                    while Lock.is_locked(lock_key):
-                        yield gen.sleep(0.01)
-
-                    Lock.lock(lock_key)
-                    
                     seats = data['seats']
                     if user.credits < len(seats):
                         self.set_status(400)
                         self.write('Insuficient credits to booked ' + str(len(seats)) + ' bikes')
                         self.finish()
+                        return;
+
+                    seat_locked = []
+                    for s in seats:
+                        lock_key = 'book.create_' + data['sched_id'] + '_' + str(s)
+                        if Lock.is_locked(lock_key):
+                            seat_locked.append(s)
+                        else:
+                            Lock.lock(lock_key)
+                            locked_keys.append(lock_key)
+
+                    if len(seat_locked):
+                        self.set_status(403)
+                        msg = 'Bikes ' if len(seat_locked) > 1 else 'Bike '
+                        self.write('Unable to book a ride: '+ msg + str(seat_locked) +' unavailable');
+                        self.finish()
+                        for lk in locked_keys:
+                            Lock.unlock(lk)
                         return;
 
                     book_status = 'booked'
@@ -96,9 +108,11 @@ def create(self):
                                 seats_unavailable.append(seat_reserved.seat_number)
 
                             self.set_status(403)
-                            msg = 'Seats ' if len(seats_unavailable) > 1 else 'Seat '
-                            self.write('Unable to book a ride:'+ msg + str(seats_unavailable) +' unavailable');
+                            msg = 'Bikes ' if len(seats_unavailable) > 1 else 'Bike '
+                            self.write('Unable to book a ride: '+ msg + str(seats_unavailable) +' unavailable');
                             self.finish()
+                            for lk in locked_keys:
+                                Lock.unlock(lk)
                             return;
 
                     elif book_status == 'waitlisted':
@@ -186,8 +200,9 @@ def create(self):
         self.set_status(403)
         self.write('Please log in to your Electric account.')
     self.finish()
-    if lock_key and Lock.is_locked(lock_key): 
-        Lock.unlock(lock_key)
+    if len(locked_keys): 
+        for lk in locked_keys:
+            Lock.unlock(lk)
 
 def update(self, id):
     data = tornado.escape.json_decode(self.request.body)

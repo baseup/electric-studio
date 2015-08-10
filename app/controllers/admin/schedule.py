@@ -84,16 +84,11 @@ def create(self):
         self.set_status(400)
         self.write('Please select a rider')
         self.finish()
+        return
 
     obj_user_id = ObjectId(data['user_id'])
     ins_sched = yield InstructorSchedule.objects.get(ObjectId(data['sched_id']))
     if not 'status' in data or data['status'] == 'booked':
-
-        lock_key = 'book.create_' + data['sched_id']
-        while Lock.is_locked(lock_key):
-            yield gen.sleep(0.01)
-
-        Lock.lock(lock_key)
 
         total_booked = yield BookedSchedule.objects.filter(status='booked', date=special_date, schedule=ins_sched._id).count()
 
@@ -107,12 +102,24 @@ def create(self):
             self.set_status(400)
             self.write('Please select a bike')
             self.finish()
+            return
         else:
+
+            lock_key = 'book.create_' + data['sched_id'] + '_' + data['seat_number']
+            if Lock.is_locked(lock_key):
+                self.set_status(400)
+                self.write('Bike is unavailable or already being reserved')
+                self.finish()
+                return;
+
+            Lock.lock(lock_key)
+
             seat_reserved = yield BookedSchedule.objects.filter(status='booked', seat_number=data['seat_number'], schedule=ins_sched._id).count()
             if seat_reserved > 0:
                 self.set_status(400)
-                self.write('Seat unavailable or reserved')
+                self.write('Bike unavailable or reserved')
                 self.finish()
+                Lock.unlock(lock_key)
                 return
 
     deduct_credits = 1
@@ -129,6 +136,7 @@ def create(self):
         self.set_status(400)
         self.write('Insufficient credits')
         self.finish()
+        Lock.unlock(lock_key)
         return
 
     sched_status = 'booked'
@@ -202,9 +210,12 @@ def update(self, id):
         lock_key = None
         sched = yield InstructorSchedule.objects.get(booked_schedule.schedule._id)
 
-        lock_key = 'book.create_' + str(sched._id)
-        while Lock.is_locked(lock_key):
-            yield gen.sleep(0.01)
+        lock_key = 'book.create_' + str(sched._id) + '_' + str(data['move_to_seat'])
+        if Lock.is_locked(lock_key):
+            self.set_status(400)
+            self.write('Bike is unavailable or already being reserved')
+            self.finish()
+            return;
 
         Lock.lock(lock_key)
 
