@@ -5,3 +5,4 @@ py-bcrypt==0.4
 mandrill==1.0.57
 python-dateutil==2.4.1
 pytz
+pyyaml==3.11
