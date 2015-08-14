@@ -1,13 +1,4 @@
 base_url: http://localhost:8002
-
-users:
-    - email: test@email.com
-      password: '123456789'
-    - email: example@email.com
-      password: '123456789'
-    - email: sample@email.com
-      password: '123456789'
-
 bike_seats: 37
 
 

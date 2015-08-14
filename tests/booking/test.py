@@ -1,6 +1,14 @@
-from multiprocessing import Pool
+import sys, os
+sys.path.append(os.path.abspath('..'))
+sys.path.append(os.path.abspath('../..'))
+
+from concurrent.futures import ProcessPoolExecutor
 from requests import Session
 from datetime import datetime
+from app.models.users import User
+from helpers.db import connect_db
+from functools import partial
+from tornado import gen
 
 import json
 import yaml
@@ -11,14 +19,16 @@ class BookingTest:
     base_url     = ''
     release_date = datetime.now().strftime('%Y-%m-%d')
     sessions     = []
-    users        = []
     bike_seats   = []
     bookings     = []
+    io_loop      = None
+    offset       = 0
+    limit        = 0
 
     def __init__(self):
-        if len(sys.argv) > 1:
+        if len(sys.argv) > 3:
             try:
-                self.release_date = datetime.strptime(sys.argv[1], '%Y-%m-%d')
+                self.release_date = datetime.strptime(sys.argv[3], '%Y-%m-%d').strftime('%Y-%m-%d')
             except ValueError:
                 pass
 
@@ -26,26 +36,52 @@ class BookingTest:
             config = yaml.load(stream)
 
             self.base_url = config['base_url']
-            self.users = config['users']
             self.bike_seats = config['bike_seats']
 
-    def login_users(self):
-        for user in self.users:
+        self.io_loop = connect_db()
+        self.io_loop.run_sync(self.find_all_test_users)
+        self.io_loop.run_sync(self.schedule_bookings)
+
+    # return Future object
+    def find_all_test_users(self):
+        if len(sys.argv) > 1:
+            try:
+                self.limit = int(sys.argv[1])
+            except ValueError:
+                pass
+
+        if len(sys.argv) > 2:
+            try:
+                self.offset = int(sys.argv[2])
+            except ValueError:
+                pass
+
+        if self.limit > 0:
+            return User.objects.filter({'email': {'$regex':'^user\d+'}}).skip(self.offset).limit(self.limit).find_all(callback=self.login_test_users)
+        else:
+            return User.objects.filter({'email': {'$regex':'^user\d+'}}).find_all(callback=self.login_test_users)
+
+    def login_test_users(self, users):
+        for user in users:
+            user_dict = {'email': user.email, 'password': '1234'}
             session = Session()
 
-            response = session.post(self.base_url + '/user/login', params=user)
+            response = session.post(self.base_url + '/user/login', params=user_dict)
 
             try:
                 result = json.loads(response.content.decode('UTF-8'))
 
                 if 'success' in result and result['success']:
-                    self.sessions.append({'user': user, 'session': session})
+                    self.sessions.append({'user': user_dict, 'session': session})
 
-                    print('User ' + user['email'] + ' is now logged in')
+                    print('User ' + user_dict['email'] + ' is now logged in')
                 else:
-                    sys.exit('Error: Invalid account ' + user['email'] + ' ' + user['password'])
-            except ValueError:
-                sys.exit('Error: Invalid account ' + user['email'] + ' ' + user['password'])
+                    sys.exit('Error: Invalid account ' + user_dict['email'] + ' ' + user_dict['password'])
+            except Exception as error:
+                sys.exit('Error: Invalid account ' + user_dict['email'] + ' ' + user_dict['password'])
+                print(error)
+
+        self.setup_bookings()
 
     def setup_bookings(self):
         if len(self.sessions) < 1:
@@ -76,30 +112,24 @@ class BookingTest:
         except ValueError as e:
             sys.exit(e)
 
+    @gen.coroutine
     def schedule_bookings(self):
-        pool = Pool()
+        with ProcessPoolExecutor() as pool:
+            for booking in self.bookings:
+                for session in self.sessions:
+                    pool.submit(book, self.base_url, booking, session)
 
-        for booking in self.bookings:
-            for session in self.sessions:
-                result = pool.apply_async(self.book, args=(booking, session))
+def book(base_url, booking, session):
+    # send request payload
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    response = session['session'].post(base_url + '/api/book', data=json.dumps(booking), headers=headers)
 
-        pool.close()
-        pool.join()
+    info = '(ms=' + str(int(round(time.time() * 1000))) + ', email=' + session['user']['email'] + ', date=' + booking['date'] + ', seats=[' + ','.join(str(seat) for seat in booking['seats']) + '])'
 
-    def book(self, booking, session):
-        # send request payload
-        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        response = session['session'].post(self.base_url + '/api/book', data=json.dumps(booking), headers=headers)
-
-        info = '(ms=' + str(int(round(time.time() * 1000))) + ', email=' + session['user']['email'] + ', date=' + booking['date'] + ', seats=[' + ','.join(str(seat) for seat in booking['seats']) + '])'
-
-        if response.status_code == 200:
-            print('Success: Booking successful ' + info)
-        else:
-            print('Error: Booking failed' + info)
-            print(response.content.decode('UTF-8'))
+    if response.status_code == 200:
+        print('Success: Booking successful ' + info)
+    else:
+        print('Error: Booking failed' + info)
+        print(response.content.decode('UTF-8'))
 
 test = BookingTest()
-test.login_users()
-test.setup_bookings()
-test.schedule_bookings()
