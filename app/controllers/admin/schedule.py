@@ -204,6 +204,12 @@ def update(self, id):
         self.finish()
         return
 
+    if booked_schedule.status == 'cancelled' or booked_schedule.status == 'completed' or booked_schedule.status == 'missed':
+        self.set_status(400)
+        self.write("Unable to update: status is already " + booked_schedule.status)
+        self.finish()
+        return
+
     data = tornado.escape.json_decode(self.request.body)
 
     if 'move_to_seat' in data:
@@ -283,6 +289,12 @@ def destroy(self, id):
         missed = self.get_query_argument('missed')
         booked_schedule = yield BookedSchedule.objects.get(id)
         ref_status = booked_schedule.status
+
+        if ref_status == 'cancelled' or ref_status == 'completed' or ref_status == 'missed':
+            self.set_status(400)
+            self.write("Unable to update: status is already " + ref_status)
+            self.finish()
+            return
 
         booked_schedule.status = 'cancelled'
         if missed:

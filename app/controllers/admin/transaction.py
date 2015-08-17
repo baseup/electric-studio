@@ -100,6 +100,8 @@ def update(self, id):
             tran.expire_date = tran.create_at + timedelta(days=int(tran.expiration))
             if tran.status == 'Expired' and tran.expire_date.replace(tzinfo=gmt8) > now:
                 tran.status = 'Active'
+                tran.user_id.credits += tran.remaining_credits;
+                yield tran.user_id.save()
             tran = yield tran.save()
         if 'credit_change' in data:
             newCredits = int(data['credit_change'])

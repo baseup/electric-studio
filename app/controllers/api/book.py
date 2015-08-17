@@ -213,6 +213,13 @@ def update(self, id):
             ref_book_time = datetime.strptime('0:00','%H:%M')
             ref_sched_id = book.schedule._id
             ref_book_status = book.status
+
+            if book.status == 'cancelled' or book.status == 'completed' or book.status == 'missed':
+                self.set_status(403)
+                self.write("Unable to update: status is already " + book.status)
+                self.finish()
+                return
+
             if book.schedule:
                 ref_book_time = book.schedule.start
 
@@ -292,11 +299,5 @@ def update(self, id):
             self.write(str(value))
     else:
         self.set_status(403)
-
-    self.finish()
-
-def destroy(self, id):
-    del_package = yield Package.objects.get(id)
-    del_package.delete()
 
     self.finish()

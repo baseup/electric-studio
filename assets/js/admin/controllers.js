@@ -721,6 +721,9 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
           UserService.get({ userId: $scope.selectedUPack.user_id._id }, function (summary) {
             $scope.selectedAccount = summary;
           });
+          UserService.query({ deactivated: true}, function (users) {
+            $scope.users = users;
+          });
         }, function (error) { $.Alert(error.data); })
       });
     } else {
@@ -731,9 +734,13 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   $scope.extendPackageExpiry = function (userpackage) {
     $.Prompt('Extend expiration by how many days ?', function (days) {
       if (parseInt(days)) {
+
         TransactionService.update({ transactionId: userpackage._id}, { extend: parseInt(days) }, function () {
           UserService.get({ userId: userpackage.user_id._id }, function (summary) {
             $scope.selectedAccount = summary;
+          });
+          UserService.query({ deactivated: true}, function (users) {
+            $scope.users = users;
           });
         }, function (error) { $.Alert(error.data); })
       } else {
