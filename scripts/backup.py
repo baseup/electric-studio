@@ -23,16 +23,14 @@ def backup():
             os.path.curdir,
             output_dir))
 
-    if (os.path.isdir(output_dir)):
+    if not os.path.isdir(output_dir):
         sys.exit('Directory %s can\'t be found.' % output_dir)
 
-    output_dir = os.path.abspath(os.path.join(output_dir,
-            '%s__%s'% ( default['db'], today.strftime('%Y_%m_%d_%H%M%S'))
-            ))
+    commit = '%s__%s' % ( default['db'], today.strftime('%Y_%m_%d_%H%M%S'))
 
     print('Backing up %s from %s to %s' % (default['db'], default['host'], output_dir))
 
-    backup_output = subprocess.check_output(
+    output = subprocess.check_output(
     [
         'mongodump',
         '-host', '%s' % default['host'],
@@ -43,6 +41,20 @@ def backup():
         '-o', '%s' % output_dir
     ])
 
-    print(backup_output)
+    print(output)
+
+    os.chdir(output_dir)
+
+    try:
+        output = subprocess.check_output(["git", "add", "."])
+        print(output.decode('UTF-8'))
+
+        output = subprocess.check_output(["git", "commit", "-m", '%s' % commit])
+        print(output.decode('UTF-8'))
+
+        output = subprocess.check_output(["git", "push", "-u", "origin", "master"])
+        print(output.decode('UTF-8'))
+    except subprocess.CalledProcessError as e:
+        print(e.output.decode('UTF-8'))
 
 backup()
