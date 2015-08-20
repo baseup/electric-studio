@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from app.helper import send_email
 from app.helper import create_at_gmt8
 from motorengine import Q
+from bson.objectid import ObjectId
 import tornado
 import json
 
@@ -126,10 +127,22 @@ def update(self, id):
             scheds = yield BookedSchedule.objects.filter(user_id=user._id, status='booked').find_all()
             for i, sched in enumerate(scheds):
                 sched.status = 'cancelled';
+                deduct_credits = 1
+                if sched.schedule.type == 'Electric Endurance':
+                    deduct_credits = 2
                 if sched.user_package:
-                    sched.user_package.remaining_credits += 1
-                    yield sched.user_package.save()
-                user.credits += 1
+                    if len(sched.user_package) == 1:
+                        upack = yield UserPackage.objects.get(ObjectId(sched.user_package[0]))
+                        upack.remaining_credits += deduct_credits
+                        yield upack.save()
+                    else:
+                        upack1 = yield UserPackage.objects.get(ObjectId(sched.user_package[0]))
+                        upack2 = yield UserPackage.objects.get(ObjectId(sched.user_package[1])) 
+                        upack1.remaining_credits += 1
+                        upack2.remaining_credits += 1
+                        yield upack1.save()
+                        yield upack2.save()
+                user.credits += deduct_credits
                 sched = yield sched.save()
             user = yield user.save()
         elif 'deactivate' in data:
@@ -137,10 +150,23 @@ def update(self, id):
             scheds = yield BookedSchedule.objects.filter(user_id=user._id, status='booked').find_all()
             for i, sched in enumerate(scheds):
                 sched.status = 'cancelled';
+                deduct_credits = 1
+                if sched.schedule.type == 'Electric Endurance':
+                    deduct_credits = 2
                 if sched.user_package:
-                    sched.user_package.remaining_credits += 1
-                    yield sched.user_package.save()
-                user.credits += 1
+                    if len(sched.user_package) == 1:
+                        upack = yield UserPackage.objects.get(ObjectId(sched.user_package[0]))
+                        upack.remaining_credits += deduct_credits
+                        yield upack.save()
+                    else:
+                        upack1 = yield UserPackage.objects.get(ObjectId(sched.user_package[0]))
+                        upack2 = yield UserPackage.objects.get(ObjectId(sched.user_package[1])) 
+                        upack1.remaining_credits += 1
+                        upack2.remaining_credits += 1
+                        yield upack1.save()
+                        yield upack2.save()
+                    
+                user.credits += deduct_credits
                 sched = yield sched.save()
             user = yield user.save()
 
