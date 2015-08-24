@@ -717,6 +717,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     if ($scope.selectedCredits != undefined && $scope.selectedCredits != null) {
       var confirm_msg = 'Are you sure to change credit from (' + $scope.selectedUPack.remaining_credits + ') to ' + $scope.selectedCredits + '?';
       $.Confirm(confirm_msg, function () {
+        $.Alert('Updating credits from ' + $scope.selectedUPack.remaining_credits + ' to ' + $scope.selectedCredits + ' ...', true);
         TransactionService.update({ transactionId: $scope.selectedUPack._id}, { credit_change: parseInt($scope.selectedCredits) }, function () {
           UserService.get({ userId: $scope.selectedUPack.user_id._id }, function (summary) {
             $scope.selectedAccount = summary;
@@ -724,6 +725,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
           UserService.query({ deactivated: true}, function (users) {
             $scope.users = users;
           });
+          $.Alert('Successfully update credits');
         }, function (error) { $.Alert(error.data); })
       });
     } else {
@@ -734,7 +736,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   $scope.extendPackageExpiry = function (userpackage) {
     $.Prompt('Extend expiration by how many days ?', function (days) {
       if (parseInt(days)) {
-
+        $.Alert('Extending expiration ...', true);
         TransactionService.update({ transactionId: userpackage._id}, { extend: parseInt(days) }, function () {
           UserService.get({ userId: userpackage.user_id._id }, function (summary) {
             $scope.selectedAccount = summary;
@@ -742,9 +744,10 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
           UserService.query({ deactivated: true}, function (users) {
             $scope.users = users;
           });
+          $.Alert('Successfully extend package expiration');
         }, function (error) { $.Alert(error.data); })
       } else {
-        $.Alert('Please put valid number of days to extend')
+        $.Alert('Please put valid number of days to extend');
       }
     });
   }
@@ -770,8 +773,10 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     if ($scope.selectedBike && !isNaN($scope.selectedBike) && parseInt($scope.selectedBike) > 0 && parseInt($scope.selectedBike) < 38) {
       var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
       $.Confirm(confirm_msg, function () {
+        $.Alert('Switching bike from ' + $scope.selectedBook.seat_number + ' to ' + $scope.selectedBike + ' ...', true);
         ClassService.update({ scheduleId: $scope.selectedBook._id }, { move_to_seat : $scope.selectedBike }, function () {
           $scope.filterSchedDate($scope.selectedAccount);
+          $.Alert('Successfully moved bike');
         }, function (error) {
           $.Notify({ content: error.data });
         });
@@ -788,21 +793,25 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
   $scope.missedBooking = function () {
      $.Confirm('Are you sure on marking ' + $scope.selectedBook.user_id.first_name + ' ' + $scope.selectedBook.user_id.last_name + ' ride as MISSED ? (THIS CANNOT BE UNDONE)', function () {
+       $.Alert('Marking schedule as missed ...', true);
        ClassService.delete({ scheduleId: $scope.selectedBook._id, missed: true, notes:$scope.missedNotes }, function () {
+          $.Alert('Successfully marked as missed');
           $scope.filterSchedDate($scope.selectedAccount);
        });
      });
   }
 
   $scope.cancelBooking = function (booking) {
-    $.Confirm('Are you sure on cancelling ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride ?', function () {
-      $.Prompt('Notes on cancelling ' + booking.user_id.first_name + ' ride', function (notes) {
+    $.Confirm('Are you sure on canceling ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride ?', function () {
+      $.Prompt('Notes on canceling ' + booking.user_id.first_name + ' ride', function (notes) {
         if (notes && notes.length > 0) {
+          $.Alert('Canceling ...', true);
           ClassService.delete({ scheduleId: booking._id, notes: notes }, function () {
             $scope.filterSchedDate($scope.selectedAccount);
+            $.Alert('Successfully canceled');
           });
         } else {
-          $.Alert('Please provide a notes on cancelling schedules');
+          $.Alert('Please provide a notes on canceling schedules');
         }
       });
     });
@@ -1029,14 +1038,16 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     if (!$scope.isCompleted($scope.selectedBook.schedule)) {
       var index = $scope.spliceIndex;
       var notes = $scope.missedNotes;
-     $.Confirm('Are you sure on marking ' + $scope.selectedBook.user_id.first_name + ' ' + $scope.selectedBook.user_id.last_name + ' ride as MISSED ? (THIS CANNOT BE UNDONE)', function () {
-      ClassService.delete({ scheduleId: $scope.selectedBook._id, missed: true, notes: notes }, function () {
-        $scope.books.splice(index, 1);
-        UserService.query(function (users) {
-          $scope.users = users;
+      $.Confirm('Are you sure on marking ' + $scope.selectedBook.user_id.first_name + ' ' + $scope.selectedBook.user_id.last_name + ' ride as MISSED ? (THIS CANNOT BE UNDONE)', function () {
+        $.Alert('Marking ' + $scope.selectedBook.user_id.first_name + ' ' + $scope.selectedBook.user_id.last_name + ' ride as MISSED ...', true);
+        ClassService.delete({ scheduleId: $scope.selectedBook._id, missed: true, notes: notes }, function () {
+          $scope.books.splice(index, 1);
+          UserService.query(function (users) {
+            $scope.users = users;
+          });
+          $.Alert('Successfully marked as missed');
         });
       });
-     });
 
     } else {
       $.Notify({ content: 'Not allow to modify, This schedule is completed' });
@@ -1049,11 +1060,13 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       $.Confirm('Are you sure on cancelling ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride ?', function () {
         $.Prompt('Notes on cancelling ' + booking.user_id.first_name + ' ride', function (notes) {
           if (notes && notes.length > 0) {
+            $.Alert('Canceling ride ...', true);
             $scope.books.splice(index, 1);
             ClassService.delete({ scheduleId: booking._id, notes: notes }, function () {
               UserService.query(function (users) {
                 $scope.users = users;
               });  
+              $.Alert('Successfully canceled');
             });
           } else {
             $.Alert('Please provide a notes on cancelling schedules');
@@ -1195,8 +1208,10 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     if ($scope.selectedBike && !isNaN($scope.selectedBike) && parseInt($scope.selectedBike) > 0 && parseInt($scope.selectedBike) < 38) {
       var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
       $.Confirm(confirm_msg, function () {
+        $.Alert('Switching bike from ' + $scope.selectedBook.seat_number + ' to ' + $scope.selectedBike + ' ...', true);
         ClassService.update({ scheduleId: $scope.selectedBook._id }, { move_to_seat : $scope.selectedBike }, function () {
           $scope.reload();
+          $.Alert('Successfully switched bike');
         }, function (error) {
           $.Notify({ content: error.data });
         });
@@ -1230,10 +1245,13 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   $scope.bookWaitList = function () {
 
     if (!isNaN($scope.selectedWaitList.seat_number) && parseInt($scope.selectedWaitList.seat_number) > 0 && parseInt($scope.selectedWaitList.seat_number ) < 38) {
+      $.Alert('Moving waitlist to bike ' + $scope.selectedWaitList.seat_number + ' ...', true);
       ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number, waitlist: true }, function () {
         $scope.reload();
+        $.Alert('Successfully moved waitlist');
       }, function (error) {
         $.Notify({ content: error.data });
+        $('#alert-close-btn').click();
       });
     } else {
       $.Notify({ content: 'Invalid bike number' });    
@@ -1243,11 +1261,13 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   $scope.removeFromWaitlist = function (wait, index) {
     if (!$scope.isCompleted(wait.schedule)) {
       $.Confirm('Are you sure on cancelling ' + wait.user_id.first_name + ' waitlist ?', function () {
+        $.Alert('Canceling waitlist ...', true);
         $scope.waitList.splice(index, 1);
         ClassService.delete({ scheduleId: wait._id }, function () {
           UserService.query(function (users) {
             $scope.users = users;
           });
+          $.Alert('Successfully canceled waitlist');
         });
       });
     } else {
