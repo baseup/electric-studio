@@ -151,6 +151,7 @@ def buy(self):
                             transaction.credit_count = package.credits
                             transaction.remaining_credits = package.credits
                             transaction.expiration = package.expiration
+                            transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
                             transaction.trans_id = pp_tx
                             transaction.trans_info = str(data)
                             user.credits += package.credits
@@ -231,7 +232,9 @@ def ipn(self):
                             transaction.credit_count = package.credits
                             transaction.remaining_credits = package.credits
                             transaction.expiration = package.expiration
+                            transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
                             transaction.trans_info = str(data)
+                            transaction.trans_id = tx
                             user.credits += package.credits
 
                             transaction = yield transaction.save()

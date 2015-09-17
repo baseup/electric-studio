@@ -696,14 +696,13 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
 
   $scope.changeCredits = function (userPack) {
     TransactionService.get({ transactionId: userPack._id, book_count: true }, function(bookCount) {
-
-      var numCredits = userPack.credit_count - bookCount[0];
+      var numCredits = userPack.credit_count - bookCount['count'];
+      angular.element('#set-credits')[0].selectize.clearOptions()
       if (numCredits > 0) {
         $scope.selectedUPack = userPack;
         var selectize = angular.element('#set-credits')[0].selectize;
         selectize.settings.sortField = 'text';
         selectize.settings.sortDirection = 'desc';
-
         for (var i = numCredits; i >= 0 ; i--)
           selectize.addOption({ value: i, text: i });
         angular.element('#update-credits-modal').Modal();

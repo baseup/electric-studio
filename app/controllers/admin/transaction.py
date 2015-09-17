@@ -27,7 +27,7 @@ def find(self):
 def find_one(self, id):
     if self.get_argument('book_count'):
         book_count = (yield BookedSchedule.objects.filter(status__ne="cancelled", user_package=[str(id)]).count());
-        self.write(str(book_count))
+        self.write('{ "count" : ' + str(book_count) + ' }')
     self.finish();
 
 def create(self):
