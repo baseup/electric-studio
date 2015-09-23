@@ -106,6 +106,7 @@ routes.prefix('/api', [
     ('resource', '/schedule', 'api.schedules'),
     ('resource', '/book', 'api.book'),
     ('resource', '/history', 'api.history'),
+    ('resource', '/gift_certificate', 'api.gift_certificate'),
     # pos api
     ('resource', '/users', 'pos.users'),
     ('resource', '/packages', 'pos.packages'),

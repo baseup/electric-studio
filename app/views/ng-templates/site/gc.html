@@ -1,0 +1,55 @@
+
+  <div class="content">
+    <div class="wrapper">
+    <div class=""> <!-- center this div -->
+      <h2 class="h large primary">BUY Gift Card</h2>
+
+      <form id="payForm" ng-controller="RatesCtrl" action="https://www.paypal.com/ph/cgi-bin/webscr" method="post">
+
+      	<label>To: </label>
+      	<input type="text" placeholder="Receiver Email" name="receiver_email"/>
+      	<label>From:</label>
+      	<input type="text" placeholder="Sender Email" name="sender_email"/>
+      	<label>Number of Rides:</label>
+      		<select id="" name="package_id" ng-model="gcPackage" >
+      			<option ng-repeat="package in packages" value="{{ package }}"> {{ package.credits }} Ride{{ package.credits > 1 ? 's' : '' }}</option>
+      		</select>
+      	<label>Message: (optional) </label>
+      	<textarea></textarea>
+      	<label>Purchase a gift card</label>
+      	
+        <input type="hidden" name="cmd" value="_xclick"> 
+        <input type="hidden" name="no_note" value = "0">
+        <input type="hidden" name="bn" value="PP-BuyNowBF">
+        <input type="hidden" name="rm" value="2">
+        <input type="hidden" name="custom" value="{{ loginUser._id }}">
+        <input type="hidden" name="business" value="electric@electricstudio.ph">
+        <input type="hidden" name="item_name" value="TESTING">
+        <input type="hidden" name="item_number" value="{{ gcPackage._id }}">
+        <input type="hidden" name="amount" value="{{ gcPackage.fee }}">
+        <input type="hidden" name="currency_code" value="PHP">
+        <input type="hidden" name="ipn_notification_url" value="">
+        <input type="hidden" name="return" value="">
+        <input type="hidden" name="cancel_return" value="">
+        <input type="hidden" name="cbt" value="Return to Electric Studio">
+
+      	<input  class="" ng-click="buyGC($event, $index)" value ="Email to me" type = "button">
+      	<input  class="" ng-click="buyGC($event, $index)" value ="Email to recipient" type = "button">
+      </form>    	
+
+    </div>
+    </div>
+  </div>
+  
+  <div id="rates-section" class="content bg-gray parts-5 rates-info" ng-controller="RatesCtrl">
+    <div class="wrapper">
+      <span class="h small primary center" ng-show="loadingPackages">
+        <i class="fa fa-spinner"></i> Loading packages ... 
+      </span>
+
+      <div class="faq">
+        <p>You must purchase an Electric Studio package before you can reserve a spot in class. Package expiration begins upon purchase. A mandatory waiver must be signed by a parent/guardian for riders under the age of 18. First Timer Packages may only be purchased once per rider. All sales are final.</p>
+        <a class="link" href="#/faq">Faqs</a>
+      </div>  
+    </div>  
+  </div>

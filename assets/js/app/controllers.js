@@ -21,7 +21,8 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
         $scope.loginUser = user;
       }
     });
-  } 
+  }
+
 
   if (!$scope.loginUser && window.localStorage.getItem('login-user')) {
     $scope.reloadUser();
@@ -575,7 +576,37 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
       });
     });
   }
+
+  $scope.buyGC = function (event, index) {
+    $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
+         angular.element('#payForm').submit();
+        // var url ="https://www.paypal.com/ph/cgi-bin/webscr";
+        // var params = $.param({ cmd:"",
+        //                       no_note:"",
+        //                       bn:"PP-BuyNowBF",
+        //                       rm:"2",
+        //                       custom:"",
+        //                       business:"electric@electricstudio.ph",
+        //                       item_name:"",
+        //                       item_number: $scope.gcPackage._id,
+        //                       amount: $scope.gcPackage.fee,
+        //                       currency_code:"PHP",
+        //                       ipn_notification_url:"",
+        //                       return:"",
+        //                       cancel_return:"",
+        //                       cbt: ""
+        //                       });
+        // $http({
+        //     method: 'POST',
+        //     url: url,
+        //     data: params,
+        //     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        // })
+    });
+  }
 });
+
+
 
 ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService) {
 

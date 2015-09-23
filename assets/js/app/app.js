@@ -77,6 +77,10 @@ app.config(function ($routeProvider, $httpProvider) {
     '/history': {
       templateUrl: '/site/history',
       controller: 'SiteCtrl'
+    },
+    '/gift-cards': {
+      templateUrl: '/site/gc',
+      controller: 'SiteCtrl'
     }
   };
 

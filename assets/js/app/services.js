@@ -40,6 +40,7 @@ services.factory('UserService', function($resource) {
   });
 });
 
+
 services.factory('ForgotPasswordService', function($resource) {
   return $resource('/fpass/:user', {}, {
     send_email: {
@@ -117,6 +118,27 @@ services.factory('UserPackageService', function($resource) {
     query: {
       method: 'GET',
       isArray: true
+    }
+  });
+});
+
+services.factory('GiftCertificateService', function($resource) {
+  return $resource('/api/gift_certificate/:gcId', {}, {
+    get: {
+      method: 'GET',
+      isArray: false
+    },
+    create: {
+      method: 'POST',
+      isArray: false
+    },
+    update: {
+      method: 'PUT',
+      isArray: false
+    },
+    delete: {
+      method: 'DELETE',
+      isArray: false
     }
   });
 });
