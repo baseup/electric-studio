@@ -528,7 +528,11 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
   var scrollableView = angular.element('#rates-section').offset().top;
   angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
 
+  $scope.ipn_notification_url = '';
+  $scope.return_url = '';
+  $scope.cancel_return_url = '';
   var qstring = $location.search();
+
   if (qstring.s == 'error') {
     $.Alert('Transaction failed');
     $location.search('s', null);
@@ -576,34 +580,59 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
       });
     });
   }
+  $scope.selectGCPackage = function(){
 
-  $scope.buyGC = function (event, index) {
-    $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
-         angular.element('#payForm').submit();
-        // var url ="https://www.paypal.com/ph/cgi-bin/webscr";
-        // var params = $.param({ cmd:"",
-        //                       no_note:"",
-        //                       bn:"PP-BuyNowBF",
-        //                       rm:"2",
-        //                       custom:"",
-        //                       business:"electric@electricstudio.ph",
-        //                       item_name:"",
-        //                       item_number: $scope.gcPackage._id,
-        //                       amount: $scope.gcPackage.fee,
-        //                       currency_code:"PHP",
-        //                       ipn_notification_url:"",
-        //                       return:"",
-        //                       cancel_return:"",
-        //                       cbt: ""
-        //                       });
-        // $http({
-        //     method: 'POST',
-        //     url: url,
-        //     data: params,
-        //     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        // })
-    });
+    var jsonPackage = JSON.parse($scope.gcPackage);
+    $('input#item_name').val(jsonPackage.name);
+    $('input#item_number').val(jsonPackage._id);
+    $('input#amount').val(jsonPackage.fee);
+
   }
+
+  $scope.buyGC = function (arg) {
+
+    var senderIsReceiver = false;
+    if(arg == 'confirm_buy'){
+      if($scope.receiverEmail){
+          // Do other validations like email validations
+        $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
+            
+          console.log($scope.gcPackage);
+            var jsonPackage = JSON.parse($scope.gcPackage);
+
+            var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + jsonPackage._id + 
+                                        "&success=True&email=" + $scope.receiverEmail + "&message=" + $scope.gcMessage +
+                                        "&senderIsReceiver="+ senderIsReceiver + "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver; 
+            var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + jsonPackage._id + "&success=True&email=" + $scope.receiverEmail + 
+                          "&message=" + $scope.gcMessage +"&senderIsReceiver="+ senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver; 
+            var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False";
+      
+            console.log(ipn_notification_url);
+            console.log(return_url);
+
+            $('input#ipn_notification_url').val(ipn_notification_url);
+            $('input#return').val(return_url);
+            $('input#cancel_return').val(cancel_return);
+
+            angular.element('#payForm').submit();
+        });          
+      }else{
+        $.Alert('Please enter valid recipient email.');
+      }     
+    }else{
+      // Check if required fields are present
+      if(arg =='sender'){ 
+        senderIsReceiver = true;
+      }
+
+      if($scope.gcPackage && $scope.gcReceiver && $scope.gcSender){
+        angular.element('#enter-email-modal').Modal();
+      }else{
+        $.Alert('Please complete your form');  
+      }
+    }
+  }
+
 });
 
 

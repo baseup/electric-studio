@@ -71,13 +71,14 @@ class UserProduct(Model):
 class GiftCertificate(Model):
     __collection__ = 'gift_certificates'
     # __lazy__ = False
-    code = StringField(required=True)
+    code = StringField(required=True, unique=True)
     pin = IntField(required=True)
     package_id = ReferenceField(reference_document_type=Package, required=False)
     amount = DecimalField()
     trans_info = StringField(default=None)
-    sender_email = EmailField(required=True, unique=True)
-    receiver_email = EmailField(required=True, unique=True)
+    sender_name = StringField(required=True)
+    receiver_name = StringField(required=True)
+    receiver_email = EmailField(required=True)
     message = StringField()
 
     create_at = DateTimeField(auto_now_on_insert=True)

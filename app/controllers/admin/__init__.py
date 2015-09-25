@@ -1,8 +1,8 @@
 from app.models.admins import Admin
 from passlib.hash import bcrypt
-from app.models.packages import Package, UserPackage
+from app.models.packages import Package, UserPackage, GiftCertificate
 from app.models.users import User
-from app.helper import send_email_verification, send_email
+from app.helper import send_email_verification, send_email, code_generator
 from bson.objectid import ObjectId
 from datetime import timedelta
 from app.models.access import AccessType
@@ -15,6 +15,7 @@ import tornado
 import json
 import base64
 import urllib.parse
+import string
 
 def index(self):
     self.render('admin', user=self.get_secure_cookie('admin'))
@@ -186,6 +187,81 @@ def buy(self):
             self.redirect('/admin/#/accounts?s=error&msg=' + error)
     else:
         self.redirect('/admin/#/accounts')
+
+def buy_gc(self):
+
+    success = self.get_argument('success')
+    if success == 'True':
+        pid = self.get_argument('pid');
+        package = yield Package.objects.get(pid)
+
+        pp_tx = self.get_query_argument('tx')
+        pp_st = self.get_query_argument('st')
+        pp_amt = self.get_query_argument('amt')
+        pp_cc = self.get_query_argument('cc')
+        pp_cm = self.get_query_argument('cm')
+        pp_item = self.get_query_argument('item_number')
+
+        try :
+            gift_certificate = GiftCertificate()
+
+            code = code_generator()
+            pin = int(code_generator(4, string.digits))
+            gift_certificate.code = code
+            gift_certificate.pin = pin
+            gift_certificate.receiver_email = self.get_argument('email')
+            gift_certificate.sender_name = self.get_argument('sender_name')
+            gift_certificate.receiver_name = self.get_argument('receiver_name')
+
+            if package:
+                gift_certificate.package_id = package._id
+                gift_certificate.amount = package.fee
+
+            trans_info = {
+                'transaction' : pp_tx,
+                'status' : pp_st,
+                'amount' : pp_amt,
+                'curency' : pp_cc,
+                'cm' : pp_cm,
+                'item_number' : pp_item,
+                'paypal_data' : ''
+            }
+
+            gift_certificate.trans_info = str(trans_info)
+            gift_certificate.receiver_email = self.get_argument('email')
+
+            print(trans_info)
+
+            message = self.get_argument('message')
+            if message:
+                gift_certificate.message = message
+
+            gift_certificate = yield gift_certificate.save()
+            self.render_json(gift_certificate.to_dict())
+
+        except :
+            value = sys.exc_info()[1]
+            self.set_status(403)
+            self.write(str(value))
+            self.finish()
+
+
+def ipn_gc(self):
+
+    data = tornado.escape.url_unescape(self.request.body)
+    ipn_data = urllib.parse.parse_qs(data)
+    for k in ipn_data.keys():
+        ipn_data[k] = ipn_data[k][0]
+        if ipn_data[k]: 
+            ipn_data[k] = ipn_data[k].replace("'",'')
+
+    tx = ipn_data['txn_id']
+    uid = ipn_data['transaction_subject']
+    pid = ipn_data['item_number']
+
+    print('IPN ')
+    print(data)
+
 
 def ipn(self):
 
