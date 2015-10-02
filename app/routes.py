@@ -49,6 +49,7 @@ routes.get('/', 'home.index')
 routes.get('/user_migration ', 'home.user_migration')
 routes.get('/buy', 'home.buy')
 routes.post('/buy', 'home.buy')
+routes.post('/redeem_gc', 'home.redeem_gc')
 routes.get('/verify', 'home.verify')
 routes.post('/verify', 'home.verify')
 routes.get('/fpass', 'home.forgot_password')
@@ -58,6 +59,7 @@ routes.post('/user/login', 'home.login')
 routes.get('/user/logout', 'home.logout')
 routes.post('/upload/instructor', 'upload.instructor')
 routes.post('/upload/images', 'upload.images')
+
 
 routes.get('/sync_user_packages', 'home.sync_package')
 

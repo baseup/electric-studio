@@ -81,6 +81,10 @@ app.config(function ($routeProvider, $httpProvider) {
     '/gift-cards': {
       templateUrl: '/site/gc',
       controller: 'SiteCtrl'
+    },
+    '/redeem-gc': {
+      templateUrl: '/site/redeem-gc',
+      controller: 'SiteCtrl'
     }
   };
 

@@ -1,0 +1,90 @@
+<div ng-controller="GiftCardCtrl">
+
+  <div class="grid content pad">
+    <div class="grid__item">
+    <div class="packages box--white box--bordered">
+      <div class="box__header align--middle cf pad">
+        <span class="label label--inline">Gift Cards</span>
+        <!-- <button ng-click="showAddPackage()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-package">Add Package</button> -->
+      </div>
+
+      <div class="class-search pad cf">
+        <span class="label">Search</span>
+        <div class="bp-md-one-third float--left space--bottom space--right">
+          <input class="text-input" ng-model="searchTrans" placeholder="Enter Name, Email">
+        </div>
+        <div class="float--left">
+        <button  ng-click="showRedeemGCForm()" class="btn btn--small btn--primary space--right" data-modal-toggle="redeem-gc">Redeem GC</button>
+        </div>
+      </div>
+
+      <div class="pad" ng-show="!isUpdatePackage">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Transaction</th>
+              <th>Sender</th>
+              <th>Receiver</th>
+              <th>Email</th>
+              <th>Package Name</th>
+              <th>Credits</th>
+              <th>Price</th>
+              <th>Date</th>
+              <th>Redeemed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="transaction in transactions | search:'trans_info.transaction,transaction.receiver_name,transaction.sender_name, transaction.receiver_email':searchTrans">
+              <td>{{ getTransId(transaction) }}</td>
+              <td>{{ transaction.sender_name }}</td>
+              <td>{{ transaction.receiver_name }} </td>
+              <td>{{ transaction.receiver_email}}</td>
+              <td>{{ transaction.package_id }} </td>
+              <td>{{ transaction.credits }} Ride<span ng-if="transaction.credits > 1">s</span></td>
+              <td>
+                <small>PHP</small>
+                <span ng-if="transaction.is_free">0.00</span> 
+                <span ng-if="!transaction.is_free">{{ transaction.amount }}</span>
+              </td>
+              <td>{{ transaction.create_at }}</td>
+              <td><span ng-if="!transaction.is_redeemed">NO</span><span ng-if="transaction.is_redeemed">YES</span></td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+<!--       <ul class="pagination-nav nav nav--block text--center">
+        <li><a ng-click="prevPage($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
+        <li><a ng-click="nextPage($event)">Next <i class="fa fa-angle-right"></i></a></li>
+      </ul> -->
+
+    </div>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="redeem-gc" id="redeem-gc-modal">
+    <div class="modal__box pad">
+      <span id="close-add-account" class="close-btn modal-close">X</span>
+      <h3 class="h medium gray">Redeem GC</h3>
+      
+      <div class="float--left space--bottom">
+        <span class="label">Code</span>
+        <input ng-model="gcCode" class="text-input">
+      </div>
+      <div class="float--right space--bottom">
+        <span class="label">Pin</span>
+        <input ng-model="gcPin" type="number" ng-maxlength="4" class="text-input">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Account</span>
+        <select id="gc-account-selector" ng-model="gcAccount" class="select">
+              <option selected value="">Account</option>
+              <option ng-repeat="account in accounts" value="{{ account._id }}">{{ account.first_name }} {{ account.last_name }}</option>
+            </select>
+      </div>
+      <button type="button" ng-click="redeemGC()" class="btn btn--primary btn--medium float--right space--top">Redeem</button>
+    </div>
+  </div>
+
+</div>

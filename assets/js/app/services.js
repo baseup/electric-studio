@@ -59,6 +59,15 @@ services.factory('EmailVerifyService', function($resource) {
   });
 });
 
+services.factory('GCRedeemService', function($resource) {
+  return $resource('/redeem_gc', {}, {
+    redeem: {
+      method: 'POST',
+      isArray: false
+    }
+  });
+});
+
 services.factory('AuthService', function (UserService) {
   return {
     _user: null,
@@ -122,26 +131,6 @@ services.factory('UserPackageService', function($resource) {
   });
 });
 
-services.factory('GiftCertificateService', function($resource) {
-  return $resource('/api/gift_certificate/:gcId', {}, {
-    get: {
-      method: 'GET',
-      isArray: false
-    },
-    create: {
-      method: 'POST',
-      isArray: false
-    },
-    update: {
-      method: 'PUT',
-      isArray: false
-    },
-    delete: {
-      method: 'DELETE',
-      isArray: false
-    }
-  });
-});
 
 services.factory('ScheduleService', function($resource) {
   return $resource('/api/schedule/:scheduleId', {}, {

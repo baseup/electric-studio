@@ -58,6 +58,10 @@ app.config(function ($routeProvider, $httpProvider) {
     '/settings': {
       templateUrl: '/admin/settings',
       controller: 'AdminCtrl'
+    },
+    '/gift-cards': {
+      templateUrl: '/admin/gc',
+      controller: 'AdminCtrl'
     }
   };
 

@@ -14,6 +14,7 @@
       		<select ng-change="selectGCPackage()" name="package_id" ng-model="gcPackage" >
       			<option ng-repeat="package in packages" value="{{ package }}"> {{ package.credits }} Ride{{ package.credits > 1 ? 's' : '' }}</option>
       		</select>
+        <label>Value: {{ gcAmount }}</label> 
       	<label>Message: (optional) </label>
       	<textarea ng-model="gcMessage"></textarea>
       	<label>Purchase a gift card</label>
@@ -23,7 +24,8 @@
         <input type="hidden" id="bn" name="bn" value="PP-BuyNowBF">
         <input type="hidden" id="rm" name="rm" value="2">
         <input type="hidden" id="custom" name="custom" value="">
-        <input type="hidden" id="business" name="business" value="ogsmelvin05-facilitator@gmail.com"> <!-- electric@electricstudio.ph -->
+        <input type="hidden" id="business" name="business" value="ogsmelvin05-facilitator@gmail.com"> 
+        <!-- electric@electricstudio.ph -->
         <input type="hidden" id="item_name" name="item_name" value="">
         <input type="hidden" id="item_number" name="item_number" value="">
         <input type="hidden" id="amount" name="amount" value="">
@@ -39,15 +41,14 @@
       <div class="modal" data-modal="enter-email" id="enter-email-modal">
         <div class="modal__box pad">
           <span class="close-btn modal-close">X</span>
-          <h3 class="h--medium brand-color space--bottom">Please enter email address:</h3>
+          <h3 ng-if="!senderIsReceiver" class="h--medium brand-color space--bottom">Please enter {{ gcReceiver }}'s email address:</h3>
+          <h3 ng-if="senderIsReceiver" class="h--medium brand-color space--bottom">Please enter your email address:</h3>
           <span class="label">Email:</span>
           <input ng-model="receiverEmail" class="text-input">
           <a class="btn btn--primary btn--medium space--top modal-close" ng-click="buyGC('confirm_buy')"> SEND GC </a>
         </div>
       </div>  
-      
       </form>    	
-
     </div>
     </div>
   </div>

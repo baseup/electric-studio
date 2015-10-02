@@ -523,7 +523,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
   }
 });
 
-ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, PackageService) {
+ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, PackageService, GCRedeemService) {
   
   var scrollableView = angular.element('#rates-section').offset().top;
   angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
@@ -536,6 +536,12 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
   if (qstring.s == 'error') {
     $.Alert('Transaction failed');
     $location.search('s', null);
+  }else{
+    if (qstring.msg){
+      $.Alert(qstring.msg);
+      $location.search('s', null);
+      $location.search('msg', null);
+    }
   }
 
   $scope.loadingPackages = true;
@@ -580,36 +586,66 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
       });
     });
   }
+
+  $scope.redeemGC = function(){
+
+    if (!$scope.loginUser) {
+      $.Alert('Please log in to your Electric account.');
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+      angular.element('.login-toggle').click();
+      return;
+    }
+
+    if ($scope.gcPin && $scope.gcCode) {
+
+      var redeemSuccess = function () {
+        $.Alert('GC redeemed.');
+      }
+
+      var redeemFailed = function (error) {
+        $.Alert('Error ' + error);
+      }
+    
+      var data = {}
+      data.code = $scope.gcCode;
+      data.pin = $scope.gcPin;
+
+      GCRedeemService.redeem(data).$promise.then(redeemSuccess, redeemFailed);
+
+    }else{
+      $.Alert('Please complete your form');  
+    }    
+  }
+
   $scope.selectGCPackage = function(){
 
     var jsonPackage = JSON.parse($scope.gcPackage);
     $('input#item_name').val(jsonPackage.name);
     $('input#item_number').val(jsonPackage._id);
     $('input#amount').val(jsonPackage.fee);
+    $scope.gcAmount = jsonPackage.fee;
 
   }
 
   $scope.buyGC = function (arg) {
 
-    var senderIsReceiver = false;
     if(arg == 'confirm_buy'){
       if($scope.receiverEmail){
           // Do other validations like email validations
         $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
             
-          console.log($scope.gcPackage);
+            if ($scope.message == undefined){
+              $scope.message = ""
+            }
             var jsonPackage = JSON.parse($scope.gcPackage);
 
             var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + jsonPackage._id + 
                                         "&success=True&email=" + $scope.receiverEmail + "&message=" + $scope.gcMessage +
-                                        "&senderIsReceiver="+ senderIsReceiver + "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver; 
+                                        "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver; 
             var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + jsonPackage._id + "&success=True&email=" + $scope.receiverEmail + 
-                          "&message=" + $scope.gcMessage +"&senderIsReceiver="+ senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver; 
+                          "&message=" + $scope.gcMessage +"&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver; 
             var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False";
       
-            console.log(ipn_notification_url);
-            console.log(return_url);
-
             $('input#ipn_notification_url').val(ipn_notification_url);
             $('input#return').val(return_url);
             $('input#cancel_return').val(cancel_return);
@@ -622,11 +658,20 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
     }else{
       // Check if required fields are present
       if(arg =='sender'){ 
-        senderIsReceiver = true;
+        $scope.senderIsReceiver = true;
+      }else{
+        $scope.senderIsReceiver = false;
       }
 
       if($scope.gcPackage && $scope.gcReceiver && $scope.gcSender){
-        angular.element('#enter-email-modal').Modal();
+        if(!$scope.loginUser || arg=='receiver'){
+          
+          angular.element('#enter-email-modal').Modal();
+        }else{
+          
+          $scope.receiverEmail = $scope.loginUser.email;
+          $scope.buyGC('confirm_buy');
+        }
       }else{
         $.Alert('Please complete your form');  
       }

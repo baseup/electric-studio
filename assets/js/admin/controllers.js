@@ -309,6 +309,8 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     }
   }
 
+
+
   $scope.showAddAccount = function () {
     angular.element('#add-account-modal').Modal();
   }
@@ -2049,6 +2051,93 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
     });
   }
 
+});
+
+ctrls.controller('GiftCardCtrl', function ($scope, TransactionService, PackageService, GiftCardService, UserService) {
+
+  $scope.currentPage = 0;
+  $scope.hasNext = true;
+  $scope.transactions = GiftCardService.query();
+  
+  $scope.transactions.$promise.then(function (data) {
+    $scope.transactions = data;
+  });
+
+  UserService.query({ deactivated: true}, function (accounts) {
+    $scope.accounts = accounts;
+    var select = angular.element('#gc-account-selector')[0].selectize;
+    angular.forEach(accounts, function (account) {
+      if (account) select.addOption({ value: account._id, text: account.first_name+ ' ' + account.last_name });
+    });
+  });
+
+  $scope.getTransId = function (pac) {
+    if (pac.trans_info) {
+      if (!(pac.trans_info instanceof Object)) {
+        try {
+          var transInfo = pac.trans_info.replace(/\"/g, '');
+          var transInfo = transInfo.replace(/'/g, '"');
+          var trans = JSON.parse(transInfo);
+          pac.trans_info = trans;
+          return trans.transaction;
+        } catch (e) {
+          return 'Err: Transaction ID';
+        }
+      } else {
+        return pac.trans_info.transaction;
+      }
+    }
+    return null;
+  }
+
+    $scope.prevPage = function (event) {
+      if ($scope.currentPage > 0) {
+        $scope.currentPage -=1;    
+        $scope.transactions = TransactionService.query({ page : $scope.currentPage });
+        $scope.transactions.$promise.then(function (data) {
+          $scope.transactions = data;
+        });
+      }
+      event.preventDefault();
+    }
+
+    $scope.nextPage = function (event) {    
+      $scope.transactions = TransactionService.query({ page : $scope.currentPage+1 });
+      $scope.transactions.$promise.then(function (data) {
+        if(data.length > 0){
+          $scope.transactions = data;
+          $scope.currentPage += 1; 
+        }
+      }); 
+      event.preventDefault();
+    }
+
+  $scope.showRedeemGCForm = function () {
+    angular.element('#redeem-gc-modal').Modal();
+  }
+
+  $scope.redeemGC = function(){
+
+    if ( $scope.gcCode && $scope.gcPin && $scope.gcAccount){
+      var data = {
+        code : $scope.gcCode,
+        pin : $scope.gcPin,
+        user_id : $scope.gcAccount
+      }
+
+      var redeemSuccess = function () {
+        $.Alert('Success')
+      }
+
+      var redeemFail = function (error) {
+        $.Alert(error.data);
+      }
+      GiftCardService.redeem({ gcCode: $scope.gcCode }, data ).$promise.then(redeemSuccess, redeemFail);
+    }else{
+      $.Alert('Complete your form')
+    }
+  }
+  
 });
 
 ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, PackageService) {

@@ -2,7 +2,7 @@ from app.models.admins import Admin
 from passlib.hash import bcrypt
 from app.models.packages import Package, UserPackage, GiftCertificate
 from app.models.users import User
-from app.helper import send_email_verification, send_email, code_generator
+from app.helper import send_email_verification, send_email, code_generator, send_email_gc
 from bson.objectid import ObjectId
 from datetime import timedelta
 from app.models.access import AccessType
@@ -212,6 +212,7 @@ def buy_gc(self):
             gift_certificate.receiver_email = self.get_argument('email')
             gift_certificate.sender_name = self.get_argument('sender_name')
             gift_certificate.receiver_name = self.get_argument('receiver_name')
+            gift_certificate.pptx = pp_tx
 
             if package:
                 gift_certificate.package_id = package._id
@@ -230,21 +231,86 @@ def buy_gc(self):
             gift_certificate.trans_info = str(trans_info)
             gift_certificate.receiver_email = self.get_argument('email')
 
-            print(trans_info)
 
             message = self.get_argument('message')
             if message:
                 gift_certificate.message = message
 
             gift_certificate = yield gift_certificate.save()
-            self.render_json(gift_certificate.to_dict())
+
+            receiver = {
+                'email' : self.get_argument('email'),
+                'name' : self.get_argument('receiver_name')
+            }
+
+            gc = gift_certificate.to_dict()
+            site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+            content = str(self.render_string('emails/gc', gc=gc, site=site_url, package=package.name), 'UTF-8')
+            yield self.io.async_task(send_email_gc, user=receiver, content=content, subject='Gift Card')
+            self.redirect('/#/gift-cards?s=success&msg=Success')
 
         except :
             value = sys.exc_info()[1]
             self.set_status(403)
-            self.write(str(value))
-            self.finish()
+            self.redirect('/#/gift-cards?s=error&msg=' + str(value))
+    else:
+        self.redirect('/#/gift-cards?s=success&msg=Cancelled')            
 
+
+def redeem_gc(self):
+    
+    if not self.get_secure_cookie('loginUserID'):
+        self.set_status(403)
+        self.write('Please log in to your Electric account.')
+        self.redirect('/#/rates?s=error')
+    else:
+        try :
+            code = self.get_argument('code')
+            pin = self.get_argument('pin')
+            gift_certificates = yield GiftCertificate.objects.filter(code=code, pin=pin).find_all()
+
+            if gift_certificates:
+                gift_certificate = gift_certificates[0]
+
+                # get user and package
+                package = yield Package.objects.get()
+                user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+                user = yield User.objects.get(user_id)
+
+                if user.status != 'Frozen' and user.status != 'Unverified':
+                    gift_certificate.redeemer_es_id = user._id
+                    gift_certificate.redeem_date = datetime.now()
+                    gift_certificate.is_redeemed = True
+                    
+                    # save this into user transaction
+                    transaction = UserPackage()
+                    transaction.user_id = user._id
+                    transaction.package_id = package._id
+                    transaction.package_name = package.name
+                    transaction.package_fee = package.fee
+                    transaction.package_ft = package.first_timer
+                    transaction.credit_count = package.credits
+                    transaction.remaining_credits = package.credits
+                    transaction.expiration = package.expiration
+                    transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
+                    transaction.trans_id = gift_certificate.pp_tx
+                    transaction.trans_info = gift_certificate.trans_info
+                    user.credits += package.credits
+
+                    gift_certificate = yield gift_certificate.save()
+                    transaction = yield transaction.save()
+                    user = yield user.save()
+
+                    self.render_json(gift_certificate.to_dict())
+
+                else:
+                    self.set_status(403)
+                    self.redirect('/#/rates?s=error')
+        except :
+            value = sys.exc_info()[1]
+            str_value = str(value)
+            if 'The index ' in str_value and ' was violated ' in str_value:
+                self.redirect('/#/account?pname=' + pack_name + '&s=success#packages')
 
 def ipn_gc(self):
 
@@ -258,9 +324,6 @@ def ipn_gc(self):
     tx = ipn_data['txn_id']
     uid = ipn_data['transaction_subject']
     pid = ipn_data['item_number']
-
-    print('IPN ')
-    print(data)
 
 
 def ipn(self):
