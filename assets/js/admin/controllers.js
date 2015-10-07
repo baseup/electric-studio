@@ -2071,6 +2071,13 @@ ctrls.controller('GiftCardCtrl', function ($scope, TransactionService, PackageSe
     });
   });
 
+  PackageService.query(function (packages) {
+    var select = angular.element('#gc-package-selector')[0].selectize;
+    angular.forEach(packages, function (pack) {
+      if (pack) select.addOption({ value: JSON.stringify(pack), text: pack.name });
+    });
+  });
+
   $scope.getTransId = function (pac) {
     if (pac.trans_info) {
       if (!(pac.trans_info instanceof Object)) {
@@ -2091,18 +2098,20 @@ ctrls.controller('GiftCardCtrl', function ($scope, TransactionService, PackageSe
   }
 
     $scope.prevPage = function (event) {
+      console.log($scope.currentPage)
       if ($scope.currentPage > 0) {
-        $scope.currentPage -=1;    
-        $scope.transactions = TransactionService.query({ page : $scope.currentPage });
+        $scope.currentPage -=1;
+      }    
+        $scope.transactions = GiftCardService.query({ page : $scope.currentPage });
         $scope.transactions.$promise.then(function (data) {
           $scope.transactions = data;
         });
-      }
+      
       event.preventDefault();
     }
 
     $scope.nextPage = function (event) {    
-      $scope.transactions = TransactionService.query({ page : $scope.currentPage+1 });
+      $scope.transactions = GiftCardService.query({ page : $scope.currentPage+1 });
       $scope.transactions.$promise.then(function (data) {
         if(data.length > 0){
           $scope.transactions = data;
@@ -2114,6 +2123,19 @@ ctrls.controller('GiftCardCtrl', function ($scope, TransactionService, PackageSe
 
   $scope.showRedeemGCForm = function () {
     angular.element('#redeem-gc-modal').Modal();
+  }
+
+  $scope.showBuyGCForm = function () {
+    angular.element('#buy-gc-modal').Modal();
+  }
+
+  $scope.selectGCPackage = function(){
+
+    var jsonPackage = JSON.parse($scope.gcPackage);
+    $('input#item_name').val(jsonPackage.name);
+    $('input#item_number').val(jsonPackage._id);
+    $('input#amount').val(jsonPackage.fee);
+    $scope.gcAmount = jsonPackage.fee;
   }
 
   $scope.redeemGC = function(){
@@ -2137,7 +2159,58 @@ ctrls.controller('GiftCardCtrl', function ($scope, TransactionService, PackageSe
       $.Alert('Complete your form')
     }
   }
+
+  var port = '';
+  if (window.location.port)
+    port = ':' + window.location.port;
+  $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port;
   
+  $scope.buyGC = function(arg){
+
+    if(arg == 'confirm_buy'){
+
+      console.log($scope.receiverEmail);
+      if ($scope.receiverEmail){
+        $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
+            
+            if ($scope.gcMessage == undefined){
+              $scope.gcMessage = ""
+            }
+
+            var jsonPackage = JSON.parse($scope.gcPackage);
+            var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + jsonPackage._id + 
+                                        "&success=True&email=" + $scope.receiverEmail + "&message=" + $scope.gcMessage +
+                                        "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcFrom + "&receiver_name=" + $scope.gcTo; 
+            var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + jsonPackage._id + "&success=True&email=" + $scope.receiverEmail + 
+                          "&message=" + $scope.gcMessage +"&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcFrom + "&receiver_name=" + $scope.gcTo; 
+            var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False";
+      
+            $('input#ipn_notification_url').val(ipn_notification_url);
+            $('input#return').val(return_url);
+            $('input#cancel_return').val(cancel_return);
+
+            angular.element('#payForm').submit();
+        });  
+      }else{
+       $.Alert('Please enter valid recipient email.'); 
+      }
+    }else{
+      if ($scope.gcTo && $scope.gcFrom && $scope.gcPackage){
+
+        if (arg == 'sender') {
+          $scope.senderIsReceiver = true
+        }else{
+          $scope.senderIsReceiver = false
+        }
+
+        angular.element('#enter-email-modal').Modal(); 
+      }else{
+        $.Alert('Complete your form');
+      }
+    }
+
+  }
+
 });
 
 ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, PackageService) {

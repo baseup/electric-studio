@@ -16,6 +16,7 @@
         <div class="float--left">
         <button  ng-click="showRedeemGCForm()" class="btn btn--small btn--primary space--right" data-modal-toggle="redeem-gc">Redeem GC</button>
         </div>
+        <button  ng-click="showBuyGCForm()" class="btn btn--small btn--primary space--right" data-modal-toggle="buy-gc">Buy GC</button>
       </div>
 
       <div class="pad" ng-show="!isUpdatePackage">
@@ -54,10 +55,10 @@
         </table>
       </div>
 
-<!--       <ul class="pagination-nav nav nav--block text--center">
+       <ul class="pagination-nav nav nav--block text--center">
         <li><a ng-click="prevPage($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
         <li><a ng-click="nextPage($event)">Next <i class="fa fa-angle-right"></i></a></li>
-      </ul> -->
+      </ul> 
 
     </div>
     </div>
@@ -87,4 +88,63 @@
     </div>
   </div>
 
+
+  <div class="modal" data-modal="buy-gc" id="buy-gc-modal">
+    <div class="modal__box pad">
+      <span id="close-add-account" class="close-btn modal-close">X</span>
+      <form id="payForm" action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
+      <h3 class="h medium gray">BUY GC</h3>
+      <div class="float--left space--bottom">
+        <span class="label">To</span>
+        <input ng-model="gcTo" class="text-input">
+      </div>
+      <div class="float--right space--bottom">
+        <span class="label">From</span>
+        <input ng-model="gcFrom" class="text-input">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Message</span>
+        <textarea class="text-input" ng-model="gcMessage"></textarea>
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Package</span>
+        <select ng-change="selectGCPackage()" id="gc-package-selector" ng-model="gcPackage" class="select">
+              <option selected value="">Package</option>
+        </select>
+      </div>
+        
+        <input type="hidden" id="cmd" name="cmd" value="_xclick"> 
+        <input type="hidden" id="no_note" name="no_note" value = "0">
+        <input type="hidden" id="bn" name="bn" value="PP-BuyNowBF">
+        <input type="hidden" id="rm" name="rm" value="2">
+        <input type="hidden" id="custom" name="custom" value="">
+        <input type="hidden" id="business" name="business" value="ogsmelvin05-facilitator@gmail.com"> 
+        <!-- electric@electricstudio.ph -->
+        <input type="hidden" id="item_name" name="item_name" value="">
+        <input type="hidden" id="item_number" name="item_number" value="">
+        <input type="hidden" id="amount" name="amount" value="">
+        <input type="hidden" id="currency_code" name="currency_code" value="PHP">
+        <input type="hidden" id="ipn_notification_url" name="ipn_notification_url" value="">
+        <input type="hidden" id="return" name="return" value="">
+        <input type="hidden" id="cancel_return" name="cancel_return" value="">
+        <input type="hidden" id="cbt" name="cbt" value="Return to Electric Studio">
+
+      <button type="button" ng-click="buyGC('receiver')" class="btn btn--primary btn--medium float--right space--top">EMAIL TO RECEIVER</button>
+
+      <button type="button" ng-click="buyGC('sender')" class="btn btn--primary btn--medium float--right space--top">EMAIL TO SENDER</button>
+
+      </form>
+    </div>
+  </div>
+
+      <div class="modal" data-modal="enter-email" id="enter-email-modal">
+        <div class="modal__box pad">
+          <span class="close-btn modal-close">X</span>
+
+          <h3 class="h--medium brand-color space--bottom">Please enter receiver's email address:</h3>
+          <span class="label">Email:</span>
+          <input ng-model="receiverEmail" class="text-input">
+          <a class="btn btn--primary btn--medium space--top modal-close" ng-click="buyGC('confirm_buy')"> SEND GC </a>
+        </div>
+      </div>  
 </div>

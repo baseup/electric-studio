@@ -634,8 +634,8 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
           // Do other validations like email validations
         $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
             
-            if ($scope.message == undefined){
-              $scope.message = ""
+            if ($scope.gcMessage == undefined){
+              $scope.gcMessage = ""
             }
             var jsonPackage = JSON.parse($scope.gcPackage);
 

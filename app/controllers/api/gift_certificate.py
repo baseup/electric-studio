@@ -4,13 +4,26 @@ from motorengine.errors import InvalidDocumentError
 from app.models.packages import Package, GiftCertificate, UserPackage
 from app.models.users import User
 from bson.objectid import ObjectId
+from app.helper import create_at_gmt8
+from app.helper import GMT8
+from motorengine import DESCENDING
 
 import tornado
 import json
 import tornado.escape
 
 def find(self):
-    gift_certificates = yield GiftCertificate.objects.find_all()
+    page_limit = 10
+    page = 0
+    transactions = []
+    total = yield GiftCertificate.objects.count();
+    if self.get_argument('page'):
+        page = int(self.get_argument('page'))
+    gift_certificates = []
+    if(total - (page * page_limit)) > 0:
+        gift_certificates = yield GiftCertificate.objects.order_by('create_at', direction=DESCENDING) \
+                    .skip(page * page_limit).limit(page_limit).find_all()
+    gift_certificates = create_at_gmt8(gift_certificates)
     self.render_json(gift_certificates)
 
 def find_one(self, id):

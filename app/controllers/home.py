@@ -194,7 +194,7 @@ def redeem_gc(self):
     
     if not self.get_secure_cookie('loginUserID'):
         self.set_status(403)
-        # self.write('Please log in to your Electric account.')
+        self.write('Please log in to your Electric account.')
         self.redirect('/#/rates?s=error')
     else:
         try :        
