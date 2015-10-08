@@ -12,9 +12,9 @@
       	<input type="text" ng-model="gcSender" placeholder="Sender" name="from"/>
       	<label>Number of Rides:</label>
       		<select ng-change="selectGCPackage()" name="package_id" ng-model="gcPackage" >
-      			<option ng-repeat="package in packages" value="{{ package }}"> {{ package.credits }} Ride{{ package.credits > 1 ? 's' : '' }}</option>
+      			<option ng-repeat="package in packages" ng-if="!package.first_timer" value="{{ package }}"> {{ package.credits }} Ride{{ package.credits > 1 ? 's' : '' }}</option>
       		</select>
-        <label>Value: {{ gcAmount }}</label> 
+        <label>Value: {{ gcAmount }}</label>
       	<label>Message: (optional) </label>
       	<textarea ng-model="gcMessage"></textarea>
       	<label>Purchase a gift card</label>

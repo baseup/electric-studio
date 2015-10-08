@@ -63,8 +63,6 @@ def update(self, id):
 
     data = tornado.escape.url_unescape(self.request.body)
     redeem_data = tornado.escape.json_decode(data)
-
-    print(redeem_data)
     try :
         code = redeem_data['code']
         pin = redeem_data['pin']

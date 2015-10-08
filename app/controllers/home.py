@@ -239,14 +239,17 @@ def redeem_gc(self):
                 else:
                     self.set_status(403)
                     self.write("Access Denied")
+                    self.finish()
             else:
                 self.set_status(403)
                 self.write("No gc found")
+                self.finish()
 
         except :
             value = sys.exc_info()[1]
             str_value = str(value)
             self.write(str_value)
+            self.finish()
 
 def buy(self):
 

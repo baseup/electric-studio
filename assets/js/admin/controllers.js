@@ -2074,7 +2074,11 @@ ctrls.controller('GiftCardCtrl', function ($scope, TransactionService, PackageSe
   PackageService.query(function (packages) {
     var select = angular.element('#gc-package-selector')[0].selectize;
     angular.forEach(packages, function (pack) {
-      if (pack) select.addOption({ value: JSON.stringify(pack), text: pack.name });
+      if (pack){
+        if(!pack.first_timer){
+          select.addOption({ value: JSON.stringify(pack), text: pack.name }); 
+        }
+      }
     });
   });
 

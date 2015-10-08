@@ -603,7 +603,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
       }
 
       var redeemFailed = function (error) {
-        $.Alert('Error ' + error);
+        $.Alert('Error: ' + error.data);
       }
     
       var data = {}

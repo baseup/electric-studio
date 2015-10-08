@@ -2,7 +2,7 @@ from app.models.admins import Admin
 from passlib.hash import bcrypt
 from app.models.packages import Package, UserPackage, GiftCertificate
 from app.models.users import User
-from app.helper import send_email_verification, send_email, code_generator, send_email_gc
+from app.helper import send_email_verification, send_email, code_generator
 from bson.objectid import ObjectId
 from datetime import timedelta
 from app.models.access import AccessType
@@ -202,57 +202,74 @@ def buy_gc(self):
         pp_cm = self.get_query_argument('cm')
         pp_item = self.get_query_argument('item_number')
 
-        try :
-            gift_certificate = GiftCertificate()
+        post_body = urllib.parse.urlencode({
+            'cmd' : '_notify-synch',
+            'tx' : pp_tx,
+            'at' : PDT_TOKEN,
+        })
 
-            code = code_generator()
-            pin = int(code_generator(4, string.digits))
-            gift_certificate.code = code
-            gift_certificate.pin = pin
-            gift_certificate.receiver_email = self.get_argument('email')
-            gift_certificate.sender_name = self.get_argument('sender_name')
-            gift_certificate.receiver_name = self.get_argument('receiver_name')
-            gift_certificate.pptx = pp_tx
+        url = 'https://www.sandbox.paypal.com/cgi-bin/webscr'
+        pp_request = HTTPRequest(url=url, method='POST', body=post_body, validate_cert=False)
+        pp_response = yield AsyncHTTPClient().fetch(pp_request)
+        pp_data = pp_response.body.decode('UTF-8')
+        if 'SUCCESS' in pp_data:
+            pp_data = pp_data[7:]
+            pp_data = pp_data.replace("'",'')
+            pp_data = urllib.parse.unquote(pp_data)
+            try :
+                gift_certificate = GiftCertificate()
 
-            if package:
-                gift_certificate.package_id = package._id
-                gift_certificate.amount = package.fee
+                code = code_generator()
+                pin = int(code_generator(4, string.digits))
+                gift_certificate.code = code
+                gift_certificate.pin = pin
+                gift_certificate.receiver_email = self.get_argument('email')
+                gift_certificate.sender_name = self.get_argument('sender_name')
+                gift_certificate.receiver_name = self.get_argument('receiver_name')
+                gift_certificate.pptx = pp_tx
 
-            trans_info = {
-                'transaction' : pp_tx,
-                'status' : pp_st,
-                'amount' : pp_amt,
-                'curency' : pp_cc,
-                'cm' : pp_cm,
-                'item_number' : pp_item,
-                'paypal_data' : ''
-            }
+                if package:
+                    gift_certificate.package_id = package._id
+                    gift_certificate.amount = package.fee
 
-            gift_certificate.trans_info = str(trans_info)
-            gift_certificate.receiver_email = self.get_argument('email')
+                trans_info = {
+                    'transaction' : pp_tx,
+                    'status' : pp_st,
+                    'amount' : pp_amt,
+                    'curency' : pp_cc,
+                    'cm' : pp_cm,
+                    'item_number' : pp_item,
+                    'paypal_data' : pp_data
+                }
 
+                gift_certificate.trans_info = str(trans_info)
+                gift_certificate.receiver_email = self.get_argument('email')
 
-            message = self.get_argument('message')
-            if message:
-                gift_certificate.message = message
+                message = self.get_argument('message')
+                if message:
+                    gift_certificate.message = message
 
-            gift_certificate = yield gift_certificate.save()
+                gift_certificate = yield gift_certificate.save()
 
-            receiver = {
-                'email' : self.get_argument('email'),
-                'name' : self.get_argument('receiver_name')
-            }
+                receiver = {
+                    'email' : self.get_argument('email'),
+                    'first_name' : self.get_argument('receiver_name'),
+                    'last_name': ''
+                }
 
-            gc = gift_certificate.to_dict()
-            site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
-            content = str(self.render_string('emails/gc', gc=gc, site=site_url, package=package.name), 'UTF-8')
-            yield self.io.async_task(send_email_gc, user=receiver, content=content, subject='Gift Card')
-            self.redirect('/#/gift-cards?s=success&msg=Success')
+                gc = gift_certificate.to_dict()
+                site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                content = str(self.render_string('emails/gc', gc=gc, site=site_url, package=package.name), 'UTF-8')
+                yield self.io.async_task(send_email, user=receiver, content=content, subject='Gift Card')
+                self.redirect('/#/gift-cards?s=success&msg=Success')
 
-        except :
-            value = sys.exc_info()[1]
-            self.set_status(403)
-            self.redirect('/#/gift-cards?s=error&msg=' + str(value))
+            except :
+                value = sys.exc_info()[1]
+                self.set_status(403)
+                self.redirect('/#/gift-cards?s=error&msg=' + str(value))
+        else:
+            error = pp_data.replace('\n',' : ')
+            self.redirect('/#/gift-cards?s=success&msg=' + error)    
     else:
         self.redirect('/#/gift-cards?s=success&msg=Cancelled')            
 
@@ -267,7 +284,7 @@ def redeem_gc(self):
         try :
             code = self.get_argument('code')
             pin = self.get_argument('pin')
-            gift_certificates = yield GiftCertificate.objects.filter(code=code, pin=pin).find_all()
+            gift_certificates = yield GiftCertificate.objects.filter(code=code, pin=pin, is_redeemed=False).find_all()
 
             if gift_certificates:
                 gift_certificate = gift_certificates[0]
@@ -324,7 +341,71 @@ def ipn_gc(self):
     tx = ipn_data['txn_id']
     uid = ipn_data['transaction_subject']
     pid = ipn_data['item_number']
+    package = yield Package.objects.get(pid)
 
+    error = None
+    if tx and package:
+        trans_filter = { '$regex' : '.*' + tx + '.*', '$options' : 'i' }
+        trans_exists = yield GiftCertificate.objects.filter(trans_info=trans_filter).count()
+        if trans_exists <= 0:
+            data = {
+                'transaction' : tx,
+                'status' : ipn_data['payment_status'],
+                'amount' : ipn_data['mc_gross'],
+                'curency' : ipn_data['mc_currency'],
+                'cm' : ipn_data['transaction_subject'],
+                'item_number' : pid,
+                'paypal_data' : ipn_data
+            }
+
+            try :
+                gift_certificate = GiftCertificate()
+
+                code = code_generator()
+                pin = int(code_generator(4, string.digits))
+                gift_certificate.code = code
+                gift_certificate.pin = pin
+                gift_certificate.receiver_email = self.get_argument('email')
+                gift_certificate.sender_name = self.get_argument('sender_name')
+                gift_certificate.receiver_name = self.get_argument('receiver_name')
+                gift_certificate.pptx = tx
+
+                if package:
+                    gift_certificate.package_id = package._id
+                    gift_certificate.amount = package.fee
+
+                gift_certificate.trans_info = str(data)
+                gift_certificate.receiver_email = self.get_argument('email')
+
+                message = self.get_argument('message')
+                if message:
+                    gift_certificate.message = message
+
+                gift_certificate = yield gift_certificate.save()
+
+                receiver = {
+                    'email' : self.get_argument('email'),
+                    'first_name' : self.get_argument('receiver_name'),
+                    'last_name' : ''
+                }
+
+                gc = gift_certificate.to_dict()
+                site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                content = str(self.render_string('emails/gc', gc=gc, site=site_url, package=package.name), 'UTF-8')
+                yield self.io.async_task(send_email, user=receiver, content=content, subject='Gift Card')
+                
+            except :
+                value = sys.exc_info()[1]
+                self.set_status(403)
+                error = str(value)
+        else:
+            error = error = 'Transation ' + tx + ' already exists'
+    else:
+        error = str(ipn_data)
+    if error:
+        print('IPN Error: ' + error)
+    self.finish()
+        
 
 def ipn(self):
 
