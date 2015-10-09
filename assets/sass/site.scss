@@ -1263,8 +1263,26 @@ body {
       right: 0;
     }
   }
-  
+
   &.items-3 {
+    width: 160px;
+    
+    .item {
+      position: absolute;
+      top: 0;
+    }
+    
+    .item:nth-child(1) {
+      left: 0;
+    }
+    
+    .item:nth-child(2) {
+      right: 0;
+    }
+    
+  }
+  
+  &.items-4 {
     width: 240px;
     
     .item {
@@ -1318,6 +1336,11 @@ body {
     
   }
   
+}
+
+.class-desc {
+  text-align: left;
+  width: 280px;
 }
 
 /* Rates Page */
@@ -2597,17 +2620,23 @@ body {
   .circles {
     height:160px;
     margin-bottom: 40px;
+    margin-right: auto;
+    margin-left: auto;
     
     .item {
       width: 160px;
       height: 160px;
     }
-    
-    &.items-2 {
-      width: 220px;
+
+    &.items-1 {
+      width: 160px;
     }
     
     &.items-3 {
+      width: 220px;
+    }
+    
+    &.items-4 {
       width: 320px;
     }
   }
