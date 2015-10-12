@@ -210,7 +210,6 @@ def generate_gc(self):
             value = sys.exc_info()[1]
             self.set_status(403)
             self.redirect('/#/gift-cards?s=error&msg=' + str(value))
-
     self.finish()
 
 
@@ -257,6 +256,7 @@ def buy_gc(self):
                 if package:
                     gift_certificate.package_id = package._id
                     gift_certificate.amount = package.fee
+                    gift_certificate.credits = package.credits
 
                 trans_info = {
                     'transaction' : pp_tx,

@@ -47,6 +47,7 @@ def create(self):
             if package:
                 gift_certificate.package_id = package._id
                 gift_certificate.amount = package.fee
+                gift_certificate.credits = package.credits
                 gift_certificate.pin = pin
                 gift_certificate.code = code
 

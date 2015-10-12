@@ -28,7 +28,8 @@
               <th>Sender</th>
               <th>Receiver</th>
               <th>Email</th>
-              <th>Package Name</th>
+              <th>Code</th>
+              <th>Pin</th>
               <th>Credits</th>
               <th>Price</th>
               <th>Date</th>
@@ -41,7 +42,8 @@
               <td>{{ transaction.sender_name }}</td>
               <td>{{ transaction.receiver_name }} </td>
               <td>{{ transaction.receiver_email}}</td>
-              <td>{{ transaction.package_id }} </td>
+              <td>{{ transaction.code }}</td>
+              <td>{{ transaction.pin }} </td>
               <td>{{ transaction.credits }} Ride<span ng-if="transaction.credits > 1">s</span></td>
               <td>
                 <small>PHP</small>
