@@ -4,13 +4,14 @@ from motorengine.errors import InvalidDocumentError
 from app.models.packages import Package, GiftCertificate, UserPackage
 from app.models.users import User
 from bson.objectid import ObjectId
-from app.helper import create_at_gmt8
+from app.helper import create_at_gmt8, code_generator
 from app.helper import GMT8
 from motorengine import DESCENDING
 
 import tornado
 import json
 import tornado.escape
+import string
 
 def find(self):
     page_limit = 10
@@ -31,33 +32,32 @@ def find_one(self, id):
     self.render_json(gift_certificate)
 
 def create(self):
-    try :
-        gift_certificate = GiftCertificate()
-        package = yield Package.objects.get(self.get_argument('package_id'))
+    # create batch gcs
+    data = tornado.escape.url_unescape(self.request.body)
+    gc_data = tornado.escape.json_decode(data)
+    count = int(gc_data['count'])
+    pid = gc_data['package_id']
 
-        gift_certificate.code = self.get_argument('code')
-        gift_certificate.pin = self.get_argument('pin')
+    for i in range(count):
+        try:
+            gift_certificate = GiftCertificate()
+            code = code_generator()
+            pin = int(code_generator(4, string.digits))
+            package = yield Package.objects.get(pid)
+            if package:
+                gift_certificate.package_id = package._id
+                gift_certificate.amount = package.fee
+                gift_certificate.pin = pin
+                gift_certificate.code = code
 
-        if package:
-            gift_certificate.package_id = package._id
-            gift_certificate.amount = package.fee
+            gift_certificate = yield gift_certificate.save()
+        except :
+            value = sys.exc_info()[1]
+            self.set_status(403)
 
-        gift_certificate.trans_info = self.get_argument('trans_info')
-        gift_certificate.sender_email = self.get_argument('sender_email')
-        gift_certificate.receiver_email = self.get_argument('receiver_email')
-
-        message = self.get_argument('message')
-        if message:
-            gift_certificate.message = message
-
-        gift_certificate = yield gift_certificate.save()
-        self.render_json(gift_certificate.to_dict())
-
-    except :
-        value = sys.exc_info()[1]
-        self.set_status(403)
-        self.write(str(value))
-        self.finish()
+            print(value)
+            self.redirect('/#/gift-cards?s=error&msg=' + str(value))
+    self.finish()
 
 def update(self, id):
 

@@ -188,6 +188,32 @@ def buy(self):
     else:
         self.redirect('/admin/#/accounts')
 
+def generate_gc(self):
+    count = int(self.get_argument('count'))
+    pid = self.get_argument('package_id')
+
+    for i in range(count):
+        try:
+            gift_certificate = GiftCertificate()
+            code = code_generator()
+            pin = int(code_generator(4, string.digits))
+            package = yield Package.objects.get(pid)
+
+            if package:
+                gift_certificate.package_id = package._id
+                gift_certificate.amount = package.fee
+                gift_certificate.pin = pin
+                gift_certificate.code = code
+
+            gift_certificate = yield gift_certificate.save()
+        except :
+            value = sys.exc_info()[1]
+            self.set_status(403)
+            self.redirect('/#/gift-cards?s=error&msg=' + str(value))
+
+    self.finish()
+
+
 def buy_gc(self):
 
     success = self.get_argument('success')

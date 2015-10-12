@@ -17,6 +17,7 @@
         <button  ng-click="showRedeemGCForm()" class="btn btn--small btn--primary space--right" data-modal-toggle="redeem-gc">Redeem GC</button>
         </div>
         <button  ng-click="showBuyGCForm()" class="btn btn--small btn--primary space--right" data-modal-toggle="buy-gc">Buy GC</button>
+        <button  ng-click="generateGCForm()" class="btn btn--small btn--primary space--right" data-modal-toggle="generate-gc">Generate GC</button>
       </div>
 
       <div class="pad" ng-show="!isUpdatePackage">
@@ -108,7 +109,7 @@
       </div>
       <div class="one-whole float--left space--bottom">
         <span class="label">Package</span>
-        <select ng-change="selectGCPackage()" id="gc-package-selector" ng-model="gcPackage" class="select">
+        <select ng-change="selectGCPackage()" id="" ng-model="gcPackage" class="select gc-package-selector">
               <option selected value="">Package</option>
         </select>
       </div>
@@ -145,6 +146,26 @@
           <span class="label">Email:</span>
           <input ng-model="receiverEmail" class="text-input">
           <a class="btn btn--primary btn--medium space--top modal-close" ng-click="buyGC('confirm_buy')"> SEND GC </a>
+        </div>
+      </div>  
+
+      <div class="modal" data-modal="generate-gc" id="generate-gc-modal">
+        <div class="modal__box pad">
+          <span class="close-btn modal-close">X</span>
+
+          <h3 class="h--medium brand-color space--bottom">Generate GCs:</h3>
+          <div class="float--left space--bottom">
+            <span class="label">Count</span>
+            <input ng-model="gcCount" class="text-input">
+          </div>
+          <div class="one-whole float--left space--bottom">
+            <span class="label">Package</span>
+            <select ng-change="selectGCPackage()" id="" ng-model="gcPackage" class="select gc-package-selector2">
+                <option selected value="">Package</option>
+            </select>
+          </div>
+
+          <a class="btn btn--primary btn--medium space--top modal-close" ng-click="generateGC()"> GENERATE GCs </a>
         </div>
       </div>  
 </div>

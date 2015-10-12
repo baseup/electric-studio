@@ -2053,7 +2053,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
 
 });
 
-ctrls.controller('GiftCardCtrl', function ($scope, TransactionService, PackageService, GiftCardService, UserService) {
+ctrls.controller('GiftCardCtrl', function ($scope, $route, TransactionService, PackageService, GiftCardService, UserService) {
 
   $scope.currentPage = 0;
   $scope.hasNext = true;
@@ -2072,11 +2072,13 @@ ctrls.controller('GiftCardCtrl', function ($scope, TransactionService, PackageSe
   });
 
   PackageService.query(function (packages) {
-    var select = angular.element('#gc-package-selector')[0].selectize;
+    var select = angular.element('.gc-package-selector')[0].selectize;
+    var select2 = angular.element('.gc-package-selector2')[0].selectize;
     angular.forEach(packages, function (pack) {
       if (pack){
         if(!pack.first_timer){
           select.addOption({ value: JSON.stringify(pack), text: pack.name }); 
+          select2.addOption({ value: JSON.stringify(pack), text: pack.name }); 
         }
       }
     });
@@ -2129,6 +2131,10 @@ ctrls.controller('GiftCardCtrl', function ($scope, TransactionService, PackageSe
     angular.element('#redeem-gc-modal').Modal();
   }
 
+  $scope.generateGCForm = function(){
+    angular.element('#generate-gc-modal').Modal();
+  }
+
   $scope.showBuyGCForm = function () {
     angular.element('#buy-gc-modal').Modal();
   }
@@ -2142,6 +2148,33 @@ ctrls.controller('GiftCardCtrl', function ($scope, TransactionService, PackageSe
     $scope.gcAmount = jsonPackage.fee;
   }
 
+
+  $scope.generateGC = function(){
+
+    if ($scope.gcCount && $scope.gcPackage){
+      var jsonPackage = JSON.parse($scope.gcPackage);
+      var data = {
+        count : $scope.gcCount,
+        package_id : jsonPackage._id,
+        user_id : $scope.gcAccount
+      }
+
+      var batchSuccess = function () {
+
+        $route.reload();
+        $.Alert('Success')
+      }
+
+      var batchFail = function (error) {
+        $.Alert(error.data);
+      }
+
+      GiftCardService.create({}, data ).$promise.then(batchSuccess, batchFail);
+
+    }else{
+      $.Alert('Complete your form');
+    }
+  }
   $scope.redeemGC = function(){
 
     if ( $scope.gcCode && $scope.gcPin && $scope.gcAccount){
@@ -2152,6 +2185,7 @@ ctrls.controller('GiftCardCtrl', function ($scope, TransactionService, PackageSe
       }
 
       var redeemSuccess = function () {
+        $route.reload();
         $.Alert('Success')
       }
 
