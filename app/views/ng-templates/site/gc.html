@@ -14,6 +14,7 @@
         </div>
 
         <div class="row">
+        <form id="payForm" ng-controller="RatesCtrl" action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
           <div class="col-md-6 card-holder">
             <small class="label">INPUT GIFT DETAILS</small>
             <div class="card-input">
@@ -21,92 +22,67 @@
 
               <div class="row">
                 <div class="col-md-8">
-                  <input type="text" placeholder="TO">
-                  <input type="text" placeholder="FROM">
-                  <small class="label">VALIDITY: 180 DAYS</small>
+                  <input ng-model="gcReceiver" type="text" placeholder="TO">
+                  <input ng-model="gcSender" type="text" placeholder="FROM">
+                  <small class="label">VALIDITY: {{ gcValidity }} DAYS</small>
                 </div>
                 <div class="col-md-4">
-                  <select class="rides">
-                    <option>20</option>
+                  <select class="rides" ng-change="selectGCPackage()" ng-model="gcPackage">
+                    <option ng-repeat="package in packages" ng-if="!package.first_timer" value="{{ package }}"> {{ package.credits }} </option>
                   </select>
                   <small class="label fr">RIDES</small>
                 </div>
                </div>
             </div>
           </div>
+
+          <!-- HIDDEN FIELDS -->
+
+          <input type="hidden" id="cmd" name="cmd" value="_xclick"> 
+          <input type="hidden" id="no_note" name="no_note" value = "0">
+          <input type="hidden" id="bn" name="bn" value="PP-BuyNowBF">
+          <input type="hidden" id="rm" name="rm" value="2">
+          <input type="hidden" id="custom" name="custom" value="">
+          <input type="hidden" id="business" name="business" value="ogsmelvin05-facilitator@gmail.com"> 
+          <!-- electric@electricstudio.ph -->
+          <input type="hidden" id="item_name" name="item_name" value="">
+          <input type="hidden" id="item_number" name="item_number" value="">
+          <input type="hidden" id="amount" name="amount" value="">
+          <input type="hidden" id="currency_code" name="currency_code" value="PHP">
+          <input type="hidden" id="ipn_notification_url" name="ipn_notification_url" value="">
+          <input type="hidden" id="return" name="return" value="">
+          <input type="hidden" id="cancel_return" name="cancel_return" value="">
+          <input type="hidden" id="cbt" name="cbt" value="Return to Electric Studio">
+
           <div class="col-md-6 copy-holder">
               <span class="label">SENDER'S EMAIL ADDRESS</span>
-              <input type="text" name="semail" class="input">
-
+              <input type="email" ng-model="senderEmail" name="semail" class="input">
 
               <span class="label">RECIPIENT'S EMAIL ADDRESS</span>
-              <input type="text" name="remail" class="input">
+              <input type="email" ng-model="receiverEmail" name="remail" class="input">
 
               <span class="label">ADD MESSAGE <i>(OPTIONAL)</i></span>
-              <textarea class="input"> </textarea>
+              <textarea class="input" ng-model="gcMessage"> </textarea>
 
               <div class="row">
+                <div class="col-md-12">
+                  <BIG>TOTAL: <span ng-if="gcAmount">P {{ gcAmount }}</span> <span ng-if="!gcAmount"> P 0.00</span></BIG>
+                </div>
+                
                 <div class="col-md-6">
-                  <BIG>TOTAL: <span>P16,000</span></BIG>
+                  <input ng-click="buyGC('sender')" class="btn" type="button" value="EMAIL TO ME" /> 
                 </div>
                 <div class="col-md-6">
-                  <button class="btn"> BUY NOW </button>
-                </div>
-
+                  <input ng-click="buyGC('receiver')" class="btn" type="button" value="EMAIL TO RECIPIENT" /> 
+                </div>                 
               </div>
+
            </div>
+          </form> <!-- END PAYPAL FORM -->
         </div>
       </div>
 
-    <div class=""> <!-- center this div -->
-      <h2 class="h large primary">BUY Gift Card</h2>
 
-      <form id="payForm" ng-controller="RatesCtrl" action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
-
-      	<label>To: </label>
-      	<input type="text" ng-model="gcReceiver" placeholder="Receiver" name="to"/>
-      	<label>From:</label>
-      	<input type="text" ng-model="gcSender" placeholder="Sender" name="from"/>
-      	<label>Number of Rides:</label>
-      		<select ng-change="selectGCPackage()" name="package_id" ng-model="gcPackage" >
-      			<option ng-repeat="package in packages" ng-if="!package.first_timer" value="{{ package }}"> {{ package.credits }} Ride{{ package.credits > 1 ? 's' : '' }}</option>
-      		</select>
-        <label>Value: {{ gcAmount }}</label>
-      	<label>Message: (optional) </label>
-      	<textarea ng-model="gcMessage"></textarea>
-      	<label>Purchase a gift card</label>
-      	
-        <input type="hidden" id="cmd" name="cmd" value="_xclick"> 
-        <input type="hidden" id="no_note" name="no_note" value = "0">
-        <input type="hidden" id="bn" name="bn" value="PP-BuyNowBF">
-        <input type="hidden" id="rm" name="rm" value="2">
-        <input type="hidden" id="custom" name="custom" value="">
-        <input type="hidden" id="business" name="business" value="ogsmelvin05-facilitator@gmail.com"> 
-        <!-- electric@electricstudio.ph -->
-        <input type="hidden" id="item_name" name="item_name" value="">
-        <input type="hidden" id="item_number" name="item_number" value="">
-        <input type="hidden" id="amount" name="amount" value="">
-        <input type="hidden" id="currency_code" name="currency_code" value="PHP">
-        <input type="hidden" id="ipn_notification_url" name="ipn_notification_url" value="">
-        <input type="hidden" id="return" name="return" value="">
-        <input type="hidden" id="cancel_return" name="cancel_return" value="">
-        <input type="hidden" id="cbt" name="cbt" value="Return to Electric Studio">
-
-      	<input  ng-click="buyGC('sender')" value ="Email to me" type = "button">
-      	<input  ng-click="buyGC('receiver')" value ="Email to recipient" type = "button">
-
-      <div class="modal" data-modal="enter-email" id="enter-email-modal">
-        <div class="modal__box pad">
-          <span class="close-btn modal-close">X</span>
-          <h3 ng-if="!senderIsReceiver" class="h--medium brand-color space--bottom">Please enter {{ gcReceiver }}'s email address:</h3>
-          <h3 ng-if="senderIsReceiver" class="h--medium brand-color space--bottom">Please enter your email address:</h3>
-          <span class="label">Email:</span>
-          <input ng-model="receiverEmail" class="text-input">
-          <a class="btn btn--primary btn--medium space--top modal-close" ng-click="buyGC('confirm_buy')"> SEND GC </a>
-        </div>
-      </div>  
-      </form>    	
-    </div>
     </div>
   </div>
   

@@ -624,19 +624,26 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
     $('input#item_number').val(jsonPackage._id);
     $('input#amount').val(jsonPackage.fee);
     $scope.gcAmount = jsonPackage.fee;
-
+    $scope.gcValidity = jsonPackage.expiration;
   }
 
   $scope.buyGC = function (arg) {
 
-    if(arg == 'confirm_buy'){
+    if(arg =='sender'){ 
+      $scope.senderIsReceiver = true;
+    }else{
+      $scope.senderIsReceiver = false;
+    }
+
+    if ($scope.gcPackage && $scope.gcReceiver && $scope.gcSender) {
       if($scope.receiverEmail){
           // Do other validations like email validations
         $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
             
             if ($scope.gcMessage == undefined){
-              $scope.gcMessage = ""
+              $scope.gcMessage = "" 
             }
+            
             var jsonPackage = JSON.parse($scope.gcPackage);
 
             var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + jsonPackage._id + 
@@ -654,28 +661,30 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
         });          
       }else{
         $.Alert('Please enter valid recipient email.');
-      }     
+      }  
     }else{
-      // Check if required fields are present
-      if(arg =='sender'){ 
-        $scope.senderIsReceiver = true;
-      }else{
-        $scope.senderIsReceiver = false;
-      }
-
-      if($scope.gcPackage && $scope.gcReceiver && $scope.gcSender){
-        if(!$scope.loginUser || arg=='receiver'){
-          
-          angular.element('#enter-email-modal').Modal();
-        }else{
-          
-          $scope.receiverEmail = $scope.loginUser.email;
-          $scope.buyGC('confirm_buy');
-        }
-      }else{
-        $.Alert('Please complete your form');  
-      }
+      $.Alert('Please complete your form');  
     }
+
+    // if(arg == 'confirm_buy'){
+   
+    // }else{
+    //   // Check if required fields are present
+
+
+    //   if($scope.gcPackage && $scope.gcReceiver && $scope.gcSender){
+    //     if(!$scope.loginUser || arg=='receiver'){
+          
+    //       angular.element('#enter-email-modal').Modal();
+    //     }else{
+          
+    //       $scope.receiverEmail = $scope.loginUser.email;
+    //       $scope.buyGC('confirm_buy');
+    //     }
+    //   }else{
+    //     $.Alert('Please complete your form');  
+    //   }
+    // }
   }
 
 });
