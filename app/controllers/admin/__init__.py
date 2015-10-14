@@ -257,6 +257,7 @@ def buy_gc(self):
                     gift_certificate.package_id = package._id
                     gift_certificate.amount = package.fee
                     gift_certificate.credits = package.credits
+                    gift_certificate.validity = package.expiration
 
                 trans_info = {
                     'transaction' : pp_tx,
@@ -332,13 +333,14 @@ def redeem_gc(self):
                     transaction.package_name = package.name
                     transaction.package_fee = package.fee
                     transaction.package_ft = package.first_timer
-                    transaction.credit_count = package.credits
-                    transaction.remaining_credits = package.credits
-                    transaction.expiration = package.expiration
-                    transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
-                    transaction.trans_id = gift_certificate.pp_tx
+                    transaction.credit_count = gift_certificate.credits
+                    transaction.remaining_credits = gift_certificate.credits
+                    transaction.expiration = gift_certificate.validity
+                    transaction.expire_date = datetime.now() + timedelta(days=gift_certificate.validity)
+                    transaction.trans_id = gift_certificate.pptx
                     transaction.trans_info = gift_certificate.trans_info
-                    user.credits += package.credits
+                    user.credits += gift_certificate.credits
+
 
                     gift_certificate = yield gift_certificate.save()
                     transaction = yield transaction.save()

@@ -82,6 +82,7 @@ class GiftCertificate(Model):
     receiver_email = EmailField(required=False)
     message = StringField()
     credits = IntField()
+    validity = IntField()
 
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)

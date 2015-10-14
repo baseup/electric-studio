@@ -528,6 +528,10 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
   var scrollableView = angular.element('#rates-section').offset().top;
   angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
 
+  if ($scope.loginUser) {
+    $scope.senderEmail = $scope.loginUser.email;
+  }
+
   $scope.ipn_notification_url = '';
   $scope.return_url = '';
   $scope.cancel_return_url = '';
@@ -631,6 +635,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
 
     if(arg =='sender'){ 
       $scope.senderIsReceiver = true;
+      $scope.receiverEmail = $scope.senderEmail;
     }else{
       $scope.senderIsReceiver = false;
     }
