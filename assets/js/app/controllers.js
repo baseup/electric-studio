@@ -523,10 +523,12 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
   }
 });
 
-ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, PackageService, GCRedeemService) {
-  
-  var scrollableView = angular.element('#rates-section').offset().top;
-  angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+ctrls.controller('RatesCtrl', function ($scope, $http, $route, $location, UserService, PackageService, GCRedeemService) {
+
+  if (angular.element('#rates-section').offset()) {
+    var scrollableView = angular.element('#rates-section').offset().top;
+    angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+  };
 
   if ($scope.loginUser) {
     $scope.senderEmail = $scope.loginUser.email;
@@ -613,6 +615,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
       var data = {}
       data.code = $scope.gcCode;
       data.pin = $scope.gcPin;
+      $route.reload();
 
       GCRedeemService.redeem(data).$promise.then(redeemSuccess, redeemFailed);
 
