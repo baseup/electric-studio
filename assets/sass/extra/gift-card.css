@@ -66,11 +66,12 @@
 }
 .gift-card .card-holder {
   padding-right: 50px;
+  min-height: 330px;
 }
 .gift-card .copy-holder {
   padding-left: 50px;
 }
-.gift-card .copy-holder p {
+.gift-card p {
   font-size: 14px;
   color: #939393;
 }

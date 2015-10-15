@@ -1,7 +1,45 @@
-
+  <link rel="stylesheet" type="text/css" href="assets/sass/extra/gift-card.css">
+  <link rel="stylesheet" type="text/css" href="assets/sass/extra/grid.min.css">
   <div class="content" ng-controller="RatesCtrl">
     <div class="wrapper">
-    <div class=""> <!-- center this div -->
+      <div class="gift-card">
+            
+            <div class="title">
+               <div class="title">
+                  <small>ELECTRIC STUDIO GIFT CARD</small>
+                  <h2>REDEEM GIFT CARD</h2>
+               </div>
+            </div>
+
+            <div class="row">
+               <!-- <div class="col-md-6">
+                  <img src="assets/images/gift-card-balance.png">
+               </div> -->
+               <div class="col-md-6 card-holder">
+
+
+                  <div class="row pad--top">
+                     <div class="col-md-12">
+                     <p>To redeem your gift card, enter the Card Code number and pin and hit Redeem button.</p>
+                     </div>
+                     <div class="col-md-6 pad--top">
+                        <span class="label">Card Code</span>
+                        <input class="input" ng-model="gcCode">
+                     </div>
+
+                     <div class="col-md-6 pad--top">
+                        <span class="label">PIN</span>
+                        <input class="input" ng-model="gcPin">
+                     </div>
+                  </div>
+
+                  <button class="btn" ng-click="redeemGC()" type="button"> REDEEM GIFT CARD </button>
+
+               </div>
+            </div>
+         </div>
+
+    <!-- <div class="">
       <h2 class="h large primary">Redeem Gift Card</h2>
 
 
@@ -14,20 +52,7 @@
         <input ng-click="redeemGC()" type="button" name="redeem" value="Redeem"> 
 	
     </div>
-    </div>
+    </div> -->
   </div>
   
-  <div id="rates-section" class="content bg-gray parts-5 rates-info" ng-controller="RatesCtrl">
-    <div class="wrapper">
-      <span class="h small primary center" ng-show="loadingPackages">
-        <i class="fa fa-spinner"></i> Loading packages ... 
-      </span>
-
-      <div class="faq">
-        <p>You must purchase an Electric Studio package before you can reserve a spot in class. Package expiration begins upon purchase. A mandatory waiver must be signed by a parent/guardian for riders under the age of 18. First Timer Packages may only be purchased once per rider. All sales are final.</p>
-        <a class="link" href="#/faq">Faqs</a>
-      </div>  
-    </div>  
-  </div>
-
-
+ 
