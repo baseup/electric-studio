@@ -53,12 +53,11 @@ def create(self):
                 gift_certificate.code = code
 
             gift_certificate = yield gift_certificate.save()
-        except :
+        except:
             value = sys.exc_info()[1]
             self.set_status(403)
-
-            print(value)
             self.redirect('/#/gift-cards?s=error&msg=' + str(value))
+            return
     self.finish()
 
 def update(self, id):
