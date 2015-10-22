@@ -65,8 +65,8 @@ def create(self):
             value = sys.exc_info()[1]
             self.set_status(403)
 
-            print("ERROR " + str(value))
-            self.redirect('/#/gift-cards?s=error&msg=dd' + str(value))
+            print("ERROR " + str(sys.exc_info()))
+            self.redirect('/#/gift-cards?s=error&msg=' + str(value))
             return
     self.finish()
 
