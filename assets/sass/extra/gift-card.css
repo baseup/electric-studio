@@ -6,6 +6,11 @@
   padding: 0 80px;
   font: inherit;
 }
+@media(max-width: 992px){
+  .gift-card{
+    padding : 0;
+  }
+}
 .gift-card .title {
   margin-bottom: 30px;
 }
@@ -61,6 +66,15 @@
   font-weight: bold;
   color: #939393;
 }
+
+@media(max-width: 992px){
+  .gift-card .card-input select.rides{
+    font-size: 14px;
+    font-weight: normal;
+    height: auto;
+    padding: 10px;
+  }
+}
 .gift-card .card-input small.label {
   color: #fff;
 }
@@ -70,6 +84,12 @@
 }
 .gift-card .copy-holder {
   padding-left: 50px;
+}
+@media(max-width: 992px){
+  .gift-card .card-holder,.gift-card .copy-holder{
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 }
 .gift-card p {
   font-size: 14px;
@@ -109,6 +129,7 @@
   text-align: center;
   border-radius: 5px;
   cursor: pointer;
+  margin: 5px 0;
 }
 .gift-card .balance {
   width: 100%;

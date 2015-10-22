@@ -111,7 +111,7 @@ select, .select {
   padding: $base-spacing-unit;
   
   @include breakpoint(lg) {
-    max-width: 1200px;
+    max-width: 1300px;
   }
   
   @extend .cf;
