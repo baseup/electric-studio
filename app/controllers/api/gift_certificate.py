@@ -56,6 +56,8 @@ def create(self):
         except:
             value = sys.exc_info()[1]
             self.set_status(403)
+
+            print(value)
             self.redirect('/#/gift-cards?s=error&msg=' + str(value))
             return
     self.finish()
