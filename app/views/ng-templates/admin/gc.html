@@ -5,10 +5,10 @@
     <div class="packages box--white box--bordered">
       <div class="box__header align--middle cf pad">
         <span class="label label--inline">Gift Cards</span>
-        <div class="float--right">
-          <button  ng-click="showRedeemGCForm()" class="btn btn--small btn--primary space--right" data-modal-toggle="redeem-gc">Redeem GC</button>
-          <button  ng-click="showBuyGCForm()" class="btn btn--small btn--primary space--right" data-modal-toggle="buy-gc">Buy GC</button>
-          <button  ng-click="generateGCForm()" class="btn btn--small btn--primary space--right" data-modal-toggle="generate-gc">Generate GC</button>
+        <div class="float--right  space--top">
+          <button  ng-click="showRedeemGCForm()" class="btn btn--small btn--primary space--right space--bottom" data-modal-toggle="redeem-gc">Redeem GC</button>
+          <button  ng-click="showBuyGCForm()" class="btn btn--small btn--primary space--right space--bottom" data-modal-toggle="buy-gc">Buy GC</button>
+          <button  ng-click="generateGCForm()" class="btn btn--small btn--primary space--right space--bottom" data-modal-toggle="generate-gc">Generate GC</button>
         </div>
       </div>
 
@@ -110,7 +110,7 @@
         <span class="label">To</span>
         <input ng-model="gcTo" class="text-input">
       </div>
-      <div class="float--right space--bottom">
+      <div class="float--left space--bottom">
         <span class="label">From</span>
         <input ng-model="gcFrom" class="text-input">
       </div>
@@ -141,9 +141,9 @@
         <input type="hidden" id="cancel_return" name="cancel_return" value="">
         <input type="hidden" id="cbt" name="cbt" value="Return to Electric Studio">
 
-      <button type="button" ng-click="buyGC('receiver')" class="btn btn--primary btn--medium float--left space--top">EMAIL TO RECEIVER</button>
+      <button type="button" ng-click="buyGC('receiver')" class="btn btn--primary btn--medium space--top">EMAIL TO RECEIVER</button>
 
-      <button type="button" ng-click="buyGC('sender')" class="btn btn--primary btn--medium float--right space--top">EMAIL TO SENDER</button>
+      <button type="button" ng-click="buyGC('sender')" class="btn btn--primary btn--medium  space--top">EMAIL TO SENDER</button>
 
       </form>
     </div>
