@@ -77,10 +77,10 @@ class GiftCertificate(Model):
     amount = DecimalField()
     trans_info = StringField(default=None)
     pptx = StringField(default=None)
-    sender_name = StringField(required=False)
-    receiver_name = StringField(required=False)
+    sender_name = StringField(required=False, default='')
+    receiver_name = StringField(required=False, default='')
     receiver_email = EmailField(required=False)
-    message = StringField()
+    message = StringField(required=False)
     credits = IntField()
     validity = IntField()
 
