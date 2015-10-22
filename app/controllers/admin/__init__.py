@@ -216,6 +216,8 @@ def generate_gc(self):
 def buy_gc(self):
 
     success = self.get_argument('success')
+    isAdmin = self.get_argument('admin')
+
     if success == 'True':
         pid = self.get_argument('pid');
         package = yield Package.objects.get(pid)
@@ -273,8 +275,12 @@ def buy_gc(self):
                 gift_certificate.receiver_email = self.get_argument('email')
 
                 message = self.get_argument('message')
+
                 if message:
                     gift_certificate.message = message
+                else:
+                    gift_certificate.message = ' '
+                
 
                 gift_certificate = yield gift_certificate.save()
 
@@ -288,17 +294,37 @@ def buy_gc(self):
                 site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
                 content = str(self.render_string('emails/gc', gc=gc, site=site_url, package=package.name), 'UTF-8')
                 yield self.io.async_task(send_email, user=receiver, content=content, subject='Gift Card')
-                self.redirect('/#/gift-cards?s=success&msg=Success')
-
+                
+                if self.get_secure_cookie('admin') and isAdmin:
+                    self.redirect('/admin/#/gift-cards?s=success&msg=Success') 
+                else:
+                    self.redirect('/#/gift-cards?s=success&msg=Success') 
+                
             except :
                 value = sys.exc_info()[1]
                 self.set_status(403)
-                self.redirect('/#/gift-cards?s=error&msg=' + str(value))
+            
+                if self.get_secure_cookie('admin') and isAdmin:
+                    self.redirect('/admin/#/gift-cards?s=error&msg=' + str(value))
+                    return
+                else:
+                    self.redirect('/#/gift-cards?s=error&msg=' + str(value))
+                    return
         else:
             error = pp_data.replace('\n',' : ')
-            self.redirect('/#/gift-cards?s=success&msg=' + error)    
+            if self.get_secure_cookie('admin') and isAdmin:
+                self.redirect('/admin/#/gift-cards?s=success&msg=' + error)   
+                return
+            else:
+                self.redirect('/#/gift-cards?s=success&msg=' + error) 
+                return
     else:
-        self.redirect('/#/gift-cards?s=success&msg=Cancelled')            
+        if self.get_secure_cookie('admin') and isAdmin:
+            self.redirect('/admin/#/gift-cards?s=success&msg=Cancelled') 
+            return
+        else:
+            self.redirect('/#/gift-cards?s=success&msg=Cancelled')      
+            return      
 
 
 def redeem_gc(self):

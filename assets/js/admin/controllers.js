@@ -2053,7 +2053,21 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
 
 });
 
-ctrls.controller('GiftCardCtrl', function ($scope, $route, TransactionService, PackageService, GiftCardService, UserService) {
+ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, TransactionService, PackageService, GiftCardService, UserService) {
+
+  var qstring = $location.search();
+
+  if (qstring.s == 'error') {
+    $.Alert('Transaction failed');
+    $location.search('s', null);
+    $location.search('msg', null);
+  }else{
+    if (qstring.msg){
+      $.Alert(qstring.msg);
+      $location.search('s', null);
+      $location.search('msg', null);
+    }
+  }
 
   $scope.currentPage = 0;
   $scope.hasNext = true;
@@ -2160,7 +2174,6 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, TransactionService, P
       }
 
       var batchSuccess = function () {
-
         $route.reload();
         $.Alert('Success')
       }
@@ -2218,10 +2231,10 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, TransactionService, P
             var jsonPackage = JSON.parse($scope.gcPackage);
             var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + jsonPackage._id + 
                                         "&success=True&email=" + $scope.receiverEmail + "&message=" + $scope.gcMessage +
-                                        "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcFrom + "&receiver_name=" + $scope.gcTo; 
+                                        "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcFrom + "&receiver_name=" + $scope.gcTo+"&admin=True"; 
             var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + jsonPackage._id + "&success=True&email=" + $scope.receiverEmail + 
-                          "&message=" + $scope.gcMessage +"&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcFrom + "&receiver_name=" + $scope.gcTo; 
-            var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False";
+                          "&message=" + $scope.gcMessage +"&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcFrom + "&receiver_name=" + $scope.gcTo +"&admin=True"; 
+            var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False&admin=True";
       
             $('input#ipn_notification_url').val(ipn_notification_url);
             $('input#return').val(return_url);

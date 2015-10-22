@@ -650,15 +650,18 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route, $location, UserSe
             
             if ($scope.gcMessage == undefined){
               $scope.gcMessage = "" 
+            }else{
+              var msG = "&message=" + $scope.gcMessage;
+              $scope.gcMessage = msG;
             }
             
             var jsonPackage = JSON.parse($scope.gcPackage);
 
             var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + jsonPackage._id + 
-                                        "&success=True&email=" + $scope.receiverEmail + "&message=" + $scope.gcMessage +
+                                        "&success=True&email=" + $scope.receiverEmail + $scope.gcMessage +
                                         "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver; 
             var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + jsonPackage._id + "&success=True&email=" + $scope.receiverEmail + 
-                          "&message=" + $scope.gcMessage +"&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver; 
+                          $scope.gcMessage + "&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver; 
             var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False";
       
             $('input#ipn_notification_url').val(ipn_notification_url);
