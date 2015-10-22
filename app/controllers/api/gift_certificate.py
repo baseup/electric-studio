@@ -38,9 +38,9 @@ def create(self):
     count = int(gc_data['count'])
     pid = gc_data['package_id']
 
-    print("gc_data " + gc_data)
+    print("gc_data " + str(gc_data))
     print("pid " + pid)
-    print("count " + count)
+    print("count " + str(count))
 
     for i in range(count):
         try:
@@ -50,8 +50,8 @@ def create(self):
             package = yield Package.objects.get(pid)
 
             print("code " + code)
-            print("pin " + pin)
-            print("package " + package)
+            print("pin " + str(pin))
+            print("package " + str(package.to_dict()))
             if package:
                 gift_certificate.package_id = package._id
                 gift_certificate.amount = package.fee
@@ -65,7 +65,7 @@ def create(self):
             value = sys.exc_info()[1]
             self.set_status(403)
 
-            print("ERROR " + value)
+            print("ERROR " + str(value))
             self.redirect('/#/gift-cards?s=error&msg=' + str(value))
             return
     self.finish()
