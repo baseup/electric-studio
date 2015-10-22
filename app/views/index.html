@@ -45,8 +45,14 @@
             </ul>  
           </div>  
         </li>
-        <li>
-          <a ng-class="{ active : activeMainNav('/gift-cards') }" href="#/gift-cards">Gift Card</a>
+        <li class="class-menu">
+          <a>GiftCards <i class="fa fa-chevron-down"></i></a>
+          <div class="class-menu__list">
+            <ul class="class-menu__holder">
+              <li><a href="#/gift-cards">Buy</a></li>
+              <li><a href="#/redeem-gc">Redeem</a></li>
+            </ul>
+          </div>
         </li>  
         <li>
           <a ng-class="{ active : activeMainNav('/whats-new') }" href="#/whats-new">What's New</a>
