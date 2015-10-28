@@ -637,6 +637,10 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   }
 
   $scope.getTransId = function (pac) {
+    if (pac.trans_id) {
+      return pac.trans_id;
+    }
+    
     if (pac.trans_info) {
       if (!(pac.trans_info instanceof Object)) {
         try {
@@ -2069,6 +2073,10 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
   });
 
   $scope.getTransId = function (pac) {
+    if (pac.trans_id) {
+      return pac.trans_id;
+    }
+
     if (pac.trans_info) {
       if (!(pac.trans_info instanceof Object)) {
         try {
