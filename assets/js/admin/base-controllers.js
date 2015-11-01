@@ -27,6 +27,7 @@ ctrls.controller('AdminCtrl', function ($scope, PrivilegeService){
 
     angular.element('.dashboard-menu').Dropdown();
     angular.element('.classes-menu').Dropdown();
+    angular.element('.giftcard-menu').Dropdown();
   
     angular.element('.datepicker').pickadate({
       labelMonthNext: 'Go to the next month',

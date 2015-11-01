@@ -4,55 +4,66 @@
     <div class="grid__item">
     <div class="packages box--white box--bordered">
       <div class="box__header align--middle cf pad">
-        <span class="label label--inline">Gift Cards</span>
+        <span class="label label--inline">GC Generation</span>
         <div class="float--right  space--top">
           <button  ng-click="showRedeemGCForm()" class="btn btn--small btn--primary space--right space--bottom" data-modal-toggle="redeem-gc">Redeem GC</button>
           <button  ng-click="showBuyGCForm()" class="btn btn--small btn--primary space--right space--bottom" data-modal-toggle="buy-gc">Buy GC</button>
           <button  ng-click="generateGCForm()" class="btn btn--small btn--primary space--right space--bottom" data-modal-toggle="generate-gc">Generate GC</button>
         </div>
+        <div class="float--right">
+          <div class="float--left space--right">
+            <span class="label">From</span>
+            <input class="text-input" id="input_from" ng-model='gcDateFilter.fromDate' placeholder="Today" />
+          </div>
+          <div class="float--left space--right">
+            <span class="label">To</span>
+            <input class="text-input" id="input_to" ng-model='gcDateFilter.toDate' placeholder="To" />
+          </div>
+          <div class="float--left space--left space--bottom">
+            <span class="label">&nbsp;</span>
+            <button class="btn btn--small btn--tertiary float--right" ng-click="exportGCListByDate()">Export</button>
+          </div>
+        </div>
+
       </div>
 
       <div class="class-search pad cf">
         <span class="label">Search</span>
         <div class="bp-md-one-third float--left space--bottom space--right">
-          <input class="text-input" ng-model="searchTrans" placeholder="Enter Name, Email">
+          <input class="text-input" ng-model="searchTrans" placeholder="Search Code, Email, Transaction ID">
         </div>
         
       </div>
 
-      <div class="pad" ng-show="!isUpdatePackage">
+      <div class="pad">
         <table class="data-table">
           <thead>
             <tr>
+              <th>Date Generated</th>
               <th>Transaction</th>
               <th>Sender</th>
+              <th>Sender's Email</th>
               <th>Receiver</th>
-              <th>Email</th>
+              <th>Receiver's Email</th>
               <th>Code</th>
               <th>Pin</th>
-              <th>Credits</th>
-              <th>Price</th>
-              <th>Date</th>
-              <th>Redeemed</th>
+              <th>Package</th>
+              <th>Date Redeemed</th>
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="transaction in transactions | search:'trans_info.transaction,transaction.receiver_name,transaction.sender_name, transaction.receiver_email':searchTrans">
+            <tr ng-repeat="transaction in transactions | search:'trans_info.transaction,code,receiver_email':searchTrans">
+              <td>{{ transaction.create_at}}</td>
               <td>{{ getTransId(transaction) }}</td>
-              <td>{{ transaction.sender_name }}</td>
-              <td>{{ transaction.receiver_name }} </td>
-              <td>{{ transaction.receiver_email}}</td>
+              <td>{{ transaction.sender_name }} </td>
+              <td>{{ transaction.sender_email }}</td>
+              <td>{{ transaction.receiver_name }}</td>
+              <td>{{ transaction.receiver_email }} </td>
               <td>{{ transaction.code }}</td>
-              <td>{{ transaction.pin }} </td>
+              <td>{{ transaction.pin }}</td>
               <td>{{ transaction.credits }} Ride<span ng-if="transaction.credits > 1">s</span></td>
+              <td>{{ transaction.redeem_date }}</td>
               <td>
-                <small>PHP</small>
-                <span ng-if="transaction.is_free">0.00</span> 
-                <span ng-if="!transaction.is_free">{{ transaction.amount }}</span>
-              </td>
-              <td>{{ transaction.create_at }}</td>
-              <td><span ng-if="!transaction.is_redeemed">NO</span><span ng-if="transaction.is_redeemed">YES</span></td>
-
             </tr>
           </tbody>
         </table>

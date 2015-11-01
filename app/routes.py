@@ -100,7 +100,8 @@ routes.prefix('/admin', [
 
     ('get', '/export/download-bookings', 'admin.export.download_bookings'),
     ('get', '/export/waitlist', 'admin.export.waitlist'),
-    ('get', '/export/download-user-accounts', 'admin.export.download_user_accounts')
+    ('get', '/export/download-user-accounts', 'admin.export.download_user_accounts'),
+    ('get', '/export/download-gift-cards-report', 'admin.export.download_gift_cards_report')
 ])
 
 routes.prefix('/api', [

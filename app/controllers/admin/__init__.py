@@ -356,7 +356,7 @@ def redeem_gc(self):
                     transaction = UserPackage()
                     transaction.user_id = user._id
                     transaction.package_id = package._id
-                    transaction.package_name = package.name
+                    transaction.package_name = 'GC - ' + str(gift_certificate.credits) + ' Rides'
                     transaction.package_fee = package.fee
                     transaction.package_ft = package.first_timer
                     transaction.credit_count = gift_certificate.credits

@@ -70,7 +70,7 @@ class UserProduct(Model):
 
 class GiftCertificate(Model):
     __collection__ = 'gift_certificates'
-    # __lazy__ = False
+    __lazy__ = False
     code = StringField(required=True, unique=True)
     pin = IntField(required=True)
     package_id = ReferenceField(reference_document_type=Package, required=False)

@@ -17,13 +17,29 @@ def find(self):
     page_limit = 10
     page = 0
     transactions = []
-    total = yield GiftCertificate.objects.count();
+
+    startDate = self.get_query_argument('fromDate')
+    endDate = self.get_query_argument('toDate')
+    isRedeemed = (self.get_query_argument('isRedeemed') == 'true')
+    
+    fromDate = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
+    if startDate:
+        fromDate = datetime.strptime(startDate, '%Y-%m-%d')
+    toDate = datetime.now() + timedelta(days=7)
+    if endDate: 
+        toDate = datetime.strptime(endDate, '%Y-%m-%d')
+
+    gc_query = GiftCertificate.objects.filter(create_at__gte=fromDate, create_at__lte=toDate, is_redeemed=isRedeemed)
+    total = (yield GiftCertificate.objects.filter(create_at__gte=fromDate, create_at__lte=toDate, is_redeemed=isRedeemed).count());
+
     if self.get_argument('page'):
         page = int(self.get_argument('page'))
     gift_certificates = []
+
     if(total - (page * page_limit)) > 0:
-        gift_certificates = yield GiftCertificate.objects.order_by('create_at', direction=DESCENDING) \
-                    .skip(page * page_limit).limit(page_limit).find_all()
+        gc_query.order_by('create_at', direction=DESCENDING) \
+                .skip(page * page_limit).limit(page_limit)
+        gift_certificates = yield gc_query.find_all()
     gift_certificates = create_at_gmt8(gift_certificates)
     self.render_json(gift_certificates)
 

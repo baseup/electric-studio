@@ -2056,6 +2056,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
 ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, TransactionService, PackageService, GiftCardService, UserService) {
 
   var qstring = $location.search();
+  
 
   if (qstring.s == 'error') {
     $.Alert('Transaction failed');
@@ -2071,22 +2072,91 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
 
   $scope.currentPage = 0;
   $scope.hasNext = true;
-  $scope.transactions = GiftCardService.query();
+  var isRedeemed = ($location.url() == '/gc-redemption');
+  $scope.transactions = GiftCardService.query({ isRedeemed:isRedeemed });
   
   $scope.transactions.$promise.then(function (data) {
     $scope.transactions = data;
   });
 
+  var from_input = angular.element('#input_from').pickadate({
+      format: 'yyyy-mm-dd',
+      formatSubmit: 'yyyy-mm-dd',
+      today: false
+    }), from_picker = from_input.pickadate('picker')
+
+  var to_input = angular.element('#input_to').pickadate({
+      format: 'yyyy-mm-dd',
+      formatSubmit: 'yyyy-mm-dd',
+      today: false
+    }), to_picker = to_input.pickadate('picker')
+
+
+  var date = new Date();
+  from_picker.set('select', new Date());
+  to_picker.set('select', [date.getFullYear(), date.getMonth(), date.getDate() + 7]);
+
+  $scope.gcDateFilter = {};
+  $scope.gcDateFilter.fromDate = from_picker.get('value');
+  $scope.gcDateFilter.toDate = to_picker.get('value');
+
+  // Check if there’s a “from” or “to” date to start with.
+  if (from_picker.get('value')) {
+    to_picker.set('min', from_picker.get('select'));
+  }
+  if (to_picker.get('value')) {
+    from_picker.set('max', to_picker.get('select'));
+  }
+
+  // When something is selected, update the “from” and “to” limits.
+  from_picker.on('set', function (event) {
+    if (event.select) {
+      to_picker.set('min', from_picker.get('select'));
+    }
+    else if ('clear' in event) {
+      to_picker.set('min', false);
+    }
+  });
+
+  to_picker.on('set', function (event) {
+    if (event.select) {
+      from_picker.set('max', to_picker.get('select'));
+    }
+    else if ('clear' in event) {
+      from_picker.set('max', false);
+    }
+  });
+
+  $scope.exportGCListByDate = function () {
+    if ($scope.gcDateFilter) {
+      var fromDate = $scope.gcDateFilter.fromDate;
+      var toDate = $scope.gcDateFilter.toDate;
+
+      $scope.transactions = GiftCardService.query({ fromDate:fromDate, toDate:toDate, isRedeemed:isRedeemed });
+      $scope.transactions.$promise.then(function (data) {
+        $scope.transactions = data;
+      });
+
+      window.location = '/admin/export/download-gift-cards-report?fromDate=' + fromDate + '&toDate=' + toDate + '&isRedeemed='+isRedeemed;
+
+    } else {
+      $.Alert('Please select a valid date values');
+    }
+  }
+
+
   UserService.query({ deactivated: true}, function (accounts) {
     $scope.accounts = accounts;
     var select = angular.element('#gc-account-selector')[0].selectize;
+    select.settings.searchField = ['text', 'email'];
     angular.forEach(accounts, function (account) {
-      if (account) select.addOption({ value: account._id, text: account.first_name+ ' ' + account.last_name });
+      if (account) select.addOption({ value: account._id, text: account.first_name+ ' ' + account.last_name, email: account.email });
     });
   });
 
   PackageService.query(function (packages) {
     var select = angular.element('.gc-package-selector')[0].selectize;
+
     var select2 = angular.element('.gc-package-selector2')[0].selectize;
     angular.forEach(packages, function (pack) {
       if (pack){
@@ -2118,11 +2188,13 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
   }
 
     $scope.prevPage = function (event) {
-      console.log($scope.currentPage)
+      var fromDate = $scope.gcDateFilter.fromDate;
+      var toDate = $scope.gcDateFilter.toDate;
+
       if ($scope.currentPage > 0) {
         $scope.currentPage -=1;
       }    
-        $scope.transactions = GiftCardService.query({ page : $scope.currentPage });
+        $scope.transactions = GiftCardService.query({ page : $scope.currentPage, fromDate:fromDate, toDate:toDate, isRedeemed:isRedeemed });
         $scope.transactions.$promise.then(function (data) {
           $scope.transactions = data;
         });
@@ -2131,9 +2203,12 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
     }
 
     $scope.nextPage = function (event) {    
-      $scope.transactions = GiftCardService.query({ page : $scope.currentPage+1 });
+      var fromDate = $scope.gcDateFilter.fromDate;
+      var toDate = $scope.gcDateFilter.toDate;
+
+      $scope.transactions = GiftCardService.query({ page : $scope.currentPage+1, fromDate:fromDate, toDate:toDate, isRedeemed:isRedeemed });
       $scope.transactions.$promise.then(function (data) {
-        if(data.length > 0){
+        if(data.length >= 10){
           $scope.transactions = data;
           $scope.currentPage += 1; 
         }
