@@ -2144,6 +2144,15 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
     }
   }
 
+  $scope.searchGC = function(queryString){
+      var fromDate = $scope.gcDateFilter.fromDate;
+      var toDate = $scope.gcDateFilter.toDate;
+
+      $scope.transactions = GiftCardService.query({ fromDate:fromDate, toDate:toDate, isRedeemed:isRedeemed, queryString:queryString });
+      $scope.transactions.$promise.then(function (data) {
+        $scope.transactions = data;
+      });
+  }
 
   UserService.query({ deactivated: true}, function (accounts) {
     $scope.accounts = accounts;
@@ -2297,7 +2306,7 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
 
       console.log($scope.receiverEmail);
       if ($scope.receiverEmail){
-        $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
+        $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph.', function () {
             
             if ($scope.gcMessage == undefined){
               $scope.gcMessage = ""

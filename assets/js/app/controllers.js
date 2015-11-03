@@ -523,7 +523,9 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
   }
 });
 
-ctrls.controller('RatesCtrl', function ($scope, $http, $route, $location, UserService, PackageService, GCRedeemService) {
+ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $location, UserService, PackageService, GCRedeemService) {
+
+  var qstring = $location.search();
 
   if (angular.element('#rates-section').offset()) {
     var scrollableView = angular.element('#rates-section').offset().top;
@@ -596,7 +598,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route, $location, UserSe
   $scope.redeemGC = function(){
 
     if (!$scope.loginUser) {
-      $.Alert('Please log in to your Electric account.');
+      $.Alert('Please log in to your Electric Studio Account or create an account');
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
@@ -605,8 +607,28 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route, $location, UserSe
     if ($scope.gcPin && $scope.gcCode) {
 
       var redeemSuccess = function () {
-        $.Alert('GC redeemed.');
+
+        UserService.get(function (user) {
+
+          $scope.loginUser =  user;
+          $scope.reloadUser(user);
+
+        });
+
+        $.Alert("Gift Card value is now loaded to your account");
+
+        $timeout(goToAccountPage, 500);
+
+        // $route.reload();
+        // $location.path('/account');
       }
+
+      var goToAccountPage = function() {
+        window.location = "/#/account";
+        window.location.reload();
+      }
+
+    
 
       var redeemFailed = function (error) {
         $.Alert('Error: ' + error.data);
@@ -615,12 +637,12 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route, $location, UserSe
       var data = {}
       data.code = $scope.gcCode;
       data.pin = $scope.gcPin;
-      $route.reload();
+      
 
       GCRedeemService.redeem(data).$promise.then(redeemSuccess, redeemFailed);
 
     }else{
-      $.Alert('Please complete your form');  
+      $.Alert('Oops. We need more details from you.');  
     }    
   }
 
@@ -659,9 +681,9 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route, $location, UserSe
 
             var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + jsonPackage._id + 
                                         "&success=True&email=" + $scope.receiverEmail + $scope.gcMessage +
-                                        "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver; 
+                                        "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail; 
             var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + jsonPackage._id + "&success=True&email=" + $scope.receiverEmail + 
-                          $scope.gcMessage + "&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver; 
+                          $scope.gcMessage + "&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail; 
             var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False";
       
             $('input#ipn_notification_url').val(ipn_notification_url);
@@ -674,28 +696,9 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route, $location, UserSe
         $.Alert('Please enter valid recipient email.');
       }  
     }else{
-      $.Alert('Please complete your form');  
+      $.Alert('Oops. We need more details from you.');  
     }
 
-    // if(arg == 'confirm_buy'){
-   
-    // }else{
-    //   // Check if required fields are present
-
-
-    //   if($scope.gcPackage && $scope.gcReceiver && $scope.gcSender){
-    //     if(!$scope.loginUser || arg=='receiver'){
-          
-    //       angular.element('#enter-email-modal').Modal();
-    //     }else{
-          
-    //       $scope.receiverEmail = $scope.loginUser.email;
-    //       $scope.buyGC('confirm_buy');
-    //     }
-    //   }else{
-    //     $.Alert('Please complete your form');  
-    //   }
-    // }
   }
 
 });

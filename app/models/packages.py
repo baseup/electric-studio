@@ -78,6 +78,7 @@ class GiftCertificate(Model):
     trans_info = StringField(default=None)
     pptx = StringField(default=None)
     sender_name = StringField(required=False)
+    sender_email = StringField(required=False)
     receiver_name = StringField(required=False)
     receiver_email = StringField(required=False)
     message = StringField(required=False, default=None)

@@ -251,6 +251,7 @@ def buy_gc(self):
                 gift_certificate.code = code
                 gift_certificate.pin = pin
                 gift_certificate.receiver_email = self.get_argument('email')
+                gift_certificate.sender_email = self.get_argument('sender_email')
                 gift_certificate.sender_name = self.get_argument('sender_name')
                 gift_certificate.receiver_name = self.get_argument('receiver_name')
                 gift_certificate.pptx = pp_tx
@@ -338,12 +339,15 @@ def redeem_gc(self):
             code = self.get_argument('code')
             pin = self.get_argument('pin')
             gift_certificates = yield GiftCertificate.objects.filter(code=code, pin=pin, is_redeemed=False).find_all()
-
+            print(gift_certificate.package_id)
+            print("testung ")
             if gift_certificates:
                 gift_certificate = gift_certificates[0]
 
                 # get user and package
-                package = yield Package.objects.get()
+                package = yield Package.objects.get(gift_certificate.package_id)
+
+
                 user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
                 user = yield User.objects.get(user_id)
 
@@ -355,10 +359,10 @@ def redeem_gc(self):
                     # save this into user transaction
                     transaction = UserPackage()
                     transaction.user_id = user._id
-                    transaction.package_id = package._id
+                    transaction.package_id = gift_certificate.package_id
                     transaction.package_name = 'GC - ' + str(gift_certificate.credits) + ' Rides'
-                    transaction.package_fee = package.fee
-                    transaction.package_ft = package.first_timer
+                    transaction.package_fee = gift_certificate.amount
+                    transaction.package_ft = False
                     transaction.credit_count = gift_certificate.credits
                     transaction.remaining_credits = gift_certificate.credits
                     transaction.expiration = gift_certificate.validity
@@ -420,6 +424,7 @@ def ipn_gc(self):
                 gift_certificate.code = code
                 gift_certificate.pin = pin
                 gift_certificate.receiver_email = self.get_argument('email')
+                gift_certificate.sender_email = self.get_argument('sender_email')
                 gift_certificate.sender_name = self.get_argument('sender_name')
                 gift_certificate.receiver_name = self.get_argument('receiver_name')
                 gift_certificate.pptx = tx
@@ -429,7 +434,6 @@ def ipn_gc(self):
                     gift_certificate.amount = package.fee
 
                 gift_certificate.trans_info = str(data)
-                gift_certificate.receiver_email = self.get_argument('email')
 
                 message = self.get_argument('message')
                 if message:
@@ -448,6 +452,14 @@ def ipn_gc(self):
                 content = str(self.render_string('emails/gc', gc=gc, site=site_url, package=package.name), 'UTF-8')
                 yield self.io.async_task(send_email, user=receiver, content=content, subject='Gift Card')
                 
+                # TODO: Needed email for sender that the gift card has been sent to the receiver via email
+                # This one need template/content as of now we havent
+                sender = {
+                    'email' : self.get_argument('sender_email'),
+                    'first_name' : self.get_argument('sender_name'),
+                    'last_name' : ''
+                }
+
             except :
                 value = sys.exc_info()[1]
                 self.set_status(403)

@@ -18,6 +18,7 @@ def find(self):
     page = 0
     transactions = []
 
+    searchKeyword = self.get_query_argument('queryString')
     startDate = self.get_query_argument('fromDate')
     endDate = self.get_query_argument('toDate')
     isRedeemed = (self.get_query_argument('isRedeemed') == 'true')
@@ -29,8 +30,9 @@ def find(self):
     if endDate: 
         toDate = datetime.strptime(endDate, '%Y-%m-%d')
 
-    gc_query = GiftCertificate.objects.filter(create_at__gte=fromDate, create_at__lte=toDate, is_redeemed=isRedeemed)
-    total = (yield GiftCertificate.objects.filter(create_at__gte=fromDate, create_at__lte=toDate, is_redeemed=isRedeemed).count());
+    # create_at__gte=fromDate, create_at__lte=toDate, 
+    gc_query = GiftCertificate.objects.filter(is_redeemed=isRedeemed)
+    total = (yield GiftCertificate.objects.filter(is_redeemed=isRedeemed).count());
 
     if self.get_argument('page'):
         page = int(self.get_argument('page'))
@@ -41,6 +43,13 @@ def find(self):
                 .skip(page * page_limit).limit(page_limit)
         gift_certificates = yield gc_query.find_all()
     gift_certificates = create_at_gmt8(gift_certificates)
+
+    # gift_certificates_filtered = []
+    # if searchKeyword:
+    #     for gift_certificate in gift_certificates:
+    #         if searchKeyword in gift_certificate.code or searchKeyword in gift_certificate.receiver_email or searchKeyword in gift_certificate.pptx or searchKeyword in gift_certificate.sender_email:
+    #             gift_certificates_filtered = gift_certificate
+
     self.render_json(gift_certificates)
 
 def find_one(self, id):
