@@ -215,7 +215,10 @@ def redeem_gc(self):
                     transaction = UserPackage()
                     transaction.user_id = user._id
                     transaction.package_id = gift_certificate.package_id._id
-                    transaction.package_name = 'GC - ' + str(gift_certificate.credits) + ' Rides'
+                    rides = ' Ride'
+                    if gift_certificate.credits > 1:
+                        rides = ' Rides'
+                    transaction.package_name = 'GC - ' + str(gift_certificate.credits) + rides
                     transaction.package_fee = gift_certificate.amount
                     transaction.package_ft = False
                     transaction.credit_count = gift_certificate.credits

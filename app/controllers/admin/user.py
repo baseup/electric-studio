@@ -33,7 +33,6 @@ def find(self):
         if str_skip:
             skip_val = int(str_skip)
         if get_all_flag is None:
-            print("account is paginated")
             query.skip(skip_val).limit(15)
         
     users = yield query.find_all()
