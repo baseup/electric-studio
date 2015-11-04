@@ -124,6 +124,7 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   var workouts = angular.element('#workouts-section');
   var firstRide = angular.element('#firstride-section');
   var faq = angular.element('#faq');
+  var packages_section = angular.element('#packages');
 
   if (aboutUs.length) {
     var scrollableView = aboutUs.offset().top;
@@ -138,6 +139,13 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
   } 
   
+  if (packages_section.length && window.location.hash.indexOf('package') > 0) {
+
+    var scrollableView = packages_section.offset().top;
+    angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+    $.Alert("Gift Card value is now loaded to your account");
+
+  };
 
   if (faq.length) {;
     angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
@@ -589,7 +597,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
         return;
       }
 
-      $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
+      $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
         angular.element('#payForm-' + index).submit();
       });
     });
@@ -609,26 +617,12 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
       var redeemSuccess = function () {
 
         UserService.get(function (user) {
-
           $scope.loginUser =  user;
           $scope.reloadUser(user);
-
         });
-
-        $.Alert("Gift Card value is now loaded to your account");
-
-        $timeout(goToAccountPage, 500);
-
-        // $route.reload();
-        // $location.path('/account');
+        window.location = "/#/account#package"
+        window.location.reload()
       }
-
-      var goToAccountPage = function() {
-        window.location = "/#/account";
-        window.location.reload();
-      }
-
-    
 
       var redeemFailed = function (error) {
         $.Alert('Error: ' + error.data);
@@ -638,7 +632,6 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
       data.code = $scope.gcCode;
       data.pin = $scope.gcPin;
       
-
       GCRedeemService.redeem(data).$promise.then(redeemSuccess, redeemFailed);
 
     }else{
@@ -658,17 +651,19 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
 
   $scope.buyGC = function (arg) {
 
-    if(arg =='sender'){ 
+    if(arg =='sender'){
+      var receiverEmail = $scope.senderEmail;
       $scope.senderIsReceiver = true;
-      $scope.receiverEmail = $scope.senderEmail;
+      // $scope.receiverEmail = $scope.senderEmail;
     }else{
       $scope.senderIsReceiver = false;
+      var receiverEmail = $scope.receiverEmail;
     }
 
     if ($scope.gcPackage && $scope.gcReceiver && $scope.gcSender) {
-      if($scope.receiverEmail){
+      if(receiverEmail){
           // Do other validations like email validations
-        $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
+        $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
             
             if ($scope.gcMessage == undefined){
               $scope.gcMessage = "" 
@@ -680,9 +675,9 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
             var jsonPackage = JSON.parse($scope.gcPackage);
 
             var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + jsonPackage._id + 
-                                        "&success=True&email=" + $scope.receiverEmail + $scope.gcMessage +
+                                        "&success=True&email=" + receiverEmail + $scope.gcMessage +
                                         "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail; 
-            var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + jsonPackage._id + "&success=True&email=" + $scope.receiverEmail + 
+            var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + jsonPackage._id + "&success=True&email=" + receiverEmail + 
                           $scope.gcMessage + "&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail; 
             var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False";
       

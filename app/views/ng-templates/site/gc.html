@@ -16,7 +16,7 @@
         <div class="row">
         <form id="payForm" ng-controller="RatesCtrl" action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
           <div class="col-md-6 card-holder">
-            <small class="label">INPUT GIFT DETAILS</small>
+            <small class="label">ENTER GIFT DETAILS</small>
             <div class="card-input">
               <img src="assets/images/gift-card-title.png">
 
@@ -24,7 +24,7 @@
                 <div class="col-md-8">
                   <input ng-model="gcReceiver" type="text" placeholder="TO">
                   <input ng-model="gcSender" type="text" placeholder="FROM">
-                  <small class="label">VALIDITY: {{ gcValidity }} DAYS</small>
+                  <small class="label">VALIDITY: {{ gcValidity }} DAYS from the time the Gift Card is loaded into the account</small>
                 </div>
                 <div class="col-md-4">
                   <select class="rides" ng-change="selectGCPackage()" ng-model="gcPackage">

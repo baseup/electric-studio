@@ -274,7 +274,6 @@ def buy_gc(self):
 
                 gift_certificate.trans_info = str(trans_info)
                 gift_certificate.receiver_email = self.get_argument('email')
-
                 message = self.get_argument('message')
 
                 if message:
@@ -292,21 +291,36 @@ def buy_gc(self):
                 }
 
                 gc = gift_certificate.to_dict()
-                site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+                site_url = url = self.request.protocol + '://' + self.request.host + '/#/account'
+                subject = 'Electric Studio Gift Card from ' + self.get_argument('sender_name') 
                 content = str(self.render_string('emails/gc', gc=gc, site=site_url, package=package.name), 'UTF-8')
-                yield self.io.async_task(send_email, user=receiver, content=content, subject='Gift Card')
+                yield self.io.async_task(send_email, user=receiver, content=content, subject=subject)
                 
+                if self.get_argument('sender_email'):
+                    sender = {
+                        'email' : self.get_argument('sender_email'),
+                        'first_name' : self.get_argument('sender_name'),
+                        'last_name': ''
+                    }
+
+                    gc = gift_certificate.to_dict()
+                    site_url = url = self.request.protocol + '://' + self.request.host + '/#/account'
+                    subject = 'You send Electric Studio Gift Card to ' + self.get_argument('receiver_name') 
+                    content = str(self.render_string('emails/gc', gc=gc, site=site_url, package=package.name), 'UTF-8')
+                    yield self.io.async_task(send_email, user=sender, content=content, subject=subject)
+
+
                 if self.get_secure_cookie('admin') and isAdmin:
-                    self.redirect('/admin/#/gift-cards?s=success&msg=Success') 
+                    self.redirect('/admin/#/gc-generation?s=success&msg=Success! Your Gift Card has been sent') 
                 else:
-                    self.redirect('/#/gift-cards?s=success&msg=Success') 
+                    self.redirect('/#/gift-cards?s=success&msg=Success! Your Gift Card has been sent')
                 
-            except :
+            except:
                 value = sys.exc_info()[1]
                 self.set_status(403)
             
                 if self.get_secure_cookie('admin') and isAdmin:
-                    self.redirect('/admin/#/gift-cards?s=error&msg=' + str(value))
+                    self.redirect('/admin/#/gc-generation?s=error&msg=' + str(value))
                     return
                 else:
                     self.redirect('/#/gift-cards?s=error&msg=' + str(value))
@@ -314,14 +328,14 @@ def buy_gc(self):
         else:
             error = pp_data.replace('\n',' : ')
             if self.get_secure_cookie('admin') and isAdmin:
-                self.redirect('/admin/#/gift-cards?s=success&msg=' + error)   
+                self.redirect('/admin/#/gc-generation?s=success&msg=' + error)   
                 return
             else:
                 self.redirect('/#/gift-cards?s=success&msg=' + error) 
                 return
     else:
         if self.get_secure_cookie('admin') and isAdmin:
-            self.redirect('/admin/#/gift-cards?s=success&msg=Cancelled') 
+            self.redirect('/admin/#/gc-generation?s=success&msg=Cancelled') 
             return
         else:
             self.redirect('/#/gift-cards?s=success&msg=Cancelled')      
@@ -339,14 +353,12 @@ def redeem_gc(self):
             code = self.get_argument('code')
             pin = self.get_argument('pin')
             gift_certificates = yield GiftCertificate.objects.filter(code=code, pin=pin, is_redeemed=False).find_all()
-            print(gift_certificate.package_id)
-            print("testung ")
+
             if gift_certificates:
                 gift_certificate = gift_certificates[0]
 
                 # get user and package
                 package = yield Package.objects.get(gift_certificate.package_id)
-
 
                 user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
                 user = yield User.objects.get(user_id)

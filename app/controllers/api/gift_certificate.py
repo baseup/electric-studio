@@ -99,10 +99,8 @@ def update(self, id):
         
         if gift_certificate:
             gift_certificate.is_redeemed = True
-            gc_dict = gift_certificate.to_dict()
-
             # get user and package
-            package = yield Package.objects.get(gc_dict['package_id'])
+            package = yield Package.objects.get(gift_certificate.package_id._id)
 
             # ES account is required to redeem
             gift_certificate.redeemer_es_id = user._id
@@ -112,7 +110,7 @@ def update(self, id):
             transaction = UserPackage()
             transaction.user_id = user._id
             transaction.package_id = package._id
-            transaction.package_name = package.name
+            transaction.package_name = 'GC - ' + str(gift_certificate.credits) + ' Rides'
             transaction.package_fee = package.fee
             transaction.package_ft = package.first_timer
             transaction.credit_count = gift_certificate.credits
@@ -128,7 +126,7 @@ def update(self, id):
             user = yield user.save()
 
             self.render_json(gift_certificate.to_dict())
-
+            return
         else:
             self.set_status(403)
             self.write('Invalid code and pin')

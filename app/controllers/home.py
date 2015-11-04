@@ -203,11 +203,7 @@ def redeem_gc(self):
             gift_certificate = yield GiftCertificate.objects.get(code=code, pin=pin, is_redeemed=False)
 
             if gift_certificate:
-                gc_dict = gift_certificate.to_dict()
-                package_id = gc_dict['package_id']
                 # get user and package
-                package = yield Package.objects.get(package_id)
-
                 user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
                 user = yield User.objects.get(user_id)
                 if user.status != 'Frozen' and user.status != 'Unverified':
@@ -218,17 +214,17 @@ def redeem_gc(self):
                     # # save this into user transaction
                     transaction = UserPackage()
                     transaction.user_id = user._id
-                    transaction.package_id = package._id
-                    transaction.package_name = package.name
-                    transaction.package_fee = package.fee
-                    transaction.package_ft = package.first_timer
-                    transaction.credit_count = package.credits
-                    transaction.remaining_credits = package.credits
-                    transaction.expiration = package.expiration
-                    transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
+                    transaction.package_id = gift_certificate.package_id._id
+                    transaction.package_name = 'GC - ' + str(gift_certificate.credits) + ' Rides'
+                    transaction.package_fee = gift_certificate.amount
+                    transaction.package_ft = False
+                    transaction.credit_count = gift_certificate.credits
+                    transaction.remaining_credits = gift_certificate.credits
+                    transaction.expiration = gift_certificate.validity
+                    transaction.expire_date = datetime.now() + timedelta(days=gift_certificate.validity)
                     transaction.trans_id = gift_certificate.pptx
                     transaction.trans_info = gift_certificate.trans_info
-                    user.credits += package.credits
+                    user.credits += gift_certificate.credits
 
                     gift_certificate = yield gift_certificate.save()
                     transaction = yield transaction.save()
@@ -236,13 +232,14 @@ def redeem_gc(self):
 
                     gift_certificate = yield gift_certificate.save()
                     self.render_json(gift_certificate.to_dict())
+                    return
                 else:
                     self.set_status(403)
                     self.write("Access Denied")
                     self.finish()
             else:
                 self.set_status(403)
-                self.write("No gc found")
+                self.write('Invalid code and pin')
                 self.finish()
 
         except :
