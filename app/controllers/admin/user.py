@@ -19,6 +19,7 @@ def find(self):
     deactivated = self.get_query_argument('deactivated')
     search = self.get_query_argument('search');
     query = User.objects.order_by('update_at',direction=DESCENDING).filter(status__ne='Deleted')
+    get_all_flag = self.get_query_argument('get_all')
 
     if not deactivated:
         query.filter(status__ne='Deactivated')
@@ -31,8 +32,9 @@ def find(self):
         skip_val = 0
         if str_skip:
             skip_val = int(str_skip)
-
-        query.skip(skip_val).limit(15)
+        if get_all_flag is None:
+            print("account is paginated")
+            query.skip(skip_val).limit(15)
         
     users = yield query.find_all()
 

@@ -2154,7 +2154,7 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
       });
   }
 
-  UserService.query({ deactivated: true}, function (accounts) {
+  UserService.query({ deactivated: true, get_all:true}, function (accounts) {
     $scope.accounts = accounts;
     var select = angular.element('#gc-account-selector')[0].selectize;
     select.settings.searchField = ['text', 'email'];
