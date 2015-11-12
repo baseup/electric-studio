@@ -99,12 +99,14 @@
           <dd class="bp-md-one-half">
           <select id="gc-account-selector" ng-model="gcAccount" class="select">
             <option selected value="">Account</option>
-            <option ng-repeat="account in accounts" value="{{ account._id }}">{{ account.first_name }} {{ account.last_name }}</option>
+            <option ng-repeat="account in accounts" value="{{ account._id }}">
+              {{ account.first_name }} {{ account.last_name }} - {{ account.email }}
+            </option>
           </select>
         </dl>
       </div>   
 
-      <button class="btn btn--medium btn--primary space--top modal-close ng-scope" ng-click="redeemGC()">Redeem</button>   
+      <button ng-disabled="redeemingGC" class="btn btn--medium btn--primary space--top modal-close ng-scope" ng-click="redeemGC()">Redeem</button>   
       
      
     </div>

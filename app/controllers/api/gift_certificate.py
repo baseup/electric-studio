@@ -31,8 +31,13 @@ def find(self):
         toDate = datetime.strptime(endDate, '%Y-%m-%d')
 
     # create_at__gte=fromDate, create_at__lte=toDate, 
-    gc_query = GiftCertificate.objects.filter(is_redeemed=isRedeemed)
-    total = (yield GiftCertificate.objects.filter(is_redeemed=isRedeemed).count());
+    gc_query = GiftCertificate.objects
+    if isRedeemed:
+        gc_query.filter(is_redeemed=isRedeemed)
+
+    total = 0
+    if isRedeemed: total = (yield GiftCertificate.objects.filter(is_redeemed=isRedeemed).count());
+    else: total = (yield GiftCertificate.objects.count());
 
     if self.get_argument('page'):
         page = int(self.get_argument('page'))
@@ -94,45 +99,50 @@ def update(self, id):
         code = redeem_data['code']
         pin = redeem_data['pin']
         user_id = redeem_data['user_id']
-        gift_certificate = yield GiftCertificate.objects.get(code=code, pin=pin, is_redeemed=False) # 
+        gift_certificate = yield GiftCertificate.objects.get(code=code, pin=pin) # 
         user = yield User.objects.get(user_id)
         
         if gift_certificate:
-            gift_certificate.is_redeemed = True
-            # get user and package
-            package = yield Package.objects.get(gift_certificate.package_id._id)
+            if gift_certificate.is_redeemed:
+                self.set_status(403)
+                self.write('Gift card has already been redeemed.')
+                return self.finish()
+            else:
 
-            # ES account is required to redeem
-            gift_certificate.redeemer_es_id = user._id
-            gift_certificate.redeem_date = datetime.now()
+                gift_certificate.is_redeemed = True
+                # get user and package
+                package = yield Package.objects.get(gift_certificate.package_id._id)
 
-            # # save this into user transaction
-            transaction = UserPackage()
-            transaction.user_id = user._id
-            transaction.package_id = package._id
-            rides = ' Ride'
-            if gift_certificate.credits > 1:
-                rides = ' Rides'
-            transaction.package_name = 'GC - ' + str(gift_certificate.credits) + rides
-            transaction.package_fee = package.fee
-            transaction.package_ft = package.first_timer
-            transaction.credit_count = gift_certificate.credits
-            transaction.remaining_credits = gift_certificate.credits
-            transaction.expiration = gift_certificate.validity
-            transaction.expire_date = datetime.now() + timedelta(days=gift_certificate.validity)
-            transaction.trans_id = gift_certificate.pptx
-            transaction.trans_info = gift_certificate.trans_info
-            user.credits += gift_certificate.credits
+                # ES account is required to redeem
+                gift_certificate.redeemer_es_id = user._id
+                gift_certificate.redeem_date = datetime.now()
 
-            gift_certificate = yield gift_certificate.save()
-            transaction = yield transaction.save()
-            user = yield user.save()
+                # # save this into user transaction
+                transaction = UserPackage()
+                transaction.user_id = user._id
+                transaction.package_id = package._id
+                rides = ' Ride'
+                if gift_certificate.credits > 1:
+                    rides = ' Rides'
+                transaction.package_name = 'GC - ' + str(gift_certificate.credits) + rides
+                transaction.package_fee = package.fee
+                transaction.package_ft = package.first_timer
+                transaction.credit_count = gift_certificate.credits
+                transaction.remaining_credits = gift_certificate.credits
+                transaction.expiration = gift_certificate.validity
+                transaction.expire_date = datetime.now() + timedelta(days=gift_certificate.validity)
+                transaction.trans_id = gift_certificate.pptx
+                transaction.trans_info = gift_certificate.trans_info
+                user.credits += gift_certificate.credits
 
-            self.render_json(gift_certificate.to_dict())
-            return
+                gift_certificate = yield gift_certificate.save()
+                transaction = yield transaction.save()
+                user = yield user.save()
+
+                return self.render_json(gift_certificate.to_dict())
         else:
             self.set_status(403)
-            self.write('Invalid code and pin')
+            self.write('Incorrect card code or pin. Please try again.')
             self.finish()
     except :
         value = sys.exc_info()[1]

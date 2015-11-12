@@ -37,6 +37,7 @@
               <th>Date Redeemed</th>
               <th>Package</th>
               <th>Transaction</th>
+              <th>GC Code</th>
               <th>Sender's Email</th>
               <th>Receiver's Email</th>
               <th>ES Account</th>
@@ -47,6 +48,7 @@
               <td>{{ transaction.redeem_date }}</td>
               <td>{{ transaction.credits }} Ride<span ng-if="transaction.credits > 1">s</span></td>
               <td>{{ getTransId(transaction) }}</td>
+              <td>{{ transaction.code }}</td>
               <td>{{ transaction.sender_email}}</td>
               <td>{{ transaction.receiver_email }}</td>
               <td>{{ transaction.redeemer_es_id.email }} </td>
@@ -85,12 +87,14 @@
           <dd class="bp-md-one-half">
           <select id="gc-account-selector" ng-model="gcAccount" class="select">
             <option selected value="">Account</option>
-            <option ng-repeat="account in accounts" value="{{ account._id }}">{{ account.first_name }} {{ account.last_name }}</option>
+            <option ng-repeat="account in accounts" value="{{ account._id }}">
+              {{ account.first_name }} {{ account.last_name }} - {{ account.email }}
+            </option>
           </select>
         </dl>
       </div>   
 
-      <button class="btn btn--medium btn--primary space--top modal-close ng-scope" ng-click="redeemGC()">Redeem</button>   
+      <button ng-disabled="redeemingGC" class="btn btn--medium btn--primary space--top modal-close ng-scope" ng-click="redeemGC()">Redeem</button>   
       
      
     </div>

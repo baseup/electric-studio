@@ -85,8 +85,6 @@ def download_gift_cards_report(self):
             redeemer_email = None
             if gc.redeem_date:
                 redeem_date = gc.redeem_date.strftime('%Y-%m-%d')
-
-            print(gc.redeemer_es_id)
             if gc.redeemer_es_id:
                 redeemer_email = gc.redeemer_es_id.email
             writer.writerow({

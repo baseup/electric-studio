@@ -2178,6 +2178,7 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
   });
 
   $scope.getTransId = function (pac) {
+    if (pac.trans_id) return pac.trans_id;
     if (pac.trans_info) {
       if (!(pac.trans_info instanceof Object)) {
         try {
@@ -2266,14 +2267,14 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
         $.Alert(error.data);
       }
 
-      GiftCardService.create({}, data ).$promise.then(batchSuccess, batchFail);
+      GiftCardService.create(data).$promise.then(batchSuccess, batchFail);
 
     }else{
       $.Alert('Complete your form');
     }
   }
   $scope.redeemGC = function(){
-
+    $scope.redeemingGC = true;
     if ( $scope.gcCode && $scope.gcPin && $scope.gcAccount){
       var data = {
         code : $scope.gcCode,
@@ -2284,10 +2285,12 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
       var redeemSuccess = function () {
         $route.reload();
         $.Alert('Success')
+        $scope.redeemingGC = false;
       }
 
       var redeemFail = function (error) {
         $.Alert(error.data);
+        $scope.redeemingGC = false;
       }
       GiftCardService.redeem({ gcCode: $scope.gcCode }, data ).$promise.then(redeemSuccess, redeemFail);
     }else{
