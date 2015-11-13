@@ -28,7 +28,9 @@
                 </div>
                 <div class="col-md-4">
                   <select class="rides" ng-change="selectGCPackage()" ng-model="gcPackage">
-                    <option ng-repeat="package in packages" ng-if="!package.first_timer" value="{{ package }}"> {{ package.credits }} </option>
+                    <option ng-repeat="package in packages" value="{{ package }}"> 
+                      {{ package.credits }} {{ package.first_timer ? 'First Timer' : '' }}
+                    </option>
                   </select>
                   <small class="label fr">RIDES</small>
                 </div>

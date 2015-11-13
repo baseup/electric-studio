@@ -2169,10 +2169,8 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
     var select2 = angular.element('.gc-package-selector2')[0].selectize;
     angular.forEach(packages, function (pack) {
       if (pack){
-        if(!pack.first_timer){
-          select.addOption({ value: JSON.stringify(pack), text: pack.name }); 
-          select2.addOption({ value: JSON.stringify(pack), text: pack.name }); 
-        }
+        select.addOption({ value: JSON.stringify(pack), text: pack.name }); 
+        select2.addOption({ value: JSON.stringify(pack), text: pack.name }); 
       }
     });
   });
