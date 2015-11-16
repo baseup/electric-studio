@@ -76,7 +76,7 @@ class GiftCertificate(Model):
     package_id = ReferenceField(reference_document_type=Package, required=False)
     amount = DecimalField()
     trans_info = StringField(default=None)
-    pptx = StringField(default=None)
+    pptx = StringField(default=None, unique=True)
     sender_name = StringField(required=False)
     sender_email = StringField(required=False)
     receiver_name = StringField(required=False)

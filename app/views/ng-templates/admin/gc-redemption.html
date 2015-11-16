@@ -46,7 +46,7 @@
           <tbody>
             <tr ng-repeat="transaction in transactions | search:'trans_info.transaction,code,receiver_email':searchTrans">
               <td>{{ transaction.redeem_date }}</td>
-              <td>{{ transaction.credits }} Ride<span ng-if="transaction.credits > 1">s</span></td>
+              <td>{{ transaction.package_id.name }}</td>
               <td>{{ getTransId(transaction) }}</td>
               <td>{{ transaction.code }}</td>
               <td>{{ transaction.sender_email}}</td>

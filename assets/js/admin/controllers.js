@@ -2176,7 +2176,7 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
   });
 
   $scope.getTransId = function (pac) {
-    if (pac.trans_id) return pac.trans_id;
+    if (pac.pptx) return pac.pptx;
     if (pac.trans_info) {
       if (!(pac.trans_info instanceof Object)) {
         try {

@@ -200,9 +200,18 @@ def redeem_gc(self):
         try :        
             code = redeem_data['code']
             pin = redeem_data['pin']
-            gift_certificate = yield GiftCertificate.objects.get(code=code, pin=pin, is_redeemed=False)
+            gift_certificate = yield GiftCertificate.objects.get(code=code, pin=pin)
 
             if gift_certificate:
+
+                if gift_certificate.is_redeemed:
+                    self.set_status(403)
+                    self.write('Gift card has already been redeemed.')
+                    return self.finish()
+
+                if 'checkOnly' in redeem_data: 
+                    return self.render_json(gift_certificate);
+
                 # get user and package
                 user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
                 user = yield User.objects.get(user_id)
@@ -215,12 +224,9 @@ def redeem_gc(self):
                     transaction = UserPackage()
                     transaction.user_id = user._id
                     transaction.package_id = gift_certificate.package_id._id
-                    rides = ' Ride'
-                    if gift_certificate.credits > 1:
-                        rides = ' Rides'
-                    transaction.package_name = 'GC - ' + str(gift_certificate.credits) + rides
+                    transaction.package_name = 'GC - ' + gift_certificate.package_id.name
                     transaction.package_fee = gift_certificate.amount
-                    transaction.package_ft = False
+                    transaction.package_ft = gift_certificate.package_id.first_timer
                     transaction.credit_count = gift_certificate.credits
                     transaction.remaining_credits = gift_certificate.credits
                     transaction.expiration = gift_certificate.validity

@@ -603,6 +603,33 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
     });
   }
 
+  $scope.checkGCValue = function () {
+    if (!$scope.loginUser) {
+      $.Alert('Please log in to your Electric Studio Account or create an account');
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+      angular.element('.login-toggle').click();
+      return;
+    }
+
+    if ($scope.gcPin && $scope.gcCode) {
+
+      var data = {}
+      data.code = $scope.gcCode;
+      data.pin = $scope.gcPin;
+      data.checkOnly = true;
+      
+      GCRedeemService.redeem(data).$promise.then(function (data){
+        $.Alert('<div style="text-align: left">Package: ' + data.package_id.name + '<br>' + 
+                'Credits: ' + data.credits + '<br>' + 
+                'Validity: ' + data.validity + ' days</div>');
+      }, function (error) {
+        $.Alert('Error: ' + error.data);
+      });
+    }else{
+      $.Alert('Oops. We need more details from you.');  
+    }    
+  }
+
   $scope.redeemGC = function(){
 
     if (!$scope.loginUser) {

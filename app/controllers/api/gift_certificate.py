@@ -121,10 +121,7 @@ def update(self, id):
                 transaction = UserPackage()
                 transaction.user_id = user._id
                 transaction.package_id = package._id
-                rides = ' Ride'
-                if gift_certificate.credits > 1:
-                    rides = ' Rides'
-                transaction.package_name = 'GC - ' + str(gift_certificate.credits) + rides
+                transaction.package_name = 'GC - ' + package.name
                 transaction.package_fee = package.fee
                 transaction.package_ft = package.first_timer
                 transaction.credit_count = gift_certificate.credits
