@@ -1,15 +1,15 @@
 /**
  * These are all design base components
  */
- 
+
 ::selection {
-  background: lighten($brand-color-primary, 10%); 
+  background: lighten($brand-color-primary, 10%);
   color: #fff;
 }
 
 ::-moz-selection {
-  background: lighten($brand-color-primary, 10%); 
-  color: #fff; 
+  background: lighten($brand-color-primary, 10%);
+  color: #fff;
 }
 
 
@@ -27,23 +27,23 @@ a {
   @extend .brand-link;
   cursor: pointer;
   text-transform: none;
-  
+
   &:hover {
     color: darken($brand-color-primary, 10%);
   }
-  
+
   &:focus {
     outline: 0;
   }
-  
+
   &.link--full {
     display: block;
   }
-  
-  &.small { 
+
+  &.small {
     font-size: 80%;
   }
-  
+
   &.link--secondary {
     color: $color-text-light;
     &:hover {
@@ -59,8 +59,8 @@ a {
   div{
     p{
       text-align:center;
-    }   
-  } 
+    }
+  }
 }
 
 .cal-tooltip {
@@ -81,13 +81,13 @@ select, .select {
   @extend .text-color-light;
   text-transform: uppercase;
   margin-bottom: $base-spacing-unit / 2;
-  
+
   &.label--inline {
     display: inline;
     margin-bottom: 0;
     margin-right: $base-spacing-unit / 2;
   }
-} 
+}
 
 .inline {
   display: inline!important;
@@ -107,34 +107,16 @@ select, .select {
 
 .wrapper {
   max-width: 1080px;
-  margin: 0 auto; 
+  margin: 0 auto;
   padding: $base-spacing-unit;
-  
+
   @include breakpoint(lg) {
     max-width: 1300px;
   }
-  
+
   @extend .cf;
 }
 
-.text-input {
-  line-height: 34px;
-  padding: 0 $base-spacing-unit / 2;
-  border-width: 0;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0px 0px 1px #999 inset;
-  
-  &:focus {
-    box-shadow: 0 0 0 1px rgba($brand-color-primary, .6);
-  }
-  
-  &:focus::-webkit-input-placeholder { color:transparent; }
-  &:focus:-moz-placeholder { color:transparent; }
-  &:focus::-moz-placeholder { color:transparent; }
-  &:focus:-ms-input-placeholder { color:transparent; } 
-  
-}
 
 .text-color-light {
   color: rgba($color-text, .70);

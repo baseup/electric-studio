@@ -114,7 +114,7 @@
 }
 
 /**
- * Borders 
+ * Borders
  */
 .border {
   border-color: $border-color;
@@ -122,15 +122,25 @@
   border-width: 0;
 }
 
-  .border--top { 
+  .border--top {
     @extend .border;
-    border-top-width: 1px!important; 
+    border-top-width: 1px!important;
   }
-  .border--bottom { 
-    @extend .border; 
-    border-bottom-width: 1px!important; 
+  .border--bottom {
+    @extend .border;
+    border-bottom-width: 1px!important;
   }
   .border--all {
     @extend .border;
-    border-width: 1px!important;  
+    border-width: 1px!important;
   }
+
+
+/**
+ * Center content
+ */
+ .center {
+   margin-left: auto;
+   margin-right: auto;
+   float: none!important;
+ }
