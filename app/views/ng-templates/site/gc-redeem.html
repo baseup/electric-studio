@@ -1,0 +1,26 @@
+<div class="gc-redeem content bg-lightGray" ng-controller="RatesCtrl">
+  <div class="wrapper grid">
+
+    <div class="grid__item bp-md-one-half bp-lg-two-fifths  pad--off-left center color-secondary">
+      <h2 class="h large pad--bottom">Redeem gift card</h2>
+      <p>To redeem your gift card, enter the Card Code number and pin and hit Redeem button.</p>
+
+      <div class="grid pad--ends">
+        <div class="grid__item grid__item--inline one-whole bp-md-one-half pad--bottom">
+          <span class="label weight--semibold">Card code</span>
+          <input class="text-input text-input--large text-input--full" ng-model="gcCode" />
+        </div>
+        <div class="grid__item grid__item--inline one-whole bp-md-one-half pad--bottom">
+          <span class="label weight--semibold">Pin</span>
+          <input class="text-input text-input--large text-input--full" ng-model="gcPin" />
+        </div>
+        <div class="grid__item">
+          <button class="btn btn--large btn--full btn--primary space--half-bottom" ng-click="redeemGC()" type="button">Redeem gift card</button>
+          <button class="btn btn--large btn--full btn--primary space--half-bottom" ng-click="checkGCValue()" type="button">Check value</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

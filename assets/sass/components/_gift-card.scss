@@ -1,0 +1,70 @@
+.gc-buy {
+  overflow: visible!important;
+
+  .wrapper {
+    overflow: visible!important;
+  }
+}
+
+.gc-card {
+  background: $brand-color-primary;
+  padding: 40px;
+  border-radius: 2em;
+  color: #fff;
+
+  .nameplate {
+    max-height: 56px;
+  }
+
+  .text-input {
+    font-family: 'Brandon_Grotesque', sans-serif;
+    font-size: 18px;
+  }
+
+  .gc-card__select {
+
+    &.selectize-control {
+      height: 86px!important;
+    }
+
+    .selectize-input {
+      font-size: 60px!important;
+      line-height: 86px!important;
+      height: 86px!important;
+      font-family: 'Tungsten', sans-serif;
+
+      &:after {
+        font-size: 16px;
+        background: none;
+        color: $color-text;
+      }
+    }
+
+  }
+
+}
+
+
+
+.gc-form {
+
+  .text-input {
+    font-family: 'Brandon_Grotesque', sans-serif;
+    font-size: 18px;
+    border: 1px solid rgba(#999, 0.6);
+    box-shadow: none;
+  }
+
+  @include breakpoint(md) {
+    padding-left: 100px;
+  }
+
+}
+
+
+.gc-redeem {
+  .text-input {
+    font-family: 'Brandon_Grotesque', sans-serif;
+    font-size: 18px;
+  }
+}
