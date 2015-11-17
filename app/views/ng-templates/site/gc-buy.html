@@ -13,7 +13,8 @@
             <div class="grid__item bp-md-two-thirds">
               <input ng-model="gcReceiver" class="text-input text-input--full space--bottom" placeholder="TO"/>
               <input ng-model="gcSender" class="text-input text-input--full space--bottom" placeholder="FROM"/>
-              <small class="text-uppercase">VALIDITY: {{ gcValidity }} DAYS from the time the Gift Card is loaded into the account</small>
+              <small class="text-uppercase" ng-if="!gcPackageFirstTimer">VALIDITY: {{ gcValidity }} DAYS from the time the Gift Card is loaded into the account</small>
+              <small class="text-uppercase" ng-if="gcPackageFirstTimer">Valid only for new riders. First Timer Package may only be availed once per rider.</small>
             </div>
             <div class="grid__item bp-md-one-third">
               <div class="pad--left">
@@ -24,7 +25,7 @@
                 </select>
                 <div class="text--right space--half-top">
                   <small class="text-uppercase">Rides</small>
-                  <small ng-if="gcPackageFirstTimer" class="block text--left">First Timer package only</small>
+                  <small ng-if="gcPackageFirstTimer" class="block text--left text-uppercase space--half-top">First Timer Package</small>
                 </div>
               </div>
             </div>
