@@ -19,11 +19,12 @@
               <div class="pad--left">
                 <select id="select-gc-package" class="gc-card__select" ng-change="selectGCPackage()" ng-model="gcPackage">
                   <option ng-repeat="package in packages" value="{{ package }}">
-                    {{ package.name }}
+                    {{ package.credits }}
                   </option>
                 </select>
                 <div class="text--right space--half-top">
                   <small class="text-uppercase">Rides</small>
+                  <small ng-if="gcPackageFirstTimer" class="block text--left">First Timer package only</small>
                 </div>
               </div>
             </div>

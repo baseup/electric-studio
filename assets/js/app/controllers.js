@@ -565,6 +565,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   $scope.packages.$promise.then(function (data) {
     $scope.packages = data;
     $scope.loadingPackages = false;
+    gcPackageSelectize();
   });
 
   var port = '';
@@ -666,11 +667,20 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
     }
   }
 
-  $timeout(function() {
-    $('#select-gc-package').selectize({
-      create: false
+
+  function gcPackageSelectize() {
+    $timeout(function() {
+      var $packageSelect = $('#select-gc-package');
+      if(!$packageSelect[0]) return;
+
+      var selectize = $packageSelect[0].selectize;
+      if(selectize) selectize.destroy();
+
+      $packageSelect.selectize({
+        create: false
+      });
     });
-  });
+  }
 
   $scope.selectGCPackage = function(){
 
@@ -680,6 +690,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
     $('input#amount').val(jsonPackage.fee);
     $scope.gcAmount = jsonPackage.fee;
     $scope.gcValidity = jsonPackage.expiration;
+    $scope.gcPackageFirstTimer = jsonPackage.first_timer;
   }
 
   $scope.buyGC = function (arg) {
