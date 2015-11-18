@@ -379,7 +379,10 @@ def redeem_gc(self):
                     transaction.remaining_credits = gift_certificate.credits
                     transaction.expiration = gift_certificate.validity
                     transaction.expire_date = datetime.now() + timedelta(days=gift_certificate.validity)
-                    transaction.trans_id = gift_certificate.pptx
+                    if gift_certificate.pptx:
+                        transaction.trans_id = gift_certificate.pptx
+                    else:
+                        transaction.trans_id = str(user._id) + datetime.now().strftime('%Y%m%d%H%M%S')
                     transaction.trans_info = gift_certificate.trans_info
                     user.credits += gift_certificate.credits
 
