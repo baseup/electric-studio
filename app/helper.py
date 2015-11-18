@@ -48,6 +48,9 @@ def create_at_gmt8(records):
             if records[i].create_at:
                 records[i].create_at = records[i].create_at.replace(tzinfo=pytz.utc)
                 records[i].create_at = records[i].create_at.astimezone(tz=gmt8)
+            if records[i].redeem_date:
+                records[i].redeem_date = records[i].redeem_date.replace(tzinfo=pytz.utc)
+                records[i].redeem_date = records[i].redeem_date.astimezone(tz=gmt8)
     return records;
 
 def code_generator(size=8, chars=string.ascii_uppercase + string.digits):
