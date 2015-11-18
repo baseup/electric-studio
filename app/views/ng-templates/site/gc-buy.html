@@ -1,15 +1,15 @@
 <div class="gc-buy content bg-lightGray">
-  <div class="wrapper color-secondary bp-lg-four-fifths">
+  <div class="wrapper color-secondary bp-lg-three-quarters">
     <h2 class="h large pad--bottom">Buy Gift Card</h2>
 
     <form class="grid" id="payForm" ng-controller="RatesCtrl" action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
 
-      <div class="grid__item bp-md-two-fifths bp-lg-one-half">
+      <div class="grid__item space--bottom bp-md-two-fifths bp-lg-one-half">
         <small class="text-uppercase">Enter gift details</small>
         <div class="gc-card space--ends">
           <img src="assets/images/es-gc-card-header.png" alt="Electric Studio Logo" class="nameplate">
 
-          <div class="grid space--top pad--top">
+          <div class="grid space--top pad--half-top">
             <div class="grid__item bp-md-two-thirds">
               <input ng-model="gcReceiver" class="text-input text-input--full space--bottom" placeholder="TO"/>
               <input ng-model="gcSender" class="text-input text-input--full space--bottom" placeholder="FROM"/>

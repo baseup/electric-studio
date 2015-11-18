@@ -7,13 +7,18 @@
 }
 
 .gc-card {
-  background: $brand-color-primary;
-  padding: 40px;
-  border-radius: 2em;
+  background: #333;
+  padding: 30px;
+  border-radius: 1.5em;
   color: #fff;
+  margin-right: 0;
+
+  @include breakpoint(lg) {
+    margin-right: 40px;
+  }
 
   .nameplate {
-    max-height: 56px;
+    max-height: 52px;
   }
 
   .text-input {
@@ -40,6 +45,10 @@
       }
     }
 
+    .selectize-dropdown {
+      min-width: 120px!important;
+    }
+
   }
 
 }
@@ -56,7 +65,7 @@
   }
 
   @include breakpoint(md) {
-    padding-left: 100px;
+    padding-left: 80px;
   }
 
 }
@@ -66,5 +75,14 @@
   .text-input {
     font-family: 'Brandon_Grotesque', sans-serif;
     font-size: 18px;
+  }
+}
+
+
+.text-input {
+  -webkit-text-fill-color: $color-text !important;
+  
+  &:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset!important;
   }
 }
