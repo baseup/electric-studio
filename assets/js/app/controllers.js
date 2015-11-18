@@ -605,12 +605,6 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   }
 
   $scope.checkGCValue = function () {
-    if (!$scope.loginUser) {
-      $.Alert('Please log in to your Electric Studio Account or create an account');
-      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
-      angular.element('.login-toggle').click();
-      return;
-    }
 
     if ($scope.gcPin && $scope.gcCode) {
 

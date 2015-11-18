@@ -191,27 +191,27 @@ def forgot_password(self):
 def redeem_gc(self):
     data = tornado.escape.url_unescape(self.request.body)
     redeem_data = tornado.escape.json_decode(data)
+
+    code = redeem_data['code']
+    pin = redeem_data['pin']
+    gift_certificate = yield GiftCertificate.objects.get(code=code, pin=pin)
+
+    if gift_certificate:
+
+        if gift_certificate.is_redeemed:
+            self.set_status(403)
+            self.write('Gift card has already been redeemed.')
+            return self.finish()
+
+        if 'checkOnly' in redeem_data: 
+            return self.render_json(gift_certificate);
     
-    if not self.get_secure_cookie('loginUserID'):
-        self.set_status(403)
-        self.write('Please log in to your Electric account.')
-        self.redirect('/#/rates?s=error')
-    else:
-        try :        
-            code = redeem_data['code']
-            pin = redeem_data['pin']
-            gift_certificate = yield GiftCertificate.objects.get(code=code, pin=pin)
-
-            if gift_certificate:
-
-                if gift_certificate.is_redeemed:
-                    self.set_status(403)
-                    self.write('Gift card has already been redeemed.')
-                    return self.finish()
-
-                if 'checkOnly' in redeem_data: 
-                    return self.render_json(gift_certificate);
-
+        if not self.get_secure_cookie('loginUserID'):
+            self.set_status(403)
+            self.write('Please log in to your Electric account.')
+            self.redirect('/#/rates?s=error')
+        else:
+            try :
                 # get user and package
                 user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
                 user = yield User.objects.get(user_id)
@@ -246,16 +246,16 @@ def redeem_gc(self):
                     self.set_status(403)
                     self.write("Access Denied")
                     self.finish()
-            else:
-                self.set_status(403)
-                self.write('Invalid code and pin')
-                self.finish()
 
-        except :
-            value = sys.exc_info()[1]
-            str_value = str(value)
-            self.write(str_value)
-            self.finish()
+            except :
+                value = sys.exc_info()[1]
+                str_value = str(value)
+                self.write(str_value)
+                self.finish()
+    else:
+        self.set_status(403)
+        self.write('Invalid code and pin')
+        self.finish()
 
 def buy(self):
 
