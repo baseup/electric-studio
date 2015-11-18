@@ -118,6 +118,7 @@ def user_migration(self):
 
 def logout(self):
     self.clear_cookie('loginUser')
+    self.clear_cookie('loginUserID')
     self.finish()
 
 def verify(self):
