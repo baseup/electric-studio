@@ -1692,13 +1692,18 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
   }
 
   $scope.saveSlider = function () {
-    if ($scope.toUploadFile &&
-       $scope.newSlider && $scope.newSlider.text) {
+    if ($scope.toUploadFile) {
       $scope.uploading = true;
+
+      var post_data = {};
+      if ($scope.newSlider && $scope.newSlider.text){
+        post_data = { 'text' : $scope.newSlider.text };
+      }
+
       $upload.upload({
         url: '/admin/slider',
         method: 'POST',
-        data: { 'text' : $scope.newSlider.text },
+        data: post_data,
         file: $scope.toUploadFile
       }).then(
         function (e) {
@@ -1720,7 +1725,7 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         }
       );
     } else {
-      $.Notify({ content: 'Please upload a file and input a text.' });
+      $.Notify({ content: 'Please upload a file.' });
     }
   }
 
