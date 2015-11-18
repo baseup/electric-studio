@@ -19,6 +19,9 @@ import base64
 import urllib.parse
 
 def index(self):
+    if not self.get_secure_cookie('loginUser') and self.get_secure_cookie('loginUserID'):
+        self.clear_cookie('loginUserID')
+
     user_credits = 0;
     if self.get_secure_cookie('loginUserID'):
         user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
