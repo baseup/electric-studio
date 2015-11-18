@@ -2159,7 +2159,9 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
     var select = angular.element('#gc-account-selector')[0].selectize;
     select.settings.searchField = ['text', 'email'];
     angular.forEach(accounts, function (account) {
-      if (account) select.addOption({ value: account._id, text: account.first_name+ ' ' + account.last_name, email: account.email });
+      if (account) select.addOption({ value: account._id, 
+                                      text: account.first_name+ ' ' + account.last_name + ' ' + account.email, 
+                                      email: account.email });
     });
   });
 
