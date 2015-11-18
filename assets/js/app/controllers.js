@@ -565,7 +565,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   $scope.packages.$promise.then(function (data) {
     $scope.packages = data;
     $scope.loadingPackages = false;
-    gcPackageSelectize();
+    gcPackageSelectize(data);
   });
 
   var port = '';
@@ -668,17 +668,26 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   }
 
 
-  function gcPackageSelectize() {
-    $timeout(function() {
-      var $packageSelect = $('#select-gc-package');
-      if(!$packageSelect[0]) return;
+  function gcPackageSelectize(data) {
+    var $packageSelect = $('#select-gc-package');
+    if(!$packageSelect[0]) return;
 
-      var selectize = $packageSelect[0].selectize;
-      if(selectize) selectize.destroy();
+    var selectize = $packageSelect[0].selectize;
+    if(selectize) selectize.destroy();
 
-      $packageSelect.selectize({
-        create: false
-      });
+    $packageSelect.selectize({
+      create: false,
+      labelField: 'credits',
+      valueField: 'value',
+      render: {
+        option: function(item, escape) {
+          return item.credits ? '<div class="pad--half-ends">' + escape(item.name) + '</div>' : '';
+        }
+      }
+    });
+
+    angular.forEach(data, function(item) {
+      $packageSelect[0].selectize.addOption({name: item.name, credits: item.credits, value: JSON.stringify(item)});
     });
   }
 
