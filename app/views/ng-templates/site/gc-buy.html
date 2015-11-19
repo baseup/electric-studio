@@ -17,7 +17,7 @@
             </div>
             <div class="grid__item bp-md-one-third">
               <div class="pad--left">
-                <select id="select-gc-package" class="gc-card__select" ng-change="selectGCPackage()" ng-model="gcPackage">
+                <select id="select-gc-package" class="gc-card__select" ng-change="selectGCPackage()" ng-model="gcPackage" hidden="hidden">
                   <option ng-repeat="package in packages" value="{{ package }}">
                     {{ package.credits }}
                   </option>
