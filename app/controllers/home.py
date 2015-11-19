@@ -213,13 +213,19 @@ def redeem_gc(self):
         if not self.get_secure_cookie('loginUserID'):
             self.set_status(403)
             self.write('Please log in to your Electric account.')
-            self.redirect('/#/rates?s=error')
+            self.finish()
         else:
             try :
                 # get user and package
                 user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
                 user = yield User.objects.get(user_id)
                 if user.status != 'Frozen' and user.status != 'Unverified':
+
+                    ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
+                    if ft_package_count > 0:
+                        self.set_status(403)
+                        self.write('You can only buy first timer package once.')
+                        return self.finish()
 
                     gift_certificate.redeemer_es_id = user._id
                     gift_certificate.redeem_date = datetime.now()

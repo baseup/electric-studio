@@ -8,7 +8,8 @@ import json
     
 def find(self):
     has_first_timer = False
-    if self.get_secure_cookie('loginUserID'):
+    is_gc = self.get_query_argument('gc')
+    if self.get_secure_cookie('loginUserID') and not is_gc:
         user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
         ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
         if ft_package_count > 0:

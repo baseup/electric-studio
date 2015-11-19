@@ -1779,10 +1779,11 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
   }
 
   $scope.removeSlider = function (slider) {
-    SliderService.delete({ sliderId: slider._id });
-    $scope.sliders = SliderService.query();
-    $scope.sliders.$promise.then(function (data) {
-      $scope.sliders = data;
+    SliderService.delete({ sliderId: slider._id }, function () {
+      $scope.sliders = SliderService.query();
+      $scope.sliders.$promise.then(function (data) {
+        $scope.sliders = data;
+      });
     });
   }
   
