@@ -560,8 +560,13 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
     }
   }
 
+  var isGCPage = ($location.url() == '/gift-cards');
+
+  var query_params = {};
+  if (isGCPage) query_params = { gc: true };
+
   $scope.loadingPackages = true;
-  $scope.packages = PackageService.query();
+  $scope.packages = PackageService.query(query_params);
   $scope.packages.$promise.then(function (data) {
     $scope.packages = data;
     $scope.loadingPackages = false;

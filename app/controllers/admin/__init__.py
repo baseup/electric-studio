@@ -347,22 +347,32 @@ def redeem_gc(self):
     if not self.get_secure_cookie('loginUserID'):
         self.set_status(403)
         self.write('Please log in to your Electric account.')
-        self.redirect('/#/rates?s=error')
+        return self.finish()
     else:
-        try :
-            code = self.get_argument('code')
-            pin = self.get_argument('pin')
-            gift_certificates = yield GiftCertificate.objects.filter(code=code, pin=pin, is_redeemed=False).find_all()
+        code = self.get_argument('code')
+        pin = self.get_argument('pin')
+        gift_certificate = yield GiftCertificate.objects.get(code=code, pin=pin)
+        if gift_certificate:
 
-            if gift_certificates:
-                gift_certificate = gift_certificates[0]
+            if gift_certificate.is_redeemed:
+                self.set_status(403)
+                self.write('Gift card has already been redeemed.')
+                return self.finish()
 
-                # get user and package
-                package = yield Package.objects.get(gift_certificate.package_id)
+            # get user and package
+            package = yield Package.objects.get(gift_certificate.package_id)
 
-                user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
-                user = yield User.objects.get(user_id)
+            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+            user = yield User.objects.get(user_id)
 
+            if package.first_timer:
+                ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
+                if ft_package_count > 0:
+                    self.set_status(403)
+                    self.write('User ' + user.email + ' already have first timer package.')
+                    return self.finish()
+
+            try:
                 if user.status != 'Frozen' and user.status != 'Unverified':
                     gift_certificate.redeemer_es_id = user._id
                     gift_certificate.redeem_date = datetime.now()
@@ -392,15 +402,18 @@ def redeem_gc(self):
                     user = yield user.save()
 
                     self.render_json(gift_certificate.to_dict())
-
                 else:
                     self.set_status(403)
-                    self.redirect('/#/rates?s=error')
-        except :
-            value = sys.exc_info()[1]
-            str_value = str(value)
-            if 'The index ' in str_value and ' was violated ' in str_value:
-                self.redirect('/#/account?pname=' + pack_name + '&s=success#packages')
+                    self.write('User status is not valid.')
+                    return self.finish()
+            except :
+                value = sys.exc_info()[1]
+                self.write(str(value))
+                self.finish()
+        else:
+            self.set_status(403)
+            self.write('Incorrect card code or pin. Please try again.')
+            self.finish()
 
 def ipn_gc(self):
 

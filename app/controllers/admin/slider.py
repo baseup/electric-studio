@@ -69,7 +69,10 @@ def update(self, id):
 
 def destroy(self, id):
     slider = yield Slider.objects.get(id)
-    os.remove(slider.image)
+    try:
+        os.remove(slider.image)
+    except: 
+        pass
     slider.delete()
 
     self.finish()
