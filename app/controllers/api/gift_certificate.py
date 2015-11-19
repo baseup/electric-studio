@@ -109,15 +109,17 @@ def update(self, id):
                 return self.finish()
             else:
 
-                ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
-                if ft_package_count > 0:
-                    self.set_status(403)
-                    self.write('User ' + user.email + ' already have first timer package.')
-                    return self.finish()
-
-                gift_certificate.is_redeemed = True
                 # get user and package
                 package = yield Package.objects.get(gift_certificate.package_id._id)
+
+                if package.first_timer:
+                    ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
+                    if ft_package_count > 0:
+                        self.set_status(403)
+                        self.write('User ' + user.email + ' already have first timer package.')
+                        return self.finish()
+
+                gift_certificate.is_redeemed = True
 
                 # ES account is required to redeem
                 gift_certificate.redeemer_es_id = user._id

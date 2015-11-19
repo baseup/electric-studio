@@ -221,11 +221,12 @@ def redeem_gc(self):
                 user = yield User.objects.get(user_id)
                 if user.status != 'Frozen' and user.status != 'Unverified':
 
-                    ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
-                    if ft_package_count > 0:
-                        self.set_status(403)
-                        self.write('You can only buy first timer package once.')
-                        return self.finish()
+                    if gift_certificate.package_id.first_timer:
+                        ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
+                        if ft_package_count > 0:
+                            self.set_status(403)
+                            self.write('You can only buy first timer package once.')
+                            return self.finish()
 
                     gift_certificate.redeemer_es_id = user._id
                     gift_certificate.redeem_date = datetime.now()

@@ -365,11 +365,12 @@ def redeem_gc(self):
             user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
             user = yield User.objects.get(user_id)
 
-            ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
-            if ft_package_count > 0:
-                self.set_status(403)
-                self.write('User ' + user.email + ' already have first timer package.')
-                return self.finish()
+            if package.first_timer:
+                ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
+                if ft_package_count > 0:
+                    self.set_status(403)
+                    self.write('User ' + user.email + ' already have first timer package.')
+                    return self.finish()
 
             try:
                 if user.status != 'Frozen' and user.status != 'Unverified':
