@@ -32,10 +32,10 @@
         <div class="bp-md-one-third float--left space--bottom space--right">
           <input class="text-input" ng-model="searchGiftCards" placeholder="Search Code, Email, Transaction ID">
         </div>
-        
+
       </div>
 
-      <div class="pad">
+      <div class="space overflow--x">
         <table class="data-table">
           <thead>
             <tr>
@@ -72,7 +72,7 @@
        <ul class="pagination-nav nav nav--block text--center">
         <li><a ng-click="prevPage($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
         <li><a ng-click="nextPage($event)">Next <i class="fa fa-angle-right"></i></a></li>
-      </ul> 
+      </ul>
 
     </div>
     </div>
@@ -82,7 +82,7 @@
     <div class="modal__box pad">
       <span id="close-add-account" class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Redeem GC</h3>
-      
+
       <div class="data-list cf pad--ends">
         <dl class="space-bottom">
           <dt class="label">Code</dt>
@@ -104,11 +104,11 @@
             </option>
           </select>
         </dl>
-      </div>   
+      </div>
 
-      <button ng-disabled="redeemingGC" class="btn btn--medium btn--primary space--top modal-close ng-scope" ng-click="redeemGC()">Redeem</button>   
-      
-     
+      <button ng-disabled="redeemingGC" class="btn btn--medium btn--primary space--top modal-close ng-scope" ng-click="redeemGC()">Redeem</button>
+
+
     </div>
   </div>
 
@@ -118,7 +118,7 @@
       <span id="close-add-account" class="close-btn modal-close">X</span>
       <form id="payForm" action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
       <h3 class="h--medium brand-color space--bottom">BUY GC</h3>
-      
+
       <div class="float--left space--bottom">
         <span class="label">To</span>
         <input ng-model="gcTo" class="text-input">
@@ -137,13 +137,13 @@
               <option selected value="">Package</option>
         </select>
       </div>
-        
-        <input type="hidden" id="cmd" name="cmd" value="_xclick"> 
+
+        <input type="hidden" id="cmd" name="cmd" value="_xclick">
         <input type="hidden" id="no_note" name="no_note" value = "0">
         <input type="hidden" id="bn" name="bn" value="PP-BuyNowBF">
         <input type="hidden" id="rm" name="rm" value="2">
         <input type="hidden" id="custom" name="custom" value="">
-        <input type="hidden" id="business" name="business" value="ogsmelvin05-facilitator@gmail.com"> 
+        <input type="hidden" id="business" name="business" value="ogsmelvin05-facilitator@gmail.com">
         <!-- electric@electricstudio.ph -->
         <input type="hidden" id="item_name" name="item_name" value="">
         <input type="hidden" id="item_number" name="item_number" value="">
@@ -171,7 +171,7 @@
           <input ng-model="receiverEmail" type="email" class="text-input">
           <a class="btn btn--primary btn--medium space--top modal-close" ng-click="buyGC('confirm_buy')"> SEND GC </a>
         </div>
-      </div>  
+      </div>
 
       <div class="modal" data-modal="generate-gc" id="generate-gc-modal">
         <div class="modal__box pad">
@@ -196,5 +196,5 @@
 
           <a class="btn btn--primary btn--medium space--top modal-close" ng-click="generateGC()"> GENERATE GCs </a>
         </div>
-      </div>  
+      </div>
 </div>
