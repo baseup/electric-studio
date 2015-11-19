@@ -685,6 +685,8 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
     });
   }
 
+  gcPackageSelectize();
+
   $scope.selectGCPackage = function(){
 
     var jsonPackage = JSON.parse($scope.gcPackage);
