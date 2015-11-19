@@ -690,7 +690,6 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
     });
   }
 
-  gcPackageSelectize();
 
   $scope.selectGCPackage = function(){
 
