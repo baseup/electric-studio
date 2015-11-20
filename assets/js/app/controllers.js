@@ -623,7 +623,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
                 'Credits: ' + data.credits + '<br>' +
                 'Validity: ' + data.validity + ' days</div>');
       }, function (error) {
-        $.Alert('Error: ' + error.data);
+        $.Alert(error.data);
       });
     }else{
       $.Alert('Oops. We need more details from you.');
@@ -652,7 +652,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
       }
 
       var redeemFailed = function (error) {
-        $.Alert('Error: ' + error.data);
+        $.Alert(error.data);
       }
 
       var data = {}
