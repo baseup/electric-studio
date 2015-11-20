@@ -701,16 +701,17 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
     $scope.gcValidity = jsonPackage.expiration;
     $scope.gcPackageFirstTimer = jsonPackage.first_timer;
   }
+  
+  $scope.emailTo = 'sender';
+  $scope.buyGC = function () {
 
-  $scope.buyGC = function (arg) {
-
-    if(arg =='sender'){
-      var receiverEmail = $scope.senderEmail;
+    var receiverEmail = null;
+    if($scope.emailTo =='sender'){
+      receiverEmail = $scope.senderEmail;
       $scope.senderIsReceiver = true;
-      // $scope.receiverEmail = $scope.senderEmail;
     }else{
       $scope.senderIsReceiver = false;
-      var receiverEmail = $scope.receiverEmail;
+      receiverEmail = $scope.receiverEmail;
     }
 
     if ($scope.gcPackage && $scope.gcReceiver && $scope.gcSender) {

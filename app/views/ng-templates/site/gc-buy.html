@@ -78,8 +78,8 @@
         <big class="h medium">TOTAL: <span ng-if="gcAmount" class="brand-color">P {{ gcAmount || 0.00}}</span> <span ng-if="!gcAmount" class="brand-color"> P 0.00</span></big>
 
         <div class="space--top">
-          <label class="weight--semibold"><input type="checkbox" value="sender" checked> email to sender</label>
-          <label class="weight--semibold"><input type="checkbox" value="recipient"> email to recipient</label>
+          <label class="weight--semibold"><input type="radio" ng-model="emailTo" value="sender"> email to sender</label>
+          <label class="weight--semibold"><input type="radio" ng-model="emailTo" value="receiver"> email to recipient</label>
           <input ng-click="buyGC()" class="btn btn--large btn--primary btn--full space--half-top" type="button" value="Buy Gift Card" />
         </div>
       </div>
