@@ -204,7 +204,7 @@ def redeem_gc(self):
 
         if gift_certificate.is_redeemed:
             self.set_status(403)
-            self.write('Gift card has already been redeemed.')
+            self.write('Your gift card has already been redeemed.')
             return self.finish()
 
         if 'checkOnly' in redeem_data: 
@@ -225,7 +225,7 @@ def redeem_gc(self):
                         ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
                         if ft_package_count > 0:
                             self.set_status(403)
-                            self.write('You can only buy first timer package once.')
+                            self.write('Sorry, you may only avail of the First Timer Package once.')
                             return self.finish()
 
                     gift_certificate.redeemer_es_id = user._id
@@ -268,7 +268,7 @@ def redeem_gc(self):
                 self.finish()
     else:
         self.set_status(403)
-        self.write('Invalid code and pin')
+        self.write('Incorrect card code or pin. Please try again.')
         self.finish()
 
 def buy(self):
