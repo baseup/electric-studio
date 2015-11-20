@@ -7,16 +7,28 @@
       <div class="grid__item space--bottom bp-md-two-fifths bp-lg-one-half">
         <small class="text-uppercase">Enter gift details</small>
         <div class="gc-card space--ends">
-          <img src="assets/images/es-gc-card-header.png" alt="Electric Studio Logo" class="nameplate">
+          <div class="grid">
 
-          <div class="grid space--top pad--half-top">
-            <div class="grid__item bp-md-two-thirds">
-              <input ng-model="gcReceiver" class="text-input text-input--full space--bottom" placeholder="TO"/>
-              <input ng-model="gcSender" class="text-input text-input--full space--bottom" placeholder="FROM"/>
-              <small class="text-uppercase">VALIDITY: {{ gcValidity }} DAYS from the time the Gift Card is loaded into the account</small>
+            <div class="gc-header grid">
+              <div class="grid__item bp-md-two-thirds">
+                <img src="assets/images/es-gc-card-header.png" alt="Electric Studio Logo" class="gc-card-nameplate">
+              </div>
+              <div class="grid__item bp-md-one-third">
+                <small ng-if="gcPackageFirstTimer" class="first-timer-label-top block text--left text-uppercase">First Timer Package</small>
+              </div>
             </div>
+
+            <div class="grid__item bp-md-two-thirds">
+              <div class="space--top pad--half-top">
+                <input ng-model="gcReceiver" class="text-input text-input--full space--bottom" placeholder="TO"/>
+                <input ng-model="gcSender" class="text-input text-input--full space--bottom" placeholder="FROM"/>
+                <small class="text-uppercase">VALIDITY: {{ gcValidity }} DAYS from the time the Gift Card is loaded into the account</small>
+              </div>
+            </div>
+
             <div class="grid__item bp-md-one-third">
-              <div class="pad--left">
+              <div class="gc-package-select">
+                <small ng-if="gcPackageFirstTimer" class="first-timer-label block text--left text-uppercase space--half-bottom">First Timer Package</small>
                 <select id="select-gc-package" class="gc-card__select" ng-change="selectGCPackage()" ng-model="gcPackage" hidden="hidden">
                   <option ng-repeat="package in packages" value="{{ package }}">
                     {{ package.credits }}
@@ -24,10 +36,10 @@
                 </select>
                 <div class="text--right space--half-top">
                   <small class="text-uppercase">Rides</small>
-                  <small ng-if="gcPackageFirstTimer" class="block text--left text-uppercase space--half-top">First Timer Package</small>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
         <small class="text-uppercase block weight--semibold space--half-bottom" ng-if="gcPackageFirstTimer">Valid only for new riders. First Timer Package may only be availed once per rider.</small>
@@ -57,7 +69,7 @@
         <span class="label">Sender's email address</span>
         <input type="email" ng-model="senderEmail" name="semail" class="text-input text-input--large text-input--full space--bottom" />
 
-        <span class="label">Recepient's email address</span>
+        <span class="label">Recipient's email address <i>(optional)</i></span>
         <input type="email" ng-model="receiverEmail" name="remail" class="text-input text-input--large text-input--full space--bottom">
 
         <span class="label">Add message <i>(optional)</i></span>
@@ -65,13 +77,10 @@
 
         <big class="h medium">TOTAL: <span ng-if="gcAmount" class="brand-color">P {{ gcAmount || 0.00}}</span> <span ng-if="!gcAmount" class="brand-color"> P 0.00</span></big>
 
-        <div class="grid space--top">
-          <div class="grid__item one-half">
-            <input ng-click="buyGC('sender')" class="btn btn--large btn--primary btn--full" type="button" value="EMAIL TO ME" />
-          </div>
-          <div class="grid__item one-half">
-            <input ng-click="buyGC('receiver')" class="btn btn--large btn--primary btn--full" type="button" value="EMAIL TO RECIPIENT" />
-          </div>
+        <div class="space--top">
+          <label class="weight--semibold"><input type="checkbox" value="sender" checked> email to sender</label>
+          <label class="weight--semibold"><input type="checkbox" value="recipient"> email to recipient</label>
+          <input ng-click="buyGC()" class="btn btn--large btn--primary btn--full space--half-top" type="button" value="Buy Gift Card" />
         </div>
       </div>
 
