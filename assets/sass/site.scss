@@ -1282,6 +1282,24 @@ body {
     }
     
   }
+
+  &.items-3 {
+    width: 160px;
+    
+    .item {
+      position: absolute;
+      top: 0;
+    }
+    
+    .item:nth-child(1) {
+      left: 0;
+    }
+    
+    .item:nth-child(2) {
+      right: 0;
+    }
+    
+  }
   
   &.items-4 {
     width: 240px;
@@ -1337,6 +1355,11 @@ body {
 
   }
 
+}
+
+.class-desc {
+  text-align: left;
+  width: 280px;
 }
 
 .class-desc {
@@ -2640,7 +2663,7 @@ body {
     &.items-3 {
       width: 220px;
     }
-    
+
     &.items-4 {
       width: 320px;
     }
