@@ -1266,6 +1266,24 @@ body {
   }
 
   &.items-3 {
+    width: 160px;
+    
+    .item {
+      position: absolute;
+      top: 0;
+    }
+    
+    .item:nth-child(1) {
+      left: 0;
+    }
+    
+    .item:nth-child(2) {
+      right: 0;
+    }
+    
+  }
+  
+  &.items-4 {
     width: 240px;
 
     .item {
@@ -1319,6 +1337,11 @@ body {
 
   }
 
+}
+
+.class-desc {
+  text-align: left;
+  width: 280px;
 }
 
 /* Rates Page */
@@ -2441,6 +2464,24 @@ body {
       overflow: auto;
     }
 
+    &.parts-2 {
+
+      section {
+        width: 50%;
+        float: left;
+        padding-top: 5px;
+        padding-bottom: 50px;
+      }
+
+      section:nth-of-type(2n+1) {
+        padding-right: 20px;
+      }
+
+      section:nth-of-type(2n+2) {
+        padding-left: 20px;
+      }
+    }
+
     &.parts-3 {
 
       section {
@@ -2580,6 +2621,8 @@ body {
   .circles {
     height:160px;
     margin-bottom: 40px;
+    margin-right: auto;
+    margin-left: auto;
 
     .item {
       width: 160px;
@@ -2590,7 +2633,15 @@ body {
       width: 220px;
     }
 
+    &.items-1 {
+      width: 160px;
+    }
+    
     &.items-3 {
+      width: 220px;
+    }
+    
+    &.items-4 {
       width: 320px;
     }
   }
