@@ -5,6 +5,8 @@ from app.settings import MANDRILL_API_KEY, EMAIL_SENDER, EMAIL_SENDER_NAME
 import mandrill
 import sys
 import pytz
+import string
+import random
 
 class Lock(object):
     locker = {}
@@ -26,7 +28,7 @@ class Lock(object):
 
 class GMT8(tzinfo):
     def utcoffset(self, dt):
-        return timedelta(hours=8)
+        return timedelta(hours=8, minutes=2)
     def dst(self, dt):
         return timedelta(0)
     def tzname(self,dt):
@@ -39,7 +41,13 @@ def create_at_gmt8(records):
             if records[i].create_at:
                 records[i].create_at = records[i].create_at.replace(tzinfo=pytz.utc)
                 records[i].create_at = records[i].create_at.astimezone(tz=gmt8)
+            if hasattr(records[i], 'redeem_date') and records[i].redeem_date:
+                records[i].redeem_date = records[i].redeem_date.replace(tzinfo=pytz.utc)
+                records[i].redeem_date = records[i].redeem_date.astimezone(tz=gmt8)
     return records;
+
+def code_generator(size=8, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 def mongo_to_dict(obj):
     return_data = []

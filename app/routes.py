@@ -49,6 +49,7 @@ routes.get('/', 'home.index')
 routes.get('/user_migration ', 'home.user_migration')
 routes.get('/buy', 'home.buy')
 routes.post('/buy', 'home.buy')
+routes.post('/redeem_gc', 'home.redeem_gc')
 routes.get('/verify', 'home.verify')
 routes.post('/verify', 'home.verify')
 routes.get('/fpass', 'home.forgot_password')
@@ -58,6 +59,7 @@ routes.post('/user/login', 'home.login')
 routes.get('/user/logout', 'home.logout')
 routes.post('/upload/instructor', 'upload.instructor')
 routes.post('/upload/images', 'upload.images')
+
 
 routes.get('/sync_user_packages', 'home.sync_package')
 
@@ -75,11 +77,15 @@ routes.prefix('/admin', [
     ('get', '/?', 'admin.index'),
     ('get', '/buy', 'admin.buy'),
     ('post', '/buy', 'admin.buy'),
+    ('get', '/buy_gc', 'admin.buy_gc'),
+    ('post', '/buy_gc', 'admin.buy_gc'),
     ('get', '/login', 'admin.login'),
     ('post', '/login', 'admin.login'),
     ('get', '/logout', 'admin.logout'),
     ('get', '/privileges', 'admin.privileges'),
     ('post', '/ipn', 'admin.ipn'),
+    ('post', '/ipn_gc', 'admin.ipn_gc'),
+    ('post', '/generate_gc', 'admin.generate_gc'),
 
     ('resource', '/security', 'admin.security'),
     ('resource', '/setting', 'admin.setting'),
@@ -94,7 +100,8 @@ routes.prefix('/admin', [
 
     ('get', '/export/download-bookings', 'admin.export.download_bookings'),
     ('get', '/export/waitlist', 'admin.export.waitlist'),
-    ('get', '/export/download-user-accounts', 'admin.export.download_user_accounts')
+    ('get', '/export/download-user-accounts', 'admin.export.download_user_accounts'),
+    ('get', '/export/download-gift-cards-report', 'admin.export.download_gift_cards_report')
 ])
 
 routes.prefix('/api', [
@@ -106,6 +113,7 @@ routes.prefix('/api', [
     ('resource', '/schedule', 'api.schedules'),
     ('resource', '/book', 'api.book'),
     ('resource', '/history', 'api.history'),
+    ('resource', '/gift_certificate', 'api.gift_certificate'),
     # pos api
     ('resource', '/users', 'pos.users'),
     ('resource', '/packages', 'pos.packages'),

@@ -67,3 +67,30 @@ class UserProduct(Model):
 
     def to_dict(self):
        return mongo_to_dict(self)
+
+class GiftCertificate(Model):
+    __collection__ = 'gift_certificates'
+    __lazy__ = False
+    code = StringField(required=True, unique=True)
+    pin = IntField(required=True)
+    package_id = ReferenceField(reference_document_type=Package, required=False)
+    amount = DecimalField()
+    trans_info = StringField(default=None)
+    pptx = StringField(default=None)
+    sender_name = StringField(required=False)
+    sender_email = StringField(required=False)
+    receiver_name = StringField(required=False)
+    receiver_email = StringField(required=False)
+    message = StringField(required=False, default=None)
+    credits = IntField()
+    validity = IntField()
+
+    create_at = DateTimeField(auto_now_on_insert=True)
+    update_at = DateTimeField(auto_now_on_update=True)
+      
+    is_redeemed = BooleanField(default=False)
+    redeemer_es_id = ReferenceField(reference_document_type=User)
+    redeem_date = DateTimeField()
+
+    def to_dict(self):
+       return mongo_to_dict(self)

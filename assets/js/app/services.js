@@ -40,6 +40,7 @@ services.factory('UserService', function($resource) {
   });
 });
 
+
 services.factory('ForgotPasswordService', function($resource) {
   return $resource('/fpass/:user', {}, {
     send_email: {
@@ -52,6 +53,15 @@ services.factory('ForgotPasswordService', function($resource) {
 services.factory('EmailVerifyService', function($resource) {
   return $resource('/verify/:user', {}, {
     email_verify: {
+      method: 'POST',
+      isArray: false
+    }
+  });
+});
+
+services.factory('GCRedeemService', function($resource) {
+  return $resource('/redeem_gc', {}, {
+    redeem: {
       method: 'POST',
       isArray: false
     }
@@ -120,6 +130,7 @@ services.factory('UserPackageService', function($resource) {
     }
   });
 });
+
 
 services.factory('ScheduleService', function($resource) {
   return $resource('/api/schedule/:scheduleId', {}, {

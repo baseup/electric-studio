@@ -136,6 +136,23 @@ services.factory('InstructorService', function($resource) {
   });
 });
 
+services.factory('GiftCardService', function($resource) {
+  return $resource('/api/gift_certificate/:gcCode', {}, {
+    query: {
+      method: 'GET',
+      isArray: true
+    },
+    redeem:{
+      method: 'PUT',
+      isArray: false
+    },
+    create:{
+      method: 'POST',
+      isArray: false
+    }
+  });
+});
+
 services.factory('TransactionService', function ($resource) {
   return $resource('/admin/transaction/:transactionId', {}, {
     query: {

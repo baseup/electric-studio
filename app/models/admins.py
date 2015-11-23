@@ -37,7 +37,7 @@ class Instructor(Model):
 class Slider(Model):
     __collection__ = 'sliders'
     image = StringField(required=True)
-    text = StringField(required=True)
+    text = StringField(default=None)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 

@@ -15,7 +15,7 @@ def find_one(self, id):
 
 def create(self):
 
-    if self.request.files and self.get_argument('text'):
+    if self.request.files:
         try:
             upload_file = self.request.files['file'][0]
             new_name = datetime.now().strftime('%Y_%m_%d_%H_%M_%S') + '_' + upload_file['filename']
@@ -24,8 +24,9 @@ def create(self):
             new_file = open(path + new_name, 'wb')
             new_file.write(upload_file['body'])
 
-            slider = Slider(text=self.get_argument('text'),
-                            image=path + new_name)
+            slider = Slider(image=path + new_name)
+            if self.get_argument('text'):
+                slider.text = self.get_argument('text')
             slider = yield slider.save()
         except:
             value = sys.exc_info()[1]
@@ -68,7 +69,10 @@ def update(self, id):
 
 def destroy(self, id):
     slider = yield Slider.objects.get(id)
-    os.remove(slider.image)
+    try:
+        os.remove(slider.image)
+    except: 
+        pass
     slider.delete()
 
     self.finish()

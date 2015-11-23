@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
   <title>Home - Electric Studio</title>
-  
+
   <link rel="stylesheet" href="{{ static_url('css/site.css') }}">
   <script type="text/javascript">(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-64306317-1', 'auto');ga('send', 'pageview');</script>
 </head>
@@ -19,11 +19,11 @@
         </a>
         <img src="{{ static_url('images/electricstudio-logo.png') }}" class="logo">
       </h1>
-      
+
       <ul class="main-menu">
         <li>
           <a ng-class="{ active : activeMainNav('/about') }" href="#/about">About Us</a>
-        </li>  
+        </li>
         <li>
           <a ng-class="{ active : activeMainNav('/instructors') }" href="#/instructors">Instructors</a>
         </li>
@@ -42,39 +42,48 @@
                   </ul>
                 </div>
               </li>
-            </ul>  
-          </div>  
+            </ul>
+          </div>
+        </li>
+        <li class="class-menu">
+          <a>Gift Card <i class="fa fa-chevron-down"></i></a>
+          <div class="class-menu__list">
+            <ul class="class-menu__holder">
+              <li><a href="#/gift-cards">Buy</a></li>
+              <li><a href="#/redeem-gc">Redeem</a></li>
+            </ul>
+          </div>
         </li>
         <li>
           <a ng-class="{ active : activeMainNav('/whats-new') }" href="#/whats-new">What's New</a>
         </li>
       </ul>
-      
+
       <div class="account-menu">
         <div class="account-menu__options">
         {% if not loginUser %}
-          <a class="login-toggle">Login</a> /  
+          <a class="login-toggle">Login</a> /
           <a class="signup-toggle">Sign up</a>
           <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
         {% else %}
           <a href="javascript:void(0)" class="user-loggedin">
-            Hi <strong>{{ loginUser }}</strong>! 
+            Hi <strong>{{ loginUser }}</strong>!
             <span>{{ credits }}</span>
             <i class="fa fa-caret-down"></i>
           </a>
-        {% end %}            
+        {% end %}
         </div>
-        {% if loginUser %}  
+        {% if loginUser %}
         <div class="account-menu__list">
           <div class="account-menu__holder">
             <a href="#/account">My Account</a>
             <a href="#/reserved">My Classes</a>
             <a href="javascript:void(0)" ng-click="logout()" >Sign Out</a>
-          </div>  
+          </div>
         </div>
-        {% end %}  
-      </div>  
-      
+        {% end %}
+      </div>
+
       <div class="book-buy">
         <span class="book-ride-btn" href="#/schedule">
           <span>Buy/Book A Ride</span>
@@ -88,15 +97,15 @@
               <li><a class="color--orange font--bold" href="#/schedule">FORT BGC</a></li>
             </ul>
           </div>
-        </span>  
+        </span>
       </div>
-      
+
 
       <a class="menu-toggle"><i class="fa fa-bars"></i></a>
-      
-    </div>  
+
+    </div>
   </header>
-  
+
   <div class="header-form-container login" ng-controller="LoginCtrl">
     <div class="wrapper">
       <h2 class="h large light">Log In</h2>
@@ -114,9 +123,9 @@
         <a ng-click="forgotPass()" >Forgot password ?</a> <a ng-click="showSignup()">/ Sign up</a>
       </form>
       <span class="close-btn">&times;</span>
-    </div>  
+    </div>
   </div>
-  
+
   <div class="header-form-container signup" ng-controller="SignUpCtrl">
     <div class="wrapper" ng-show="!registered">
       <h2 class="h large light">Sign Up</h2>
@@ -150,7 +159,7 @@
         <li><a href="#/career">Careers</a></li>
         <li><a href="#/contact">Contact Us</a></li>
       </ul>
-      
+
       <ul class="social-links">
         <li>
           <a href="mailto:letsride@electricstudio.ph"><i class="fa fa-envelope"></i></a>
@@ -165,7 +174,7 @@
           <a href="https://twitter.com/teamelectricph"><i class="fa fa-twitter"></i></a>
         </li>
       </ul>
-    </div>  
+    </div>
   </footer>
 
   <div class="modal alert-modal" id="alert-modal">
@@ -201,26 +210,28 @@
       <a class="btn btn--small btn--primary modal-close" ng-click="sendForgotPassEmail()">Send</a>
     </div>
   </div>
-  
+
   <script src="{{ static_url('vendor/jquery/dist/jquery.min.js') }}"></script>
-  
-  <script src="{{ static_url('vendor/angular/angular.min.js') }}"></script> 
+
+  <script src="{{ static_url('vendor/angular/angular.min.js') }}"></script>
   <script src="{{ static_url('vendor/angular-route/angular-route.min.js') }}"></script>
   <script src="{{ static_url('vendor/angular-resource/angular-resource.min.js') }}"></script>
   <script src="{{ static_url('vendor/angular-sanitize/angular-sanitize.min.js') }}"></script>
-  
+
   <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.css') }}">
   <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.date.css') }}">
-  
+  <link rel="stylesheet" href="{{ static_url('vendor/selectize/dist/css/selectize.default.css') }}">
+
   <script src="{{ static_url('vendor/FitText.js/jquery.fittext.js') }}"></script>
   <script src="{{ static_url('vendor/glidejs/dist/jquery.glide.min.js') }}"></script>
   <script src="{{ static_url('vendor/pickadate/lib/picker.js') }}"></script>
   <script src="{{ static_url('vendor/pickadate/lib/picker.date.js') }}"></script>
+  <script src="{{ static_url('vendor/selectize/dist/js/standalone/selectize.min.js') }}"></script>
 
   <script src="{{ static_url('js/app/templates.js') }}"></script>
   <script src="{{ static_url('js/app/services.js') }}"></script>
   <script src="{{ static_url('js/app/controllers.js') }}"></script>
   <script src="{{ static_url('js/app/app.js') }}"></script>
-  <script src="{{ static_url('js/script.js') }}"></script> 
-</body>  
+  <script src="{{ static_url('js/script.js') }}"></script>
+</body>
 </html>

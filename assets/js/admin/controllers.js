@@ -309,6 +309,8 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     }
   }
 
+
+
   $scope.showAddAccount = function () {
     angular.element('#add-account-modal').Modal();
   }
@@ -1694,13 +1696,18 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
   }
 
   $scope.saveSlider = function () {
-    if ($scope.toUploadFile &&
-       $scope.newSlider && $scope.newSlider.text) {
+    if ($scope.toUploadFile) {
       $scope.uploading = true;
+
+      var post_data = {};
+      if ($scope.newSlider && $scope.newSlider.text){
+        post_data = { 'text' : $scope.newSlider.text };
+      }
+
       $upload.upload({
         url: '/admin/slider',
         method: 'POST',
-        data: { 'text' : $scope.newSlider.text },
+        data: post_data,
         file: $scope.toUploadFile
       }).then(
         function (e) {
@@ -1722,7 +1729,7 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         }
       );
     } else {
-      $.Notify({ content: 'Please upload a file and input a text.' });
+      $.Notify({ content: 'Please upload a file.' });
     }
   }
 
@@ -1776,10 +1783,11 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
   }
 
   $scope.removeSlider = function (slider) {
-    SliderService.delete({ sliderId: slider._id });
-    $scope.sliders = SliderService.query();
-    $scope.sliders.$promise.then(function (data) {
-      $scope.sliders = data;
+    SliderService.delete({ sliderId: slider._id }, function () {
+      $scope.sliders = SliderService.query();
+      $scope.sliders.$promise.then(function (data) {
+        $scope.sliders = data;
+      });
     });
   }
   
@@ -2051,6 +2059,304 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
 
       InstructorService.delete({instructorId : ins._id}).$promise.then(addSuccess, addFail);
     });
+  }
+
+});
+
+ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, TransactionService, PackageService, GiftCardService, UserService) {
+
+  var qstring = $location.search();
+  
+
+  if (qstring.s == 'error') {
+    $.Alert('Transaction failed');
+    $location.search('s', null);
+    $location.search('msg', null);
+  }else{
+    if (qstring.msg){
+      $.Alert(qstring.msg);
+      $location.search('s', null);
+      $location.search('msg', null);
+    }
+  }
+
+  $scope.currentPage = 0;
+  $scope.hasNext = true;
+  var isRedeemed = ($location.url() == '/gc-redemption');
+  $scope.transactions = GiftCardService.query({ isRedeemed:isRedeemed });
+  
+  $scope.transactions.$promise.then(function (data) {
+    $scope.transactions = data;
+  });
+
+  var from_input = angular.element('#input_from').pickadate({
+      format: 'yyyy-mm-dd',
+      formatSubmit: 'yyyy-mm-dd',
+      today: false
+    }), from_picker = from_input.pickadate('picker')
+
+  var to_input = angular.element('#input_to').pickadate({
+      format: 'yyyy-mm-dd',
+      formatSubmit: 'yyyy-mm-dd',
+      today: false
+    }), to_picker = to_input.pickadate('picker')
+
+
+  var date = new Date();
+  from_picker.set('select', new Date());
+  to_picker.set('select', [date.getFullYear(), date.getMonth(), date.getDate() + 7]);
+
+  $scope.gcDateFilter = {};
+  $scope.gcDateFilter.fromDate = from_picker.get('value');
+  $scope.gcDateFilter.toDate = to_picker.get('value');
+
+  // Check if there’s a “from” or “to” date to start with.
+  if (from_picker.get('value')) {
+    to_picker.set('min', from_picker.get('select'));
+  }
+  if (to_picker.get('value')) {
+    from_picker.set('max', to_picker.get('select'));
+  }
+
+  // When something is selected, update the “from” and “to” limits.
+  from_picker.on('set', function (event) {
+    if (event.select) {
+      to_picker.set('min', from_picker.get('select'));
+    }
+    else if ('clear' in event) {
+      to_picker.set('min', false);
+    }
+  });
+
+  to_picker.on('set', function (event) {
+    if (event.select) {
+      from_picker.set('max', to_picker.get('select'));
+    }
+    else if ('clear' in event) {
+      from_picker.set('max', false);
+    }
+  });
+
+  $scope.exportGCListByDate = function () {
+    if ($scope.gcDateFilter) {
+      var fromDate = $scope.gcDateFilter.fromDate;
+      var toDate = $scope.gcDateFilter.toDate;
+
+      $scope.transactions = GiftCardService.query({ fromDate:fromDate, toDate:toDate, isRedeemed:isRedeemed });
+      $scope.transactions.$promise.then(function (data) {
+        $scope.transactions = data;
+      });
+
+      window.location = '/admin/export/download-gift-cards-report?fromDate=' + fromDate + '&toDate=' + toDate + '&isRedeemed='+isRedeemed;
+
+    } else {
+      $.Alert('Please select a valid date values');
+    }
+  }
+
+  $scope.searchGC = function(queryString){
+      var fromDate = $scope.gcDateFilter.fromDate;
+      var toDate = $scope.gcDateFilter.toDate;
+
+      $scope.transactions = GiftCardService.query({ fromDate:fromDate, toDate:toDate, isRedeemed:isRedeemed, queryString:queryString });
+      $scope.transactions.$promise.then(function (data) {
+        $scope.transactions = data;
+      });
+  }
+
+  UserService.query({ deactivated: true, get_all:true}, function (accounts) {
+    $scope.accounts = accounts;
+    var select = angular.element('#gc-account-selector')[0].selectize;
+    select.settings.searchField = ['text', 'email'];
+    angular.forEach(accounts, function (account) {
+      if (account) select.addOption({ value: account._id, 
+                                      text: account.first_name+ ' ' + account.last_name + ' ' + account.email, 
+                                      email: account.email });
+    });
+  });
+
+  PackageService.query(function (packages) {
+    var select = angular.element('.gc-package-selector')[0].selectize;
+
+    var select2 = angular.element('.gc-package-selector2')[0].selectize;
+    angular.forEach(packages, function (pack) {
+      if (pack){
+        select.addOption({ value: JSON.stringify(pack), text: pack.name }); 
+        select2.addOption({ value: JSON.stringify(pack), text: pack.name }); 
+      }
+    });
+  });
+
+  $scope.getTransId = function (pac) {
+    if (pac.pptx) return pac.pptx;
+    if (pac.trans_info) {
+      if (!(pac.trans_info instanceof Object)) {
+        try {
+          var transInfo = pac.trans_info.replace(/\"/g, '');
+          var transInfo = transInfo.replace(/'/g, '"');
+          var trans = JSON.parse(transInfo);
+          pac.trans_info = trans;
+          return trans.transaction;
+        } catch (e) {
+          return 'Err: Transaction ID';
+        }
+      } else {
+        return pac.trans_info.transaction;
+      }
+    }
+    return null;
+  }
+
+    $scope.prevPage = function (event) {
+      var fromDate = $scope.gcDateFilter.fromDate;
+      var toDate = $scope.gcDateFilter.toDate;
+
+      if ($scope.currentPage > 0) {
+        $scope.currentPage -=1;
+      }    
+        $scope.transactions = GiftCardService.query({ page : $scope.currentPage, fromDate:fromDate, toDate:toDate, isRedeemed:isRedeemed });
+        $scope.transactions.$promise.then(function (data) {
+          $scope.transactions = data;
+        });
+      
+      event.preventDefault();
+    }
+
+    $scope.nextPage = function (event) {    
+      var fromDate = $scope.gcDateFilter.fromDate;
+      var toDate = $scope.gcDateFilter.toDate;
+
+      $scope.transactions = GiftCardService.query({ page : $scope.currentPage+1, fromDate:fromDate, toDate:toDate, isRedeemed:isRedeemed });
+      $scope.transactions.$promise.then(function (data) {
+        if(data.length >= 10){
+          $scope.transactions = data;
+          $scope.currentPage += 1; 
+        }
+      }); 
+      event.preventDefault();
+    }
+
+  $scope.showRedeemGCForm = function () {
+    angular.element('#redeem-gc-modal').Modal();
+  }
+
+  $scope.generateGCForm = function(){
+    angular.element('#generate-gc-modal').Modal();
+  }
+
+  $scope.showBuyGCForm = function () {
+    angular.element('#buy-gc-modal').Modal();
+  }
+
+  $scope.selectGCPackage = function(){
+
+    var jsonPackage = JSON.parse($scope.gcPackage);
+    $('input#item_name').val(jsonPackage.name);
+    $('input#item_number').val(jsonPackage._id);
+    $('input#amount').val(jsonPackage.fee);
+    $scope.gcAmount = jsonPackage.fee;
+  }
+
+
+  $scope.generateGC = function(){
+
+    if ($scope.gcCount && $scope.gcPackage){
+      var jsonPackage = JSON.parse($scope.gcPackage);
+      var data = {
+        count : $scope.gcCount,
+        package_id : jsonPackage._id,
+        user_id : $scope.gcAccount
+      }
+
+      var batchSuccess = function () {
+        $route.reload();
+        $.Alert('Success')
+      }
+
+      var batchFail = function (error) {
+        $.Alert(error.data);
+      }
+
+      GiftCardService.create(data).$promise.then(batchSuccess, batchFail);
+
+    }else{
+      $.Alert('Complete your form');
+    }
+  }
+  $scope.redeemGC = function(){
+    $scope.redeemingGC = true;
+    if ( $scope.gcCode && $scope.gcPin && $scope.gcAccount){
+      var data = {
+        code : $scope.gcCode,
+        pin : $scope.gcPin,
+        user_id : $scope.gcAccount
+      }
+
+      var redeemSuccess = function () {
+        $route.reload();
+        $.Alert('Success')
+        $scope.redeemingGC = false;
+      }
+
+      var redeemFail = function (error) {
+        $.Alert(error.data);
+        $scope.redeemingGC = false;
+      }
+      GiftCardService.redeem({ gcCode: $scope.gcCode }, data ).$promise.then(redeemSuccess, redeemFail);
+    }else{
+      $.Alert('Complete your form')
+    }
+  }
+
+  var port = '';
+  if (window.location.port)
+    port = ':' + window.location.port;
+  $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port;
+  
+  $scope.buyGC = function(arg){
+
+    if(arg == 'confirm_buy'){
+
+      console.log($scope.receiverEmail);
+      if ($scope.receiverEmail){
+        $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph.', function () {
+            
+            if ($scope.gcMessage == undefined){
+              $scope.gcMessage = ""
+            }
+
+            var jsonPackage = JSON.parse($scope.gcPackage);
+            var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + jsonPackage._id + 
+                                        "&success=True&email=" + $scope.receiverEmail + "&message=" + $scope.gcMessage +
+                                        "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcFrom + "&receiver_name=" + $scope.gcTo+"&admin=True"; 
+            var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + jsonPackage._id + "&success=True&email=" + $scope.receiverEmail + 
+                          "&message=" + $scope.gcMessage +"&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcFrom + "&receiver_name=" + $scope.gcTo +"&admin=True"; 
+            var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False&admin=True";
+      
+            $('input#ipn_notification_url').val(ipn_notification_url);
+            $('input#return').val(return_url);
+            $('input#cancel_return').val(cancel_return);
+
+            angular.element('#payForm').submit();
+        });  
+      }else{
+       $.Alert('Please enter valid recipient email.'); 
+      }
+    }else{
+      if ($scope.gcTo && $scope.gcFrom && $scope.gcPackage){
+
+        if (arg == 'sender') {
+          $scope.senderIsReceiver = true
+        }else{
+          $scope.senderIsReceiver = false
+        }
+
+        angular.element('#enter-email-modal').Modal(); 
+      }else{
+        $.Alert('Complete your form');
+      }
+    }
+
   }
 
 });

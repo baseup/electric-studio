@@ -1,0 +1,94 @@
+<html>
+<body>
+
+<table style="width:100%; max-width: 700px; border: solid 1px #ccc; font: 13px Arial; border-radius: 3px;" cellspacing="0" cellpadding="0">
+	<tr>
+		<td style="background-color:#FF8F1C; padding: 10px;">
+			<img src="http://electricstudio.ph/assets/images/electricstudio-logo.png" height="40">
+			<img src="http://electricstudio.ph/assets/images/electricstudio-nameplate.png" height="40">
+		</td>
+
+		<td style="background-color:#FF8F1C; padding: 10px; width: 100px;">
+			<a href="http://www.electricstudio.ph" style="display: block; color:#fff; white-space: no-wrap; text-decoration: none">www.electricstudio.ph</a>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" style="padding: 20px;">
+			<table cellspacing="5" cellpadding="0">
+				<tr>
+					<td style="border-bottom: solid 1px #ccc; padding: 10px">
+						<span style="display:inline-block; width: 100px; color:#777">TO: </span>
+						<span style="font-size: 26px">{{gc['receiver_name']}}</span>
+					</td>
+
+					<td style="border-bottom: solid 1px #ccc; padding: 10px; width: 33%" colspan="2">
+						<span style="display:inline-block; width: 100px; color:#777">VALUE: </span>
+						<span style="font-size: 26px">{{ gc['amount'] }}</span></td>
+				</tr>
+				<tr>
+					<td style="border-bottom: solid 1px #ccc; padding: 10px">
+						<span style="display:inline-block; width: 100px; color:#777">FROM: </span>
+						<span style="font-size: 26px">{{gc['sender_name']}}</span>
+					</td>
+					<td style="border-bottom: solid 1px #ccc; padding: 10px">
+						<span style="display:inline-block; width: 100px; color:#777">RIDES: </span>
+						<span style="font-size: 26px">{{gc['credits']}}</span>
+					</td>
+					<td style="border-bottom: solid 1px #ccc; font-size: 14px; color: #777; padding: 10px">
+						<span style="display:block">VALIDITY: </span>
+						<span style="">{{gc['validity']}} DAYS</span><br/>
+						from time the Gift Card is loaded into the account
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" style="padding-top: 20px;font-size: 26px">
+						{{ gc['message'] }}
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<table style="background: #ccc;font-size: 12px; color:#fff; width: 100%;">
+	          <tr>
+	            <td style=" padding: 10px; width: 60%"> </td>
+	            <td style=" padding: 10px">card code: <strong> {{ gc['code']}} </strong></td>
+	            <td style=" padding: 10px">pin: <strong> {{ gc['pin']}}</strong></td>
+	          </tr>
+	        </table>
+		</td>
+	</tr>
+</table>
+
+<table style="width:100%; margin-top: 30px; max-width: 700px; font: 13px Arial; border-radius: 3px;" cellspacing="0" cellpadding="0">
+	<tr>
+		<td style="background: #ccc; padding: 5px; font-size: 18px">
+			How to use your Gift Card
+		</td>
+	</tr>
+	<tr>
+		<td style="padding: 5px">
+			<p><strong>ONLINE:</strong> To redeem your card, go to www.electricstudio.ph and enter the Electric Studio card code and PIN.</p>
+
+			<p> <strong>IN STUDIO:</strong> Print out the page and take into any Electric Studio branch (make sure the e-Gift Card number and PIN are included on the printout).</p>
+
+			<p> <strong>BY PHONE:</strong> Purchase classes over the phone and simply give the e-Gift Card number and PIN to the Electric Studio staff when finishing up your order.</p>
+		</td>
+	</tr>
+	<tr>
+		<td style="background: #ccc; padding: 5px; font-size: 18px">
+			To Check your Gift Card Balance
+		</td>
+	</tr>
+	<tr>
+		<td style="padding: 5px">
+			<p><strong>ONLINE:</strong> Go to the Gift Card Page on the Electric Studio Website and enter your e-Gift Card number and PIN.</p>
+
+			<p> <strong>OVER THE PHONE:</strong> Call one of our Electric Studio branch and provide your e-Gift Card number/</p>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

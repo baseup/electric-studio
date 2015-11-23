@@ -58,6 +58,14 @@ app.config(function ($routeProvider, $httpProvider) {
     '/settings': {
       templateUrl: '/admin/settings',
       controller: 'AdminCtrl'
+    },
+    '/gc-generation': {
+      templateUrl: '/admin/gc-generation',
+      controller: 'AdminCtrl'
+    },
+    '/gc-redemption': {
+      templateUrl: '/admin/gc-redemption',
+      controller: 'AdminCtrl'
     }
   };
 

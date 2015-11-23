@@ -1,0 +1,130 @@
+.gc-buy {
+  overflow: visible!important;
+
+  .wrapper {
+    overflow: visible!important;
+  }
+}
+
+.gc-card {
+  background: #333;
+  padding: 30px;
+  border-radius: 1.5em;
+  color: #fff;
+  margin-right: 0;
+
+  @include breakpoint(lg) {
+    margin-right: 40px;
+  }
+
+  .first-timer-label {
+    @include breakpoint(md) {
+      display: none;
+    }
+  }
+
+  .text-input {
+    font-family: 'Brandon_Grotesque', sans-serif;
+    font-size: 18px;
+  }
+
+  .gc-card__select {
+
+    &.selectize-control {
+      height: 86px!important;
+    }
+
+    .selectize-input {
+      font-size: 60px!important;
+      line-height: 86px!important;
+      height: 86px!important;
+      font-family: 'Tungsten', sans-serif;
+
+      &:after {
+        font-size: 16px;
+        background: none;
+        color: $color-text;
+      }
+    }
+
+    .selectize-dropdown {
+      min-width: 120px!important;
+    }
+
+  }
+
+}
+
+.gc-header {
+  position: relative;
+  overflow: hidden;
+
+  .gc-card-nameplate {
+    max-height: 52px;
+  }
+
+  .first-timer-label-top {
+    font-family: 'Brandon_Grotesque', sans-serif;
+    display: none;
+
+    @include breakpoint(md) {
+      display: block;
+      position: absolute;
+      bottom: 0;
+      padding-left: 20px;
+      margin-top: 0;
+      font-size: 80%;
+    }
+
+    @include breakpoint(lg) {
+      line-height: 24px;
+      font-size: 16px;
+    }
+
+  }
+}
+
+
+.gc-package-select {
+  padding-top: 20px;
+  position: relative;
+
+  @include breakpoint(md) {
+    padding-left: 20px;
+    padding-top: 30px;
+  }
+}
+
+
+
+.gc-form {
+
+  .text-input {
+    font-family: 'Brandon_Grotesque', sans-serif;
+    font-size: 18px;
+    border: 1px solid rgba(#999, 0.6);
+    box-shadow: none;
+  }
+
+  @include breakpoint(md) {
+    padding-left: 80px;
+  }
+
+}
+
+
+.gc-redeem {
+  .text-input {
+    font-family: 'Brandon_Grotesque', sans-serif;
+    font-size: 18px;
+  }
+}
+
+
+.text-input {
+  -webkit-text-fill-color: $color-text !important;
+
+  &:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset!important;
+  }
+}

@@ -1,6 +1,6 @@
 from passlib.hash import bcrypt
 from app.models.users import User
-from app.models.packages import Package, UserPackage
+from app.models.packages import Package, UserPackage, GiftCertificate
 from app.helper import send_email_verification, send_email
 from app.models.schedules import InstructorSchedule, BookedSchedule
 from app.models.admins import Instructor, Admin, Setting, Branch
@@ -19,6 +19,9 @@ import base64
 import urllib.parse
 
 def index(self):
+    if not self.get_secure_cookie('loginUser') and self.get_secure_cookie('loginUserID'):
+        self.clear_cookie('loginUserID')
+
     user_credits = 0;
     if self.get_secure_cookie('loginUserID'):
         user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
@@ -116,9 +119,9 @@ def user_migration(self):
     print("Total records " + str(i))
     self.finish()
 
-
 def logout(self):
     self.clear_cookie('loginUser')
+    self.clear_cookie('loginUserID')
     self.finish()
 
 def verify(self):
@@ -189,6 +192,84 @@ def forgot_password(self):
                 self.write('No user found for the specified email address')
         self.finish()
 
+def redeem_gc(self):
+    data = tornado.escape.url_unescape(self.request.body)
+    redeem_data = tornado.escape.json_decode(data)
+
+    code = redeem_data['code']
+    pin = redeem_data['pin']
+    gift_certificate = yield GiftCertificate.objects.get(code=code, pin=pin)
+
+    if gift_certificate:
+
+        if gift_certificate.is_redeemed:
+            self.set_status(403)
+            self.write('Your gift card has already been redeemed.')
+            return self.finish()
+
+        if 'checkOnly' in redeem_data: 
+            return self.render_json(gift_certificate);
+    
+        if not self.get_secure_cookie('loginUserID'):
+            self.set_status(403)
+            self.write('Please log in to your Electric account.')
+            self.finish()
+        else:
+            try :
+                # get user and package
+                user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+                user = yield User.objects.get(user_id)
+                if user.status != 'Frozen' and user.status != 'Unverified':
+
+                    if gift_certificate.package_id.first_timer:
+                        ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
+                        if ft_package_count > 0:
+                            self.set_status(403)
+                            self.write('Sorry, you may only avail of the First Timer Package once.')
+                            return self.finish()
+
+                    gift_certificate.redeemer_es_id = user._id
+                    gift_certificate.redeem_date = datetime.now()
+                    gift_certificate.is_redeemed = True
+                    # # save this into user transaction
+                    transaction = UserPackage()
+                    transaction.user_id = user._id
+                    transaction.package_id = gift_certificate.package_id._id
+                    transaction.package_name = 'GC - ' + gift_certificate.package_id.name
+                    transaction.package_fee = gift_certificate.amount
+                    transaction.package_ft = gift_certificate.package_id.first_timer
+                    transaction.credit_count = gift_certificate.credits
+                    transaction.remaining_credits = gift_certificate.credits
+                    transaction.expiration = gift_certificate.validity
+                    transaction.expire_date = datetime.now() + timedelta(days=gift_certificate.validity)
+                    if gift_certificate.pptx:
+                        transaction.trans_id = gift_certificate.pptx
+                    else:
+                        transaction.trans_id = str(user._id) + datetime.now().strftime('%Y%m%d%H%M%S')
+                    transaction.trans_info = gift_certificate.trans_info
+                    user.credits += gift_certificate.credits
+
+                    gift_certificate = yield gift_certificate.save()
+                    transaction = yield transaction.save()
+                    user = yield user.save()
+
+                    gift_certificate = yield gift_certificate.save()
+                    self.render_json(gift_certificate.to_dict())
+                    return
+                else:
+                    self.set_status(403)
+                    self.write("Access Denied")
+                    self.finish()
+
+            except :
+                value = sys.exc_info()[1]
+                str_value = str(value)
+                self.write(str_value)
+                self.finish()
+    else:
+        self.set_status(403)
+        self.write('Incorrect card code or pin. Please try again.')
+        self.finish()
 
 def buy(self):
 

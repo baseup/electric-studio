@@ -21,7 +21,8 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
         $scope.loginUser = user;
       }
     });
-  } 
+  }
+
 
   if (!$scope.loginUser && window.localStorage.getItem('login-user')) {
     $scope.reloadUser();
@@ -39,7 +40,7 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   }
 
   $scope.selectedSched = null;
-  
+
   $scope.activeMainNav = function (path) {
     return window.location.hash.indexOf('#' + path) == 0;
   }
@@ -51,8 +52,8 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
       signupToggle = angular.element('.signup-toggle'),
       bookToggle = angular.element('.book-toggle'),
       menuToggle = angular.element('.menu-toggle');
-    
-  
+
+
   angular.element('.datepicker').pickadate({
     labelMonthNext: 'Go to the next month',
     labelMonthPrev: 'Go to the previous month',
@@ -66,10 +67,10 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   });
 
   angular.element('.fit-text span').fitText(2);
-  
+
   angular.element('.close-btn').click(function () {
     var headerForm = angular.element(this).closest(login.add(signup));
-    
+
     headerForm.removeClass('show');
   });
 
@@ -88,12 +89,12 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   });
 
   $(window).resize(function () {
-    var winH = angular.element(this).height(), 
+    var winH = angular.element(this).height(),
         headerH = angular.element('.main-header').outerHeight(),
         footerH = angular.element('.main-footer').height();
 
     if (angular.element(this).width() >= 980) {
-      angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
+      angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
     }
   }).trigger('resize');
 
@@ -104,7 +105,7 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
       method: 'GET',
       success: function (response) {
         window.localStorage.removeItem('login-user');
-        window.location = '/';        
+        window.location = '/';
       },
       error: function (xhr, code, error) {
         $.Alert(xhr.responseText);
@@ -123,6 +124,7 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   var workouts = angular.element('#workouts-section');
   var firstRide = angular.element('#firstride-section');
   var faq = angular.element('#faq');
+  var packages_section = angular.element('#packages');
 
   if (aboutUs.length) {
     var scrollableView = aboutUs.offset().top;
@@ -135,8 +137,15 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   if (firstRide.length) {
     var scrollableView = firstRide.offset().top;
     angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-  } 
-  
+  }
+
+  if (packages_section.length && window.location.hash.indexOf('package') > 0) {
+
+    var scrollableView = packages_section.offset().top;
+    angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+    $.Alert("Gift Card value is now loaded to your account");
+
+  };
 
   if (faq.length) {;
     angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
@@ -157,7 +166,7 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
       }).data('api_glide');
 
       var win = angular.element(window);
-      var winH = win.height(), 
+      var winH = win.height(),
         headerH = angular.element('.main-header').outerHeight(),
         footerH = angular.element('.main-footer').height();
 
@@ -170,7 +179,7 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
         angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
           var img = angular.element(value);
           var src = img.attr('src');
-          
+
           intervals.push({
             fn : '',
             tries : 0
@@ -195,7 +204,7 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
       }, 800);
 
       if (win.width() >= 980) {
-        angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));    
+        angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
       }
 
       if (!angular.element('.slider > li').css('width')) {
@@ -267,7 +276,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
 
       UserService.create($scope.user).$promise.then(registerSuccess, registerFail);
     }
-  } 
+  }
 
   $scope.sendEmailConfirmation = function (user) {
     $scope.sendingEmail = true;
@@ -409,7 +418,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
     $scope.account = $scope.loginUser;
     $scope.billing = {};
 
-    if ($scope.account.billing && $scope.account.billing != 'null') { 
+    if ($scope.account.billing && $scope.account.billing != 'null') {
       $scope.billing = JSON.parse($scope.account.billing);
     }
 
@@ -522,22 +531,46 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
   }
 });
 
-ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, PackageService) {
-  
-  var scrollableView = angular.element('#rates-section').offset().top;
-  angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $location, UserService, PackageService, GCRedeemService) {
 
   var qstring = $location.search();
+
+  if (angular.element('#rates-section').offset()) {
+    var scrollableView = angular.element('#rates-section').offset().top;
+    angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+  };
+
+  if ($scope.loginUser) {
+    $scope.senderEmail = $scope.loginUser.email;
+  }
+
+  $scope.ipn_notification_url = '';
+  $scope.return_url = '';
+  $scope.cancel_return_url = '';
+  var qstring = $location.search();
+
   if (qstring.s == 'error') {
     $.Alert('Transaction failed');
     $location.search('s', null);
+  }else{
+    if (qstring.msg){
+      $.Alert(qstring.msg);
+      $location.search('s', null);
+      $location.search('msg', null);
+    }
   }
 
+  var isGCPage = ($location.url() == '/gift-cards');
+
+  var query_params = {};
+  if (isGCPage) query_params = { gc: true };
+
   $scope.loadingPackages = true;
-  $scope.packages = PackageService.query();
+  $scope.packages = PackageService.query(query_params);
   $scope.packages.$promise.then(function (data) {
     $scope.packages = data;
     $scope.loadingPackages = false;
+    gcPackageSelectize(data);
   });
 
   var port = '';
@@ -556,7 +589,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
     }
 
     UserService.get(function (user) {
-      
+
       $scope.loginUser =  user;
       $scope.reloadUser(user);
 
@@ -570,12 +603,156 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $location, UserService, P
         return;
       }
 
-      $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph to ensure your rides are credited to your account.', function () {
+      $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
         angular.element('#payForm-' + index).submit();
       });
     });
   }
+
+  $scope.checkGCValue = function () {
+
+    if ($scope.gcPin && $scope.gcCode) {
+
+      var data = {}
+      data.code = $scope.gcCode;
+      data.pin = $scope.gcPin;
+      data.checkOnly = true;
+
+      GCRedeemService.redeem(data).$promise.then(function (data){
+        $.Alert('<div style="text-align: left">Package: ' + data.package_id.name + '<br>' +
+                'Credits: ' + data.credits + '<br>' +
+                'Validity: ' + data.validity + ' days</div>');
+      }, function (error) {
+        $.Alert(error.data);
+      });
+    }else{
+      $.Alert('Oops. We need more details from you.');
+    }
+  }
+
+  $scope.redeemGC = function(){
+
+    if (!$scope.loginUser) {
+      $.Alert('Please log in to your Electric Studio Account or create an account');
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+      angular.element('.login-toggle').click();
+      return;
+    }
+
+    if ($scope.gcPin && $scope.gcCode) {
+
+      var redeemSuccess = function () {
+
+        UserService.get(function (user) {
+          $scope.loginUser =  user;
+          $scope.reloadUser(user);
+        });
+        window.location = "/#/account#package"
+        window.location.reload()
+      }
+
+      var redeemFailed = function (error) {
+        $.Alert(error.data);
+      }
+
+      var data = {}
+      data.code = $scope.gcCode;
+      data.pin = $scope.gcPin;
+
+      GCRedeemService.redeem(data).$promise.then(redeemSuccess, redeemFailed);
+
+    }else{
+      $.Alert('Oops. We need more details from you.');
+    }
+  }
+
+
+  function gcPackageSelectize(data) {
+    var $packageSelect = $('#select-gc-package');
+    if(!$packageSelect[0]) return;
+
+    var selectize = $packageSelect[0].selectize;
+    if(selectize) selectize.destroy();
+
+    $packageSelect.selectize({
+      create: false,
+      labelField: 'credits',
+      valueField: 'value',
+      render: {
+        option: function(item, escape) {
+          return item.credits ? '<div class="pad--half-ends">' + escape(item.name) + '</div>' : '';
+        }
+      }
+    });
+
+    angular.forEach(data, function(item) {
+      $packageSelect[0].selectize.addOption({name: item.name, credits: item.credits, value: JSON.stringify(item)});
+    });
+  }
+
+
+  $scope.selectGCPackage = function(){
+
+    var jsonPackage = JSON.parse($scope.gcPackage);
+    $('input#item_name').val(jsonPackage.name);
+    $('input#item_number').val(jsonPackage._id);
+    $('input#amount').val(jsonPackage.fee);
+    $scope.gcAmount = jsonPackage.fee;
+    $scope.gcValidity = jsonPackage.expiration;
+    $scope.gcPackageFirstTimer = jsonPackage.first_timer;
+  }
+  
+  $scope.emailTo = 'sender';
+  $scope.buyGC = function () {
+
+    var receiverEmail = null;
+    if($scope.emailTo =='sender'){
+      receiverEmail = $scope.senderEmail;
+      $scope.senderIsReceiver = true;
+    }else{
+      $scope.senderIsReceiver = false;
+      receiverEmail = $scope.receiverEmail;
+    }
+
+    if ($scope.gcPackage && $scope.gcReceiver && $scope.gcSender) {
+      if(receiverEmail){
+          // Do other validations like email validations
+        $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
+
+            if ($scope.gcMessage == undefined){
+              $scope.gcMessage = ""
+            }else{
+              var msG = "&message=" + $scope.gcMessage;
+              $scope.gcMessage = msG;
+            }
+
+            var jsonPackage = JSON.parse($scope.gcPackage);
+
+            var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + jsonPackage._id +
+                                        "&success=True&email=" + receiverEmail + $scope.gcMessage +
+                                        "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail;
+            var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + jsonPackage._id + "&success=True&email=" + receiverEmail +
+                          $scope.gcMessage + "&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail;
+            var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False";
+
+            $('input#ipn_notification_url').val(ipn_notification_url);
+            $('input#return').val(return_url);
+            $('input#cancel_return').val(cancel_return);
+
+            angular.element('#payForm').submit();
+        });
+      }else{
+        $.Alert('Please enter valid recipient email.');
+      }
+    }else{
+      $.Alert('Oops. We need more details from you.');
+    }
+
+  }
+
 });
+
+
 
 ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService) {
 
@@ -592,14 +769,14 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService
 	       angular.element('html, body').animate({
 	         scrollTop : target.offset().top
 	       });
-    
+
 	       target.find('.image').addClass('focus');
-        
+
 	       $timeout(function () {
 	         target.find('.image').removeClass('focus');
 	       }, 2000);
 	   }
-    
+
   });
 });
 
@@ -646,7 +823,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
         var bookFail = function (error) {
           $.Alert(error.data)
         }
-        
+
         BookService.update({ bookId: book._id }, data).$promise.then(bookSuccess, bookFail);
       });
     }
@@ -702,7 +879,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
       if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
         $.Alert('Not enough credits.');
-      } 
+      }
 
       var book = {};
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
@@ -741,7 +918,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
       if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
         $.Alert('Not enough credits.');
-      } 
+      }
 
       var today = new Date();
       var time = schedule.start.split(/[^0-9]/);
@@ -755,7 +932,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       // if ($scope.weekRelease) {
       //   if (today < $scope.weekRelease.date) {
       //     var d = $scope.weekRelease;
-      //     var strDate = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() + ' ' + 
+      //     var strDate = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() + ' ' +
       //                   d.getHours() + ':' + d.getMinutes() +':' +d.getSeconds();
       //     var tryDate = week_days[$scope.weekRelease.getDay()] + ' ' + $filter('formatTime')(strDate);
       //     $.Alert('Booking is not yet available, Please try again on ' + tryDate);
@@ -780,13 +957,13 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       bfilter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
       bfilter.sched_id = sched.schedule._id;
       bfilter.waitlist = true
-      
+
       $scope.waitlist = BookService.query(bfilter);
       $scope.waitlist.$promise.then(function (waitlistData) {
         $scope.waitlist = waitlistData;
         if ($scope.waitlist.length > 0) {
 
-          
+
 
           $.Confirm(cutOffMsg + 'This class is full. Would you like to join the waitlist?', function () {
             $scope.$apply(function () {
@@ -946,7 +1123,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
     $scope.resched = SharedService.get('resched');
-    
+
     $scope.cancelResched = function () {
       SharedService.clear('resched');
       $location.path('/reserved');
@@ -1012,7 +1189,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
   }
 
   $scope.setSeatNumber = function (number, event) {
-    
+
     var seat_index = -1;
     for (var i = 0; i < seats.length; i++) {
       if (seats[i] === number) {
@@ -1027,7 +1204,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
           deductCredits = 2;
         }
 
-        if ($scope.loginUser && 
+        if ($scope.loginUser &&
             ((!seats.length && deductCredits > $scope.loginUser.credits) ||
              (seats.length * deductCredits) >= $scope.loginUser.credits)) {
           $.Alert('Not enough credits');
@@ -1082,7 +1259,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       if ($scope.loginUser && $scope.loginUser.credits < (seats.length * deductCredits)) {
         $.Alert('Not enough credits, you only have ' + $scope.loginUser.credits);
         return;
-      } 
+      }
 
       var today = new Date();
 
@@ -1096,9 +1273,9 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       book.sched_id = sched.schedule._id;
       var str_seats = seats.sort(function(a, b){return a-b}) + '';
       str_seats = str_seats.replace(/,/g, ', ');
-      var confirm_message = 'You are about to book bike'+ (seats.length > 1 ? 's' : '') + ' # ' + str_seats + 
+      var confirm_message = 'You are about to book bike'+ (seats.length > 1 ? 's' : '') + ' # ' + str_seats +
                             ' for ' + $scope.daySched + ', ' + $scope.dateSched + '.';
-      var cutOffMsg = '';                     
+      var cutOffMsg = '';
       if (+today >= +cutOffchkDate) {
         cutOffMsg = 'You can no longer cancel this ride once a booking is made. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.<br/><br/>'
       }
@@ -1119,7 +1296,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
 
           if ($scope.forWaitlist) {
             $.Alert('You have been added to the waitlist');
-          } else {  
+          } else {
             $.Alert('You have successfully booked a ride.');
           }
           UserService.get(function (user) {
@@ -1201,7 +1378,7 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
         $scope.histories.$promise.then(function (data) {
           $scope.histories = data;
         });
-      }        
+      }
       event.preventDefault();
     }
   }
@@ -1209,9 +1386,9 @@ ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) 
 });
 
 ctrls.controller('WhatsnewCtrl', function ($scope, Instagram) {
-  
+
   Instagram.fetchRecent(function (data) {
     $scope.instagram = data;
   });
-  
+
 });
