@@ -305,7 +305,7 @@ def buy_gc(self):
 
                     gc = gift_certificate.to_dict()
                     site_url = url = self.request.protocol + '://' + self.request.host + '/#/account'
-                    subject = 'You send Electric Studio Gift Card to ' + self.get_argument('receiver_name') 
+                    subject = 'Electric Studio Gift Card sent to ' + self.get_argument('receiver_name') 
                     content = str(self.render_string('emails/gc', gc=gc, site=site_url, package=package.name), 'UTF-8')
                     yield self.io.async_task(send_email, user=sender, content=content, subject=subject)
 
