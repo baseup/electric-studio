@@ -235,7 +235,7 @@ def buy_gc(self):
             'at' : PDT_TOKEN,
         })
 
-        url = 'https://www.sandbox.paypal.com/cgi-bin/webscr'
+        url = 'https://www.paypal.com/cgi-bin/webscr'
         pp_request = HTTPRequest(url=url, method='POST', body=post_body, validate_cert=False)
         pp_response = yield AsyncHTTPClient().fetch(pp_request)
         pp_data = pp_response.body.decode('UTF-8')
