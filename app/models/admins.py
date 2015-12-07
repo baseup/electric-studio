@@ -41,6 +41,15 @@ class Slider(Model):
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 
+class LandingPage(Model):
+    __collection__ = 'landing_pages'
+    image = StringField()
+    text = StringField(required=True)
+    button_label = StringField(default=None)
+    button_link = StringField(default=None)
+    create_at = DateTimeField(auto_now_on_insert=True)
+    update_at = DateTimeField(auto_now_on_update=True)
+
 class Setting(Model):
     __collection__ = 'settings'
     key = StringField(required=True)

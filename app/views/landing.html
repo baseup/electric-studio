@@ -1,0 +1,7 @@
+{% for landing in landing_pages %}
+<div>
+	<img src="{{ static_url(landing.image) }}"/>
+	<h3>{{ landing.text }}</h3>
+	<a href="{{ landing.button_link }}">{{ landing.button_label }}</a>
+</div>
+{% end %}
