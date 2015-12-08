@@ -5,14 +5,15 @@ from app.helper import send_email_booking, send_email_cancel, send_email_move, s
 from app.models.packages import UserPackage
 from app.models.users import User
 from bson.objectid import ObjectId
-from datetime import datetime, timedelta
-from app.helper import Lock
+from datetime import datetime, timedelta, time
+from app.helper import Lock, GMT8
 from tornado import gen
 
 import tornado
 import json
 import sys
 import tornado.escape
+
 
 def find(self):
 
@@ -61,6 +62,14 @@ def create(self):
             if user.status != 'Frozen' and user.status != 'Unverified':
                 
                 sched = yield InstructorSchedule.objects.get(data['sched_id']);
+
+                gmt8 = GMT8()
+                one_hour_before = datetime.combine(datetime.strptime(data['date'],'%Y-%m-%d'), (sched.start - timedelta(hours=1)).time())
+                one_hour_before = one_hour_before.replace(tzinfo=gmt8)
+                if datetime.now(tz=gmt8) >= one_hour_before:
+                    self.set_status(403)
+                    self.write('Online booking closes 1 hour before class starts. Please call the studio to book this class.')
+                    return self.finish()
 
                 deduct_credits = 1
                 if sched.type == 'Electric Endurance':
@@ -205,6 +214,7 @@ def create(self):
             Lock.unlock(lk)
 
 def update(self, id):
+    gmt8 = GMT8()
     data = tornado.escape.json_decode(self.request.body)
     if data and self.get_secure_cookie('loginUserID'):
         try:
@@ -222,6 +232,14 @@ def update(self, id):
 
             if book.schedule:
                 ref_book_time = book.schedule.start
+
+            if book.status == 'booked' and data['status'] == 'cancelled':
+                cutOff_datetime = datetime.combine(ref_book_date - timedelta(days=1), time(17,00))
+                cutOff_datetime = cutOff_datetime.replace(tzinfo=gmt8)
+                if datetime.now(tz=gmt8) >= cutOff_datetime:
+                    self.set_status(403)
+                    self.write("This ride can no longer be cancelled. You can only cancel your booking until 5pm the day before your ride.")
+                    return self.finish()
 
             sched = None
             if 'sched_id' in data:
