@@ -639,10 +639,6 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
   }
 
   $scope.getTransId = function (pac) {
-    if (pac.trans_id) {
-      return pac.trans_id;
-    }
-    
     if (pac.trans_info) {
       if (!(pac.trans_info instanceof Object)) {
         try {
@@ -652,7 +648,11 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
           pac.trans_info = trans;
           return trans.transaction;
         } catch (e) {
-          return 'Err: Transaction ID';
+          if (pac.trans_id) {
+            return pac.trans_id;
+          } else { 
+            return 'Err: Transaction ID';
+          }
         }
       } else {
         return pac.trans_info.transaction;
@@ -2188,7 +2188,6 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
   });
 
   $scope.getTransId = function (pac) {
-    if (pac.pptx) return pac.pptx;
     if (pac.trans_info) {
       if (!(pac.trans_info instanceof Object)) {
         try {
@@ -2198,7 +2197,8 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
           pac.trans_info = trans;
           return trans.transaction;
         } catch (e) {
-          return 'Err: Transaction ID';
+          if (pac.pptx) return pac.pptx;
+          else return 'Err: Transaction ID';
         }
       } else {
         return pac.trans_info.transaction;
@@ -2379,10 +2379,6 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
   });
 
   $scope.getTransId = function (pac) {
-    if (pac.trans_id) {
-      return pac.trans_id;
-    }
-
     if (pac.trans_info) {
       if (!(pac.trans_info instanceof Object)) {
         try {
@@ -2392,7 +2388,11 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
           pac.trans_info = trans;
           return trans.transaction;
         } catch (e) {
-          return 'Err: Transaction ID';
+          if (pac.trans_id) {
+            return pac.trans_id;
+          } else {
+            return 'Err: Transaction ID';
+          }
         }
       } else {
         return pac.trans_info.transaction;
