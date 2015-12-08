@@ -1,13 +1,13 @@
 <div ng-controller="LandingPageCtrl">
     <div class="content-result pad">
       <div class="cf space--bottom">
-        <span class="label inline">LandingPages</span>
-        <button ng-if="getAccess('sliders', 'create')" ng-click="showAddLandingPage()" class="btn btn--small btn--secondary float--right" data-modal-toggle="add-landing-page">Add LandingPage</button>
+        <span class="label inline">Landing Page Sections</span>
+        <button ng-if="getAccess('sliders', 'create')" ng-click="showAddLandingPage()" class="btn btn--small btn--secondary float--right" data-modal-toggle="add-landing-page">Add Section</button>
       </div>
 
     <div ng-show="isUpdateLandingPage">
       <div class="modal__box pad">
-        <h3 class="h--medium brand-color space--bottom">Add LandingPage</h3>
+        <h3 class="h--medium brand-color space--bottom">Landing Page Section</h3>
         <div class="cf">
           <div class="space--bottom one-whole space--right">
             <span class="label">Text</span>
@@ -35,7 +35,7 @@
           <div ng-if="!chkChangePic(landing._id) || !getAccess('sliders', 'update')" align="center" class="image" ng-click="changeLandingPic(landing)">
             <img ng-if="landing.image" height="200" ng-src="{{ landing.image }}">
             <img ng-if="!landing.image"  height="200" src="assets/images/pic-placeholder.png">
-          </div>  
+          </div>
           <div class="pad" style="height: 203px;" ng-if="chkChangePic(landing._id) && getAccess('sliders', 'update')">
             <input ng-show="!uploading" type="file" ng-file-select="uploadLandingPic($files)" ng-model="landingpic"/>
             <span ng-show="uploading">Uploading: {{ progress }}</span>
@@ -50,7 +50,7 @@
           <div class="pad--sides">
             <div class="data-list">
               <a class="btn btn--small btn--secondary" href="{{ landing.button_link }}">
-                {{ landing.button_label }}  
+                {{ landing.button_label }}
               </a>
             </div>
 
@@ -65,13 +65,13 @@
       </div>
 
     </div>
-  </div>  
+  </div>
 
   <!-- modal Add LandingPage -->
   <div id="add-landing-page-modal" class="modal" data-modal="add-landing-page">
     <div class="modal__box pad" style="max-width: 35%">
       <span class="close-btn modal-close">X</span>
-      <h3 class="h--medium brand-color space--bottom">Add LandingPage</h3>
+      <h3 class="h--medium brand-color space--bottom">Add Section</h3>
       <div class="cf">
         <div class="space--bottom one-whole float--left space--right">
           <span class="label">Text</span>
@@ -91,7 +91,7 @@
           <input ng-show="!uploading" type="file" ng-file-select="uploadLandingPic($files)" ng-model="landingpic"/>
           <span ng-show="uploading">Uploading: {{ progress }}</span>
         </div>
-        
+
       </div>
       <button class="btn btn--medium btn--primary space--top modal-close" ng-click="addLandingPage()">Add</button>
     </div>
