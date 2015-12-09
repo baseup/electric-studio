@@ -7,6 +7,11 @@ import tornado.escape
 
 def find(self):
     sliders = yield Slider.objects.find_all()
+    for i, slider in enumerate(sliders):
+        if slider.image:
+            slider.image = self.static_url(slider.image)
+        slider.image = slider.image.replace('/assets/assets','/assets')
+
     self.render_json(sliders)
 
 def find_one(self, id):

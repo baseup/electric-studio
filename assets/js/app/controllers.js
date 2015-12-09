@@ -140,11 +140,8 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   }
 
   if (packages_section.length && window.location.hash.indexOf('package') > 0) {
-
     var scrollableView = packages_section.offset().top;
     angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-    $.Alert("Gift Card value is now loaded to your account");
-
   };
 
   if (faq.length) {;
@@ -1027,9 +1024,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       $scope.waitlist.$promise.then(function (waitlistData) {
         $scope.waitlist = waitlistData;
         if ($scope.waitlist.length > 0) {
-
-
-
           $.Confirm(cutOffMsg + 'This class is full. Would you like to join the waitlist?', function () {
             $scope.$apply(function () {
               $scope.waitlistUser(sched);

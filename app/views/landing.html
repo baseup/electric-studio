@@ -1,7 +1,66 @@
-{% for landing in landing_pages %}
-<div>
-	<img src="{{ static_url(landing.image) }}"/>
-	<h3>{{ landing.text }}</h3>
-	<a href="{{ landing.button_link }}">{{ landing.button_label }}</a>
-</div>
-{% end %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+  <title>Sign Up - Electric Studio</title>
+
+  <link rel="stylesheet" href="{{static_url('css/landing-page.css')}}">
+</head>
+
+<body>
+	<header class="page-header">
+		<div class="wrapper">
+			<a href="/">
+				<img src="{{ static_url('images/electricstudio-logo.png') }}" class="brand-logo">
+				<img src="{{ static_url('images/electricstudio-nameplate.png') }}" alt="Electric Studio Logo" class="brand-nameplate">
+			</a>
+		</div>
+	</header>
+
+	{% for landing in landing_pages %}
+		<div class="section" style="background-image:url( {{ static_url(landing.image) }} )">
+			<div class="center-content"
+	      data-stellar-ratio="2"
+	      data-stellar-offset-parent="true"
+	      data-stellar-horizontal-offset="0"
+	      data-stellar-vertical-offset="20">
+	      <h2 class="section-title">{{ landing.text }}</h2>
+	    </div>
+			<div class="btn-container"
+	      data-stellar-ratio="1.5"
+	      data-stellar-offset-parent="true"
+	      data-stellar-horizontal-offset="0"
+	      data-stellar-vertical-offset="20">
+	      <a class="cta-btn btn btn--large btn--primary" href="{{ landing.button_link }}">{{ landing.button_label }}</a>
+	    </div>
+		</div>
+	{% end %}
+
+  <script src="{{ static_url('vendor/jquery/dist/jquery.min.js') }}"></script>
+  <script src="{{ static_url('vendor/jquery.stellar/jquery.stellar.min.js') }}"></script>
+  <script src="{{ static_url('vendor/color-thief/dist/color-thief.min.js') }}"></script>
+
+  <script>
+    $.stellar.positionProperty.transfade = {
+      setPosition: function(element, newLeft, originalLeft, newTop, originalTop) {
+        var distance = newTop - originalTop;
+        var rate = $(window).height() / 3;
+        element.css('transform', 'translate3d(0px, ' + distance + 'px, 0px').css('opacity', 1 + (distance / rate));
+      }
+    };
+
+    $.stellar({
+      responsive: true,
+      horizontalOffset: '50%',
+      verticalOffset: 50,
+			horizontalScrolling: false,
+      parallaxElements: true,
+			hideDistantElements: true,
+			parallaxBackgrounds: false,
+      positionProperty: 'transfade'
+    });
+  </script>
+</body>
