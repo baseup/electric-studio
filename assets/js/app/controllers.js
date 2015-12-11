@@ -9,7 +9,7 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 });
 
 
-ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
+ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService) {
 
   $scope.loginUser = AuthService.getCurrentUser();
 
@@ -40,6 +40,12 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
   }
 
   $scope.selectedSched = null;
+
+  if (!$scope.loginUser) {
+    if (window.location.hash.indexOf('#signup') >= 0) {
+      angular.element('.signup-toggle').click();
+    }
+  }
 
   $scope.activeMainNav = function (path) {
     return window.location.hash.indexOf('#' + path) == 0;
@@ -645,7 +651,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   $scope.buyPackage = function (event, index) {
 
     if (!$scope.loginUser) {
-      $.Alert('Please log in to your Electric account.');
+      $.Alert('Please sign up or log in to your Electric account.');
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
@@ -913,7 +919,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   $scope.waitlistUser = function (sched) {
 
     if (!$scope.loginUser) {
-      $.Alert('Please log in to your Electric account.');
+      $.Alert('Please sign up or log in to your Electric account.');
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
@@ -1286,7 +1292,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
   $scope.bookSchedule = function () {
 
     if (!$scope.loginUser) {
-      $.Alert('Please log in to your Electric account.');
+      $.Alert('Please sign up or log in to your Electric account.');
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;

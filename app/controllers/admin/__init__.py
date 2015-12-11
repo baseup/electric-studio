@@ -346,7 +346,7 @@ def redeem_gc(self):
     
     if not self.get_secure_cookie('loginUserID'):
         self.set_status(403)
-        self.write('Please log in to your Electric account.')
+        self.write('Please sign up or log in to your Electric account.')
         return self.finish()
     else:
         code = self.get_argument('code')

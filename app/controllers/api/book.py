@@ -43,7 +43,7 @@ def find(self):
                 self.finish()
         else:
             self.set_status(403)
-            self.write('Please log in to your Electric account.')
+            self.write('Please sign up or log in to your Electric account.')
             self.finish()
 
 def find_one(self, id):
@@ -207,7 +207,7 @@ def create(self):
             self.write(str(value))
     else:
         self.set_status(403)
-        self.write('Please log in to your Electric account.')
+        self.write('Please sign up or log in to your Electric account.')
     self.finish()
     if len(locked_keys): 
         for lk in locked_keys:
