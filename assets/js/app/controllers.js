@@ -60,10 +60,11 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     labelMonthSelect: 'Pick a month from the dropdown',
     labelYearSelect: 'Pick a year from the dropdown',
     selectMonths: true,
-    selectYears: 20,
+    selectYears: 50,
     format: 'yyyy-mm-dd',
     formatSubmit: 'yyyy-mm-dd',
-    today: false
+    today: false,
+    max: true
   });
 
   angular.element('.fit-text span').fitText(2);
