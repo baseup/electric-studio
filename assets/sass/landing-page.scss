@@ -200,13 +200,54 @@ html, body {
   right: 0;
   text-align: center;
   z-index: 3;
+
+  .btn {
+    line-height: 3.1;
+    padding: 0 1em;
+
+    @include breakpoint(sm) {
+      line-height: 3.6;
+      padding: 0 1.5em;
+    }
+  }
+
 }
 
+
+
+.rates-section {
+
+  .content-wrapper {
+    margin-top: 30px;
+
+    @include breakpoint(sm) {
+      margin-top: 0;
+    }
+
+    &:before {
+      display: none;
+
+      @include breakpoint(sm) {
+        display: inline-block;
+      }
+    }
+
+  }
+
+  .section-title {
+    font-size: 35px;
+  }
+
+  .btn-container {
+    bottom: 15px;
+  }
+
+}
 
 .rates {
   display: inline-block;
   width: auto;
-  margin: 20px auto;
+  margin: 10px auto;
   background: #ddd;
   border: 8px solid #ddd;
   border-top-width: 0;
@@ -216,6 +257,7 @@ html, body {
     display: block;
     max-width: 540px;
     width: 100%;
+    margin: 20px auto;
   }
 
   > h4 {
@@ -256,9 +298,9 @@ html, body {
     }
 
     h3 {
-      height: 80px;
-      width: 80px;
-      line-height: 80px;
+      height: 68px;
+      width: 68px;
+      line-height: 68px;
       margin: 0 auto 8px;
       background: #fff;
       color: $brand-color-primary;
@@ -300,6 +342,9 @@ html, body {
 
       @include breakpoint(sm) {
         margin: 8px auto;
+        height: 80px;
+        width: 80px;
+        line-height: 80px;
       }
     }
   }

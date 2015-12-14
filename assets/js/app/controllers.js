@@ -9,7 +9,7 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 });
 
 
-ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
+ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService) {
 
   $scope.loginUser = AuthService.getCurrentUser();
 
@@ -41,6 +41,12 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
 
   $scope.selectedSched = null;
 
+  if (!$scope.loginUser) {
+    if (window.location.hash.indexOf('#signup') >= 0) {
+      angular.element('.signup-toggle').click();
+    }
+  }
+
   $scope.activeMainNav = function (path) {
     return window.location.hash.indexOf('#' + path) == 0;
   }
@@ -60,10 +66,11 @@ ctrls.controller('SiteCtrl', function ($scope, AuthService, UserService) {
     labelMonthSelect: 'Pick a month from the dropdown',
     labelYearSelect: 'Pick a year from the dropdown',
     selectMonths: true,
-    selectYears: 20,
+    selectYears: 50,
     format: 'yyyy-mm-dd',
     formatSubmit: 'yyyy-mm-dd',
-    today: false
+    today: false,
+    max: true
   });
 
   angular.element('.fit-text span').fitText(2);
@@ -644,7 +651,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   $scope.buyPackage = function (event, index) {
 
     if (!$scope.loginUser) {
-      $.Alert('Please log in to your Electric account.');
+      $.Alert('Please sign up or log in to your Electric account.');
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
@@ -912,7 +919,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   $scope.waitlistUser = function (sched) {
 
     if (!$scope.loginUser) {
-      $.Alert('Please log in to your Electric account.');
+      $.Alert('Please sign up or log in to your Electric account.');
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
@@ -1285,7 +1292,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
   $scope.bookSchedule = function () {
 
     if (!$scope.loginUser) {
-      $.Alert('Please log in to your Electric account.');
+      $.Alert('Please sign up or log in to your Electric account.');
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;

@@ -41,6 +41,6 @@ def find(self):
             self.finish();
     else:
         self.set_status(403)
-        self.write('Please log in to your Electric account.')
+        self.write('Please sign up or log in to your Electric account.')
         self.finish()
     

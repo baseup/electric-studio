@@ -20,10 +20,7 @@ ctrls.controller('AdminCtrl', function ($scope, PrivilegeService){
     });
     
     //apply selectize on all `.select` element
-    angular.element('.select').selectize({
-      create: true
-      // sortField: 'text'
-    });
+    angular.element('.select').selectize();
 
     angular.element('.dashboard-menu').Dropdown();
     angular.element('.classes-menu').Dropdown();
@@ -39,6 +36,19 @@ ctrls.controller('AdminCtrl', function ($scope, PrivilegeService){
       format: 'yyyy-mm-dd',
       formatSubmit: 'yyyy-mm-dd',
       today: false
+    });
+
+    angular.element('.birth-datepicker').pickadate({
+      labelMonthNext: 'Go to the next month',
+      labelMonthPrev: 'Go to the previous month',
+      labelMonthSelect: 'Pick a month from the dropdown',
+      labelYearSelect: 'Pick a year from the dropdown',
+      selectMonths: true,
+      selectYears: 50,
+      format: 'yyyy-mm-dd',
+      formatSubmit: 'yyyy-mm-dd',
+      today: false,
+      max: true
     });
 
     $scope.getAccess = function (module, action) {
