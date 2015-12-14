@@ -1360,8 +1360,90 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
    
 });
 
+ctrls.controller('ClassTypeCtrl', function ($scope, ClassTypeService) {
 
-ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, InstructorService) {
+  $scope.classTypes = ClassTypeService.query();
+  $scope.classTypes.$promise.then(function (data) {
+    $scope.classTypes = data;
+  });
+
+  $scope.showAddClassType = function () {
+    angular.element('#add-class-type-modal').Modal();
+  }
+
+  $scope.addClassType = function () {
+
+    if ($scope.newClassType) {
+      
+      if (!$scope.newClassType.name) {
+        $.Alert('Class type must have name')
+        return;
+      }
+
+      var addSuccess = function () {
+        ClassTypeService.query().$promise.then(function (data) {
+          $scope.classTypes = data;
+        });
+        $scope.newClassType = null;
+      }
+
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
+
+      ClassTypeService.create($scope.newClassType).$promise.then(addSuccess, addFail);
+    }
+  }
+
+  $scope.updatingClassType = {};
+  $scope.setClassType = function (ct) {
+
+    if (ct) {
+      $scope.updatingClassType[ct._id] = true;
+      var addSuccess = function () {
+        ClassTypeService.query().$promise.then(function (data) {
+          $scope.classTypes = data;
+        });
+        $scope.updatingClassType[ct._id] = false;
+      }
+
+      var addFail = function (error) {
+        $.Alert(error.data);
+        $scope.updatingClassType[ct._id] = false;
+      }
+
+      ClassTypeService.update({ typeId: ct._id }, ct).$promise.then(addSuccess, addFail);
+    }
+  }
+
+  $scope.removeClassType = function (ct) {
+    $.Confirm('Are you sure on deleting ' + ct.name + ' ?', function () {
+      var addSuccess = function () {
+        ClassTypeService.query().$promise.then(function (data) {
+          $scope.classTypes = data;
+        });
+      }
+
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
+
+      ClassTypeService.delete({ typeId: ct._id }).$promise.then(addSuccess, addFail);
+    });
+  }
+});
+
+
+ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, InstructorService, ClassTypeService) {
+
+  $scope.classTypesByName = {};
+  $scope.classTypes = ClassTypeService.query();
+  $scope.classTypes.$promise.then(function (data) {
+    $scope.classTypes = data;
+    angular.forEach($scope.classTypes, function (ct) {
+      $scope.classTypesByName[ct.name] = ct;
+    });
+  });
 
   var calendar = angular.element('.calendar');
   calendar.fullCalendar({
@@ -1463,7 +1545,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   
   $scope.addSchedule = function () {
     $timeout(function () {
-      angular.element('#add-select-schedule-type')[0].selectize.setValue('');
+      var addSchedSelectize = angular.element('#add-select-schedule-type')[0].selectize;
+      addSchedSelectize.clearOptions()
+      angular.forEach($scope.classTypes, function (ct) {
+        addSchedSelectize.addOption({ value: ct.name, text: ct.name })
+      });
+      addSchedSelectize.setValue('');
       angular.element('#add-class-instructor')[0].selectize.setValue('');
       angular.element('#add-no-seats')[0].selectize.setValue(37);
     }, 400);
@@ -1544,7 +1631,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
 
   $scope.editSchedule = function (sched) {
     $timeout(function () {
-      angular.element('#edit-select-schedule-type')[0].selectize.setValue(sched.type);
+      var editSchedSelectize = angular.element('#edit-select-schedule-type')[0].selectize;
+      editSchedSelectize.clearOptions()
+      angular.forEach($scope.classTypes, function (ct) {
+        editSchedSelectize.addOption({ value: ct.name, text: ct.name });
+      });
+      editSchedSelectize.setValue(sched.type);
       angular.element('#edit-class-instructor')[0].selectize.setValue(sched.instructor._id);
       angular.element('#edit-no-seats')[0].selectize.setValue(sched.seats);
     }, 400);
@@ -2317,7 +2409,6 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
 
     if(arg == 'confirm_buy'){
 
-      console.log($scope.receiverEmail);
       if ($scope.receiverEmail){
         $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph.', function () {
             

@@ -35,6 +35,10 @@ app.config(function ($routeProvider, $httpProvider) {
       templateUrl: '/admin/instructor',
       controller: 'AdminCtrl'
     },
+    '/classtypes': {
+      templateUrl: '/admin/classtypes',
+      controller: 'AdminCtrl'
+    },
     '/schedules': {
       templateUrl: '/admin/schedule',
       controller: 'AdminCtrl'

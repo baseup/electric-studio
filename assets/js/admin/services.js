@@ -178,6 +178,27 @@ services.factory('TransactionService', function ($resource) {
   });
 });
 
+services.factory('ClassTypeService', function ($resource) {
+  return $resource('/admin/class/types/:typeId', {}, {
+    query: {
+      method: 'GET',
+      isArray: true
+    },
+    update: {
+      method: 'PUT',
+      isArray: false
+    },
+    create: {
+      method: 'POST',
+      isArray: false
+    },
+    delete: {
+      method: 'DELETE',
+      isArray: false
+    }
+  });
+});
+
 services.factory('ScheduleService', function ($resource) {
   return $resource('/admin/instructor/schedules/:scheduleId', {}, {
     query: {

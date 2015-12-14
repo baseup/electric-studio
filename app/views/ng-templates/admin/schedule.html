@@ -40,6 +40,8 @@
         </dl>
       </div>
 
+      <h5>{{ classTypesByName[selectedSched.type].description }}</h5>
+
       <button ng-if="getAccess('schedules', 'update')" ng-click="editSchedule(selectedSched)" class="btn btn--medium btn--primary space--top modal-close">Edit</button>
       <button ng-if="getAccess('schedules', 'delete')" ng-click="removeSchedule(selectedSched)"
         class="btn btn--medium btn--tertiary space--top modal-close">Remove</button>
@@ -71,6 +73,7 @@
               <option value="Jumpstart">Jumpstart</option>
             </select>
           <dd>
+          {{ classTypesByName[newSpecSched.type].description }}
         </dl>
 
         <dl class="space--bottom">
@@ -136,6 +139,7 @@
               <option value="Electric Endurance">Electric Endurance</option>
             </select>
           <dd>
+          {{ classTypesByName[editSched.type].description }}
         </dl>
 
         <dl class="space--bottom">
