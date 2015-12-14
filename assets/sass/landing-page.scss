@@ -236,6 +236,14 @@ html, body {
 
   .section-title {
     font-size: 35px;
+
+    @include breakpoint(sm) {
+      font-size: 60px;
+    }
+
+    @include breakpoint(md) {
+      font-size: 100px;
+    }
   }
 
   .btn-container {
