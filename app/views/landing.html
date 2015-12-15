@@ -121,7 +121,9 @@
       setPosition: function(element, newLeft, originalLeft, newTop, originalTop) {
         var distance = newTop - originalTop;
         var rate = $(window).height() / 3;
-        element.css('transform', 'translate3d(0px, ' + distance + 'px, 0px').css('opacity', 1 + (distance / rate));
+        element.css('transform', 'translate3d(0px, ' + distance + 'px, 0px)')
+        .css('-webkit-transform', 'translate3d(0px, ' + distance + 'px, 0px)')
+        .css('opacity', 1 + (distance / rate));
       }
     };
 
