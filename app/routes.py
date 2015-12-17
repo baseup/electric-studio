@@ -95,6 +95,7 @@ routes.prefix('/admin', [
     ('resource', '/statistic', 'admin.statistic'),
     ('resource', '/package', 'admin.package'),
     ('resource', '/user', 'admin.user'),
+    ('resource', '/class/types', 'admin.class_types'),
     ('resource', '/schedule', 'admin.schedule'),
     ('resource', '/instructor/schedules', 'admin.instructor_schedules'),
     ('resource', '/slider', 'admin.slider'),
