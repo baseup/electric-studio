@@ -46,6 +46,7 @@ routes.when('admin.transaction.destroy', 'auth.access')
 
 
 routes.get('/', 'home.index')
+routes.get('/signup', 'home.landing')
 routes.get('/user_migration ', 'home.user_migration')
 routes.get('/buy', 'home.buy')
 routes.post('/buy', 'home.buy')
@@ -59,6 +60,7 @@ routes.post('/user/login', 'home.login')
 routes.get('/user/logout', 'home.logout')
 routes.post('/upload/instructor', 'upload.instructor')
 routes.post('/upload/images', 'upload.images')
+routes.post('/upload/landing', 'upload.landing')
 
 
 routes.get('/sync_user_packages', 'home.sync_package')
@@ -110,6 +112,7 @@ routes.prefix('/api', [
     ('resource', '/user', 'api.user'),
     ('resource', '/package', 'api.package'),
     ('resource', '/instructor', 'api.instructor'),
+    ('resource', '/landing', 'api.landing'),
     ('resource', '/transaction', 'api.transaction'),
     ('resource', '/schedule', 'api.schedules'),
     ('resource', '/book', 'api.book'),

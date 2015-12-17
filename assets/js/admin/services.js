@@ -136,6 +136,27 @@ services.factory('InstructorService', function($resource) {
   });
 });
 
+services.factory('LandingPageService', function($resource) {
+  return $resource('/api/landing/:landingPageId', {}, {
+    query: {
+      method: 'GET',
+      isArray: true
+    },
+    update: {
+      method: 'PUT',
+      isArray: false
+    },
+    create: {
+      method: 'POST',
+      isArray: false
+    },
+    delete: {
+      method: 'DELETE',
+      isArray: false
+    }
+  });
+});
+
 services.factory('GiftCardService', function($resource) {
   return $resource('/api/gift_certificate/:gcCode', {}, {
     query: {

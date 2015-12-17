@@ -1267,40 +1267,40 @@ body {
 
   &.items-3 {
     width: 160px;
-    
+
     .item {
       position: absolute;
       top: 0;
     }
-    
+
     .item:nth-child(1) {
       left: 0;
     }
-    
+
     .item:nth-child(2) {
       right: 0;
     }
-    
+
   }
 
   &.items-3 {
     width: 160px;
-    
+
     .item {
       position: absolute;
       top: 0;
     }
-    
+
     .item:nth-child(1) {
       left: 0;
     }
-    
+
     .item:nth-child(2) {
       right: 0;
     }
-    
+
   }
-  
+
   &.items-4 {
     width: 240px;
 
@@ -1915,7 +1915,7 @@ body {
 
     span {
       display: block;
-      font-size: 0.5em;
+      font-size: 0.8em;
     }
 
     .time {
@@ -2659,7 +2659,7 @@ body {
     &.items-1 {
       width: 160px;
     }
-    
+
     &.items-3 {
       width: 220px;
     }
