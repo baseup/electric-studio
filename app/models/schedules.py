@@ -36,4 +36,13 @@ class BookedSchedule(Model):
     
     def to_dict(self):
        return mongo_to_dict(self)
+
+class ClassType(Model):
+    __collection__ = 'class_types'
+    __lazy__ = False
+    name = StringField(required=True)
+    description = StringField()
+    create_at = DateTimeField(auto_now_on_insert=True)
+    update_at = DateTimeField(auto_now_on_update=True)
+        
     
