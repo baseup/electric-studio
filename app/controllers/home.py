@@ -3,7 +3,7 @@ from app.models.users import User
 from app.models.packages import Package, UserPackage, GiftCertificate
 from app.helper import send_email_verification, send_email
 from app.models.schedules import InstructorSchedule, BookedSchedule
-from app.models.admins import Instructor, Admin, Setting, Branch
+from app.models.admins import Instructor, Admin, Setting, Branch, LandingPage
 from app.models.access import AccessType, Privilege
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
@@ -123,6 +123,10 @@ def logout(self):
     self.clear_cookie('loginUser')
     self.clear_cookie('loginUserID')
     self.finish()
+
+def landing(self): 
+    landing_pages = yield LandingPage.objects.find_all()
+    return self.render('landing', landing_pages=landing_pages)
 
 def verify(self):
     if self.request.method == 'GET':

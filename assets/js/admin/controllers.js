@@ -2725,3 +2725,162 @@ ctrls.controller('SettingCtrl', function ($scope, $timeout, $filter, SettingServ
   }
 
 });
+
+ctrls.controller('LandingPageCtrl', function ($scope, $upload, LandingPageService) {
+
+   $scope.showAddLandingPage = function () {
+    angular.element('#add-landing-page-modal').Modal();
+  }
+
+  $scope.landingPages = LandingPageService.query();
+  $scope.landingPages.$promise.then(function (data) {
+    $scope.landingPages = data;
+  });
+
+  $scope.addLandingPage = function () {
+    
+    angular.element('#add-landing-page-modal').Modal();
+    
+    if ($scope.newLandingPage) {
+      if (!$scope.newLandingPage.text) {
+        $.Alert('LandingPage must have text');
+        return;
+      }
+
+      if (!$scope.newLandingPage.button_label) {
+        $.Alert('LandingPage must have button label');
+        return;
+      }      
+      
+      if (!$scope.newLandingPage.button_link) {
+        $.Alert('LandingPage must have button link')
+        return;
+      }
+
+      var addSuccess = function (data) {
+        $scope.picLandingPage = data;
+        $scope.uploadLandingPic($scope.files);
+
+        LandingPageService.query().$promise.then(function (data) {
+          $scope.landingPages = data;
+        });
+        $scope.newLandingPage = null;
+      }
+
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
+
+      LandingPageService.create($scope.newLandingPage).$promise.then(addSuccess, addFail);
+    }
+  }
+
+  $scope.picLandingPage = null;
+  $scope.changeLandingPic = function (ins) {
+    if (!$scope.uploading) {
+      $scope.picLandingPage = ins;
+    }
+  }
+
+  $scope.chkChangePic = function (id) {
+    if ($scope.picLandingPage && $scope.picLandingPage._id == id) {
+      return true;
+    }
+    return false;
+  }
+
+  $scope.cancelChangePic = function () {
+    $scope.picLandingPage = null;
+  }
+
+  $scope.uploading = false;
+  $scope.uploadLandingPic = function (files) {
+
+    if (!$scope.picLandingPage) {
+      $scope.files = files;
+      return;
+    }
+
+    if (files && files[0]) {
+      var file = files[0];
+      if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
+        $.Alert('Invalid file type');
+        return;
+      } else if (file.size > (1024 * 1024 * 3)) {
+        $.Alert('Must not exceed 3MB');
+        return;
+      }
+
+      $scope.uploading = true;
+      $upload.upload({
+        url: '/upload/landing',
+        method: 'POST',
+        data: { 'id' :$scope.picLandingPage._id },
+        file: file
+      }).then(
+        function (e) {
+          $scope.landingPages = LandingPageService.query();
+          $scope.landingPages.$promise.then(function (data) {
+            $scope.landingPages = data;
+          });
+          $scope.picLandingPage = null;
+          $scope.uploading = false;
+       },
+        function (e) {
+          $scope.uploading = false;
+          $.Alert(e.data);
+        },
+        function (e) {
+          $scope.progress = parseInt(100.0 * e.loaded / e.total);
+        }
+      );
+    } else {
+      $.Alert('Please select image to upload');
+    }
+  }
+
+  $scope.setToUpdate = function (ins) {
+    $scope.isUpdateLandingPage = true;
+    $scope.updateLandingPage = ins;
+  }
+
+  $scope.cancelUpdateLandingPage = function () {
+    $scope.isUpdateLandingPage = false;
+    $scope.updateLandingPage = null;
+  }
+
+  $scope.setLandingPage = function () {
+    if ($scope.updateLandingPage) {
+      var addSuccess = function () {
+        LandingPageService.query().$promise.then(function (data) {
+          $scope.landingPages = data;
+        });
+        $scope.isUpdateLandingPage = false;
+        $scope.updateLandingPage = null;
+      }
+
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
+
+      LandingPageService.update({ landingPageId: $scope.updateLandingPage._id }, $scope.updateLandingPage).$promise.then(addSuccess, addFail);
+    }
+  }
+
+  $scope.removeLandingPage = function (ins) {
+    $.Confirm('Are you sure on deleting ' + ins.text + ' ?', function () {
+      var addSuccess = function (data) {
+        LandingPageService.query().$promise.then(function (data) {
+          $scope.landingPages = data;
+        });
+      }
+
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
+
+      LandingPageService.delete({ landingPageId : ins._id}).$promise.then(addSuccess, addFail);
+    });
+  }
+
+});

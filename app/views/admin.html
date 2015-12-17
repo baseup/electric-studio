@@ -10,13 +10,13 @@
     <link rel="stylesheet" href="{{ static_url('css/admin.css') }}">
 
     <script src="{{ static_url('vendor/jquery/dist/jquery.min.js') }}"></script>
-   
-    <script src="{{ static_url('vendor/angular/angular.min.js') }}"></script> 
+
+    <script src="{{ static_url('vendor/angular/angular.min.js') }}"></script>
     <script src="{{ static_url('vendor/angular-route/angular-route.min.js') }}"></script>
     <script src="{{ static_url('vendor/angular-resource/angular-resource.min.js') }}"></script>
     <script src="{{ static_url('vendor/angular-sanitize/angular-sanitize.min.js') }}"></script>
-    <script src="{{ static_url('vendor/ng-file-upload/angular-file-upload-shim.min.js') }}"></script> 
-    <script src="{{ static_url('vendor/ng-file-upload/angular-file-upload.min.js') }}"></script> 
+    <script src="{{ static_url('vendor/ng-file-upload/angular-file-upload-shim.min.js') }}"></script>
+    <script src="{{ static_url('vendor/ng-file-upload/angular-file-upload.min.js') }}"></script>
 
     <script src="{{ static_url('js/admin/templates.js') }}"></script>
     <script src="{{ static_url('js/admin/services.js') }}"></script>
@@ -46,6 +46,7 @@
               <li><a href="#/packages">Packages</a></li>
               <li><a href="#/instructors">Instructors</a></li>
               <li><a href="#/sliders">Sliders</a></li>
+              <li><a href="#/landing">Landing Page</a></li>
               <li><a ng-if="getAccess('users', 'read')" href="#/users">Users</a></li>
             </ul>
           </li>
@@ -104,12 +105,12 @@
           <button class="sidebar-toggle btn btn--small btn--primary">
             <i class="fa fa-bars"></i>
           </button>
-          
+
           <div class="user">
             <div class="user__pic">
               <img src="{{ static_url('images/pic-placeholder.png') }}" alt="">
             </div>
-            
+
             <span class="user__name">{{ user }}</span>
             <a href="/admin/logout" class="user__logout"><i class="fa fa-sign-out"></i> Log Out</a>
           </div>
@@ -150,7 +151,7 @@
     <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.time.css') }}">
     <link rel="stylesheet" href="{{ static_url('vendor/fullcalendar/dist/fullcalendar.min.css') }}">
 
-    
+
     <script src="{{ static_url('vendor/selectize/dist/js/standalone/selectize.min.js') }}"></script>
     <script src="{{ static_url('vendor/pickadate/lib/picker.js') }}"></script>
     <script src="{{ static_url('vendor/pickadate/lib/picker.date.js') }}"></script>
@@ -159,6 +160,6 @@
     <script src="{{ static_url('vendor/fullcalendar/dist/fullcalendar.min.js') }}"></script>
     <script src="{{ static_url('vendor/Chart.js/Chart.min.js') }}"></script>
 
-    <script src="{{ static_url('js/script.js') }}"></script> 
+    <script src="{{ static_url('js/script.js') }}"></script>
   </body>
 </html>

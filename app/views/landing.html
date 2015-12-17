@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+  <title>Sign Up - Electric Studio</title>
+
+  <link rel="stylesheet" href="{{static_url('css/landing-page.css')}}">
+</head>
+
+<body>
+  <div class="main">
+  	<header class="page-header">
+  		<div class="wrapper">
+  			<a href="/" target="_blank">
+  				<img src="{{ static_url('images/electricstudio-logo.png') }}" class="brand-logo">
+  				<img src="{{ static_url('images/electricstudio-nameplate.png') }}" alt="Electric Studio Logo" class="brand-nameplate">
+  			</a>
+  		</div>
+  	</header>
+
+  	{% for landing in landing_pages %}
+  		<div class="section">
+        <div class="section-background" style="background-image:url( {{ static_url(landing.image) }} )"></div>
+  			<div class="content-wrapper"
+  	      data-stellar-ratio="2"
+  	      data-stellar-offset-parent="true"
+  	      data-stellar-horizontal-offset="0"
+  	      data-stellar-vertical-offset="20">
+          <div class="content">
+    	      <h2 class="section-title">{{ landing.text }}</h2>
+          </div>
+  	    </div>
+  			<div class="btn-container"
+  	      data-stellar-ratio="1.5"
+  	      data-stellar-offset-parent="true"
+  	      data-stellar-horizontal-offset="0"
+  	      data-stellar-vertical-offset="20">
+  	      <a class="cta-btn btn btn--large btn--primary" href="{{ landing.button_link }}" target="_blank">{{ landing.button_label }}</a>
+  	    </div>
+  		</div>
+  	{% end %}
+
+    <div class="section rates-section">
+      <div class="content-wrapper"
+        data-stellar-ratio="2"
+        data-stellar-offset-parent="true"
+        data-stellar-horizontal-offset="0"
+        data-stellar-vertical-offset="20">
+        <div class="content">
+          <h2 class="section-title">Fast and convenient online booking</h2>
+          <div class="rates">
+            <h4>First Timer Package</h4>
+            <ul class="rate-list">
+              <li>
+                <div class="col rides-col">
+                  <h3>5</h3>
+                  <span>Rides</span>
+                </div>
+                <div class="col price-col">
+                  <span class="price">PHP 1,500.00</span>
+                  <small class="expiration">Expires in 30 days</small>
+                </div>
+                <div class="col buy-col">
+                  <a class="btn btn--medium" href="/#/rates" target="_blank">Buy</a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="btn-container"
+        data-stellar-ratio="1.5"
+        data-stellar-offset-parent="true"
+        data-stellar-horizontal-offset="0"
+        data-stellar-vertical-offset="20">
+        <a class="cta-btn btn btn--large btn--primary" href="/#/#signup" target="_blank">Join Us</a>
+      </div>
+    </div>
+
+
+    <div class="section featured">
+      <div class="content-wrapper"
+        data-stellar-ratio="2"
+        data-stellar-offset-parent="true"
+        data-stellar-horizontal-offset="0"
+        data-stellar-vertical-offset="20">
+        <div class="content">
+          <h2 class="section-title">Revolutionizing indoor cycling in Manila</h2>
+        </div>
+      </div>
+      <ul class="featured-list">
+        <li><div class="logo-container"  style="background-image:url( {{static_url('images/landing-page/town-and-country.gif')}} )"></div></li>
+        <li><div class="logo-container"  style="background-image:url( {{static_url('images/landing-page/LOfficiel.png')}} )"></div></li>
+        <li><div class="logo-container"  style="background-image:url( {{static_url('images/landing-page/preview.png')}} )"></div></li>
+        <li><div class="logo-container"  style="background-image:url( {{static_url('images/landing-page/inquirer.png')}} )"></div></li>
+        <li><div class="logo-container"  style="background-image:url( {{static_url('images/landing-page/tslogo.png')}} )"></div></li>
+        <li><div class="logo-container"  style="background-image:url( {{static_url('images/landing-page/philstar.png')}} )"></div></li>
+        <li><div class="logo-container"  style="background-image:url( {{static_url('images/landing-page/meglogo.jpg')}} )"></div></li>
+        <li><div class="logo-container"  style="background-image:url( {{static_url('images/landing-page/celebrity-mom.png')}} )"></div></li>
+        <li><div class="logo-container"  style="background-image:url( {{static_url('images/landing-page/anc.jpg')}} )"></div></li>
+        <li><div class="logo-container"  style="background-image:url( {{static_url('images/landing-page/preen.png')}} )"></div></li>
+      </ul>
+      <div class="btn-container"
+        data-stellar-ratio="1.5"
+        data-stellar-offset-parent="true"
+        data-stellar-horizontal-offset="0"
+        data-stellar-vertical-offset="20">
+        <a class="cta-btn btn btn--large btn--primary" href="/#/#signup" target="_blank">Join Us</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ static_url('vendor/jquery/dist/jquery.min.js') }}"></script>
+  <script src="{{ static_url('vendor/jquery.stellar/jquery.stellar.min.js') }}"></script>
+
+  <script>
+    $.stellar.positionProperty.transfade = {
+      setPosition: function(element, newLeft, originalLeft, newTop, originalTop) {
+        var distance = newTop - originalTop;
+        var rate = $(window).height() / 3;
+        element.css('transform', 'translate3d(0px, ' + distance + 'px, 0px)')
+        .css('-webkit-transform', 'translate3d(0px, ' + distance + 'px, 0px)')
+        .css('opacity', 1 + (distance / rate));
+      }
+    };
+
+    $('.main').stellar({
+      responsive: true,
+      horizontalOffset: '50%',
+      verticalOffset: 50,
+			horizontalScrolling: false,
+      parallaxElements: true,
+			hideDistantElements: true,
+			parallaxBackgrounds: false,
+      positionProperty: 'transfade'
+    });
+  </script>
+</body>
