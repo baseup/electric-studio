@@ -1,33 +1,12 @@
 <div ng-controller="InstructorCtrl">
-  <div class="content pad--off-bottom">
-    <div class="wrapper">
-      <h2 class="h large primary">Meet Our Pack</h2>
-      <!-- <p class="intro">Our instructors have been selected for their high energy and ability to inspire a class.</p> -->
-      <div class="group-pic">
-        <img class="group-pic-img" src="/assets/images/teampic.jpg">
-        <div class="imgmap">
-          <a href="" data-target="kris" data-title="Kris"></a>
-          <a href="" data-target="raisa" data-title="Raisa"></a>
-          <a href="" data-target="migs" data-title="Migs"></a>
-          <a href="" data-target="trish" data-title="Trish"></a>
-          <a href="" data-target="yessa" data-title="Yessa"></a>
-          <a href="" data-target="mel" data-title="Mel"></a>
-          <a href="" data-target="rache" data-title="Rache"></a>
-          <a href="" data-target="abel" data-title="Abel"></a>
-          <a href="" data-target="mitch" data-title="Mitch"></a>
-          <a href="" data-target="armand" data-title="Armand"></a>
-        </div>
-      </div>
-    </div>
-  </div>
-  
   <div class="content bg-lightGray parts-4 instructors-info">
     <div class="wrapper">
+      <h2 class="h large primary pad--bottom">Meet Our Pack</h2>
       <div class="cf">
         <section ng-repeat-start="instructor in instructors" id="{{ instructor.admin.first_name }}">
           <div class="image">
             <img ng-src="{{ instructor.image ? instructor.image : 'http://placehold.it/350x150' }}">
-          </div>  
+          </div>
           <h2 class="h--medium space--ends h--primary">{{ instructor.admin.first_name }}</h2>
           <p class="text-color-light">{{ instructor.motto }}</p>
         </section>
@@ -36,6 +15,6 @@
       <div class="book-cta">
         <a class="button large center primary"  href="#/schedule">Book A Ride</a>
       </div>
-    </div>  
+    </div>
   </div>
 </div>
