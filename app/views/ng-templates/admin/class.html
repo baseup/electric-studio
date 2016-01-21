@@ -16,6 +16,9 @@
     <dl class="float--left space--right">
       <dt>Instructor</dt>
       <dd class="caps">{{ schedDetails.instructor.admin.first_name }} {{ schedDetails.instructor.admin.last_name }}</dd>
+      <dd ng-if="schedDetails.sub_instructor"> 
+        {{ schedDetails.sub_instructor.admin.first_name }} {{ schedDetails.sub_instructor.admin.last_name }}
+      </dd>
     </dl>
     <dl class="float--left space--right">
       <dt>Class Type</dt>

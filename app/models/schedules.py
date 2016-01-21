@@ -9,6 +9,7 @@ class InstructorSchedule(Model):
     __collection__ = 'instructor_schedules'
     __lazy__ = False
     instructor = ReferenceField(reference_document_type=Instructor)
+    sub_instructor = ReferenceField(reference_document_type=Instructor, required=False, default=None)
     type = StringField(required=True, default='regular')
     day = StringField()
     date = DateTimeField()

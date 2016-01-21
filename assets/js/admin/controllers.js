@@ -1499,6 +1499,9 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
         }, 400);
       }
       angular.element('#edit-class-instructor')[0].selectize.setValue($scope.selectedSched.instructor._id);
+      if ($scope.selectedSched.sub_instructor) {
+        angular.element('#edit-class-sub-instructor')[0].selectize.setValue($scope.selectedSched.sub_instructor._id);
+      }
       $scope.$apply();
       angular.element('#view-schedule-modal').Modal();
     }
@@ -1552,6 +1555,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       });
       addSchedSelectize.setValue('');
       angular.element('#add-class-instructor')[0].selectize.setValue('');
+      angular.element('#add-class-sub-instructor')[0].selectize.setValue('');
       angular.element('#add-no-seats')[0].selectize.setValue(37);
     }, 400);
     angular.element('#add-sched-modal').Modal();
@@ -1638,6 +1642,9 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       });
       editSchedSelectize.setValue(sched.type);
       angular.element('#edit-class-instructor')[0].selectize.setValue(sched.instructor._id);
+      if (sched.sub_instructor) {
+        angular.element('#edit-class-sub-instructor')[0].selectize.setValue(sched.sub_instructor._id);
+      }
       angular.element('#edit-no-seats')[0].selectize.setValue(sched.seats);
     }, 400);
     angular.element('#edit-sched-modal').Modal();
@@ -1715,11 +1722,15 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   InstructorService.query(function (instructors) {
     // var regSelectize = angular.element('#add-reg-class-instructor')[0].selectize;
     var specSelectize = angular.element('#add-class-instructor')[0].selectize;
+    var addSubInstructor = angular.element('#add-class-sub-instructor')[0].selectize;
     var editInstructor = angular.element('#edit-class-instructor')[0].selectize;
+    var editSubInstructor = angular.element('#edit-class-sub-instructor')[0].selectize;
     angular.forEach(instructors, function (instructor) {
       // regSelectize.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
       specSelectize.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
+      addSubInstructor.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
       editInstructor.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
+      editSubInstructor.addOption({ value: instructor._id, text: instructor.admin.first_name + ' ' + instructor.admin.last_name });
     });
   });
 });

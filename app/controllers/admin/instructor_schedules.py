@@ -36,10 +36,12 @@ def find(self):
         spec_scheds = yield InstructorSchedule.objects.filter(date=start_date_filter).find_all()
         for sched in spec_scheds:
             events.append({
-                'title': sched.type + ' with ' + sched.instructor.admin.first_name,
+                'title': sched.type + ' with ' + sched.instructor.admin.first_name + 
+                        (' and ' + sched.sub_instructor.admin.first_name if sched.sub_instructor else ''),
                 'start': start_date_string + sched.start.strftime(' %H:%M:%S'),
                 'end': start_date_string + sched.end.strftime(' %H:%M:%S'),
                 'instructor': sched.instructor,
+                'sub_instructor': sched.sub_instructor,
                 'start_time': sched.start.strftime('%I:%M %p'),
                 'end_time': sched.end.strftime('%I:%M %p'),
                 'id': str(sched._id),
@@ -70,6 +72,8 @@ def create(self):
         self.finish()
         return
     new_sched.instructor = ObjectId(data['instructor'])
+    if 'sub_instructor' in data:
+        new_sched.sub_instructor = ObjectId(data['sub_instructor'])
     yield new_sched.save()
     self.render_json(new_sched)
 
@@ -102,5 +106,8 @@ def update(self, id):
         return
     if 'instructor' in data:
         sched.instructor = ObjectId(data['instructor'])
+    if 'sub_instructor' in data:
+        sched.sub_instructor = ObjectId(data['sub_instructor'])
+
     yield sched.save()
     self.render_json(sched)
