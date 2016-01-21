@@ -36,7 +36,12 @@
           <div class="image">
             <img src="{{ instructor.image ? '/assets/' + instructor.image : 'http://placehold.it/350x150' }}">
           </div>
-          <h3 class="h small primary">{{ instructor.admin.first_name }}</h3>
+          <div ng-if="subInstructor" class="image sub">
+            <img src="{{ subInstructor.image ? '/assets/' + subInstructor.image : 'http://placehold.it/350x150' }}">
+          </div>
+          <h3 class="h small primary">
+            {{ instructor.admin.first_name }} {{ subInstructor ? ' &amp; ' + subInstructor.admin.first_name : ''}}
+          </h3>
         </div>
         <div class="front seats">
           <span ng-click="setSeatNumber(16, $event)" ng-class="{ unavailable: checkSeat(16),hidden: 16 > sched.seats }">16</span>

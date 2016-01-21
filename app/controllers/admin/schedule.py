@@ -60,18 +60,27 @@ def find(self):
 
             scheds = yield BookedSchedule.objects.filter(status='booked', date=date, schedule=ins_sched._id).find_all()
             waitlist = yield BookedSchedule.objects.filter(status='waitlisted', date=date, schedule=ins_sched._id).find_all()
+
+            first_timers = {}
+            for b in scheds:
+                book_counts = (yield BookedSchedule.objects.filter(status='completed', user_id=b.user_id, date__lte=date).count())
+                if book_counts == 0:
+                    first_timers[str(b.user_id._id)] = True;
+
             self.render_json({
                 'bookings': scheds,
                 'waitlist': waitlist,
                 'schedule': ins_sched,
-                'schedules': list_scheds
+                'schedules': list_scheds,
+                'first_timers': first_timers
             })
         else:
             self.render_json({
                 'bookings': [],
                 'waitlist': [],
                 'schedule': {},
-                'schedules': []
+                'schedules': [],
+                'first_timers':{}
             })
 
 def create(self):

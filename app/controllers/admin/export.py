@@ -20,7 +20,7 @@ def download_bookings(self):
 
         filename = 'bookings-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
         with open(filename, 'w') as csvfile:
-            fieldnames = ['Bike Number', 'First', 'Last', 'Signature']
+            fieldnames = ['Bike Number', 'First', 'Last', '1st Timer', 'Signature']
             sched_writer = csv.writer(csvfile)
             sched_writer.writerow([bookings[0].date.strftime('%A, %B %d, %Y')])
             sched_writer.writerow([bookings[0].schedule.instructor.admin.first_name.upper()])
@@ -30,10 +30,12 @@ def download_bookings(self):
 
             for i in range(1, 38):
                 if i in bikeMap:
+                    book_counts = (yield BookedSchedule.objects.filter(status='completed', user_id=bikeMap[i].user_id, date__lte=bikeMap[i].date).count())
                     writer.writerow({
                         'Bike Number': i,
                         'First': bikeMap[i].user_id.first_name,
                         'Last': bikeMap[i].user_id.last_name,
+                        '1st Timer': 'Y' if book_counts == 0 else 'N',
                         'Signature': ''
                     })
                 else:

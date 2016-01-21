@@ -1199,6 +1199,9 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
       sched.schedule = schedule;
       $scope.timeSched = sched.schedule.start;
       $scope.instructor = sched.schedule.instructor;
+      if (sched.schedule.sub_instructor) {
+        $scope.subInstructor = sched.schedule.sub_instructor;
+      }
     });
 
     $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() ;
@@ -1206,6 +1209,9 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, 
     $scope.timeSched = sched.schedule.start;
     $scope.sched = sched.schedule;
     $scope.instructor = sched.schedule.instructor;
+    if (sched.schedule.sub_instructor) {
+      $scope.subInstructor = sched.schedule.sub_instructor;
+    }
 
     var book_filter = {};
     book_filter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();

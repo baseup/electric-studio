@@ -953,6 +953,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       $scope.books = books.bookings;
       $scope.waitList = books.waitlist;
       $scope.schedDetails = books.schedule;
+      $scope.firstTimers = books.first_timers;
       if (books.schedules.length) {
         $scope.blockedBikes = {};
         SettingService.getBlockedBikes(function (bikes) {
