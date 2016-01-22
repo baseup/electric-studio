@@ -35,7 +35,7 @@ def download_bookings(self):
                         'Bike Number': i,
                         'First': bikeMap[i].user_id.first_name,
                         'Last': bikeMap[i].user_id.last_name,
-                        '1st Timer': 'Y' if book_counts == 0 else 'N',
+                        '1st Timer': 'Y' if book_counts == 0 else '',
                         'Signature': ''
                     })
                 else:

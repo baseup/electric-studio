@@ -1,11 +1,12 @@
 from app.models.schedules import *
 from app.models.packages import *
 from app.models.admins import Setting
-from datetime import datetime
+from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 from motorengine import DESCENDING, ASCENDING
 from app.helper import send_email, send_email_cancel, send_email_booking, send_email_move
 from app.helper import Lock
+from app.helper import GMT8
 import tornado.escape
 
 def find(self):
@@ -58,7 +59,13 @@ def find(self):
             elif sched_id:
                 ins_sched = yield InstructorSchedule.objects.get(sched_id)
 
-            scheds = yield BookedSchedule.objects.filter(status='booked', date=date, schedule=ins_sched._id).find_all()
+            gmt8 = GMT8()
+            endplus24 = datetime.combine(date, ins_sched.end.time()) + timedelta(days=1)
+            endplus24 = endplus24.replace(tzinfo=gmt8)
+
+            scheds = []
+            if endplus24 > datetime.now(tz=gmt8):
+                scheds = yield BookedSchedule.objects.filter(status__in=['booked','completed'], date=date, schedule=ins_sched._id).find_all()
             waitlist = yield BookedSchedule.objects.filter(status='waitlisted', date=date, schedule=ins_sched._id).find_all()
 
             first_timers = {}
@@ -299,7 +306,7 @@ def destroy(self, id):
         booked_schedule = yield BookedSchedule.objects.get(id)
         ref_status = booked_schedule.status
 
-        if ref_status == 'cancelled' or ref_status == 'completed' or ref_status == 'missed':
+        if ref_status == 'cancelled' or (missed and ref_status == 'completed') or ref_status == 'missed':
             self.set_status(400)
             self.write("Unable to update: status is already " + ref_status)
             self.finish()

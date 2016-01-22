@@ -1021,12 +1021,13 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     }
   }
 
-  $scope.isCompleted = function (sched) {
+  $scope.isCompleted = function (sched, is_cancel) {
 
     var now = new Date();
     var dateParts = sched.date.split(/[^0-9]/);
     var timeParts = sched.end.split(/[^0-9]/);
-    var date =  new Date(dateParts[0], dateParts[1]-1, dateParts[2], timeParts[3], timeParts[4], timeParts[5]);
+    var plusDay = is_cancel ? 1 : 0;
+    var date =  new Date(dateParts[0], dateParts[1]-1, dateParts[2]+plusDay, timeParts[3], timeParts[4], timeParts[5]);
     if (date < now)
       return true;
 
@@ -1052,6 +1053,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
             $scope.users = users;
           });
           $.Alert('Successfully marked as missed');
+        }, function (error) {
+          $.Alert(error.data);
         });
       });
 
@@ -1061,7 +1064,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
 
   $scope.cancelBooking = function (booking, index) {
-    if (!$scope.isCompleted(booking.schedule)) {
+    if (!$scope.isCompleted(booking.schedule, true)) {
 
       $.Confirm('Are you sure on cancelling ' + booking.user_id.first_name + ' ' + booking.user_id.last_name + ' ride ?', function () {
         $.Prompt('Notes on cancelling ' + booking.user_id.first_name + ' ride', function (notes) {
@@ -1073,6 +1076,8 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
                 $scope.users = users;
               });  
               $.Alert('Successfully canceled');
+            }, function (error) {
+              $.Alert(error.data);
             });
           } else {
             $.Alert('Please provide a notes on cancelling schedules');
