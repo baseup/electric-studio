@@ -32,6 +32,9 @@ def index(self):
 def maintenance(self):
     self.render('maintenance')
 
+def terms(self):
+    self.render('terms')
+
 def login(self):
     email = self.get_argument('email')
     passWord = self.get_argument('password')

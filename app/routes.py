@@ -46,6 +46,7 @@ routes.when('admin.transaction.destroy', 'auth.access')
 
 
 routes.get('/', 'home.index')
+routes.get('/terms', 'home.terms')
 routes.get('/signup', 'home.landing')
 routes.get('/user_migration ', 'home.user_migration')
 routes.get('/buy', 'home.buy')
