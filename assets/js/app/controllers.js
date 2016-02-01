@@ -294,10 +294,17 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
   $scope.signingUp = false;
   $scope.signUp = function () {
     $scope.signupError = null;
+
+    if (!$scope.terms) {
+      $scope.signupError = 'To continue, please read and agree on our Terms & Condition';
+      return;
+    }
+
     if ($scope.user) {
       $scope.signingUp = true;
       if (!$scope.user.email || $scope.user.email.length == 0) {
         $scope.signupError = 'Email Address is required';
+        $scope.signingUp = false;
         return;
       }
 
@@ -306,11 +313,13 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
         if ($scope.user.password == '') {
           $scope.signupError = "Password is required";
         }
+        $scope.signingUp = false;
         return;
       }
 
       if ($scope.user.password && $scope.user.password.length < 6) {
         $scope.signupError = 'Password must be at least 6 characters.';
+        $scope.signingUp = false;
         return;
       }
 

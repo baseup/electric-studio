@@ -166,7 +166,9 @@
         <input class="input-box" placeholder="Mobile Number" ng-model="user.phone_number">
         <input type="password" class="input-box" placeholder="Password (minimum 6 character)" ng-model="user.password">
         <input type="password" required compare-to="user.password" class="input-box" placeholder="Re-type Password" ng-model="user.confirm_password">
-
+        <br><br>
+        <input type="checkbox" ng-model="terms"> I have read and agree to the <a href="/terms">Terms & Conditions</a>.
+        <br><br>
         <input ng-disabled="signingUp" type="submit" value="Sign Up" class="button primary" ng-click="signUp()">
       </form>
       <span class="close-btn">&times;</span>
@@ -187,6 +189,7 @@
         <li><a href="#/faq">FAQ</a></li>
         <li><a href="#/career">Careers</a></li>
         <li><a href="#/contact">Contact Us</a></li>
+        <li><a href="/terms">Terms</a></li>
       </ul>
 
       <ul class="social-links">

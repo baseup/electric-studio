@@ -14,6 +14,9 @@ def download_bookings(self):
         query = BookedSchedule.objects.order_by('seat_number', direction=ASCENDING)
         bookings = yield query.filter(schedule=sched._id, status='booked').find_all()
 
+        if len(bookings) == 0:
+            return self.redirect('/admin/#/classes')
+
         bikeMap = {}
         for b in bookings:
             bikeMap[b.seat_number] = b
@@ -23,7 +26,18 @@ def download_bookings(self):
             fieldnames = ['Bike Number', 'First', 'Last', '1st Timer', 'Signature']
             sched_writer = csv.writer(csvfile)
             sched_writer.writerow([bookings[0].date.strftime('%A, %B %d, %Y')])
-            sched_writer.writerow([bookings[0].schedule.instructor.admin.first_name.upper()])
+            sched_writer.writerow([bookings[0].schedule.instructor.admin.first_name.upper() + ' ' + bookings[0].schedule.start.strftime('%I:%M %p')])
+            sched_writer.writerow([])
+            sched_writer.writerow(['By signing, Rider represents that he/she is physically fit and has read and agrees to the terms and conditions on www.electricstudio.ph'])
+            sched_writer.writerow([])
+            sched_writer.writerow(['SAFETY INSTRUCTIONS:','1) Test your bike brake'])
+            sched_writer.writerow(['','2) Tighten bike pins.'])
+            sched_writer.writerow(['','3) Clip in securely to pedals.'])
+            sched_writer.writerow(['','4) Stay hydrated.'])
+            sched_writer.writerow(['','5) Move at a comfortable pace.'])
+            sched_writer.writerow(['','6) Reach out if you need help.'])
+            sched_writer.writerow([])
+
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
             writer.writeheader()
