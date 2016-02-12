@@ -837,7 +837,18 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService
   $scope.instructors = InstructorService.query();
   $scope.instructors.$promise.then(function (data) {
     $scope.instructors = data;
+
+    $scope.randomList = [];
+    angular.forEach($scope.instructors, function(item) {
+      item.rank = 0.5 - Math.random();
+      $scope.randomList.push(item);
+    });
   });
+
+  $scope.viewInstructor = function(data) {
+    angular.element('#view-instructor-info').Modal();
+    $scope.selectedInstructor = data;
+  }
 
   angular.element('.imgmap a').click(function () {
    var id = angular.element(this).data('target'),
