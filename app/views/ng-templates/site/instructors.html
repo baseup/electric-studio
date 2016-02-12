@@ -3,12 +3,11 @@
     <div class="wrapper">
       <h2 class="h large primary pad--bottom">Meet Our Pack</h2>
       <div class="cf">
-        <section ng-repeat-start="instructor in instructors" id="{{ instructor.admin.first_name }}">
+        <section ng-repeat-start="instructor in randomList | orderBy:'rank'" id="{{ instructor.admin.first_name }}" class="pad--off" ng-click="viewInstructor(instructor)">
           <div class="image">
             <img ng-src="{{ instructor.image ? instructor.image : 'http://placehold.it/350x150' }}">
+            <h2 class="name h--large"><span>{{ instructor.admin.first_name }}</span></h2>
           </div>
-          <h2 class="h--medium space--ends h--primary">{{ instructor.admin.first_name }}</h2>
-          <p class="text-color-light">{{ instructor.motto }}</p>
         </section>
         <div ng-repeat-end="" class="clearfix" ng-if="($index + 1) % 4 == 0 "></div>
       </div>
@@ -17,4 +16,63 @@
       </div>
     </div>
   </div>
+
+  <div class="modal instructor-modal" id="view-instructor-info">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <section class="cf">
+        <div class="image space--bottom">
+          <img ng-src="{{ selectedInstructor.image ? selectedInstructor.image : 'http://placehold.it/350x150' }}">
+        </div>
+        <div class="details space--bottom">
+          <h2 class="name h--large h--primary space--bottom"><span>{{ selectedInstructor.admin.first_name }}</span></h2>
+          <p class="text-color-light">{{ selectedInstructor.motto }}</p>
+        </div>
+      </section>
+      <section class="cf space--top">
+        <h3 class="h small">What I'm listening to</h3>
+      </section>
+      <section class="schedule cf space--top">
+        <h3 class="h small">Ride with {{ selectedInstructor.admin.first_name }}</h3>
+
+        <div class="row">
+          <span class="time">6:00 PM</span>
+          <span class="instructor">
+            {{ selectedInstructor.admin.first_name }} &amp; Kris
+          </span>
+          <span class="schedtype">Pure Electric</span>
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate)">reserve</button>
+        </div>
+
+        <div class="row">
+          <span class="time">6:00 PM</span>
+          <span class="instructor">
+            {{ selectedInstructor.admin.first_name }} &amp; Kris
+          </span>
+          <span class="schedtype">Pure Electric</span>
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate)">reserve</button>
+        </div>
+
+        <div class="row">
+          <span class="time">6:00 PM</span>
+          <span class="instructor">
+            {{ selectedInstructor.admin.first_name }} &amp; Kris
+          </span>
+          <span class="schedtype">Pure Electric</span>
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate)">reserve</button>
+        </div>
+
+        <div class="row">
+          <span class="time">6:00 PM</span>
+          <span class="instructor">
+            {{ selectedInstructor.admin.first_name }} &amp; Kris
+          </span>
+          <span class="schedtype">Pure Electric</span>
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate)">reserve</button>
+        </div>
+
+      </section>
+    </div>
+  </div>
+
 </div>

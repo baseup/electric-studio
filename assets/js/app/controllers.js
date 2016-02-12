@@ -779,7 +779,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
     $scope.gcValidity = jsonPackage.expiration;
     $scope.gcPackageFirstTimer = jsonPackage.first_timer;
   }
-  
+
   $scope.emailTo = 'sender';
   $scope.buyGC = function () {
 
@@ -837,7 +837,18 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService
   $scope.instructors = InstructorService.query();
   $scope.instructors.$promise.then(function (data) {
     $scope.instructors = data;
+
+    $scope.randomList = [];
+    angular.forEach($scope.instructors, function(item) {
+      item.rank = 0.5 - Math.random();
+      $scope.randomList.push(item);
+    });
   });
+
+  $scope.viewInstructor = function(data) {
+    angular.element('#view-instructor-info').Modal();
+    $scope.selectedInstructor = data;
+  }
 
   angular.element('.imgmap a').click(function () {
    var id = angular.element(this).data('target'),
@@ -909,7 +920,14 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService, $timeout) {
+
+  $timeout(function() {
+    var scheduleRow = angular.element('.schedule .row').not('.unavailable');
+    var scrollableView = scheduleRow.length ? scheduleRow.offset().top : 0;
+    angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+  }, 100);
+
   $scope.resched = SharedService.get('resched');
 
   $scope.blockedBikes = {};
