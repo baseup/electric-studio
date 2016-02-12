@@ -175,6 +175,7 @@ body {
   display: block;
   padding: $base-spacing-unit / 2 0;
   text-align: left;
+  display: none;
 
   @include breakpoint(md) {
     padding: 0;
@@ -472,12 +473,13 @@ body {
 }
 
 .book-buy{
-  float: right;
+  float: left;
   position: relative;
   top: -4px;
   margin-right: 40px;
 
   @include breakpoint(md) {
+    float: right;
     margin-right: 0px;
     top: 35px;
   }
