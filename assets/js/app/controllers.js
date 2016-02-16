@@ -832,7 +832,9 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
 
 
 
-ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService) {
+ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route, UserService, InstructorService, ScheduleService, SettingService, SharedService, BookService) {
+
+  var DAYS = ['mon','tue','wed','thu','fri','sat','sun','nmon']
 
   $scope.instructors = InstructorService.query();
   $scope.instructors.$promise.then(function (data) {
@@ -845,9 +847,208 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, InstructorService
     });
   });
 
+  $scope.blockedBikes = {};
+  SettingService.getBlockedBikes(function (bikes) {
+    $scope.blockedBikes = bikes;
+  });
+
+  $scope.waitlistUser = function (sched) {
+
+    if (!$scope.loginUser) {
+      $.Alert('Please sign up or log in to your Electric account.');
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+      angular.element('.login-toggle').click();
+      return;
+    }
+
+    $.Alert('Setting schedule as waitlist ...')
+
+    UserService.get(function (user) {
+
+      $scope.loginUser = user;
+
+      if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
+        $.Alert('Your account is frozen. Please contact the studio for more details.');
+        return;
+      }
+
+      if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
+        $.Alert('Account is not verified, Please check your email to verify account.');
+        return;
+      }
+
+      var deductCredits = 1;
+      if (sched.schedule.type == 'Electric Endurance') {
+        deductCredits = 2;
+      }
+
+      if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
+        $.Alert('Not enough credits.');
+        return;
+      }
+
+      var book = {};
+      book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+      book.seats = [];
+      book.sched_id = sched.schedule._id;
+      book.status = 'waitlisted';
+
+      var waitlistSuccess = function () {
+
+        if ($scope.resched) {
+          SharedService.clear('resched');
+        }
+
+        $.Alert('You have been added to the waitlist');
+        $scope.reloadUser();
+        window.location = '/#/reserved'
+        window.location.reload();
+      }
+      var waitlistFail = function (error) {
+        $.Alert(error.data)
+        $route.reload();
+      }
+
+      BookService.book(book).$promise.then(waitlistSuccess, waitlistFail);
+    });
+  }
+
+  $scope.setSchedule = function (schedule, date) {
+
+    var parts = schedule.date.split(/[^0-9]/);
+    var date =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+
+    if (!$scope.chkSched(schedule)) {
+
+      var deductCredits = 1;
+      if (schedule.type == 'Electric Endurance') {
+        deductCredits = 2;
+      }
+
+      if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
+        $.Alert('Not enough credits.');
+        return;
+      }
+
+      var today = new Date();
+      var time = schedule.start.split(/[^0-9]/);
+      var chkDate = new Date(date);
+      chkDate.setHours(time[3] - 1, time[4], 0);
+      if (+today >= +chkDate) {
+        $.Alert('Online booking closes 1 hour before class starts. Please call the studio to book this class.')
+        return;
+      }
+
+      // if ($scope.weekRelease) {
+      //   if (today < $scope.weekRelease.date) {
+      //     var d = $scope.weekRelease;
+      //     var strDate = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() + ' ' +
+      //                   d.getHours() + ':' + d.getMinutes() +':' +d.getSeconds();
+      //     var tryDate = week_days[$scope.weekRelease.getDay()] + ' ' + $filter('formatTime')(strDate);
+      //     $.Alert('Booking is not yet available, Please try again on ' + tryDate);
+      //     return;
+      //   }
+      // }
+
+      var cutOffchkDate = new Date(date);
+      cutOffchkDate.setDate(date.getDate() - 1);
+      cutOffchkDate.setHours(17, 0, 0);
+
+      var cutOffMsg = '';
+      // if (+today >= +cutOffchkDate) {
+      //   cutOffMsg = 'You can no longer cancel this ride once waitlisted. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.<br><br>';
+      // }
+
+      var sched = {};
+      sched.date = date;
+      sched.schedule = schedule;
+
+      var bfilter = {};
+      bfilter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+      bfilter.sched_id = sched.schedule._id;
+      bfilter.waitlist = true
+
+      $scope.waitlist = BookService.query(bfilter);
+      $scope.waitlist.$promise.then(function (waitlistData) {
+        $scope.waitlist = waitlistData;
+        if ($scope.waitlist.length > 0) {
+          $.Confirm(cutOffMsg + 'This class is full. Would you like to join the waitlist?', function () {
+            $scope.$apply(function () {
+              $scope.waitlistUser(sched);
+            });
+          });
+        } else {
+          delete bfilter.waitlist;
+          $scope.reserved = BookService.query(bfilter);
+          $scope.reserved.$promise.then(function (data) {
+            $scope.reserved = data;
+            var seats = sched.schedule.seats;
+            for (var k in $scope.blockedBikes) {
+              var key = parseInt(k)
+              if (key && key <= sched.schedule.seats) {
+                seats -= 1;
+              }
+            }
+            if ($scope.reserved.length >= seats) {
+              $.Confirm(cutOffMsg + 'This class is full. Would you like to join the waitlist?', function () {
+                $scope.$apply(function () {
+                  $scope.waitlistUser(sched);
+                });
+              });
+            } else {
+              SharedService.set('selectedSched', sched);
+              $location.path('/class');
+            }
+          });
+        }
+      });
+    }
+  }
+
+  $scope.chkSched = function (sched) {
+
+    if (!$scope.releases[sched._id])
+      return true;
+
+    return false;
+  }
+
+  $scope.isFull = function (sched) {
+
+    if (!$scope.chkSched(sched)) {
+      var seats = sched.seats;
+      for (var k in $scope.blockedBikes) {
+        var key = parseInt(k)
+        if (key && key <= sched.seats) {
+          seats -= 1;
+        }
+      }
+      if ($scope.counts[sched._id].books >= seats || $scope.counts[sched._id].waitlist > 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   $scope.viewInstructor = function(data) {
-    angular.element('#view-instructor-info').Modal();
+    
     $scope.selectedInstructor = data;
+    angular.element('#view-instructor-info').Modal();
+    
+    $scope.loadingSchedules = true;
+    ScheduleService.query({ ins: data._id }).$promise.then(function (data) {
+      $scope.releases = data.releases;
+      $scope.counts = data.counts
+      $scope.schedules = [];
+      angular.forEach(data, function(sched, key) {
+        console.log(DAYS.indexOf(key));
+        if (DAYS.indexOf(key) >= 0 && sched && sched.length) {
+          $scope.schedules = $scope.schedules.concat(sched);
+        }
+      });;
+      $scope.loadingSchedules = false;
+    });
+    
   }
 
   angular.element('.imgmap a').click(function () {
@@ -975,6 +1176,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
       if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
         $.Alert('Not enough credits.');
+        return;
       }
 
       var book = {};

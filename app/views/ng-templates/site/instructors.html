@@ -35,40 +35,19 @@
       <section class="schedule cf space--top">
         <h3 class="h small">Ride with {{ selectedInstructor.admin.first_name }}</h3>
 
-        <div class="row">
-          <span class="time">6:00 PM</span>
+        <div class="row" ng-class="{ row: sched, unavailable: chkSched(sched), full: isFull(sched) }"
+            ng-repeat="sched in schedules">
           <span class="instructor">
-            {{ selectedInstructor.admin.first_name }} &amp; Kris
+            {{ sched.date | formatDate }}
           </span>
-          <span class="schedtype">Pure Electric</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate)">reserve</button>
-        </div>
-
-        <div class="row">
-          <span class="time">6:00 PM</span>
+          <span class="time">{{ sched.start | formatTime }}</span>
           <span class="instructor">
-            {{ selectedInstructor.admin.first_name }} &amp; Kris
+            {{ sched.sub_instructor ? 'with ' + sched.sub_instructor.admin.first_name : '' }}
           </span>
-          <span class="schedtype">Pure Electric</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate)">reserve</button>
-        </div>
-
-        <div class="row">
-          <span class="time">6:00 PM</span>
-          <span class="instructor">
-            {{ selectedInstructor.admin.first_name }} &amp; Kris
-          </span>
-          <span class="schedtype">Pure Electric</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate)">reserve</button>
-        </div>
-
-        <div class="row">
-          <span class="time">6:00 PM</span>
-          <span class="instructor">
-            {{ selectedInstructor.admin.first_name }} &amp; Kris
-          </span>
-          <span class="schedtype">Pure Electric</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate)">reserve</button>
+          <span class="schedtype">{{ sched.type }}</span>
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(sched)">
+            {{ isFull(sched) ? 'waitlist' : 'reserve' }}
+          </button>
         </div>
 
       </section>

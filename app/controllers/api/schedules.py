@@ -3,12 +3,14 @@ from datetime import datetime, timedelta
 from app.models.schedules import InstructorSchedule, BookedSchedule
 from app.models.admins import Setting
 from app.helper import GMT8
+from bson.objectid import ObjectId
 import tornado
 
 def find(self):
     gmt8 = GMT8()
 
     date = self.get_query_argument('date')
+    ins = self.get_query_argument('ins')
     if not date:
         date = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
     else:
@@ -43,8 +45,11 @@ def find(self):
     week_days = ['mon','tue','wed','thu','fri','sat','sun','nmon']
     for day in week_days:
 
-        sched = yield InstructorSchedule.objects.filter(date=date) \
-                                              .order_by('start', direction=ASCENDING).find_all(lazy=True)
+        sched_query = InstructorSchedule.objects.filter(date=date)
+        if ins:
+            sched_query.filter(instructor=ObjectId(ins)).limit(4)
+
+        sched = yield sched_query.order_by('start', direction=ASCENDING).find_all(lazy=True)
         if date.replace(tzinfo=gmt8) + timedelta(days=1) > now:
             for s in sched:
                 sched_date = date.replace(hour=s.start.hour, minute=s.start.minute, second=0, tzinfo=gmt8)
