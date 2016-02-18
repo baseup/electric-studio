@@ -1552,7 +1552,8 @@ body {
       opacity: 0;
       transition: opacity 0.4s ease;
       font-family: 'Tungsten', sans-serif;
-      font-size: 60px;
+      font-size: 48px;
+      font-weight: 400;
 
       &:before {
         content: '';
@@ -1615,7 +1616,8 @@ body {
 
     .name {
       font-family: 'Tungsten', sans-serif;
-      font-size: 60px;
+      font-size: 52px;
+      font-weight: 400;
     }
   }
 
