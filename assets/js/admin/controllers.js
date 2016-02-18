@@ -2003,7 +2003,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
     angular.element('#add-instructor-modal').Modal();
   }
 
-  $scope.instructors = InstructorService.query();
+  $scope.instructors = InstructorService.query({ deactivated: true });
   $scope.instructors.$promise.then(function (data) {
     $scope.instructors = data;
   });
@@ -2040,7 +2040,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
         $scope.picInstructor = data;
         $scope.uploadInsPic($scope.files);
 
-        InstructorService.query().$promise.then(function (data) {
+        InstructorService.query({ deactivated: true }).$promise.then(function (data) {
           $scope.instructors = data;
         });
         $scope.newInstructor = null;
@@ -2098,7 +2098,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
         file: file
       }).then(
         function (e) {
-          $scope.instructors = InstructorService.query();
+          $scope.instructors = InstructorService.query({ deactivated: true });
           $scope.instructors.$promise.then(function (data) {
             $scope.instructors = data;
           });
@@ -2139,7 +2139,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
   $scope.setInstructor = function () {
     if ($scope.updateInstructor) {
       var addSuccess = function () {
-        InstructorService.query().$promise.then(function (data) {
+        InstructorService.query({ deactivated: true }).$promise.then(function (data) {
           $scope.instructors = data;
         });
         $scope.isUpdateInstructor = false;
@@ -2157,7 +2157,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
   $scope.removeInstructor = function (ins) {
     $.Confirm('Are you sure on deleting ' + ins.admin.first_name + ' ' + ins.admin.last_name + ' ?', function () {
       var addSuccess = function (data) {
-        InstructorService.query().$promise.then(function (data) {
+        InstructorService.query({ deactivated: true }).$promise.then(function (data) {
           $scope.instructors = data;
         });
       }
@@ -2167,6 +2167,26 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
       }
 
       InstructorService.delete({instructorId : ins._id}).$promise.then(addSuccess, addFail);
+    });
+  }
+
+  $scope.activateInstructor = function (ins) {
+    $.Confirm('Are you sure to activate instructor ' + ins.admin.first_name + ' ' + ins.admin.last_name + ' ?', function () {
+      var instructor = ins.admin;
+      instructor._id = ins._id;
+      instructor.gender = ins.gender;
+      instructor.motto = ins.motto;
+      instructor.birthdate = ins.birthdate ? ins.birthdate.replace(' 00:00:00', ''):'';
+      instructor.deactivated = false;
+      var addSuccess = function () {
+        ins.deactivated = false;
+      }
+
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
+
+      InstructorService.update({ instructorId: instructor._id }, instructor).$promise.then(addSuccess, addFail);
     });
   }
 

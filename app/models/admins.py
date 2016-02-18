@@ -28,6 +28,7 @@ class Instructor(Model):
     birthdate = DateTimeField()
     image = StringField()
     motto = StringField()
+    deactivated = BooleanField(required=False, default=False) 
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 

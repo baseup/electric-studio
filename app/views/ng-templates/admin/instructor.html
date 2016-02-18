@@ -47,9 +47,14 @@
     </div>
 
     <div class="account-list grid" ng-show="!isUpdateInstructor">
-
+      <div class="grid__item bp-md-one-whole bp-lg-one-whole">
+        <div  class="float--right">
+          <input type="checkbox" ng-model="filterDeactivated"/> show deactivated 
+        </div>
+        <br/><br>
+      </div>
       <div class="grid__item bp-md-one-half bp-lg-one-third"
-           ng-repeat="instructor in instructors">
+           ng-repeat="instructor in instructors | filter:filterDeactivated">
         <div class="account__item box--bordered box--white space--bottom cf">
           <div ng-if="!chkChangePic(instructor._id) || !getAccess('instructors', 'update')" align="center" class="image" ng-click="changeInsPic(instructor)">
             <img ng-if="instructor.image" height="200" ng-src="{{ instructor.image }}">
@@ -83,9 +88,12 @@
 
           </div>
 
-          <div class="account__options pad--sides pad--half-ends space--top cf">
+          <div class="account__options pad--sides pad--half-ends space--top cf" ng-hide="instructor.deactivated">
             <a href="" class="float--left" ng-if="getAccess('instructors', 'update')" ng-click="setToUpdate(instructor)" >Update</a>
             <a href="" class="float--right link--secondary" ng-if="getAccess('instructors', 'delete')" ng-click="removeInstructor(instructor)">Remove</a>
+          </div>
+          <div class="account__options pad--sides pad--half-ends space--top cf" ng-show="instructor.deactivated">
+          <a href="" class="float--right link--secondary" ng-if="getAccess('instructors', 'delete')" ng-click="activateInstructor(instructor)">Activate</a>
           </div>
 
         </div>

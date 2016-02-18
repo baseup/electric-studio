@@ -11,7 +11,11 @@ import json
 import sys
     
 def find(self):
-    instructors = yield Instructor.objects.find_all()
+    deactivated = self.get_query_argument('deactivated')
+    query = Instructor.objects;
+    if not deactivated:
+        query.filter_not(deactivated=True)
+    instructors = yield query.find_all()
     
     for i, instructor in enumerate(instructors):
         if instructor.image:
@@ -76,6 +80,8 @@ def update(self, id):
                 instructor.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
             if 'motto' in data:
                 instructor.motto = data['motto']
+            if 'deactivated' in data:
+                instructor.deactivated = data['deactivated']
             instructor = yield instructor.save()
     except:
         value = sys.exc_info()[1]
@@ -87,8 +93,8 @@ def destroy(self, id):
     instructor = yield Instructor.objects.get(id)
     scheds = yield InstructorSchedule.objects.filter(instructor=instructor._id).find_all()
     if len(scheds) > 0:
-        self.set_status(400)
-        self.write('Unable to remove, Instructor has ' + str(len(scheds)) + ' schedule');
+        instructor.deactivated = True;
+        yield instructor.save()
     else:
         admin =  yield Admin.objects.get(instructor.admin._id)
         if admin:
