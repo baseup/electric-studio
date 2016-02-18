@@ -32,7 +32,7 @@
         <h3 class="h small">Ride with {{ selectedInstructor.admin.first_name }}</h3>
 
         <div class="row" ng-class="{ row: sched, unavailable: chkSched(sched), full: isFull(sched) }"
-            ng-repeat="sched in schedules">
+            ng-repeat="sched in schedules | orderBy:'date'">
           <span class="instructor">
             {{ sched.date | formatDate }}
           </span>

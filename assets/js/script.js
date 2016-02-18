@@ -87,6 +87,7 @@
       function modalClose(modal) {
         modal.removeClass('show');
         modal.find('.modal__box').removeClass('show');
+        $('body').removeClass('modal-open');
       }
 
       function modalOpen(modal) {
@@ -94,6 +95,7 @@
         setTimeout(function () {
           modal.find('.modal__box').addClass('show');
         }, 100);
+        $('body').addClass('modal-open');
       }
     });
   }
@@ -127,7 +129,7 @@
     });
   }
 
-  
+
   /**
    * DROPDOWN
    *
@@ -146,12 +148,12 @@
         el.addClass('active');
 
         target.toggleClass('expand');
-      });  
+      });
 
     });
   }
 
-  
+
   /**
    * NOTIFY
    *
@@ -159,7 +161,7 @@
    * set `duration` only if required
    */
   $.Notify = function (opts) {
-    
+
     opts = $.extend(true, {content:'', duration: 2200}, opts);
 
     var container = $('<div/>', {'class': 'notify__container notify__container--bottom-right'}),
