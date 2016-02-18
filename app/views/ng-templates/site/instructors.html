@@ -1,7 +1,6 @@
 <div ng-controller="InstructorCtrl">
   <div class="content bg-lightGray parts-4 instructors-info">
     <div class="wrapper">
-      <h2 class="h large primary pad--bottom">Meet Our Pack</h2>
       <div class="cf">
         <section ng-repeat-start="instructor in randomList | orderBy:'rank'" id="{{ instructor.admin.first_name }}" class="pad--off" ng-click="viewInstructor(instructor)">
           <div class="image">
@@ -28,9 +27,6 @@
           <h2 class="name h--large h--primary space--bottom"><span>{{ selectedInstructor.admin.first_name }}</span></h2>
           <p class="text-color-light">{{ selectedInstructor.motto }}</p>
         </div>
-      </section>
-      <section class="cf space--top">
-        <h3 class="h small">What I'm listening to</h3>
       </section>
       <section class="schedule cf space--top">
         <h3 class="h small">Ride with {{ selectedInstructor.admin.first_name }}</h3>
