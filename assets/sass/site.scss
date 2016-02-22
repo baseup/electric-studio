@@ -1621,6 +1621,70 @@ body {
     }
   }
 
+  .schedule {
+    position: relative;
+    margin: 0 30px;
+
+    &.no-slide {
+      margin: 0;
+
+      .arrow {
+        display: none;
+      }
+    }
+
+    &.full-right {
+      margin-right: 0;
+
+      .arrow.right {
+        display: none;
+      }
+    }
+
+    &.full-left {
+      margin-left: 0;
+
+      .arrow.left {
+        display: none;
+      }
+    }
+
+    .arrow {
+      position: absolute;
+      height: 30px;
+      width: 30px;
+      font-size: 24px;
+      line-height: 30px;
+      text-align: center;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      cursor: pointer;
+
+      &:hover {
+        color: $brand-color-primary;
+      }
+
+      &.left {
+        left: -30px;
+      }
+
+      &.right {
+        right: -30px;
+      }
+    }
+
+    .schedule-slider-wrapper {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .schedule-slider {
+      transition: margin 0.4s ease;
+      overflow: hidden;
+    }
+  }
+
   .row {
     float: left;
     width: 50%;
