@@ -1031,10 +1031,10 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
   }
 
   $scope.viewInstructor = function(data) {
-    
+
     $scope.selectedInstructor = data;
     angular.element('#view-instructor-info').Modal();
-    
+
     $scope.loadingSchedules = true;
     ScheduleService.query({ ins: data._id }).$promise.then(function (data) {
       $scope.releases = data.releases;
@@ -1047,8 +1047,65 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
         }
       });;
       $scope.loadingSchedules = false;
+
+      $timeout(setScheduleSlider);
     });
-    
+
+    function setScheduleSlider() {
+      var rows = angular.element('#view-instructor-info .schedule .row');
+
+      $(window).resize(function() {
+        var winWidth = $(this).width();
+        var rowWidth = 100 / rows.length;
+        var sliderWidth = rows.length * 50;
+        var moveBy = 2;
+        var currentSlide = 0;
+
+        if(winWidth >= 740) {
+          sliderWidth = rows.length * 25;
+          moveBy = 4;
+        }
+
+        $('#view-instructor-info .schedule-slider').css('width', sliderWidth + '%');
+        $('#view-instructor-info .schedule-slider .row').css('width', rowWidth + '%');
+
+        if(rows.length <= moveBy) {
+          $('#view-instructor-info .schedule').addClass('no-slide');
+        } else {
+          $('#view-instructor-info .schedule').removeClass('no-slide');
+        }
+
+        var arrowLeft = $('#view-instructor-info .schedule .arrow.left');
+        var arrowRight = $('#view-instructor-info .schedule .arrow.right');
+        var slider = $('#view-instructor-info .schedule-slider');
+
+        $('#view-instructor-info .schedule-slider').css('margin-left', 0);
+
+        arrowRight.click(function(e) {
+          e.stopPropagation();
+
+          if(currentSlide + moveBy >= rows.length) return;
+
+          var slideWidth = slider.width();
+          currentSlide += moveBy;
+          var left = - ((slideWidth / rows.length) * currentSlide);
+          slider.css('margin-left', left + 'px');
+        });
+
+
+        arrowLeft.click(function(e) {
+          e.stopPropagation();
+
+          if(currentSlide - moveBy < 0) return;
+          var slideWidth = slider.width();
+          currentSlide -= moveBy;
+          var left = - ((slideWidth / rows.length) * currentSlide);
+          slider.css('margin-left', left + 'px');
+        });
+
+      }).trigger('resize');
+    }
+
   }
 
   angular.element('.imgmap a').click(function () {

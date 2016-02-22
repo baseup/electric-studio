@@ -87,7 +87,6 @@
       function modalClose(modal) {
         modal.removeClass('show');
         modal.find('.modal__box').removeClass('show');
-        $('body').removeClass('modal-open');
       }
 
       function modalOpen(modal) {
@@ -95,7 +94,6 @@
         setTimeout(function () {
           modal.find('.modal__box').addClass('show');
         }, 100);
-        $('body').addClass('modal-open');
       }
     });
   }
