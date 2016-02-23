@@ -1464,7 +1464,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   }
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location, $route, UserService, ScheduleService, SharedService, BookService, SettingService) {
+ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService) {
+
+  $timeout(function() {
+    angular.element('html, body').scrollTop(0);
+  });
+
   var sched = SharedService.get('selectedSched');
   if (!sched) {
     $location.path('/schedule')
