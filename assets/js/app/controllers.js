@@ -841,9 +841,15 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
     $scope.instructors = data;
 
     $scope.randomList = [];
+    $scope.selectedSched = SharedService.get('selectedSched');
     angular.forEach($scope.instructors, function(item) {
       item.rank = 0.5 - Math.random();
       $scope.randomList.push(item);
+
+      if($scope.selectedSched && $scope.selectedSched.schedule.instructor._id === item._id) {
+        $scope.viewInstructor(item);
+        SharedService.clear('selectedSched');
+      }
     });
   });
 
@@ -997,6 +1003,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
               });
             } else {
               SharedService.set('selectedSched', sched);
+              SharedService.set('backToInstructors', true);
               $location.path('/class');
             }
           });
@@ -1469,6 +1476,9 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
   $timeout(function() {
     angular.element('html, body').scrollTop(0);
   });
+
+  $scope.backButtonPath = SharedService.get('backToInstructors') ? '#/instructors' : '#/schedule';
+  SharedService.clear('backToInstructors');
 
   var sched = SharedService.get('selectedSched');
   if (!sched) {

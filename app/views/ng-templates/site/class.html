@@ -9,7 +9,7 @@
 
     <div ng-if="resched">
       <h2 class="range">
-        <span>Rescheduling: </span> 
+        <span>Rescheduling: </span>
         {{ resched.date | formatDate }} - {{ resched.schedule.start | formatTime }} - Seat {{ resched.seat_number }}</h2>
         <a class="h small primary right" ng-click="cancelResched()">Cancel</a>
       <hr/>
@@ -20,7 +20,7 @@
       <h2 class="range">FORT BGC</h2>
       <h2 class="range">{{ daySched }}, {{ dateSched }} - {{ timeSched | formatTime }}</h2>
     </div>
-    
+
     <div class="class">
 
       <div class="formation">
@@ -36,7 +36,7 @@
           <div class="image">
             <img src="{{ instructor.image ? '/assets/' + instructor.image : 'http://placehold.it/350x150' }}">
           </div>
-          <div ng-if="subInstructor" class="image sub">
+          <div ng-if="subInstructor" class="image">
             <img src="{{ subInstructor.image ? '/assets/' + subInstructor.image : 'http://placehold.it/350x150' }}">
           </div>
           <h3 class="h small primary">
@@ -88,7 +88,7 @@
           <span ng-click="setSeatNumber(35, $event)" ng-class="{ unavailable: checkSeat(35),hidden: 35 > sched.seats }">35</span>
         </div>
       </div>
-    
+
     <a ng-if="!resched && !forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Book A Ride</a>
     <ul class="legend">
       <li class="free">Free Bikes</li>
@@ -97,8 +97,8 @@
     </ul>
     <a ng-if="resched && !forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Reschedule Ride</a>
     <a ng-if="forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Join the WaitList</a>
-    <a class="h small primary center link" href="#/schedule">Back to Schedule</a>
-   
+    <a class="h small primary center link" href="{{ backButtonPath }}">Back</a>
+
 
   </div>
 </div>
