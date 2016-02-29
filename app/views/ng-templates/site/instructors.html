@@ -30,6 +30,7 @@
       </section>
       <section class="cf space--top">
         <h3 class="h small">Ride with {{ selectedInstructor.admin.first_name }}</h3>
+        <b class="text-color-light" ng-if="!schedules.length">No classes</b>
 
         <div class="schedule">
           <div class="arrow left"><i class="fa fa-angle-left"></i></div>
@@ -47,6 +48,7 @@
                   {{ sched.sub_instructor ? 'with ' + sched.sub_instructor.admin.first_name : '' }}
                 </span>
                 <span class="schedtype">{{ sched.type }}</span>
+                <span>BGC</span>
                 <button class="btn btn--small btn--primary" ng-click="setSchedule(sched)">
                   {{ isFull(sched) ? 'waitlist' : 'reserve' }}
                 </button>
