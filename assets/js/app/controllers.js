@@ -1086,6 +1086,8 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
         var arrowRight = $('#view-instructor-info .schedule .arrow.right');
         var slider = $('#view-instructor-info .schedule-slider');
 
+        hideArrows();
+
         $('#view-instructor-info .schedule-slider').css('margin-left', 0);
 
         arrowRight.click(function(e) {
@@ -1097,6 +1099,8 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
           currentSlide += moveBy;
           var left = - ((slideWidth / rows.length) * currentSlide);
           slider.css('margin-left', left + 'px');
+
+          hideArrows();
         });
 
 
@@ -1108,7 +1112,23 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
           currentSlide -= moveBy;
           var left = - ((slideWidth / rows.length) * currentSlide);
           slider.css('margin-left', left + 'px');
+
+          hideArrows();
         });
+
+        function hideArrows() {
+          if(currentSlide - moveBy >= 0) {
+            arrowLeft.removeClass('hide');
+          } else {
+            arrowLeft.addClass('hide');
+          }
+
+          if(currentSlide + moveBy >= rows.length) {
+            arrowRight.addClass('hide');
+          } else {
+            arrowRight.removeClass('hide');
+          }
+        }
 
       }).trigger('resize');
     }
