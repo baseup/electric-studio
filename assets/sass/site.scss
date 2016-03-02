@@ -1672,6 +1672,10 @@ body {
       &.right {
         right: -30px;
       }
+
+      &.hide {
+        display: none;
+      }
     }
 
     .schedule-slider-wrapper {
@@ -2467,25 +2471,26 @@ body {
         width: 270px;
       }
 
+      @include breakpoint(md) {
+        width: 350px;
+      }
+
       .image{
-        left: 50%;
         border-radius: 150px;
         height: 80px;
         overflow: hidden;
         position: relative;
         width: 80px;
-        margin-left: -40px;
+        display: inline-block;
 
         @media (min-width: 768px) {
-          width: 140px;
-          height: 140px;
-          margin-left: -70px;
+          width: 100px;
+          height: 100px;
         }
 
         @include breakpoint(md) {
           width: 150px;
           height: 150px;
-          margin-left: -75px;
         }
 
         &.sub {
