@@ -4,6 +4,7 @@ from app.models.schedules import InstructorSchedule, BookedSchedule
 from app.models.admins import Setting
 from app.helper import GMT8
 from bson.objectid import ObjectId
+from motorengine import Q
 import tornado
 
 def find(self):
@@ -47,7 +48,8 @@ def find(self):
 
         sched_query = InstructorSchedule.objects.filter(date=date)
         if ins:
-            sched_query.filter(instructor=ObjectId(ins)).limit(4)
+            qfilter = Q(instructor=ObjectId(ins)) | Q(sub_instructor=ObjectId(ins))
+            sched_query.filter(qfilter).limit(4)
 
         sched = yield sched_query.order_by('start', direction=ASCENDING).find_all(lazy=True)
         if date.replace(tzinfo=gmt8) + timedelta(days=1) > now:
