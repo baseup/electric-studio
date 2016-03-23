@@ -1,8 +1,8 @@
-from hurricane.web import RouteProvider 
+from hurricane.web import RouteProvider
 routes = RouteProvider()
 
 routes.when('admin.index', 'auth.admin')
-routes.when('home.index', 'auth.landing')   
+routes.when('home.index', 'auth.landing')
 
 # filters for pos api
 routes.when('pos.buy', 'auth.api')
@@ -46,7 +46,6 @@ routes.when('admin.transaction.destroy', 'auth.access')
 
 
 routes.get('/', 'home.index')
-routes.get('/terms', 'home.terms')
 routes.get('/signup', 'home.landing')
 routes.get('/user_migration ', 'home.user_migration')
 routes.get('/buy', 'home.buy')
@@ -133,4 +132,3 @@ routes.prefix('/api', [
 routes.subdomain('api.electric-studio.dev', [
     ('resource', 'user', 'api.user')
 ])
-

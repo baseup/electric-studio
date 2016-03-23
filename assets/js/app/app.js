@@ -85,6 +85,10 @@ app.config(function ($routeProvider, $httpProvider) {
     '/redeem-gc': {
       templateUrl: '/site/gc-redeem',
       controller: 'SiteCtrl'
+    },
+    '/terms': {
+      templateUrl: '/site/terms',
+      controller: 'SiteCtrl'
     }
   };
 
