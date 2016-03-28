@@ -49,7 +49,7 @@
     <div class="account-list grid" ng-show="!isUpdateInstructor">
       <div class="grid__item bp-md-one-whole bp-lg-one-whole">
         <div  class="float--right">
-          <input type="checkbox" ng-model="filterDeactivated"/> show deactivated 
+          <input type="checkbox" ng-model="filterDeactivated"/> show deactivated
         </div>
         <br/><br>
       </div>
@@ -59,7 +59,7 @@
           <div ng-if="!chkChangePic(instructor._id) || !getAccess('instructors', 'update')" align="center" class="image" ng-click="changeInsPic(instructor)">
             <img ng-if="instructor.image" height="200" ng-src="{{ instructor.image }}">
             <img ng-if="!instructor.image"  height="200" src="assets/images/pic-placeholder.png">
-          </div>  
+          </div>
           <div class="pad" style="height: 203px;" ng-if="chkChangePic(instructor._id) && getAccess('instructors', 'update')">
             <input ng-show="!uploading" type="file" ng-file-select="uploadInsPic($files)" ng-model="inspic"/>
             <span ng-show="uploading">Uploading: {{ progress }}</span>
@@ -100,7 +100,7 @@
       </div>
 
     </div>
-  </div>  
+  </div>
 
   <!-- modal Add Instructor -->
   <div id="add-instructor-modal" class="modal" data-modal="add-instructor">
@@ -136,16 +136,20 @@
           <span class="label">Contact Number</span>
           <input class="text-input" ng-model="newInstructor.contact_number">
         </div>
-        <div class="space--bottom float--left space--right">
+        <div class="cf"></div>
+        <div class="space--bottom"> 
           <span class="label">Motto</span>
-          <textarea class="text-input" ng-model="newInstructor.motto"></textarea>
+          <textarea class="text-input text-input--full" ng-model="newInstructor.motto"></textarea>
         </div>
-
+        <div class="space--bottom">
+          <span class="label">Music</span>
+          <select class="select text-input text-input--full" id="itunes-search" ng-model="newInstructor.albums"></select>
+        </div>
         <div class="space--bottom float--left"><br/><br/>
           <input ng-show="!uploading" type="file" ng-file-select="uploadInsPic($files)" ng-model="inspic"/>
           <span ng-show="uploading">Uploading: {{ progress }}</span>
         </div>
-        
+
       </div>
       <button class="btn btn--medium btn--primary space--top modal-close" ng-click="addInstructor()">Add</button>
     </div>
