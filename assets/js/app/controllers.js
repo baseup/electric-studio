@@ -184,26 +184,28 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
           var img = angular.element(value);
           var src = img.attr('src');
 
-          intervals.push({
-            fn : '',
-            tries : 0
-          });
+          if(src) {
+            intervals.push({
+              fn : '',
+              tries : 0
+            });
 
-          var thsObj = intervals[counter];
+            var thsObj = intervals[counter];
 
-          thsObj.fn = setInterval(function () {
-            if (thsObj.tries > maxTries) {
-              clearInterval(thsObj.fn);
-            }
-            if (img[0].complete) {
-              img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
-              img.remove();
-              clearInterval(thsObj.fn);
-            }
+            thsObj.fn = setInterval(function () {
+              if (thsObj.tries > maxTries) {
+                clearInterval(thsObj.fn);
+              }
+              if (img[0].complete) {
+                img.closest('.slide').css({backgroundImage : 'url('+src+')'}).removeClass('loading');
+                img.hide();
+                clearInterval(thsObj.fn);
+              }
 
-            thsObj.tries++;
-          }, 50)
-          counter++;;
+              thsObj.tries++;
+            }, 50)
+            counter++;
+          }
         });
       }, 800);
 
@@ -216,6 +218,20 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
           glideObj.reinit();
         // }
       }
+
+      win.resize(function() {
+        if(win.width() >= 768) {
+          angular.element('.slide').each(function(index, value) {
+            var image = $(this).find('.preloaded-img.desktop').attr('src');
+            if(image) $(this).css('background-image', image);
+          });
+        } else {
+          angular.element('.slide').each(function(index, value) {
+            var image = $(this).find('.preloaded-img.mobile').attr('src');
+            if(image) $(this).css('background-image', image);
+          });
+        }
+      });
 
       win.trigger('resize');
     }, 400);

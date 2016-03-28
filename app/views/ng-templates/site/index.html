@@ -8,7 +8,9 @@
   <ul class="slider">
     <li ng-repeat="slider in sliders" class="slide loading">
       <span>{{ slider.text }}</span>
-      <img ng-src="{{ slider.image }}" class="preloaded-img">
+      <img ng-src="{{ slider.image }}" class="preloaded-img desktop">
+      <img ng-src="{{ slider.mobileImage }}" class="preloaded-img mobile">
+      <a ng-href="{{ slider.url }}"></a>
     </li>
   </ul>
 </div>

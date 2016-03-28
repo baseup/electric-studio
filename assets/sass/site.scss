@@ -1044,6 +1044,15 @@ body {
     animation-fill-mode: both;
   }
 
+  a {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
   .home &.slide-1 {
      background-image: url('/assets/images/slider-image-1.jpg');
   }
