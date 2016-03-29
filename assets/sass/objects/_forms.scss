@@ -100,6 +100,20 @@ label,
 
 }
 
+.text-input.selectize-control.multi {
+  padding: 0!important;
+  height: auto!important;
+  overflow: visible!important;
+
+  &.text-input--full {
+    max-width: none!important;
+  }
+
+  .selectize-input {
+    height: auto!important;
+  }
+}
+
 .text-input--full {
   max-width: none;
 }

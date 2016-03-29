@@ -33,7 +33,7 @@
               <td>
                 <div align="center" class="image" ng-click="changeSliderImg(slider)">
                   <img width="200" height="200" ng-src="{{ slider.image }}">
-                </div>  
+                </div>
               </td>
               <td>
                 <div class="pad" style="height: 203px;" ng-show="chkChangeImg(slider._id)">
@@ -73,7 +73,7 @@
               <td>
                 <div align="center" class="image">
                   <img id='about-us' width="200" height="200" src="/assets/images/about-us.jpg">
-                </div>  
+                </div>
               </td>
               <td>
                 About Us
@@ -86,7 +86,7 @@
               <td>
                 <div align="center" class="image">
                   <img id='workouts' width="200" height="200" src="/assets/images/workouts.jpg">
-                </div>  
+                </div>
               </td>
               <td>
                 Workouts
@@ -99,7 +99,7 @@
               <td>
                 <div align="center" class="image">
                   <img id='first-ride' width="200" height="200" src="/assets/images/first-ride.png">
-                </div>  
+                </div>
               </td>
               <td>
                 First Ride
@@ -112,7 +112,7 @@
               <td>
                 <div align="center" class="image">
                   <img id='rates' width="200" height="200" src="/assets/images/rates.png">
-                </div>  
+                </div>
               </td>
               <td>
                 Rates & Packages
@@ -135,12 +135,20 @@
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Add Slide</h3>
       <div class="space--bottom">
-        <span class="label">Background Image</span>
+        <span class="label">Desktop Background Image</span>
+        <input type="file" ng-file-select="uploadSlider($files)" >
+      </div>
+      <div class="space--bottom cf">
+        <span class="label">Mobile Background Image</span>
         <input type="file" ng-file-select="uploadSlider($files)" >
       </div>
       <div class="space--bottom">
         <span class="label">Text</span>
         <input placeholder="Add Text" class="text-input" ng-model="newSlider.text">
+      </div>
+      <div class="space--bottom cf">
+        <span class="label">Hyperlink Address</span>
+        <input placeholder="Add URL" class="text-input" ng-model="newSlider.url">
       </div>
       <button ng-if="getAccess('sliders', 'create')" class="btn btn--medium btn--primary space--top modal-close" ng-click="saveSlider()">Add</button>
     </div>

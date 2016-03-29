@@ -17,44 +17,44 @@
 @import "components/base";
 @import "components/admin-header";
 @import "components/admin-sidebar";
-@import "components/admin-footer";  
+@import "components/admin-footer";
 @import "components/admin-content";
 @import "components/overrides";
 
-  
+
 /**
  * Ensure that media queries are compiled mobile-first
  */
 .cssc {
-  
+
   @include breakpoint(xs) {
     display: none;
   }
-  
+
   @include breakpoint(sm) {
     display: none;
   }
-  
+
   @include breakpoint(md) {
     display: none;
   }
-  
+
   @include breakpoint(lg) {
     display: none;
   }
-  
+
 }
 
 /* Class Seats */
 .seats {
-  font-family: 'Brandon_Grotesque'; 
+  font-family: 'Brandon_Grotesque';
   display: block;
-  
+
   @include breakpoint(md) {
     display: table;
   }
-  
- 
+
+
   width: 100%;
   max-width: 980px;
   margin: 0 auto;
@@ -149,23 +149,23 @@
 }
 
 .class-instructor {
-  
+
   @include breakpoint(md) {
     margin: -128px 45px 0 0;
   }
-  
-  .image {   
+
+  .image {
     height: 40px;
     width: 40px;
     border-radius: 50%;
     overflow: hidden;
     margin: 0 auto;
-    
+
     @include breakpoint(md) {
       height: 60px;
       width: 60px;
     }
-    
+
     img {
       width: 100%;
     }
@@ -195,7 +195,7 @@
         margin-top: 60px;
       }
     }
-    
+
     &:after {
       content: '';
       clear: both;
@@ -348,49 +348,49 @@
   font-weight: bold;
   margin: 20px 0;
   font-family: 'Brandon_Grotesque';
-  
+
   &.large {
     font-size: 2em;
     font-family: 'Brandon_Grotesque';
   }
-  
+
   &.medium {
     font-size: 1.4em;
   }
-  
+
   &.small {
     font-size: 1em;
   }
-  
+
   &.light {
     color: #fff!important;
   }
-  
+
   &.dark {
     color: $color-text!important;
   }
-  
+
   &.primary, &.color-primary {
     color: $brand-color-primary!important;
   }
-  
+
   &.gray {
     color: $color-text-light!important;
   }
-  
+
   &.center {
     text-align: center;
     display: block;
   }
-  
+
   &.block {
     display: block;
   }
-  
+
   &.face-primary {
     font-family: 'Brandon_Grotesque';
   }
-  
+
   &.xl {
     font-family: 'Tungsten', sans-serif;
     font-weight: 300;
@@ -398,7 +398,7 @@
     color: $brand-color-primary;
     letter-spacing: 0.2em;
     font-size: 50px;
-    
+
     @include breakpoint(sm) {
       font-size: 70px;
     }
@@ -420,4 +420,13 @@
 
 .selectize-input  {
   box-shadow: 0 0 1px #999 !important;
+  min-width: 200px;
+  display: inline-block;
+
+  &.items {
+    .item {
+      font-size: 13px;
+      line-height: normal;
+    }
+  }
 }

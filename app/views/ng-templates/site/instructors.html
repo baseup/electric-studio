@@ -28,6 +28,10 @@
           <p class="text-color-light">{{ selectedInstructor.motto }}</p>
         </div>
       </section>
+      <section class="cf space--top" ng-show="albums.length">
+        <h3 class="h small">What I'm listening to</h3>
+        <img ng-repeat="album in albums" ng-src="album">
+      </section>
       <section class="cf space--top">
         <h3 class="h small">Ride with {{ selectedInstructor.admin.first_name }}</h3>
         <b class="text-color-light" ng-if="!schedules.length">No classes</b>
