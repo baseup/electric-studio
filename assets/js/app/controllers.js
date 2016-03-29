@@ -220,17 +220,13 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
       }
 
       win.resize(function() {
-        if(win.width() >= 768) {
-          angular.element('.slide').each(function(index, value) {
-            var image = $(this).find('.preloaded-img.desktop').attr('src');
-            if(image) $(this).css('background-image', image);
-          });
-        } else {
-          angular.element('.slide').each(function(index, value) {
-            var image = $(this).find('.preloaded-img.mobile').attr('src');
-            if(image) $(this).css('background-image', image);
-          });
-        }
+        angular.element('.slide').each(function(index, value) {
+          var image = win.width() >= 768
+            ? $(this).find('.preloaded-img.desktop').attr('src')
+            : $(this).find('.preloaded-img.mobile').attr('src');
+
+          if(image) $(this).css('background-image', 'url(' + image + ')');
+        });
       });
 
       win.trigger('resize');
