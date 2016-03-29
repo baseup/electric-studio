@@ -36,6 +36,11 @@
             <span class="label">Contact Number</span>
             <input class="text-input" ng-model="updateInstructor.contact_number">
           </div>
+
+          <div class="space--bottom">
+            <span class="label">Music</span>
+            <select class="select text-input text-input--full itunes-search" id="ins-album-update" ng-model="updateInstructor.albums"></select>
+          </div>
           <div class="space--bottom left space--right">
             <span class="label">Motto</span>
             <textarea class="text-input" ng-model="updateInstructor.motto"></textarea>
@@ -143,7 +148,7 @@
         </div>
         <div class="space--bottom">
           <span class="label">Music</span>
-          <select class="select text-input text-input--full" id="itunes-search" ng-model="newInstructor.albums"></select>
+          <select class="select text-input text-input--full itunes-search" id="ins-add-albums" ng-model="newInstructor.albums"></select>
         </div>
         <div class="space--bottom float--left"><br/><br/>
           <input ng-show="!uploading" type="file" ng-file-select="uploadInsPic($files)" ng-model="inspic"/>

@@ -1,5 +1,6 @@
 
 from motorengine.errors import InvalidDocumentError
+from motorengine import DESCENDING
 from app.models.admins import Instructor, Admin
 from app.models.schedules import InstructorSchedule
 from app.models.access import AccessType
@@ -15,7 +16,7 @@ def find(self):
     query = Instructor.objects;
     if not deactivated:
         query.filter_not(deactivated=True)
-    instructors = yield query.find_all()
+    instructors = yield query.order_by('update_at',direction=DESCENDING).find_all()
     
     for i, instructor in enumerate(instructors):
         if instructor.image:
@@ -50,6 +51,8 @@ def create(self):
         instructor = Instructor(admin=admin._id,
                                 gender=data['gender'],
                                 birthdate=datetime.strptime(data['birthdate'],'%Y-%m-%d'))
+        if 'albums' in data:
+            instructor.albums = data['albums']
         if 'motto' in data:
             instructor.motto = data['motto']
         instructor = yield instructor.save()
@@ -78,6 +81,8 @@ def update(self, id):
             instructor.gender = data['gender']
             if not data['birthdate'] == '':
                 instructor.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+            if 'albums' in data:
+                instructor.albums = data['albums']
             if 'motto' in data:
                 instructor.motto = data['motto']
             if 'deactivated' in data:

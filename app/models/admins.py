@@ -28,6 +28,7 @@ class Instructor(Model):
     birthdate = DateTimeField()
     image = StringField()
     motto = StringField()
+    albums = ListField(StringField(), default=[])
     deactivated = BooleanField(required=False, default=False) 
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
@@ -38,7 +39,9 @@ class Instructor(Model):
 class Slider(Model):
     __collection__ = 'sliders'
     image = StringField(required=True)
+    mobile_image = StringField(default=None)
     text = StringField(default=None)
+    link = StringField(default=None)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 

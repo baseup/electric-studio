@@ -29,9 +29,21 @@ def create(self):
             new_file = open(path + new_name, 'wb')
             new_file.write(upload_file['body'])
 
+            mfile = None
+            mobile_new_name = None
+            if 'mfile' in self.request.files:
+                mfile = self.request.files['mfile'][0]
+                mobile_new_name = datetime.now().strftime('%Y_%m_%d_%H_%M_%S') + '_mobile_' + mfile['filename']
+                mobile_file = open(path + mobile_new_name, 'wb')
+                mobile_file.write(mfile['body'])
+
             slider = Slider(image=path + new_name)
+            if mfile and mobile_new_name:
+                slider.mobile_image = path + mobile_new_name
             if self.get_argument('text'):
                 slider.text = self.get_argument('text')
+            if self.get_argument('link'):
+                slider.link = self.get_argument('link')
             slider = yield slider.save()
         except:
             value = sys.exc_info()[1]
@@ -46,10 +58,11 @@ def create(self):
 def update(self, id):
 
     text = self.get_argument('text');
+    link = self.get_argument('link');
     try:
         slider = yield Slider.objects.get(id)
         if slider:
-            if self.request.files:
+            if 'file' in self.request.files:
                 upload_file = self.request.files['file'][0]
                 if upload_file:
                     new_name = datetime.now().strftime('%Y_%m_%d_%H_%M_%S') + '_' + upload_file['filename']
@@ -57,11 +70,29 @@ def update(self, id):
                     os.makedirs(path, exist_ok=True)
                     new_file = open(path + new_name, 'wb')
                     new_file.write(upload_file['body'])
+
+                    #remove old file
                     os.remove(slider.image)
+
                     slider.image = path + new_name
 
+            if 'mfile' in self.request.files:
+                mobile_file = self.request.files['mfile'][0]
+                if mobile_file:
+                    mobile_new_name = datetime.now().strftime('%Y_%m_%d_%H_%M_%S') + '_mobile_' + mobile_file['filename']
+                    path = 'assets/uploads/'
+                    os.makedirs(path, exist_ok=True)
+                    mobile_new_file = open(path + mobile_new_name, 'wb')
+                    mobile_new_file.write(mobile_file['body'])
+                    
+                    # remove old file
+                    os.remove(slider.mobile_image)
+                    
+                    slider.mobile_image = path + mobile_new_name
             if text:
                 slider.text = text
+            if link:
+                slider.link = link
             slider = yield slider.save()
         else:
             self.set_status(404)
@@ -76,6 +107,8 @@ def destroy(self, id):
     slider = yield Slider.objects.get(id)
     try:
         os.remove(slider.image)
+        if slider.mobile_image:
+            os.remove(slider.mobile_image)
     except: 
         pass
     slider.delete()

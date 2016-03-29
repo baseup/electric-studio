@@ -1788,7 +1788,7 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
     }
   }
 
-  $scope.uploadSlider = function (files) {
+  $scope.uploadSlider = function (files, ftype) {
     if (files && files[0]) {
       var file = files[0];
       if (['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.type) < 0) {
@@ -1798,9 +1798,11 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
         $.Alert('Must not exceed 3MB');
         return;
       }
-      $scope.toUploadFile = file;
+      if (ftype && ftype == 'mobile') $scope.forMobileFile = file;
+      else $scope.toUploadFile = file;
     } else {
-      $scope.toUploadFile = null;
+      if (ftype && ftype == 'mobile') $scope.forMobileFile = null;
+      else $scope.toUploadFile = null;
     }
   }
 
@@ -1809,15 +1811,23 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
       $scope.uploading = true;
 
       var post_data = {};
-      if ($scope.newSlider && $scope.newSlider.text){
-        post_data = { 'text' : $scope.newSlider.text };
+      if ($scope.newSlider){
+        if ($scope.newSlider.text) {
+          post_data.text = $scope.newSlider.text;
+        }
+        if ($scope.newSlider.link) {
+          post_data.link = $scope.newSlider.link;
+        }
       }
+
+      post_data.file = $scope.toUploadFile
+      if ($scope.forMobileFile)
+        post_data.mfile = $scope.forMobileFile;
 
       $upload.upload({
         url: '/admin/slider',
         method: 'POST',
-        data: post_data,
-        file: $scope.toUploadFile
+        data: post_data
       }).then(
         function (e) {
           $scope.sliders = SliderService.query();
@@ -1864,11 +1874,17 @@ ctrls.controller('SliderCtrl', function ($scope, $upload, SliderService) {
     if ($scope.toUploadFile ||
        ($scope.updateSliderImg && $scope.updateSliderImg.text)) {
       $scope.uploading = true;
+
+      var post_data = { 'text' : $scope.updateSliderImg.text, 'link': $scope.updateSliderImg.link };
+
+      post_data.file = $scope.toUploadFile
+      if ($scope.forMobileFile)
+        post_data.mfile = $scope.forMobileFile;
+
       $upload.upload({
         url: '/admin/slider/' + $scope.updateSliderImg._id,
         method: 'PUT',
-        data: { 'text' : $scope.updateSliderImg.text },
-        file: $scope.toUploadFile
+        data: post_data,
       }).then(
         function (e) {
           $scope.sliders = SliderService.query();
@@ -1997,14 +2013,17 @@ ctrls.controller('AnalyticsCtrl', function ($scope) {
 
 });
 
-ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService) {
+ctrls.controller('InstructorCtrl', function ($scope, $upload, $timeout, InstructorService) {
 
-   $scope.showAddInstructor = function () {
+  $scope.showAddInstructor = function () {
+    $timeout(function () {
+    $('.itunes-search#ins-add-albums')[0].selectize.setValue(null);
+    }, 500);
     angular.element('#add-instructor-modal').Modal();
   }
 
-  $('#itunes-search')[0].selectize.destroy();
-  $('#itunes-search').selectize({
+  $('#ins-add-albums')[0].selectize.destroy();
+  $('#ins-add-albums').selectize({
     placeholder: 'Search albums on iTunes',
     labelField: 'collectionName',
     valueField: 'artworkUrl100',
@@ -2014,8 +2033,8 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
       if (!query.length) return callback();
 
       var term = encodeURIComponent(query);
-      $.getJSON('http://itunes.apple.com/search?term=' + term + '&attribute=albumTerm&entity=album&callback=?', function(data) {
-        callback(data.results.slice(0, 10));
+      $.getJSON('https://itunes.apple.com/search?term=' + term + '&limit=10&attribute=albumTerm&entity=album&callback=?', function(data) {
+        callback(data.results);
       });
     },
     render: {
@@ -2026,7 +2045,40 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
         '</div>';
       }
     }
-  })
+  });
+
+  $('#ins-album-update')[0].selectize.destroy();
+  $('#ins-album-update').selectize({
+    placeholder: 'Search albums on iTunes',
+    labelField: 'collectionName',
+    valueField: 'artworkUrl100',
+    searchField: 'collectionName',
+    maxItems: 6,
+    load: function(query, callback) {
+      if (!query.length) return callback();
+
+      var term = encodeURIComponent(query);
+      $.getJSON('https://itunes.apple.com/search?term=' + term + '&limit=10&attribute=albumTerm&entity=album&callback=?', function(data) {
+        callback(data.results);
+      });
+    },
+    render: {
+      option: function(item, escape) {
+        return '<div>' +
+          '<img src="' + item.artworkUrl60 + '" />' +
+          '<div>' + item.collectionName + '</div>' +
+        '</div>';
+      }
+    },
+    onChange: function (value) {
+      console.log(value);
+      if (value.length) {
+        $scope.$apply(function () {
+          $scope.updateInstructor.albums = value;
+        });
+      }
+    }
+  });
 
   $scope.instructors = InstructorService.query({ deactivated: true });
   $scope.instructors.$promise.then(function (data) {
@@ -2038,6 +2090,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
     angular.element('#add-instructor-modal').Modal();
 
     if ($scope.newInstructor) {
+
       if (!$scope.newInstructor.first_name) {
         $.Alert('Instructor must have first name')
         return;
@@ -2060,6 +2113,8 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
 
       if (!$scope.newInstructor.gender)
         $scope.newInstructor.gender = 'male';
+
+      
 
       var addSuccess = function (data) {
         $scope.picInstructor = data;
@@ -2149,11 +2204,24 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, InstructorService)
     $scope.updateInstructor._id = ins._id;
     $scope.updateInstructor.gender = ins.gender;
     $scope.updateInstructor.motto = ins.motto;
+
+    if (ins.albums) {
+        delete ins.albums.$$hashKey;
+    }
+    $scope.updateInstructor.albums = ins.albums;
+    
     if (ins.birthdate) {
       $scope.updateInstructor.birthdate = ins.birthdate.replace(' 00:00:00', '');
     } else {
       $scope.updateInstructor.birthdate = '';
     }
+
+    $timeout(function () {
+      
+      
+      $('#ins-album-update')[0].selectize.setValue(ins.albums);
+    }, 500);
+    
   }
 
   $scope.cancelUpdateInstructor = function () {
