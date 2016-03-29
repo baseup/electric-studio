@@ -81,7 +81,7 @@ def update(self, id):
             instructor.gender = data['gender']
             if not data['birthdate'] == '':
                 instructor.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
-            if 'albums' in data:
+            if 'albums' in data and data['albums'] and len(data['albums']) > 0:
                 instructor.albums = data['albums']
             if 'motto' in data:
                 instructor.motto = data['motto']

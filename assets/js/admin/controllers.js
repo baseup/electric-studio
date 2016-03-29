@@ -2017,7 +2017,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, $timeout, Instruct
 
   $scope.showAddInstructor = function () {
     $timeout(function () {
-    $('.itunes-search#ins-add-albums')[0].selectize.setValue(null);
+      $('.itunes-search#ins-add-albums')[0].selectize.setValue(null);
     }, 500);
     angular.element('#add-instructor-modal').Modal();
   }
@@ -2026,7 +2026,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, $timeout, Instruct
   $('#ins-add-albums').selectize({
     placeholder: 'Search albums on iTunes',
     labelField: 'collectionName',
-    valueField: 'artworkUrl100',
+    valueField: 'collectionId',
     searchField: 'collectionName',
     maxItems: 6,
     load: function(query, callback) {
@@ -2051,9 +2051,11 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, $timeout, Instruct
   $('#ins-album-update').selectize({
     placeholder: 'Search albums on iTunes',
     labelField: 'collectionName',
-    valueField: 'artworkUrl100',
+    valueField: 'collectionId',
     searchField: 'collectionName',
     maxItems: 6,
+    preload: true,
+    options: [],
     load: function(query, callback) {
       if (!query.length) return callback();
 
@@ -2071,10 +2073,9 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, $timeout, Instruct
       }
     },
     onChange: function (value) {
-      console.log(value);
-      if (value.length) {
+      if (value && value.length) {
         $scope.$apply(function () {
-          $scope.updateInstructor.albums = value;
+          $scope.updateInstructor.albums.push(value);
         });
       }
     }
@@ -2215,13 +2216,16 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, $timeout, Instruct
     } else {
       $scope.updateInstructor.birthdate = '';
     }
-
-    $timeout(function () {
-      
-      
-      $('#ins-album-update')[0].selectize.setValue(ins.albums);
-    }, 500);
     
+    $timeout(function () {
+      $('#ins-album-update')[0].selectize.setValue(null);
+      $.getJSON('https://itunes.apple.com/lookup?id=' + ins.albums.join(',') + '&attribute=albumTerm&entity=album&callback=?', function(data) {
+        $('#ins-album-update')[0].selectize.addOption(data.results);  
+        $timeout(function () {
+          $('#ins-album-update')[0].selectize.setValue(ins.albums);
+        }, 500);
+      });      
+    });
   }
 
   $scope.cancelUpdateInstructor = function () {
