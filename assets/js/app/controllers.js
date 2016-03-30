@@ -1144,6 +1144,12 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
       }).trigger('resize');
     }
 
+    $.getJSON('https://itunes.apple.com/lookup?id=' + data.albums.join(',') + '&attribute=albumTerm&entity=album&callback=?', function(data) {
+      $scope.$apply(function() {
+        $scope.selectedInstructor.albumList = data.results;
+      });
+    });
+
   }
 
   angular.element('.imgmap a').click(function () {
