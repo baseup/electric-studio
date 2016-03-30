@@ -92,7 +92,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
   });
 
   menuToggle.off('click').click(function () {
-    angular.element('.main-menu').toggleClass('show');
+    angular.element('.menu-wrapper').toggleClass('show');
   });
 
   $(window).resize(function () {
