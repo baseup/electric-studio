@@ -197,7 +197,6 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
                 clearInterval(thsObj.fn);
               }
               if (img[0].complete) {
-                img.closest('.slide').css({backgroundImage : 'url('+src+')'}).removeClass('loading');
                 img.hide();
                 clearInterval(thsObj.fn);
               }
@@ -225,7 +224,7 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
             ? $(this).find('.preloaded-img.desktop').attr('src')
             : $(this).find('.preloaded-img.mobile').attr('src');
 
-          if(image) $(this).css('background-image', 'url(' + image + ')');
+          if(image) $(this).css('background-image', 'url(' + image + ')').removeClass('loading');
         });
       });
 
