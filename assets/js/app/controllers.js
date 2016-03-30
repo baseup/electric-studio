@@ -209,7 +209,6 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
                 clearInterval(thsObj.fn);
               }
               if (img[0].complete) {
-                img.closest('.slide').css({backgroundImage : 'url('+src+')'}).removeClass('loading');
                 img.hide();
                 clearInterval(thsObj.fn);
               }
@@ -232,17 +231,13 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
       }
 
       win.resize(function() {
-        if(win.width() >= 768) {
-          angular.element('.slide').each(function(index, value) {
-            var image = $(this).find('.preloaded-img.desktop').attr('src');
-            if(image) $(this).css('background-image', image);
-          });
-        } else {
-          angular.element('.slide').each(function(index, value) {
-            var image = $(this).find('.preloaded-img.mobile').attr('src');
-            if(image) $(this).css('background-image', image);
-          });
-        }
+        angular.element('.slide').each(function(index, value) {
+          var image = win.width() >= 768
+            ? $(this).find('.preloaded-img.desktop').attr('src')
+            : $(this).find('.preloaded-img.mobile').attr('src');
+
+          if(image) $(this).css('background-image', 'url(' + image + ')').removeClass('loading');
+        });
       });
 
       win.trigger('resize');
@@ -1160,6 +1155,12 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
 
       }).trigger('resize');
     }
+
+    $.getJSON('https://itunes.apple.com/lookup?id=' + data.albums.join(',') + '&attribute=albumTerm&entity=album&callback=?', function(data) {
+      $scope.$apply(function() {
+        $scope.selectedInstructor.albumList = data.results;
+      });
+    });
 
   }
 

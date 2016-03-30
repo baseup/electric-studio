@@ -28,9 +28,9 @@
           <p class="text-color-light">{{ selectedInstructor.motto }}</p>
         </div>
       </section>
-      <section class="cf space--top" ng-show="albums.length">
+      <section class="cf space--top" ng-show="selectedInstructor.albums.length">
         <h3 class="h small">What I'm listening to</h3>
-        <img ng-repeat="album in albums" ng-src="album">
+        <img ng-repeat="album in selectedInstructor.albumList" ng-src="{{ album.artworkUrl100 }}" title="{{ album.collectionName }}">
       </section>
       <section class="cf space--top">
         <h3 class="h small">Ride with {{ selectedInstructor.admin.first_name }}</h3>
