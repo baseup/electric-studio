@@ -19,6 +19,7 @@ class User(Model):
     status = StringField(default='Active')
     remarks = StringField(required=False)
     profile_pic = StringField(required=False)
+    agreed_terms = BooleanField(default=False)
     credits = IntField(default=0)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
