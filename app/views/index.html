@@ -85,8 +85,10 @@
             </div>
             {% end %}
           </div>
-
+          
+          {% if loginUser %}
           <span class="credits">{{ credits }}</span>
+          {% end %}
 
           <div class="book-buy">
             <span class="book-ride-btn" href="#/schedule">

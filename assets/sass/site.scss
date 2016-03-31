@@ -43,6 +43,8 @@
 
 @import "components/_gift-card";
 
+@import "components/_site-about";
+
 
 @mixin border-radius($radius: 50%) {
   -webkit-border-radius: $radius;
@@ -72,6 +74,9 @@
   transform: $trans;
 }
 
+html, body {
+  overflow-x:hidden
+}
 
 body {
   background: #fff;
