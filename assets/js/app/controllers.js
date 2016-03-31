@@ -45,6 +45,18 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
     if (window.location.hash.indexOf('#signup') >= 0) {
       angular.element('.signup-toggle').click();
     }
+  } else if (!$scope.loginUser.agreed_terms) {
+    $.Confirm('I have read and agree to these <a href="/#/terms">Terms and Conditions</a> ?' , function () {
+      var addSuccess = function () {
+        $scope.reloadUser();
+      }
+
+      var addFail = function (error) {
+        $.Alert(error.data);
+      }
+
+      UserService.update({ userId: $scope.loginUser._id }, { agreed_terms: true }).$promise.then(addSuccess, addFail);
+    });
   }
 
   $scope.activeMainNav = function (path) {

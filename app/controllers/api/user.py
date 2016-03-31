@@ -46,8 +46,10 @@ def create(self):
 
             if 'phone_number' in data:
                 user.phone_number = data['phone_number']
-
+                
+            user.agreed_terms = True
             user = yield user.save()
+
         except:
             value = sys.exc_info()[1]
             self.set_status(403)
@@ -73,6 +75,9 @@ def update(self, id):
             user = yield user.save()
         elif 'billing' in data:
             user.billing = data['billing']
+            user = yield user.save()
+        elif 'agreed_terms' in data:
+            user.agreed_terms = True
             user = yield user.save()
         else:
             user.first_name = data['first_name']
