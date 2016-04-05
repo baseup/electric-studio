@@ -74,6 +74,13 @@ def bootstrap(app):
 # Called at the beginning of a request before get/post/etc.
 # Override this method to perform common initialization regardless of the request method.
 def prepare(self):
+
+    self.set_header("Access-Control-Allow-Origin", '*')
+    self.set_header('Access-Control-Allow-Credentials', 'true')
+    self.set_header('Access-Control-Max-Age', 1728000)
+    self.set_header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS')
+    self.set_header('Access-Control-Allow-Headers', 'Keep-Alive,User-Agent,X-Requested-With,Cache-Control,Content-Type')
+
     pass
 
 # Called after the end of a request.
