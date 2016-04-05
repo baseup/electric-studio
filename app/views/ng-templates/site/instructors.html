@@ -30,7 +30,9 @@
       </section>
       <section class="cf space--top" ng-show="selectedInstructor.albums.length">
         <h3 class="h small">What I'm listening to</h3>
-        <img ng-repeat="album in selectedInstructor.albumList" ng-src="{{ album.artworkUrl100 }}" title="{{ album.collectionName }}">
+        <a ng-repeat="album in selectedInstructor.albumList" ng-href="{{ album.collectionViewUrl }}" target="_blank">
+          <img ng-src="{{ album.artworkUrl100 }}" title="{{ album.collectionName }}">
+        </a>
       </section>
       <section class="cf space--top">
         <h3 class="h small">Ride with {{ selectedInstructor.admin.first_name }}</h3>

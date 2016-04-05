@@ -49,86 +49,61 @@
         <img src="{{ static_url('images/electricstudio-logo.png') }}" class="logo">
       </h1>
 
-      <ul class="main-menu">
-        <li>
-          <a ng-class="{ active : activeMainNav('/about') }" href="#/about">About Us</a>
-        </li>
-        <li>
-          <a ng-class="{ active : activeMainNav('/instructors') }" href="#/instructors">Instructors</a>
-        </li>
-        <li class="class-menu">
-          <a>Classes <i class="fa fa-chevron-down"></i></a>
-          <div class="class-menu__list">
-            <ul class="class-menu__holder">
-              <li><a href="#/workouts">Workouts</a></li>
-              <li><a href="#/rates-and-packages">Rates &amp; Packages</a></li>
-              <li><a href="#/first-ride">What to expect</a></li>
-              <li>
-                <a>Schedule</a>
-                <div class="sub-menu-holder">
-                  <ul class="submenu">
-                    <li><a class="font--bold" href="#/schedule">BGC</a></li>
-                  </ul>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </li>
-        <li class="class-menu">
-          <a>Gift Card <i class="fa fa-chevron-down"></i></a>
-          <div class="class-menu__list">
-            <ul class="class-menu__holder">
-              <li><a href="#/gift-cards">Buy</a></li>
-              <li><a href="#/redeem-gc">Redeem</a></li>
-            </ul>
-          </div>
-        </li>
-        <li>
-          <a ng-class="{ active : activeMainNav('/whats-new') }" href="#/whats-new">What's New</a>
-        </li>
-      </ul>
+      <div class="menu-wrapper">
 
-      <div class="account-menu">
-        <div class="account-menu__options">
-        {% if not loginUser %}
-          <a class="login-toggle">Login</a> /
-          <a class="signup-toggle">Sign up</a>
-          <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
-        {% else %}
-          <a href="javascript:void(0)" class="user-loggedin">
-            Hi <strong>{{ loginUser }}</strong>!
-            <span>{{ credits }}</span>
-            <i class="fa fa-caret-down"></i>
-          </a>
-        {% end %}
-        </div>
-        {% if loginUser %}
-        <div class="account-menu__list">
-          <div class="account-menu__holder">
-            <a href="#/account">My Account</a>
-            <a href="#/reserved">My Classes</a>
-            <a href="javascript:void(0)" ng-click="logout()" >Sign Out</a>
+        <ul class="main-menu">
+          <li><a ng-class="{ active : activeMainNav('/about') }" href="#/about">About Us</a></li>
+          <li><a ng-class="{ active : activeMainNav('/instructors') }" href="#/instructors">Instructors</a></li>
+          <li class="on-mobile"><a ng-class="{ active : activeMainNav('/workouts') }" href="#/workouts">Workouts</a></li>
+          <li class="on-mobile"><a ng-class="{ active : activeMainNav('/rates-and-packages') }" href="#/rates-and-packages">Rates &plus; Packages</a></li>
+          <li><a ng-class="{ active : activeMainNav('/schedule') }" href="#/schedule">Schedules</a></li>
+          <li class="on-mobile"><a ng-class="{ active : activeMainNav('/contact') }" href="#/contact">Contact</a></li>
+          <li class="on-desktop"><a ng-class="{ active : activeMainNav('/whats-new') }" href="#/whats-new">What's New</a></li>
+        </ul>
+
+        <div class="user-menu">
+          <div class="account-menu">
+            <div class="account-menu__options">
+            {% if not loginUser %}
+              <a class="login-toggle">Login</a> /
+              <a class="signup-toggle">Sign up</a>
+              <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
+            {% else %}
+              <a href="javascript:void(0)" class="user-loggedin">
+                Hi <strong>{{ loginUser }}</strong>!
+                <i class="fa fa-caret-down"></i>
+              </a>
+            {% end %}
+            </div>
+            {% if loginUser %}
+            <div class="account-menu__list">
+              <div class="account-menu__holder">
+                <a href="#/account">My Account</a>
+                <a href="#/reserved">My Classes</a>
+                <a href="javascript:void(0)" ng-click="logout()" >Sign Out</a>
+              </div>
+            </div>
+            {% end %}
+          </div>
+          
+          {% if loginUser %}
+          <span class="credits">{{ credits }}</span>
+          {% end %}
+
+          <div class="book-buy">
+            <span class="book-ride-btn" href="#/schedule">
+              <span>Buy/Book Rides</span>
+              <div class="dropdown-holder">
+                <ul class="dropdown">
+                  <li><a href="#/schedule">BGC</a></li>
+                  <li class="special"><a href="#/rates-and-packages">Buy Rides</a></li>
+                </ul>
+              </div>
+            </span>
           </div>
         </div>
-        {% end %}
-      </div>
 
-      <div class="book-buy">
-        <span class="book-ride-btn" href="#/schedule">
-          <span>Buy/Book A Ride</span>
-          <div class="dropdown-holder">
-            <ul class="dropdown">
-              <li>
-                <div class="pad">
-                  <a class="special" href="#/rates-and-packages">Buy Rides</a>
-                </div>
-              </li>
-              <li><a class="color--orange font--bold" href="#/schedule">BGC</a></li>
-            </ul>
-          </div>
-        </span>
       </div>
-
 
       <a class="menu-toggle"><i class="fa fa-bars"></i></a>
 
@@ -137,19 +112,18 @@
 
   <div class="header-form-container login" ng-controller="LoginCtrl">
     <div class="wrapper">
-      <h2 class="h large light">Log In</h2>
-      <p class="notify">{{! signInError }}</p>
+      <p class="notify" ng-show="signInError" ng-click="signInError = null"><span class="inner-wrapper">{{! signInError }}</span></p>
+      <h2 class="h medium light">Log In</h2>
 
       <div class="wrapper" ng-controller="SignUpCtrl" ng-show="unverifiedLogin">
         <button class="button" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
       </div>
 
-      <form class="login-form" method="post">
-        <input class="input-box" placeholder="Email Address" ng-model="login.email" required>
+      <form class="login-form" method="post" autocomplete="off">
+        <input class="input-box" placeholder="Email" ng-model="login.email" required>
         <input type="password" class="input-box" placeholder="Password" ng-model="login.password" required>
-        <input type="submit" value="Log In" class="button primary" ng-click="signIn()">
-        <br/>
-        <a ng-click="forgotPass()" >Forgot password ?</a> <a ng-click="showSignup()">/ Sign up</a>
+        <input type="submit" value="Log In" class="button" ng-click="signIn()">
+        <div class="copy"><a ng-click="forgotPass()" >Forgot password ?</a> <a ng-click="showSignup()">/ Sign up</a></div>
       </form>
       <span class="close-btn">&times;</span>
     </div>
@@ -157,8 +131,8 @@
 
   <div class="header-form-container signup" ng-controller="SignUpCtrl">
     <div class="wrapper" ng-show="!registered">
-      <h2 class="h large light">Sign Up</h2>
-      <p class="notify">{{! signupError }}</p>
+      <p class="notify" ng-show="signupError" ng-click="signupError = null"><span class="inner-wrapper">{{! signupError }}</span></p>
+      <h2 class="h medium light">Sign Up</h2>
       <form class="signup-form" method="post">
         <input class="input-box" placeholder="First Name" ng-model="user.first_name">
         <input class="input-box" placeholder="Last Name" ng-model="user.last_name">
@@ -169,7 +143,7 @@
         <br><br>
         <input type="checkbox" ng-model="terms"> I have read and agree to the <a href="#/terms">Terms &amp; Conditions</a>.
         <br><br>
-        <input ng-disabled="signingUp" type="submit" value="Sign Up" class="button primary" ng-click="signUp()">
+        <input ng-disabled="signingUp" type="submit" value="Sign Up" class="button" ng-click="signUp()">
       </form>
       <span class="close-btn">&times;</span>
     </div>
@@ -185,7 +159,7 @@
   <footer class="main-footer">
     <div class="wrapper">
       <ul class="footer-links">
-        <li>© ELECTRIC STUDIO 2015</li>
+        <li class="copyright">© ELECTRIC STUDIO 2015 <a class="credit-link" href="http://greenlemon.co/">Developed by Green Lemon Media</a></li>
         <li><a href="#/faq">FAQ</a></li>
         <li><a href="#/career">Careers</a></li>
         <li><a href="#/contact">Contact Us</a></li>
@@ -206,9 +180,6 @@
           <a href="https://twitter.com/teamelectricph"><i class="fa fa-twitter"></i></a>
         </li>
       </ul>
-    </div>
-    <div class="credit-links">
-      <div class="wrapper"><a href="http://greenlemon.co/">Developed by Green Lemon Media</a></div>
     </div>
   </footer>
 
