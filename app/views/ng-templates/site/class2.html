@@ -1,0 +1,106 @@
+<div ng-if="isFrozen" class="content">
+  <div class="wrapper">
+    <p class="brand-color">Your account is frozen. Please contact the studio for more details.</p>
+  </div>
+</div>
+
+<div class="content schedule bg-lightGray" ng-controller="ClassCtrl">
+  <div class="wrapper">
+
+    <div class="branch-watermark">{{ getBranchTitle() }}</div>
+
+    <div ng-if="resched">
+      <h2 class="range">
+        <span>Rescheduling: </span>
+        {{ resched.date | formatDate }} - {{ resched.schedule.start | formatTime }} - Seat {{ resched.seat_number }}</h2>
+        <a class="h small primary right" ng-click="cancelResched()">Cancel</a>
+      <hr/>
+    </div>
+
+    <div class="header">
+      <p ng-if="forWaitlist" class="intro large center">There's no available seat for this ride.<br>but you can join the waitlisted below </p>
+      <!-- <h2 class="range">{{ branchTitle }}</h2> -->
+      <h1 class="range">{{ daySched }}, {{ timeSched | formatTime }}, {{ dateSched }}</h1>
+    </div>
+
+    <div class="class">
+
+      <div class="formation">
+        <div class="front seats">
+          <span ng-click="setSeatNumber(24, $event)" ng-class="{ unavailable: checkSeat(24),hidden: 24 > sched.seats }">24</span>
+          <span ng-click="setSeatNumber(21, $event)" ng-class="{ unavailable: checkSeat(21),hidden: 21 > sched.seats }">21</span>
+          <span ng-click="setSeatNumber(23, $event)" ng-class="{ unavailable: checkSeat(23),hidden: 23 > sched.seats }">23</span>
+          <span ng-click="setSeatNumber(20, $event)" ng-class="{ unavailable: checkSeat(20),hidden: 20 > sched.seats }">20</span>
+          <span ng-click="setSeatNumber(22, $event)" ng-class="{ unavailable: checkSeat(22),hidden: 22 > sched.seats }">22</span>
+          <span ng-click="setSeatNumber(19, $event)" ng-class="{ unavailable: checkSeat(19),hidden: 19 > sched.seats }">19</span>
+        </div>
+        <div class="front seats instructor">
+          <div class="image">
+            <img src="{{ instructor.image ? '/assets/' + instructor.image : 'http://placehold.it/350x150' }}">
+          </div>
+          <div ng-if="subInstructor" class="image">
+            <img src="{{ subInstructor.image ? '/assets/' + subInstructor.image : 'http://placehold.it/350x150' }}">
+          </div>
+          <h3 class="h small primary">
+            {{ instructor.admin.first_name }} {{ subInstructor ? ' &amp; ' + subInstructor.admin.first_name : ''}}
+          </h3>
+        </div>
+        <div class="front seats">
+          <span ng-click="setSeatNumber(16, $event)" ng-class="{ unavailable: checkSeat(16),hidden: 16 > sched.seats }">16</span>
+          <span ng-click="setSeatNumber(18, $event)" ng-class="{ unavailable: checkSeat(18),hidden: 18 > sched.seats }">18</span>
+          <span ng-click="setSeatNumber(15, $event)" ng-class="{ unavailable: checkSeat(15),hidden: 15 > sched.seats }">15</span>
+          <span ng-click="setSeatNumber(17, $event)" ng-class="{ unavailable: checkSeat(17),hidden: 17 > sched.seats }">17</span>
+        </div>
+      </div>
+
+      <div class="formation">
+        <div class="back seats">
+          <span ng-click="setSeatNumber(14, $event)" ng-class="{ unavailable: checkSeat(14),hidden: 14 > sched.seats }">14</span>
+          <span ng-click="setSeatNumber(13, $event)" ng-class="{ unavailable: checkSeat(13),hidden: 13 > sched.seats }">13</span>
+          <span ng-click="setSeatNumber(12, $event)" ng-class="{ unavailable: checkSeat(12),hidden: 12 > sched.seats }">12</span>
+          <span ng-click="setSeatNumber(11, $event)" ng-class="{ unavailable: checkSeat(11),hidden: 11 > sched.seats }">11</span>
+          <span ng-click="setSeatNumber(10, $event)" ng-class="{ unavailable: checkSeat(10),hidden: 10 > sched.seats }">10</span>
+          <span ng-click="setSeatNumber(9, $event)" ng-class="{ unavailable: checkSeat(9),hidden: 9 > sched.seats }">9</span>
+          <span ng-click="setSeatNumber(8, $event)" ng-class="{ unavailable: checkSeat(8),hidden: 8 > sched.seats }">8</span>
+          <span ng-click="setSeatNumber(7, $event)" ng-class="{ unavailable: checkSeat(7),hidden: 7 > sched.seats }">7</span>
+          <span ng-click="setSeatNumber(6, $event)" ng-class="{ unavailable: checkSeat(6),hidden: 6 > sched.seats }">6</span>
+          <span ng-click="setSeatNumber(5, $event)" ng-class="{ unavailable: checkSeat(5),hidden: 5 > sched.seats }">5</span>
+          <span ng-click="setSeatNumber(4, $event)" ng-class="{ unavailable: checkSeat(4),hidden: 4 > sched.seats }">4</span>
+          <span ng-click="setSeatNumber(3, $event)" ng-class="{ unavailable: checkSeat(3),hidden: 3 > sched.seats }">3</span>
+          <span ng-click="setSeatNumber(2, $event)" ng-class="{ unavailable: checkSeat(2),hidden: 2 > sched.seats }">2</span>
+          <span ng-click="setSeatNumber(1, $event)" ng-class="{ unavailable: checkSeat(1),hidden: 1 > sched.seats }">1</span>
+        </div>
+
+         <div class="back seats">
+          <span ng-click="setSeatNumber(34, $event)" ng-class="{ unavailable: checkSeat(34),hidden: 34 > sched.seats }">34</span>
+          <span ng-click="setSeatNumber(33, $event)" ng-class="{ unavailable: checkSeat(33),hidden: 33 > sched.seats }">33</span>
+          <span ng-click="setSeatNumber(32, $event)" ng-class="{ unavailable: checkSeat(32),hidden: 32 > sched.seats }">32</span>
+          <span ng-click="setSeatNumber(31, $event)" ng-class="{ unavailable: checkSeat(31),hidden: 31 > sched.seats }">31</span>
+          <span ng-click="setSeatNumber(30, $event)" ng-class="{ unavailable: checkSeat(30),hidden: 30 > sched.seats }">30</span>
+          <span ng-click="setSeatNumber(29, $event)" ng-class="{ unavailable: checkSeat(29),hidden: 29 > sched.seats }">29</span>
+          <span ng-click="setSeatNumber(28, $event)" ng-class="{ unavailable: checkSeat(28),hidden: 28 > sched.seats }">28</span>
+          <span ng-click="setSeatNumber(27, $event)" ng-class="{ unavailable: checkSeat(27),hidden: 27 > sched.seats }">27</span>
+          <span ng-click="setSeatNumber(26, $event)" ng-class="{ unavailable: checkSeat(26),hidden: 26 > sched.seats }">26</span>
+          <span ng-click="setSeatNumber(25, $event)" ng-class="{ unavailable: checkSeat(25),hidden: 25 > sched.seats }">25</span>
+        </div>
+
+        <div class="back seats">
+          <span ng-click="setSeatNumber(37, $event)" ng-class="{ unavailable: checkSeat(37),hidden: 37 > sched.seats }">37</span>
+          <span ng-click="setSeatNumber(36, $event)" ng-class="{ unavailable: checkSeat(36),hidden: 36 > sched.seats }">36</span>
+          <span ng-click="setSeatNumber(35, $event)" ng-class="{ unavailable: checkSeat(35),hidden: 35 > sched.seats }">35</span>
+        </div>
+      </div>
+
+    <a ng-if="!resched && !forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Book A Ride</a>
+    <ul class="legend">
+      <li class="free">Free Bikes</li>
+      <li class="reserved">Reserved Bikes</li>
+      <li class="selection">Your Selection</li>
+    </ul>
+    <a ng-if="resched && !forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Reschedule Ride</a>
+    <a ng-if="forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Join the WaitList</a>
+    <a class="h small primary center link" href="{{ backButtonPath }}">Back</a>
+
+
+  </div>
+</div>

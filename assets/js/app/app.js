@@ -35,6 +35,10 @@ app.config(function ($routeProvider, $httpProvider) {
       templateUrl: '/site/class',
       controller: 'SiteCtrl'
     },
+    '/class/:branch': {
+      templateUrl: '/site/class2',
+      controller: 'SiteCtrl'
+    },
     '/contact': {
       templateUrl: '/site/contact',
       controller: 'SiteCtrl'
@@ -62,8 +66,12 @@ app.config(function ($routeProvider, $httpProvider) {
       templateUrl: '/site/rewards',
       controller: 'SiteCtrl'
     },
-    '/schedule': {
+    '/schedule/': {
       templateUrl: '/site/schedule',
+      controller: 'SiteCtrl'
+    },
+    '/schedule/:branch': {
+      templateUrl: '/site/schedule2',
       controller: 'SiteCtrl'
     },
     '/whats-new': {

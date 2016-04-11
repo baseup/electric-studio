@@ -1,5 +1,11 @@
 'use strict';
 
+// transfer this on a better place once figured out where
+var branchTitles = {
+  'bgc' : 'FORT BGC',
+  'salcedo' : 'SALCEDO'
+};
+
 var ctrls = angular.module('elstudio.controllers.site', [
   'elstudio.services'
 ]);
@@ -9,10 +15,9 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 });
 
 
-ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService) {
+ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService, $routeParams) {
 
   $scope.loginUser = AuthService.getCurrentUser();
-
   $scope.reloadUser = function (user) {
     UserService.get(function (user) {
       if ($scope.loginUser) {
@@ -139,6 +144,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       angular.element('.signup-toggle').click();
     }
   }
+  
   var aboutUs = angular.element('#aboutus-section');
   var workouts = angular.element('#workouts-section');
   var firstRide = angular.element('#firstride-section');
@@ -1234,7 +1240,7 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService, $timeout) {
+ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams) {
 
   $timeout(function() {
     var scheduleRow = angular.element('.schedule .row').not('.unavailable');
@@ -1318,7 +1324,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     });
   }
 
-  $scope.setSchedule = function (schedule, date) {
+  $scope.setSchedule = function (schedule, date, branch) {
 
     if (!$scope.chkSched(date, schedule)) {
 
@@ -1397,14 +1403,15 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
                 });
               });
             } else {
+              var branch = $routeParams.branch in branchTitles ? $routeParams.branch : '';
               SharedService.set('selectedSched', sched);
-              $location.path('/class');
+              $location.path('/class/'+branch);
             }
           });
         }
       });
     }
-  }
+  }  
 
   $scope.chkSched = function (date, sched) {
 
@@ -1517,10 +1524,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     if (((now - pWeek) / (24 * 60 * 60 * 1000)) < 7) {
       $scope.getWeek(pWeek);
     }
-  }
+  }  
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService) {
+ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService, $routeParams) {
 
   $timeout(function() {
     angular.element('html, body').scrollTop(0);
@@ -1530,14 +1537,16 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
   SharedService.clear('backToInstructors');
 
   var sched = SharedService.get('selectedSched');
-  if (!sched) {
+  if (!sched || !($routeParams.branch in branchTitles) ) {
     $location.path('/schedule')
   } else {
 
     var seats = [];
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-
+    
+    $scope.branch = $routeParams.branch;
+    $scope.branchTitle = branchTitles[$routeParams.branch];
     $scope.resched = SharedService.get('resched');
 
     $scope.cancelResched = function () {
@@ -1589,7 +1598,6 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
     SettingService.getBlockedBikes(function (bikes) {
       $scope.blockedBikes = bikes;
     });
-
   }
 
   $scope.checkSeat = function (num) {
@@ -1741,6 +1749,11 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
       });
     });
   }
+
+  $scope.getBranchTitle = function () {
+    return $routeParams.branch in branchTitles ? branchTitles[$routeParams.branch] : false;
+  }
+  
 });
 
 ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) {
