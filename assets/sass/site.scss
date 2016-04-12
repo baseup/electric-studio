@@ -786,6 +786,10 @@ body {
     font-family: 'Brandon_Grotesque';
   }
 
+  &.face-secondary {
+    font-family: 'Tungsten', sans-serif;
+  }
+
   &.xl {
     font-family: 'Tungsten', sans-serif;
     font-weight: 300;
@@ -909,15 +913,17 @@ body {
   letter-spacing: 2px;
   color: #fff;
   background: none;
-  border: 3px solid #fff;
+  border: 2px solid #fff;
   font-size: 18px;
   cursor: pointer;
   font-weight: bold;
   -webkit-transition: all 0.4s ease;
   transition: all 0.4s ease;
+  box-sizing: border-box;
 
   &:hover {
-    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.6);
+    border: 2px solid $brand-color-primary;
   }
 
   &.large {
@@ -927,7 +933,6 @@ body {
     font-size: 1.2em;
     color: $brand-color-primary;
     background-color: #fff;
-    border: 0;
   }
 
   &.small {
@@ -2265,8 +2270,10 @@ body {
 
 .branch-watermark {
   position: absolute;
+  display: block;
+  height: 266px;
   top: -18px;
-  left: 37px;
+  left: 65px;
   font-family: 'Tungsten-Medium';
   font-size: 380px;
   color: $color-watermark;
@@ -2395,13 +2402,14 @@ body {
   .header {
     position: relative;
     text-align: center;
-    margin: 20px 0;
+    margin: 40px 0;    
     font-family: 'Brandon_Grotesque';
 
     @include breakpoint(sm) {
-      width: 440px;
+      width: 480px;
       margin: 20px auto;
       line-height: 2em;
+      margin-top: 35px;
     }
 
     .range {
@@ -2430,7 +2438,7 @@ body {
       position: absolute;
       top: 0;
       font-size: 1.4em;
-      color: $brand-color-primary;
+      color: $color-text-gray;
       padding: 0 15px;
       @include transition(all 0.4s ease);
       cursor: pointer;
@@ -2577,6 +2585,9 @@ body {
     text-align: center;
     margin: 0 auto;
     width: 280px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
     @media (min-width: 360px) {
       width: 310px;
@@ -2590,7 +2601,15 @@ body {
       width: 911px;
 
       &:first-child{
-        margin-top: 60px;
+        margin-top: 50px;
+      }
+    }
+
+    @include breakpoint(lg) {
+      width: 1160px;
+
+      &:first-child{
+        margin-top: 50px;
       }
     }
 
@@ -2598,6 +2617,11 @@ body {
       content: '';
       clear: both;
       display: block;
+    }
+
+    &.back {
+      display: block;
+      margin-top: 20px;
     }
 
     .seats{
@@ -2610,25 +2634,25 @@ body {
 
       span{
         float: left;
-        border: solid 1px transparent;
         font-size: 8px;
         height: 18px;
         width: 18px;
-        background: #fff none repeat scroll 0 0;
+        background: transparent;
         border-radius: 50%;
+        border-style: solid;
         color: #666;
         cursor: pointer;
         display: inline-block;
         font-weight: bold;
         text-align: center;
-        margin: 2px 1px;
+        // margin: 2px 1px;
         transition: all 1000ms;
         cursor: pointer;
         padding-left: 2px;
         line-height: 16px;
 
         @media (min-width: 360px) {
-          margin: 3px 2px;
+          // margin: 3px 2px;
         }
 
         @media (min-width: 768px) {
@@ -2636,17 +2660,18 @@ body {
           height: 32px;
           line-height: 30px;
           font-size: 12px;
-          margin: 5px 6px;
+          // margin: 5px 6px;
         }
 
         @include breakpoint(md) {
-          border-width: 3px;
+          border-width: 1px;
+          border-color: black;
           float: left;
-          margin: 8px 10px;
+          // margin: 8px 10px;          
           font-size: 14px;
-          line-height: 40px;
-          height: 45px;
-          width: 45px;
+          line-height: 50px;
+          height: 50px;
+          width: 50px;
         }
 
         &:hover{
@@ -2654,12 +2679,15 @@ body {
         }
 
         &.unavailable {
-          background: $brand-color-tertiary;
+          background: $color-text-gray;
+          border-color: $color-text-gray;
+          color: #fff;
           cursor: default;
         }
 
         &.selected {
           background: $brand-color-primary;
+          border-color: $brand-color-primary;
           color: #fff;
         }
 
@@ -2667,15 +2695,14 @@ body {
           visibility: hidden;
           cursor: default;
         }
-      }
+      }      
     }
 
     .front {
       width: 40px;
-      display: inline-block;
-      position: relative;
-      vertical-align: middle;
-      margin-bottom: 10px;
+      display: inline-table;
+      position: relative;      
+      // margin-bottom: 10px;
 
       @media (min-width: 360px) {
         width: 44px;
@@ -2687,12 +2714,82 @@ body {
 
       @include breakpoint(md) {
         width: 130px;
-        margin-bottom: 30px;
+        // margin-bottom: 30px;
+      }
+
+      &.wide {
+        @include breakpoint(lg) {
+          width: 405px;
+          margin-top: 70px;
+        }
+      }
+
+      & span {
+
+        @include breakpoint(lg) {
+          margin-right: 68px;
+        }
+
+        &:nth-child(4n) {
+          margin-right: 0;
+        }
+
+        &:nth-child(n+5) {
+          margin-top: 40px;
+        }
       }
     }
 
     .back {
       text-align: left;
+      display: block;
+      margin-bottom: 40px;
+
+      &.left {
+        width: 50%;
+        float: left;
+
+        span {
+          float: left;
+
+          @include breakpoint(lg) {
+            margin-right: 42px;
+            margin-left: 0;
+          }
+        }
+      }
+
+      &.right {
+        width: 50%;
+        float: right;
+      }
+
+      &.wide {
+        clear: both;
+        width: 100%;
+      }
+
+      &.center {
+        margin: auto;
+        margin-bottom: 40px;
+        width: 370px;
+      }
+    
+      span {
+        @include breakpoint(lg) {
+          float: right;
+          margin-left: 42px;
+          margin-right: 0;
+        }
+
+        &:nth-child(13n) {
+          margin-left: 0;
+        }
+
+        &:nth-child(n+14) {
+          margin-top: 40px;
+        }
+      }
     }
 
     .instructor{
@@ -2761,8 +2858,27 @@ body {
   }
 }
 
+.controls {
+  display: block;
+  position: relative;
+
+  &:before, &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+.buttons {
+  display: table;
+  margin: auto;
+}
+
 
 .legend {
+  position: absolute;
+  right: 0;
+  top: 0;
   list-style: none;
   padding: 0;
   margin: 30px 0 40px 0;
@@ -2777,6 +2893,7 @@ body {
     padding: 10px 0 10px 20px;
     line-height: 30px;
     text-align: left;
+    text-transform: uppercase;
 
     &:before {
       content: '';
@@ -2786,6 +2903,7 @@ body {
       width: 30px;
       border-radius: 50%;
       margin-right: 10px;
+      border: 1px solid transparent;
     }
 
     &:first-child{
@@ -2796,19 +2914,15 @@ body {
 
     &.free:before {
       background: #fff;
+      border: 1px solid $color-text-gray;
     }
 
     &.reserved:before {
-      background: $brand-color-tertiary;
+      background: $color-text-gray;
     }
 
     &.selection:before {
       background: $brand-color-primary;
-    }
-
-    @include breakpoint(md) {
-      display: inline-block;
-      text-align: center;
     }
   }
 }
