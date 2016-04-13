@@ -100,6 +100,7 @@ routes.prefix('/admin', [
     ('resource', '/instructor/schedules', 'admin.instructor_schedules'),
     ('resource', '/slider', 'admin.slider'),
     ('resource', '/access', 'admin.access'),
+    ('resource', '/branch', 'admin.branch'),
 
     ('get', '/export/download-bookings', 'admin.export.download_bookings'),
     ('get', '/export/waitlist', 'admin.export.waitlist'),

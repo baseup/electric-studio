@@ -28,13 +28,13 @@
     <div class="class">
 
       <div class="formation">
-        <div class="front seats">
+        <div class="front wide seats">
           <span ng-click="setSeatNumber(24, $event)" ng-class="{ unavailable: checkSeat(24),hidden: 24 > sched.seats }">24</span>
           <span ng-click="setSeatNumber(24, $event)" ng-class="{ unavailable: checkSeat(24),hidden: 24 > sched.seats }">24</span>
           <span ng-click="setSeatNumber(24, $event)" ng-class="{ unavailable: checkSeat(24),hidden: 24 > sched.seats }">24</span>
           <span ng-click="setSeatNumber(21, $event)" ng-class="{ unavailable: checkSeat(21),hidden: 21 > sched.seats }">21</span>          
         </div>
-        <div class="front seats instructor">
+        <div class="front wide seats instructor">
           <h3 class="h large face-secondary gray">
             {{ instructor.admin.first_name }} {{ subInstructor ? ' &amp; ' + subInstructor.admin.first_name : ''}}
           </h3>
@@ -48,7 +48,7 @@
             <img src="{{ subInstructor.image ? '/assets/' + subInstructor.image : 'http://placehold.it/350x150' }}">
           </div>         
         </div>
-        <div class="front seats">
+        <div class="front wide seats">
           <span ng-click="setSeatNumber(16, $event)" ng-class="{ unavailable: checkSeat(16),hidden: 16 > sched.seats }">16</span>
           <span ng-click="setSeatNumber(18, $event)" ng-class="{ unavailable: checkSeat(18),hidden: 18 > sched.seats }">18</span>
           <span ng-click="setSeatNumber(15, $event)" ng-class="{ unavailable: checkSeat(15),hidden: 15 > sched.seats }">15</span>

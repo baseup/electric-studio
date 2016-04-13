@@ -11,5 +11,12 @@
     <a href="#/account#packages" class="link basic">Packages</a><br>
     <!-- <a href="#/rewards" class="link basic">Rewards</a> -->
   </p>
+  <h2 ng-show="loginUser" class="h small">Referral</h2>
+  <p ng-show="loginUser">
+    Points: {{ loginUser.referral_points }}<br>
+    Link: <input type="text" value="{{ hostUrl }}/?ref={{ loginUser._id }}#/#signup">
+
+  </p>
+
   <a class="link" ng-click="logout()">Sign Out</a>
 </div>

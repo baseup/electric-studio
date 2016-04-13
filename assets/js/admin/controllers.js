@@ -1440,7 +1440,7 @@ ctrls.controller('ClassTypeCtrl', function ($scope, ClassTypeService) {
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, InstructorService, ClassTypeService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, InstructorService, ClassTypeService, BranchService) {
 
   $scope.classTypesByName = {};
   $scope.classTypes = ClassTypeService.query();
@@ -1450,7 +1450,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       $scope.classTypesByName[ct.name] = ct;
     });
   });
-
+   
   var calendar = angular.element('.calendar');
   calendar.fullCalendar({
     defaultView: 'agendaWeek',
@@ -1460,7 +1460,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     maxTime: '23:00:00',
     events: function (start, end, timezone, callback) {
       var events = [];
-      ScheduleService.query({ start: start.unix(), end: end.unix() }, function (scheds) {
+      ScheduleService.query({ start: start.unix(), end: end.unix(), branch: $scope.selectedBranch }, function (scheds) {
         $scope.schedules = scheds;
         angular.forEach(scheds, function (s, i) {
           s.index = i;
@@ -1515,6 +1515,21 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     //   angular.element('.calendar').fullCalendar('changeView', 'agendaDay');
     // }
   });
+
+  BranchService.query().$promise.then(function (branches) {
+    var branchSelectize = angular.element('#select-branch')[0].selectize;
+    angular.forEach(branches, function (branch) {
+      branchSelectize.addOption({ value: branch._id, text: branch.name });
+    });
+
+    branchSelectize.setValue(branches[0]._id);
+    $scope.selectedBranch = branches[0];
+    calendar.fullCalendar('refetchEvents');
+  });
+
+  $scope.filterByBranch = function() {
+    calendar.fullCalendar('refetchEvents');
+  }
 
   if ( $('[type="time"]').prop('type') != 'time' ) {
     $('[type="time"]').pickatime({
@@ -1672,10 +1687,20 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       return;
     }
 
+    if($scope.selectedBranchId){
+      $scope.newSpecSched.branch = $scope.selectedBranchId;
+    }
+
+
     if (!$scope.isPastDate($scope.newSpecSched)) {
       var newSched = angular.copy($scope.newSpecSched);
       newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
       newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
+
+      if ($scope.selectedBranch) {
+        newSched.seats = $scope.selectedBranch.num_bikes;
+      }
+
       ScheduleService.save(newSched, function (response) {
         calendar.fullCalendar('refetchEvents');
         $scope.newSpecSched = {};
@@ -1710,6 +1735,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       var updatedSched = angular.copy($scope.editSched);
       updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
       updatedSched.end = updatedSched.end.getHours() + ':' + updatedSched.end.getMinutes();
+
+      if ($scope.selectedBranch) {
+        updatedSched.seats = $scope.selectedBranch.num_bikes;
+      }
+
       ScheduleService.update(
         { scheduleId: updatedSched.id },
         updatedSched,
@@ -2819,6 +2849,18 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     return true;
   }
 
+});
+
+
+ctrls.controller('BranchCtrl', function ($scope, BranchService) {
+
+  var reloadBranches = function () {
+    BranchService.query().$promise.then(function (data) {
+      $scope.branches = data;
+    });
+  }
+
+  reloadBranches();
 });
 
 ctrls.controller('SettingCtrl', function ($scope, $timeout, $filter, SettingService) {

@@ -1,11 +1,5 @@
 'use strict';
 
-// transfer this on a better place once figured out where
-var branchTitles = {
-  'bgc' : 'FORT BGC',
-  'salcedo' : 'SALCEDO'
-};
-
 var ctrls = angular.module('elstudio.controllers.site', [
   'elstudio.services'
 ]);
@@ -172,6 +166,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
   if (faq.length) {;
     angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
   }
+
 });
 
 ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
@@ -1240,7 +1235,8 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams) {
+ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
+
 
   $timeout(function() {
     var scheduleRow = angular.element('.schedule .row').not('.unavailable');
@@ -1406,9 +1402,8 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
                 });
               });
             } else {
-              var branch = $routeParams.branch in branchTitles ? $routeParams.branch : '';
               SharedService.set('selectedSched', sched);
-              $location.path('/class/'+$scope.branch);
+              $location.path('/class/' + sched.schedule.branch.name.toLowerCase());
             }
           });
         }
@@ -1483,7 +1478,19 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     $scope.nmonM = months[n_mon.getMonth()];
     $scope.nmonDate = n_mon;
 
-    $scope.schedules = ScheduleService.query({ date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate() });
+    var branchId = $scope.branches[0]._id;
+    $scope.branchTitle = $scope.branches[0].name;
+    if ($routeParams.branch) {
+      branchId = $routeParams.branch; 
+      for(var i in $scope.branches) {
+        if ($scope.branches[i]._id == branchId) {
+          $scope.branchTitle = $scope.branches[i].name;
+          break;
+        }
+      }
+    }
+
+    $scope.schedules = ScheduleService.query({ date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate(), branch: branchId });
     $scope.loadingSchedules = true;
     $scope.schedules.$promise.then(function (data) {
       $scope.schedules = data;
@@ -1509,7 +1516,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     return false;
   }
 
-  $scope.getWeek(new Date());
+  BranchService.query().$promise.then(function (branches) {
+    $scope.branches = branches;
+    $scope.getWeek(new Date());
+  });
+
   $scope.nextWeek = function () {
     var now = new Date();
     var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
@@ -1541,15 +1552,13 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
 
   var sched = SharedService.get('selectedSched');
   if (!sched) {
-    $location.path('/schedule/'+sched.branch);
+    $location.path('/schedule')
   } else {
 
     var seats = [];
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    
-    $scope.branch = $routeParams.branch;
-    $scope.branchTitle = branchTitles[$routeParams.branch];
+
     $scope.resched = SharedService.get('resched');
 
     $scope.cancelResched = function () {

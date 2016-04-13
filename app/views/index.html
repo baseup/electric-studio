@@ -95,8 +95,9 @@
               <span>Buy/Book Rides</span>
               <div class="dropdown-holder">
                 <ul class="dropdown">
-                  <li><a href="#/schedule/bgc">BGC</a></li>
-                  <li><a href="#/schedule/salcedo">SALCEDO</a></li>
+                  {% for branch in branches %}
+                    <li><a href="#/schedule/{{ branch._id }}">{{ branch.name }}</a></li>
+                  {% end %}
                   <li class="special"><a href="#/rates-and-packages">Buy Rides</a></li>
                 </ul>
               </div>
