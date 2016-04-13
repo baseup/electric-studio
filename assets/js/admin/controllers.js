@@ -1460,7 +1460,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     maxTime: '23:00:00',
     events: function (start, end, timezone, callback) {
       var events = [];
-      ScheduleService.query({ start: start.unix(), end: end.unix(), branch: $scope.selectedBranch }, function (scheds) {
+      ScheduleService.query({ start: start.unix(), end: end.unix(), branch: $scope.selectedBranchId }, function (scheds) {
         $scope.schedules = scheds;
         angular.forEach(scheds, function (s, i) {
           s.index = i;
@@ -1524,6 +1524,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
 
     branchSelectize.setValue(branches[0]._id);
     $scope.selectedBranch = branches[0];
+    $scope.selectedBranchId = branches[0]._id;
     calendar.fullCalendar('refetchEvents');
   });
 

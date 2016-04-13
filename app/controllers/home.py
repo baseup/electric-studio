@@ -713,7 +713,7 @@ def add_branch(self):
     
     if branch_count < 3:
 
-        curBranch = yield Branch.objects.get()
+        curBranch = (yield Branch.objects.find_all())[0]
         curBranch.name = 'BGC'
         yield curBranch.save()
 

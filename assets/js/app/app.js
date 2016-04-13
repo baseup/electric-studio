@@ -35,13 +35,6 @@ app.config(function ($routeProvider, $httpProvider) {
       templateUrl: '/site/class-bgc',
       controller: 'SiteCtrl'
     },
-<<<<<<< Updated upstream
-=======
-    '/class/bgc': {
-      templateUrl: '/site/class',
-      controller: 'SiteCtrl'
-    },
->>>>>>> Stashed changes
     '/class/salcedo': {
       templateUrl: '/site/class-salcedo',
       controller: 'SiteCtrl'
@@ -71,6 +64,10 @@ app.config(function ($routeProvider, $httpProvider) {
     },
     '/rewards': {
       templateUrl: '/site/rewards',
+      controller: 'SiteCtrl'
+    },
+    '/schedule': {
+      templateUrl: '/site/schedule',
       controller: 'SiteCtrl'
     },
     '/schedule/:branch': {
