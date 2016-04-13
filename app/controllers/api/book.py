@@ -36,7 +36,7 @@ def find(self):
             user_id = self.request.headers['ES-USER-ID']
         else:
             if self.get_secure_cookie('loginUserID'):
-            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+                user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
 
         if user_id:
             user = yield User.objects.get(user_id)
