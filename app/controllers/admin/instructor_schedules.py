@@ -11,6 +11,7 @@ def find(self):
 
     start_timestamp = self.get_query_argument('start')
     end_timestamp = self.get_query_argument('end')
+    branch = self.get_query_argument('branch')
 
     events = []
     start_date = datetime.fromtimestamp(int(start_timestamp))
@@ -33,7 +34,7 @@ def find(self):
         #         'day': reg_day,
         #         'ridersCount': (yield BookedSchedule.objects.filter(status='booked', date=start_date_filter, schedule=sched._id).count())
         #     })
-        spec_scheds = yield InstructorSchedule.objects.filter(date=start_date_filter).find_all()
+        spec_scheds = yield InstructorSchedule.objects.filter(date=start_date_filter, branch=ObjectId(branch)).find_all()
         for sched in spec_scheds:
             events.append({
                 'title': sched.type + ' with ' + sched.instructor.admin.first_name + 
@@ -74,6 +75,8 @@ def create(self):
     new_sched.instructor = ObjectId(data['instructor'])
     if 'sub_instructor' in data:
         new_sched.sub_instructor = ObjectId(data['sub_instructor'])
+    if 'branch' in data:
+        new_sched.branch = ObjectId(data['branch'])
     yield new_sched.save()
     self.render_json(new_sched)
 

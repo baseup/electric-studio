@@ -204,3 +204,12 @@ services.factory('SharedService', function(){
     }
   }
 });
+
+services.factory('BranchService', function ($resource) {
+  return $resource('/admin/branch/:branchId', {}, {
+    query: {
+      method: 'GET',
+      isArray: true
+    }
+  });
+});

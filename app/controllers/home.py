@@ -19,6 +19,7 @@ import base64
 import urllib.parse
 
 def index(self):
+
     if not self.get_secure_cookie('loginUser') and self.get_secure_cookie('loginUserID'):
         self.clear_cookie('loginUserID')
 
@@ -27,7 +28,9 @@ def index(self):
         user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
         user = yield User.objects.get(user_id)
         user_credits = user.credits
-    self.render('index', loginUser=self.get_secure_cookie('loginUser'), credits=user_credits)
+
+    branches = yield Branch.objects.find_all()
+    self.render('index', loginUser=self.get_secure_cookie('loginUser'), credits=user_credits, branches=branches)
 
 def maintenance(self):
     self.render('maintenance')
@@ -282,7 +285,14 @@ def buy(self):
 
     success = self.get_argument('success')
 
-    if not self.get_secure_cookie('loginUserID'):
+    user_id = None
+    if 'ES-USER-ID' in self.request.headers:
+        user_id = self.request.headers['ES-USER-ID']
+    else:
+        if self.get_secure_cookie('loginUserID'):
+            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
+
+    if not user_id:
         self.set_status(403)
         self.write('Please sign up or log in to your Electric account.')
         self.redirect('/#/rates?s=error')
@@ -699,20 +709,27 @@ def add_regular_schedule(self):
 
 def add_branch(self):
 
-    branches = yield Branch.objects.find_all()
-    for i, a in enumerate(branches):
-        yield a.delete()
-
-    branch = Branch()
-    branch.name = 'ES Sample Branch'
-    branch.password = hashlib.md5('password'.encode()).hexdigest()
-    token = 'password' + str(datetime.now())
-    branch.token = hashlib.md5(token.encode()).hexdigest()
-    branch.expire_at = datetime.now() + timedelta(days=1)
-
-    yield branch.save()
+    branch_count = (yield Branch.objects.count())
     
+    if branch_count < 3:
+
+        curBranch = yield Branch.objects.get()
+        curBranch.name = 'BGC'
+        yield curBranch.save()
+
+        branch = Branch()
+        branch.name = 'Salcedo'
+        branch.num_bikes = 46
+        branch.password = hashlib.md5('password'.encode()).hexdigest()
+        token = 'password' + str(datetime.now())
+        branch.token = hashlib.md5(token.encode()).hexdigest()
+        branch.expire_at = datetime.now() + timedelta(days=1)
+
+        yield branch.save()
+
     self.redirect('/')
+
+
 
 def add_access_types(self):
 

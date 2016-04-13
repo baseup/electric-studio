@@ -66,6 +66,7 @@ class Branch(Model):
     name = StringField(required=True)
     password = StringField(required=True)
     token = StringField(required=True)
+    num_bikes = IntField(default=37)
     expire_at = DateTimeField(required=True)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)

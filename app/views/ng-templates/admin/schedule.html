@@ -2,17 +2,22 @@
   <div class="grid content pad">
     <div class="grid__item">
     <div class="sliders box--white box--bordered">
+      <div class="pad">
+        <select id="select-branch" class="select float--right" ng-model="selectedBranchId" ng-change="filterByBranch()">
+        </select>
+      </div>
       <div class="box__header align--middle cf pad">
         <span class="label label--inline">Schedules</span>
+        
         <!-- <button ng-click="addRegularSchedule()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-regular-schedule">Add Regular Schedule</button> -->
         <button ng-click="addSchedule()" class="btn btn--small btn--primary float--right" ng-if="getAccess('schedules', 'create')" data-modal-toggle="add-schedule">Add Schedule</button>
       </div>
+
       <div class="calendar pad"> 
       </div>
     </div>
     </div>
   </div>
-  
   <!-- modal View Schedule -->
   <div id="view-schedule-modal" class="modal view-schedule" data-modal="view-schedule">
     <div class="modal__box pad">

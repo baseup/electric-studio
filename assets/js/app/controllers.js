@@ -9,10 +9,9 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 });
 
 
-ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService) {
+ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService, $routeParams) {
 
   $scope.loginUser = AuthService.getCurrentUser();
-
   $scope.reloadUser = function (user) {
     UserService.get(function (user) {
       if ($scope.loginUser) {
@@ -139,6 +138,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       angular.element('.signup-toggle').click();
     }
   }
+  
   var aboutUs = angular.element('#aboutus-section');
   var workouts = angular.element('#workouts-section');
   var firstRide = angular.element('#firstride-section');
@@ -166,6 +166,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
   if (faq.length) {;
     angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
   }
+
 });
 
 ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
@@ -942,7 +943,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
     });
   }
 
-  $scope.setSchedule = function (schedule, date) {
+  $scope.setSchedule = function (schedule, date, branch) {
 
     var parts = schedule.date.split(/[^0-9]/);
     var date =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
@@ -1027,7 +1028,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
             } else {
               SharedService.set('selectedSched', sched);
               SharedService.set('backToInstructors', true);
-              $location.path('/class');
+              $location.path('/class/'+branch);
             }
           });
         }
@@ -1234,7 +1235,8 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService, $timeout) {
+ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
+
 
   $timeout(function() {
     var scheduleRow = angular.element('.schedule .row').not('.unavailable');
@@ -1318,7 +1320,9 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     });
   }
 
-  $scope.setSchedule = function (schedule, date) {
+  $scope.setSchedule = function (schedule, date, branch) {
+
+    $scope.branch = branch;
 
     if (!$scope.chkSched(date, schedule)) {
 
@@ -1363,6 +1367,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       var sched = {};
       sched.date = date;
       sched.schedule = schedule;
+      sched.branch = branch;
 
       var bfilter = {};
       bfilter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
@@ -1398,13 +1403,13 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
               });
             } else {
               SharedService.set('selectedSched', sched);
-              $location.path('/class');
+              $location.path('/class/' + sched.schedule.branch.name.toLowerCase());
             }
           });
         }
       });
     }
-  }
+  }  
 
   $scope.chkSched = function (date, sched) {
 
@@ -1473,7 +1478,19 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     $scope.nmonM = months[n_mon.getMonth()];
     $scope.nmonDate = n_mon;
 
-    $scope.schedules = ScheduleService.query({ date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate() });
+    var branchId = $scope.branches[0]._id;
+    $scope.branchTitle = $scope.branches[0].name;
+    if ($routeParams.branch) {
+      branchId = $routeParams.branch; 
+      for(var i in $scope.branches) {
+        if ($scope.branches[i]._id == branchId) {
+          $scope.branchTitle = $scope.branches[i].name;
+          break;
+        }
+      }
+    }
+
+    $scope.schedules = ScheduleService.query({ date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate(), branch: branchId });
     $scope.loadingSchedules = true;
     $scope.schedules.$promise.then(function (data) {
       $scope.schedules = data;
@@ -1499,7 +1516,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     return false;
   }
 
-  $scope.getWeek(new Date());
+  BranchService.query().$promise.then(function (branches) {
+    $scope.branches = branches;
+    $scope.getWeek(new Date());
+  });
+
   $scope.nextWeek = function () {
     var now = new Date();
     var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
@@ -1517,10 +1538,10 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     if (((now - pWeek) / (24 * 60 * 60 * 1000)) < 7) {
       $scope.getWeek(pWeek);
     }
-  }
+  }  
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService) {
+ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService, $routeParams) {
 
   $timeout(function() {
     angular.element('html, body').scrollTop(0);
@@ -1589,7 +1610,6 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
     SettingService.getBlockedBikes(function (bikes) {
       $scope.blockedBikes = bikes;
     });
-
   }
 
   $scope.checkSeat = function (num) {
@@ -1741,6 +1761,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
       });
     });
   }
+  
 });
 
 ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) {

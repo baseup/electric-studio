@@ -302,6 +302,18 @@ services.factory('SettingService', function ($resource) {
   });
 });
 
+services.factory('BranchService', function ($resource) {
+  return $resource('/admin/branch/:branchId', {}, {
+    query: {
+      method: 'GET',
+      isArray: true
+    },
+    update: {
+      method: 'PUT'
+    }
+  });
+});
+
 services.factory('SharedService', function(){
   var records = {};
   return {

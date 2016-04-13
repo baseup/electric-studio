@@ -12,6 +12,7 @@ def find(self):
 
     date = self.get_query_argument('date')
     ins = self.get_query_argument('ins')
+    branch = self.get_query_argument('branch')
     if not date:
         date = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
     else:
@@ -46,7 +47,7 @@ def find(self):
     week_days = ['mon','tue','wed','thu','fri','sat','sun','nmon']
     for day in week_days:
 
-        sched_query = InstructorSchedule.objects.filter(date=date)
+        sched_query = InstructorSchedule.objects.filter(date=date, branch=ObjectId(branch))
         if ins:
             qfilter = Q(instructor=ObjectId(ins)) | Q(sub_instructor=ObjectId(ins))
             sched_query.filter(qfilter).limit(4)
