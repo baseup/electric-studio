@@ -7,7 +7,7 @@
 <div class="content schedule" ng-controller="ClassCtrl">
   <div class="wrapper">
 
-    <div class="branch-watermark">{{ getBranchTitle() }}</div>
+    <div class="branch-watermark">SALCEDO</div>
 
     <div ng-if="resched">
       <h2 class="range">
@@ -28,7 +28,7 @@
     <div class="class">
 
       <div class="formation">
-        <div class="front wide seats">
+        <div class="front seats">
           <span ng-click="setSeatNumber(24, $event)" ng-class="{ unavailable: checkSeat(24),hidden: 24 > sched.seats }">24</span>
           <span ng-click="setSeatNumber(24, $event)" ng-class="{ unavailable: checkSeat(24),hidden: 24 > sched.seats }">24</span>
           <span ng-click="setSeatNumber(24, $event)" ng-class="{ unavailable: checkSeat(24),hidden: 24 > sched.seats }">24</span>
@@ -48,7 +48,7 @@
             <img src="{{ subInstructor.image ? '/assets/' + subInstructor.image : 'http://placehold.it/350x150' }}">
           </div>         
         </div>
-        <div class="front wide seats">
+        <div class="front seats">
           <span ng-click="setSeatNumber(16, $event)" ng-class="{ unavailable: checkSeat(16),hidden: 16 > sched.seats }">16</span>
           <span ng-click="setSeatNumber(18, $event)" ng-class="{ unavailable: checkSeat(18),hidden: 18 > sched.seats }">18</span>
           <span ng-click="setSeatNumber(15, $event)" ng-class="{ unavailable: checkSeat(15),hidden: 15 > sched.seats }">15</span>
@@ -106,18 +106,18 @@
       </div>
 
     <div class="controls">
-      <ul class="legend">
-        <li class="free">Free Bikes</li>
-        <li class="reserved">Reserved Bikes</li>
-        <li class="selection">Your Selection</li>
-      </ul>  
-      
       <div class="buttons">
         <a ng-if="!resched && !forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Book This Ride</a>
         <a class="button large center" href="{{ backButtonPath }}">Back to Schedule</a>  
         <a ng-if="resched && !forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Reschedule Ride</a>
         <a ng-if="forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Join the WaitList</a>
       </div>
+
+      <ul class="legend">
+        <li class="free">Free Bikes</li>
+        <li class="reserved">Reserved Bikes</li>
+        <li class="selection">Your Selection</li>
+      </ul>      
     </div>
 
   </div>

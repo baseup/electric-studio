@@ -948,7 +948,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
     });
   }
 
-  $scope.setSchedule = function (schedule, date) {
+  $scope.setSchedule = function (schedule, date, branch) {
 
     var parts = schedule.date.split(/[^0-9]/);
     var date =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
@@ -1033,7 +1033,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
             } else {
               SharedService.set('selectedSched', sched);
               SharedService.set('backToInstructors', true);
-              $location.path('/class');
+              $location.path('/class/'+branch);
             }
           });
         }
@@ -1326,6 +1326,8 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
   $scope.setSchedule = function (schedule, date, branch) {
 
+    $scope.branch = branch;
+
     if (!$scope.chkSched(date, schedule)) {
 
       var deductCredits = 1;
@@ -1369,6 +1371,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       var sched = {};
       sched.date = date;
       sched.schedule = schedule;
+      sched.branch = branch;
 
       var bfilter = {};
       bfilter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
@@ -1405,7 +1408,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
             } else {
               var branch = $routeParams.branch in branchTitles ? $routeParams.branch : '';
               SharedService.set('selectedSched', sched);
-              $location.path('/class/'+branch);
+              $location.path('/class/'+$scope.branch);
             }
           });
         }
@@ -1537,8 +1540,8 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
   SharedService.clear('backToInstructors');
 
   var sched = SharedService.get('selectedSched');
-  if (!sched || !($routeParams.branch in branchTitles) ) {
-    $location.path('/schedule')
+  if (!sched) {
+    $location.path('/schedule/'+sched.branch);
   } else {
 
     var seats = [];
@@ -1748,10 +1751,6 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
         }
       });
     });
-  }
-
-  $scope.getBranchTitle = function () {
-    return $routeParams.branch in branchTitles ? branchTitles[$routeParams.branch] : false;
   }
   
 });

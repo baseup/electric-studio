@@ -2272,12 +2272,23 @@ body {
   position: absolute;
   display: block;
   height: 266px;
-  top: -18px;
-  left: 65px;
+  top: 0;
+  left: 0;
   font-family: 'Tungsten-Medium';
-  font-size: 380px;
+  font-size: 150px;  
   color: $color-watermark;
   line-height: 1;
+
+  @media (min-width: 768px) {
+    font-size: 250px;  
+  }  
+
+  @include breakpoint(md) {
+    top: -18px;
+    left: 65px;
+    font-size: 380px;
+  }
+  
 }
 
 
@@ -2640,12 +2651,12 @@ body {
         background: transparent;
         border-radius: 50%;
         border-style: solid;
+        border-width: 1px;
         color: #666;
         cursor: pointer;
         display: inline-block;
         font-weight: bold;
         text-align: center;
-        // margin: 2px 1px;
         transition: all 1000ms;
         cursor: pointer;
         padding-left: 2px;
@@ -2699,35 +2710,71 @@ body {
     }
 
     .front {
-      width: 40px;
+      width: 105px;
       display: inline-table;
-      position: relative;      
-      // margin-bottom: 10px;
-
-      @media (min-width: 360px) {
-        width: 44px;
-      }
+      position: relative; 
+      margin-left: 0;
+      margin-right: 0;
 
       @media (min-width: 768px) {
-        width: 88px;
+        width: 233px;
       }
 
       @include breakpoint(md) {
-        width: 130px;
+        width: 380.5px;
         // margin-bottom: 30px;
       }
 
-      &.wide {
-        @include breakpoint(lg) {
-          width: 405px;
-          margin-top: 70px;
+      @include breakpoint(lg) {
+        width: 445px;
+        margin-top: 70px;
+      }
+
+      
+      &:nth-child(3) {
+        text-align: right;
+
+        & span {
+          float: right;
+          margin-right: 0;
+          margin-left: 6.3333333px;
+
+          @media (min-width: 768px) {
+            margin-left: 16.6666667px;
+          }
+
+          @include breakpoint(md) {
+            margin-left: 21.75px;
+          }
+
+          @include breakpoint(lg) {
+            margin-left: 42px;            
+          }
+
+          &:nth-child(4n) {
+            margin-left: 0;
+          }
+
+          &:nth-child(n+5) {
+            margin-top: 40px;
+          }
         }
       }
 
       & span {
+        margin-left: 0;
+        margin-right: 6.3333333px;
+
+        @media (min-width: 768px) {
+          margin-right: 16.6666667px;
+        }
+
+        @include breakpoint(md) {
+          margin-right: 21.75px;
+        }
 
         @include breakpoint(lg) {
-          margin-right: 68px;
+          margin-right: 42px;          
         }
 
         &:nth-child(4n) {
@@ -2751,10 +2798,19 @@ body {
 
         span {
           float: left;
+          margin-left: 0;
+          margin-right: 6.3333333px;
+
+          @media (min-width: 768px) {
+            margin-right: 16.6666667px;
+          }
+
+          @include breakpoint(md) {
+            margin-right: 21.75px;
+          }
 
           @include breakpoint(lg) {
-            margin-right: 42px;
-            margin-left: 0;
+            margin-right: 42px;            
           }
         }
       }
@@ -2772,14 +2828,35 @@ body {
       &.center {
         margin: auto;
         margin-bottom: 40px;
-        width: 370px;
+
+        @media (min-width: 768px) {
+          width: 230px;
+        }       
+
+        @include breakpoint(md) {
+          width: 340px;
+        }
+        
+        @include breakpoint(lg) {
+          width: 430px;
+        }
       }
     
-      span {
-        @include breakpoint(lg) {
-          float: right;
+      span {        
+        float: right;
+        margin-right: 0;
+        margin-left: 6.3333333px;
+
+        @media (min-width: 768px) {
+          margin-left: 16.6666667px;
+        }
+
+        @include breakpoint(md) {
+          margin-left: 21.75px;
+        }
+
+        @include breakpoint(lg) {          
           margin-left: 42px;
-          margin-right: 0;
         }
 
         &:nth-child(13n) {
@@ -2794,18 +2871,14 @@ body {
 
     .instructor{
       text-align: center;
-      width: 150px;
+      width: 100px;
 
       @media (min-width: 768px) {
-        width: 270px;
-      }
-
-      @include breakpoint(md) {
-        width: 350px;
+        width: 150px;
       }
 
       .image{
-        border-radius: 150px;
+        border-radius: 50%;
         height: 80px;
         overflow: hidden;
         position: relative;
@@ -2876,16 +2949,22 @@ body {
 
 
 .legend {
-  position: absolute;
-  right: 0;
-  top: 0;
+  position: relative;
+  display: table;
   list-style: none;
   padding: 0;
-  margin: 30px 0 40px 0;
+  margin: auto;
   text-align: center;
   color: $color-text-light;
   font-size: 16px;
   font-family: 'Brandon_Grotesque';
+
+  @include breakpoint(md) {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 30px 0 40px 0;
+  }
 
   li {
     display: block;

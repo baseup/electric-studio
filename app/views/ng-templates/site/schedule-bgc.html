@@ -32,7 +32,7 @@
             {{ monday.sub_instructor ? ' &amp; ' + monday.sub_instructor.admin.first_name : '' }}
           </span>
           <span class="schedtype">{{ monday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, monDate)">
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, monDate, 'bgc')">
             {{ isFull(monday) ? 'waitlist' : 'reserve' }}
           </button>
         </a>
@@ -48,7 +48,7 @@
             {{ tuesday.sub_instructor ? ' &amp; ' + tuesday.sub_instructor.admin.first_name : '' }}
           </span>
           <span class="schedtype">{{ tuesday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate)">
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate, 'bgc')">
             {{ isFull(tuesday) ? 'waitlist' : 'reserve' }}
           </button>
         </a>
@@ -64,7 +64,7 @@
             {{ wednesday.sub_instructor ? ' &amp; ' + wednesday.sub_instructor.admin.first_name : '' }}
           </span>
           <span class="schedtype">{{ wednesday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(wednesday, wedDate)">
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(wednesday, wedDate, 'bgc')">
             {{ isFull(wednesday) ? 'waitlist' : 'reserve' }}
           </button>
         </a>
@@ -80,7 +80,7 @@
             {{ thursday.sub_instructor ? ' &amp; ' + thursday.sub_instructor.admin.first_name : '' }}
           </span>
           <span class="schedtype">{{ thursday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(thursday, thuDate)">
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(thursday, thuDate, 'bgc')">
             {{ isFull(thursday) ? 'waitlist' : 'reserve' }}
           </button>
         </a>
@@ -96,7 +96,7 @@
             {{ friday.sub_instructor ? ' &amp; ' + friday.sub_instructor.admin.first_name : '' }}
           </span>
           <span class="schedtype">{{ friday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(friday, friDate)">
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(friday, friDate, 'bgc')">
             {{ isFull(friday) ? 'waitlist' : 'reserve' }}
           </button>
         </a>
@@ -113,7 +113,7 @@
             {{ saturday.sub_instructor ? ' &amp; ' + saturday.sub_instructor.admin.first_name : '' }}
           </span>
           <span class="schedtype">{{ saturday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(saturday, satDate)">
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(saturday, satDate, 'bgc')">
             {{ isFull(saturday) ? 'waitlist' : 'reserve' }}
           </button>
         </a>
@@ -129,7 +129,7 @@
             {{ sunday.sub_instructor ? ' &amp; ' + sunday.sub_instructor.admin.first_name : '' }}
           </span>
           <span class="schedtype">{{ sunday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(sunday, sunDate)">
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(sunday, sunDate, 'bgc')">
             {{ isFull(sunday) ? 'waitlist' : 'reserve' }}
           </button>
         </a>
@@ -145,7 +145,7 @@
             {{ monday.sub_instructor ? ' &amp; ' + monday.sub_instructor.admin.first_name : '' }}
           </span>
           <span class="schedtype">{{ monday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, nmonDate)">
+          <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, nmonDate, 'bgc')">
             {{ isFull(monday) ? 'waitlist' : 'reserve' }}
           </button>
         </a>

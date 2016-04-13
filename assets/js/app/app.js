@@ -31,12 +31,12 @@ app.config(function ($routeProvider, $httpProvider) {
       templateUrl: '/site/career',
       controller: 'SiteCtrl'
     },
-    '/class': {
-      templateUrl: '/site/class',
+    '/class/bgc': {
+      templateUrl: '/site/class-bgc',
       controller: 'SiteCtrl'
     },
-    '/class/:branch': {
-      templateUrl: '/site/class2',
+    '/class/salcedo': {
+      templateUrl: '/site/class-salcedo',
       controller: 'SiteCtrl'
     },
     '/contact': {
@@ -66,12 +66,12 @@ app.config(function ($routeProvider, $httpProvider) {
       templateUrl: '/site/rewards',
       controller: 'SiteCtrl'
     },
-    '/schedule/': {
-      templateUrl: '/site/schedule',
+    '/schedule/bgc': {
+      templateUrl: '/site/schedule-bgc',
       controller: 'SiteCtrl'
     },
-    '/schedule/:branch': {
-      templateUrl: '/site/schedule2',
+    '/schedule/salcedo': {
+      templateUrl: '/site/schedule-salcedo',
       controller: 'SiteCtrl'
     },
     '/whats-new': {
