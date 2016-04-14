@@ -989,8 +989,9 @@ body {
   font-weight: 600;
 
   .wrapper {
+    padding-left: 0;
     @include breakpoint(lg) {
-      max-width: 1370;
+      max-width: 1370px;
       margin-right: 0;
     }
   }
@@ -1008,6 +1009,14 @@ body {
 
     &.signup .input-box {
       width: 280px;
+    }
+
+    .login-form {
+      .copy {
+        a:nth-child(2) {
+          color: $brand-color-tertiary;
+        }
+      }
     }
   }
 
