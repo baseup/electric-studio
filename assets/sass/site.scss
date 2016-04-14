@@ -1136,26 +1136,38 @@ body {
   }
 
   .close-btn {
+    width: 24px;
+    height: 24px;
+    color: transparent;
+    top: 20px;
+    right: 20px;
+    display: block;
     position: absolute;
-    color: #fff;
-    top: 8px;
-    right: $base-spacing-unit;
-    cursor: pointer;
-    font-size: 30px;
-    font-weight: 100;
-    line-height: 1;
 
     &:hover {
-      color: $brand-color-primary;
+      &:before, &:after {
+        border-color: $brand-color-primary;
+      }
     }
 
-    @include breakpoint(md) {
-      font-size: 50px;
+    &:before, &:after {
+      content: '';
+      display: block;
+      height: 33px;
+      border-width: 1px;
+      border-style: solid;
+      border-color: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
     }
 
-    @include breakpoint(lg) {
-      font-size: 70px;
-      line-height: .78;
+    &:before {
+      transform: translate(-50%,-50%) rotate(45deg);
+    }
+
+    &:after {
+      transform: translate(-50%,-50%) rotate(-45deg);
     }
   }
 
