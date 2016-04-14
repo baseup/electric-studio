@@ -985,6 +985,15 @@ body {
   left: 0;
   right: 0;
   color: #fff;
+  font-family: 'Brandon_Grotesque',sans-serif;
+  font-weight: 600;
+
+  .wrapper {
+    @include breakpoint(lg) {
+      max-width: 1370;
+      margin-right: 0;
+    }
+  }
 
   @include breakpoint(md) {
     text-align: left;
@@ -1124,15 +1133,49 @@ body {
     right: $base-spacing-unit;
     cursor: pointer;
     font-size: 30px;
+    font-weight: 100;
+    line-height: 1;
 
     &:hover {
       color: $brand-color-primary;
     }
 
     @include breakpoint(md) {
-      font-size: 35px;
-      top: 15px;
+      font-size: 50px;
     }
+
+    @include breakpoint(lg) {
+      font-size: 70px;
+      line-height: .78;
+    }
+  }
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  input[type="checkbox"]:checked + .checkTerms-label {
+    &:after {
+      content: '';
+      display: block;
+      border-right: 1px solid white;
+      transform: translate(-50%,-50%) rotate(45deg);
+      height: 16px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+    }
+  }
+
+  .checkTerms-label {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 1px solid white;
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 2.5em;
+    position: relative;
   }
 
 }
