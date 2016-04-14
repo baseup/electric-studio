@@ -127,6 +127,10 @@ body {
     @include breakpoint(md) {
       padding: 20px $base-spacing-unit;
     }
+
+    @include breakpoint(md) {
+      padding: 20px 0px;
+    }
   }
 }
 
@@ -2278,6 +2282,7 @@ body {
   font-size: 150px;  
   color: $color-watermark;
   line-height: 1;
+  z-index: -1;
 
   @media (min-width: 768px) {
     font-size: 250px;  
@@ -2285,7 +2290,7 @@ body {
 
   @include breakpoint(md) {
     top: -18px;
-    left: 65px;
+    left: 53px;
     font-size: 380px;
   }
   
@@ -2295,36 +2300,67 @@ body {
 /* Schedule */
 .schedule {
 
+  .table {
+    display: block;
+    margin: auto;
+
+    &:before, &:after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+
+    @include breakpoint(md) {
+      margin-top: 132px;
+    }
+
+  }
+
   .day {
-    font-size: 1.4em;
-    color: $brand-color-tertiary;
+    color: $color-text-gray;
     padding: 0 10px;
-    margin: 20px 0;
-    font-family: 'Brandon_Grotesque';
+    margin: 0;
+    font-size: 2.125em;
+    font-family: 'Tungsten-Medium';
+    font-weight: lighter;
+    line-height: 1;
   }
 
   .date {
     margin: 0;
     padding: 10px;
-    border-top: 2px solid #fff;
-    border-bottom: 2px solid #fff;
+    padding-top: 0;
+    margin-bottom: 10px;
+    border: 2px solid transparent;
     color: $brand-color-primary;
-    font-size: 1.04em;
-    font-family: 'Brandon_Grotesque';
+    font-size: 2.125em;
+    font-family: 'Tungsten-Medium';
+    font-weight: lighter;
     text-transform: uppercase;
+    line-height: 1;
 
     @include breakpoint(md) {
       border-right: 1px solid #fff;
     }
   }
 
+  .column-rows {
+    border: 2px solid $brand-color-tertiary;
+    border-left: none;
+    border-bottom: none;
+
+    &:first-of-type {
+      border-left: 2px solid $brand-color-tertiary;
+    }
+  }
+
   .row {
     display: block;
-    border-bottom: 2px solid #fff;
     padding: 10px;
     line-height: 1.4em;
     color: $color-text-light;
     position: relative;
+    border-bottom: 2px solid $brand-color-tertiary;
 
     button {
       visibility: hidden;
@@ -2378,6 +2414,10 @@ body {
     .instructor {
       font-size: 0.9em;
       font-weight: bold;
+      font-family: 'Tungsten-Medium';
+      font-weight: lighter;
+      font-size: em(30);
+      margin-top: 5px;
     }
 
     .link {
@@ -2393,6 +2433,7 @@ body {
     @include breakpoint(md) {
       float: left;
       width: 12.5%;
+      margin-left: -2px; // make the border overlap
 
       &:last-child {
         .row {

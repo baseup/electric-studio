@@ -1,5 +1,11 @@
 'use strict';
 
+// transfer this on a better place once figured out where
+var branchTitles = {
+  'bgc' : 'BGC',
+  'salcedo' : 'SALCEDO'
+};
+
 var ctrls = angular.module('elstudio.controllers.site', [
   'elstudio.services'
 ]);
@@ -10,6 +16,8 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 
 
 ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService, $routeParams) {
+
+  $scope.branch = $routeParams.branch;
 
   $scope.loginUser = AuthService.getCurrentUser();
   $scope.reloadUser = function (user) {
@@ -137,6 +145,10 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.signup-toggle').click();
     }
+  }
+
+  $scope.getBranchTitle = function () {
+    return branchTitles[$scope.branch];
   }
   
   var aboutUs = angular.element('#aboutus-section');
