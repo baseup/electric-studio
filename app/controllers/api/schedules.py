@@ -43,11 +43,15 @@ def find(self):
 
     next_release = release_date + timedelta(weeks=1);
 
+    branch_filter = Q(branch=ObjectId(branch))
+    if branch == '558272c288b5c73163343c45':
+        branch_filter = Q(branch=ObjectId(branch)) | Q(branch__exists=False)
+
     scheds = {}
     week_days = ['mon','tue','wed','thu','fri','sat','sun','nmon']
     for day in week_days:
 
-        sched_query = InstructorSchedule.objects.filter(date=date, branch=ObjectId(branch))
+        sched_query = InstructorSchedule.objects.filter(date=date).filter(branch_filter)
         if ins:
             qfilter = Q(instructor=ObjectId(ins)) | Q(sub_instructor=ObjectId(ins))
             sched_query.filter(qfilter).limit(4)
