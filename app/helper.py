@@ -1,7 +1,8 @@
 from motorengine import *
 from datetime import datetime, timedelta, tzinfo
-from app.settings import MANDRILL_API_KEY, EMAIL_SENDER, EMAIL_SENDER_NAME
+from app.settings import MANDRILL_API_KEY, EMAIL_SENDER, EMAIL_SENDER_NAME, REDIS_HOST, REDIS_PORT
 
+import redis
 import mandrill
 import sys
 import pytz
@@ -9,22 +10,20 @@ import string
 import random
 
 class Lock(object):
-    locker = {}
+    redis_db = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
     @staticmethod
     def is_locked(key):
-        if key in Lock.locker:
-            return Lock.locker[key]
-        return False
+        return Lock.redis_db.exists(key)
 
     @staticmethod
     def lock(key):
-        Lock.locker[key] = True
+        Lock.redis_db.set(key, True)
     
     @staticmethod
     def unlock(key):
-        if key in Lock.locker:
-            del Lock.locker[key]
+        if Lock.redis_db.exists(key):
+            Lock.redis_db.delete(key)
 
 class GMT8(tzinfo):
     def utcoffset(self, dt):

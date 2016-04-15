@@ -6,3 +6,4 @@ mandrill==1.0.57
 python-dateutil==2.4.1
 pytz
 pyyaml==3.11
+redis==2.10.3

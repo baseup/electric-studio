@@ -96,6 +96,10 @@ COOKIE_SECRET = 'elstudio!@#$%123'
 ENABLE_LOGS = True
 # LOG_PATH = 'logs'
 
+# redis confirguration
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
+
 # MotorEngine Configuration
 DATABASE_LIMIT = 1000
 DATABASE = {
@@ -115,6 +119,7 @@ EMAIL_SENDER_NAME = 'Electric Studio'
 #Paypal
 PAYPAL_ACCOUNT = 'electric@electricstudio.ph'
 PDT_TOKEN = 'Wm9hXC14j7em4ABlNedDxq2AiwTTmcHXMTSyYrUxejrwWCdnRcZzvUrudQS'
+#PDT_TOKEN = 'GCxbIb0meX6eoIv9fYtJFvQ26u-L2buNGwP47EJZMLiomyKFbXeofypRZHq'
 
 #ENV
 MAINTENANCE = False
