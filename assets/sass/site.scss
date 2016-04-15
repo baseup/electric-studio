@@ -2505,7 +2505,7 @@ body {
         }
 
         .date {
-          border-right: none;
+          border: none;
         }
       }
     }
@@ -2740,7 +2740,7 @@ body {
       margin-top: 20px;
     }
 
-    .seats{
+    .seats {
       max-width: 100%;
       &:after{
         content: '';
@@ -2812,7 +2812,7 @@ body {
           cursor: default;
         }
       }      
-    }
+    }    
 
     .front {
       width: 105px;
@@ -2833,64 +2833,8 @@ body {
       @include breakpoint(lg) {
         width: 445px;
         margin-top: 70px;
-      }
-
-      
-      &:nth-child(3) {
-        text-align: right;
-
-        & span {
-          float: right;
-          margin-right: 0;
-          margin-left: 6.3333333px;
-
-          @media (min-width: 768px) {
-            margin-left: 16.6666667px;
-          }
-
-          @include breakpoint(md) {
-            margin-left: 21.75px;
-          }
-
-          @include breakpoint(lg) {
-            margin-left: 42px;            
-          }
-
-          &:nth-child(4n) {
-            margin-left: 0;
-          }
-
-          &:nth-child(n+5) {
-            margin-top: 40px;
-          }
-        }
-      }
-
-      & span {
-        margin-left: 0;
-        margin-right: 6.3333333px;
-
-        @media (min-width: 768px) {
-          margin-right: 16.6666667px;
-        }
-
-        @include breakpoint(md) {
-          margin-right: 21.75px;
-        }
-
-        @include breakpoint(lg) {
-          margin-right: 42px;          
-        }
-
-        &:nth-child(4n) {
-          margin-right: 0;
-        }
-
-        &:nth-child(n+5) {
-          margin-top: 40px;
-        }
-      }
-    }
+      }        
+    } // front
 
     .back {
       text-align: left;
@@ -2900,24 +2844,6 @@ body {
       &.left {
         width: 50%;
         float: left;
-
-        span {
-          float: left;
-          margin-left: 0;
-          margin-right: 6.3333333px;
-
-          @media (min-width: 768px) {
-            margin-right: 16.6666667px;
-          }
-
-          @include breakpoint(md) {
-            margin-right: 21.75px;
-          }
-
-          @include breakpoint(lg) {
-            margin-right: 42px;            
-          }
-        }
       }
 
       &.right {
@@ -2933,6 +2859,7 @@ body {
       &.center {
         margin: auto;
         margin-bottom: 40px;
+        width: 117px;
 
         @media (min-width: 768px) {
           width: 230px;
@@ -2946,33 +2873,7 @@ body {
           width: 430px;
         }
       }
-    
-      span {        
-        float: right;
-        margin-right: 0;
-        margin-left: 6.3333333px;
-
-        @media (min-width: 768px) {
-          margin-left: 16.6666667px;
-        }
-
-        @include breakpoint(md) {
-          margin-left: 21.75px;
-        }
-
-        @include breakpoint(lg) {          
-          margin-left: 42px;
-        }
-
-        &:nth-child(13n) {
-          margin-left: 0;
-        }
-
-        &:nth-child(n+14) {
-          margin-top: 40px;
-        }
-      }
-    }
+    } // back
 
     .instructor{
       text-align: center;
@@ -3033,8 +2934,342 @@ body {
         }
       }
     }
-  }
-}
+  } // formation
+
+  // 13-seat rows
+  &.seats-13 {      
+
+    .front {
+
+      &:nth-child(3) {
+        text-align: right;
+
+        & span {
+          float: right;
+          margin-right: 0;
+          margin-left: 6.3333333px;
+
+          @media (min-width: 768px) {
+            margin-left: 16.6666667px;
+          }
+
+          @include breakpoint(md) {
+            margin-left: 21.75px;
+          }
+
+          @include breakpoint(lg) {
+            margin-left: 42px;            
+          }
+
+          &:nth-child(4n) {
+            margin-left: 0;
+          }
+
+          &:nth-child(n+5) {
+            margin-top: 40px;
+          }
+        }
+      }
+
+      span {
+        margin-left: 0;
+        margin-right: 6.3333333px;
+
+        @media (min-width: 768px) {
+          margin-right: 16.6666667px;
+        }
+
+        @include breakpoint(md) {
+          margin-right: 21.75px;
+        }
+
+        @include breakpoint(lg) {
+          margin-right: 42px;          
+        }
+
+        &:nth-child(4n) {
+          margin-right: 0;
+        }
+
+        &:nth-child(n+5) {
+          margin-top: 40px;
+        }
+      }
+    } // front
+
+    .back {
+
+      span {        
+        float: right;
+        margin-right: 0;
+        margin-left: 6.3333333px;
+
+        @media (min-width: 768px) {
+          margin-left: 16.6666667px;
+        }
+
+        @include breakpoint(md) {
+          margin-left: 21.75px;
+        }
+
+        @include breakpoint(lg) {          
+          margin-left: 42px;
+        }
+
+        &:nth-child(13n) {
+          margin-left: 0;
+        }
+
+        &:nth-child(n+14) {
+          margin-top: 40px;
+        }
+      }
+
+      .left {
+        span {
+          float: left;
+          margin-left: 0;
+          margin-right: 6.3333333px;
+
+          @media (min-width: 768px) {
+            margin-right: 16.6666667px;
+          }
+
+          @include breakpoint(md) {
+            margin-right: 21.75px;
+          }
+
+          @include breakpoint(lg) {
+            margin-right: 42px;            
+          }
+        }
+      } // .back.left
+    }
+
+  } // 13
+
+  &.seats-13 {      
+
+    .front {
+
+      &:nth-child(3) {
+        text-align: right;
+
+        & span {
+          float: right;
+          margin-right: 0;
+          margin-left: 6.3333333px;
+
+          @media (min-width: 768px) {
+            margin-left: 16.6666667px;
+          }
+
+          @include breakpoint(md) {
+            margin-left: 21.75px;
+          }
+
+          @include breakpoint(lg) {
+            margin-left: 42px;            
+          }
+
+          &:nth-child(4n) {
+            margin-left: 0;
+          }
+
+          &:nth-child(n+5) {
+            margin-top: 40px;
+          }
+        }
+      }
+
+      span {
+        margin-left: 0;
+        margin-right: 6.3333333px;
+
+        @media (min-width: 768px) {
+          margin-right: 16.6666667px;
+        }
+
+        @include breakpoint(md) {
+          margin-right: 21.75px;
+        }
+
+        @include breakpoint(lg) {
+          margin-right: 42px;          
+        }
+
+        &:nth-child(4n) {
+          margin-right: 0;
+        }
+
+        &:nth-child(n+5) {
+          margin-top: 40px;
+        }
+      }
+    } // front
+
+    .back {
+
+      span {        
+        float: right;
+        margin-right: 0;
+        margin-left: 6.3333333px;
+
+        @media (min-width: 768px) {
+          margin-left: 16.6666667px;
+        }
+
+        @include breakpoint(md) {
+          margin-left: 21.75px;
+        }
+
+        @include breakpoint(lg) {          
+          margin-left: 42px;
+        }
+
+        &:nth-child(13n) {
+          margin-left: 0;
+        }
+
+        &:nth-child(n+14) {
+          margin-top: 40px;
+        }
+      }
+
+      .left {
+        span {
+          float: left;
+          margin-left: 0;
+          margin-right: 6.3333333px;
+
+          @media (min-width: 768px) {
+            margin-right: 16.6666667px;
+          }
+
+          @include breakpoint(md) {
+            margin-right: 21.75px;
+          }
+
+          @include breakpoint(lg) {
+            margin-right: 42px;            
+          }
+        }
+      } // .back.left
+    }
+
+  } // .seats-13
+
+  &.seats-14 {  
+
+    .front {
+
+      &.colums-2 {
+        width: 41px;
+        margin-left: 34px;
+        margin-right: 30px;
+
+        @media (min-width: 768px) {
+          width: 80px;
+          margin-left: 100px;
+          margin-right: 53px;
+        }
+
+        @include breakpoint(md) {
+          width: 117px;
+          margin-left: 163px;
+          margin-right: 100px;
+        }
+
+        @include breakpoint(lg) {
+          width: 150px;
+          margin-left: 195px;
+        }    
+
+        &.right {
+          margin-right: 34px;
+          margin-left: 30px;
+
+          @media (min-width: 768px) {
+              margin-right: 100px;
+              margin-left: 53px;
+          }
+
+          @include breakpoint(md) {
+            margin-right: 163px;
+            margin-left: 100px;
+          }
+
+          @include breakpoint(lg) {
+            margin-right: 195px;
+          }    
+        }    
+
+        span {
+          &:nth-child(2n) {
+            margin-right: 0;
+          }
+
+          &:nth-child(n+3) {
+            margin-top: 20px;
+          }
+        }
+      }
+
+      span {
+        margin-left: 0;
+        margin-right: 4.46px;
+
+        @media (min-width: 768px) {
+          margin-right: 12.92px;
+        }
+
+        @include breakpoint(md) {
+          margin-right: 16.23px;
+        }
+
+        @include breakpoint(lg) {
+          margin-right: 35.38px;          
+        }
+
+        &:nth-child(4n) {
+          margin-right: 0;
+        }
+
+        &:nth-child(n+5) {
+          margin-top: 40px;
+        }
+      }
+    } // front
+
+    .back {
+
+      span {        
+        float: left;
+        margin-left: 0;
+        margin-right: 4.46px;
+
+        @media (min-width: 768px) {
+          margin-right: 12.92px;
+        }
+
+        @include breakpoint(md) {
+          margin-right: 16.23px;
+        }
+
+        @include breakpoint(lg) {
+          margin-right: 35.38px;            
+        }
+
+        &:nth-child(14n) {
+          margin-right: 0;
+        }
+
+      }
+    } // back
+
+  } // .seats-14
+
+} // class
 
 .controls {
   display: block;
