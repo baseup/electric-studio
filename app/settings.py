@@ -107,8 +107,8 @@ DATABASE = {
         'db': 'elstudio_db',
         'port': 27017,
         'host': 'localhost',
-        'username': 'jace',
-        'password': '123456'
+        'username': 'elstudio_user',
+        'password': 'elstudio_notsecure'
     }
 }
 
