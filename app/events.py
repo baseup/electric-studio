@@ -52,7 +52,7 @@ def schedule_watcher():
                             yield upack.save()
                         else:
                             upack1 = yield UserPackage.objects.get(ObjectId(sched.user_package[0]))
-                            upack2 = yield UserPackage.objects.get(ObjectId(sched.user_package[1])) 
+                            upack2 = yield UserPackage.objects.get(ObjectId(sched.user_package[1]))
                             upack1.remaining_credits += 1
                             upack2.remaining_credits += 1
                             yield upack1.save()
@@ -69,12 +69,19 @@ def bootstrap(app):
     p = PeriodicCallback(schedule_watcher, 5000)
     p.start()
     pass
-    
+
 
 # Called at the beginning of a request before get/post/etc.
 # Override this method to perform common initialization regardless of the request method.
 def prepare(self):
-    pass
+   self.set_header('Access-Control-Allow-Origin', '*')
+   self.set_header('Access-Control-Allow-Credentials', 'true')
+   self.set_header('Access-Control-Max-Age', 1728000)
+   self.set_header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS')
+   self.set_header('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type,Accept,ES-USER-ID')
+
+   if self.request.method == 'OPTIONS':
+       return self.finish()
 
 # Called after the end of a request.
 # Override this method to perform cleanup, logging, etc.
