@@ -23,6 +23,12 @@
         </div>
         <div class="class-search pad cf">
           <div class="float--left space--right">
+            <span class="label">Branch</span>
+            <select class="select" ng-change="resetTotals()" id="select-branch" ng-model="selectBranch">
+              <option value="">All</option>
+            </select><br/>
+          </div>
+          <div class="float--left space--right">
             <span class="label">Instructor</span>
             <select class="select" ng-change="resetTotals()" id="search-instructor" ng-model="searchIns">
               <option value="">All</option>
@@ -51,6 +57,7 @@
           <table class="data-table">
             <thead>
               <tr>
+                <th>Branch</th>
                 <th>Schedule</th>
                 <th>Type</th>
                 <th>Instructor</th>
@@ -62,7 +69,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr ng-init="setTotal(stat, $index)" ng-repeat="stat in stats | search:'instructor._id':searchIns | filter:withAvailableSeats">
+              <tr ng-init="setTotal(stat, $index)" ng-repeat="stat in stats | search:'instructor._id':searchIns | search:'branch._id':selectBranch | filter:withAvailableSeats">
+                <td>{{ stat.branch.name }}</td>
                 <td>{{ stat.date | formatDate }} {{ stat.start | formatTime }}</td>
                 <td>{{ stat.type }}</td>
                 <td>{{ stat.instructor.admin.first_name }} {{ stat.instructor.admin.last_name }}</td>

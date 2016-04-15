@@ -2680,7 +2680,7 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
     }
 });
 
-ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService) {
+ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService, BranchService) {
 
   $scope.resetTotals = function () {
     $scope.totalSeats = 0;
@@ -2829,6 +2829,14 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     $scope.selectedType = sType;
     angular.element('#list-users-modal').Modal();
   }
+
+  BranchService.query(function (branches) {
+    var bselectize = angular.element('#select-branch')[0].selectize;
+    bselectize.addOption({ value: '', text: 'All' });
+    angular.forEach(branches, function (b) {
+      if (b) bselectize.addOption({ value: b._id, text: b.name });
+    });
+  });
 
   InstructorService.query(function (instructors) {
     var select = angular.element('#search-instructor')[0].selectize;

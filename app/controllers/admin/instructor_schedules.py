@@ -2,6 +2,7 @@ from app.models.schedules import InstructorSchedule, BookedSchedule
 from datetime import datetime, timedelta
 from dateutil import parser
 from bson.objectid import ObjectId
+from motorengine import Q
 
 import tornado.escape
 
@@ -34,7 +35,11 @@ def find(self):
         #         'day': reg_day,
         #         'ridersCount': (yield BookedSchedule.objects.filter(status='booked', date=start_date_filter, schedule=sched._id).count())
         #     })
-        spec_scheds = yield InstructorSchedule.objects.filter(date=start_date_filter, branch=ObjectId(branch)).find_all()
+        branch_filter = Q(branch=ObjectId(branch))
+        if branch == '558272c288b5c73163343c45':
+            branch_filter = Q(branch=ObjectId(branch)) | Q(branch__exists=False)
+
+        spec_scheds = yield InstructorSchedule.objects.filter(date=start_date_filter).filter(branch_filter).find_all()
         for sched in spec_scheds:
             events.append({
                 'title': sched.type + ' with ' + sched.instructor.admin.first_name + 
