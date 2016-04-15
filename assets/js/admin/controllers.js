@@ -1516,9 +1516,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     // }
   });
 
+  var bIds = {};
   BranchService.query().$promise.then(function (branches) {
     var branchSelectize = angular.element('#select-branch')[0].selectize;
     angular.forEach(branches, function (branch) {
+      bIds[branch._id] = branch;
       branchSelectize.addOption({ value: branch._id, text: branch.name });
     });
 
@@ -1529,6 +1531,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
   });
 
   $scope.filterByBranch = function() {
+    $scope.selectedBranch = bIds[$scope.selectedBranchId];
     calendar.fullCalendar('refetchEvents');
   }
 
