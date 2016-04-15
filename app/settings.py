@@ -103,8 +103,8 @@ DATABASE = {
         'db': 'elstudio_db',
         'port': 27017,
         'host': 'localhost',
-        'username': 'elstudio_user',
-        'password': 'elstudio_notsecure'
+        'username': 'jace',
+        'password': '123456'
     }
 }
 
@@ -117,4 +117,4 @@ PAYPAL_ACCOUNT = 'electric@electricstudio.ph'
 PDT_TOKEN = 'Wm9hXC14j7em4ABlNedDxq2AiwTTmcHXMTSyYrUxejrwWCdnRcZzvUrudQS'
 
 #ENV
-MAINTENANCE = True
+MAINTENANCE = False

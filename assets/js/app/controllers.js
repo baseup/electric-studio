@@ -1,5 +1,11 @@
 'use strict';
 
+// transfer this on a better place once figured out where
+var branchTitles = {
+  'bgc' : 'BGC',
+  'salcedo' : 'SALCEDO'
+};
+
 var ctrls = angular.module('elstudio.controllers.site', [
   'elstudio.services'
 ]);
@@ -138,7 +144,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       angular.element('.signup-toggle').click();
     }
   }
-  
+
   var aboutUs = angular.element('#aboutus-section');
   var workouts = angular.element('#workouts-section');
   var firstRide = angular.element('#firstride-section');
@@ -1409,7 +1415,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
         }
       });
     }
-  }  
+  }
 
   $scope.chkSched = function (date, sched) {
 
@@ -1481,7 +1487,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     var branchId = $scope.branches[0]._id;
     $scope.branchTitle = $scope.branches[0].name;
     if ($routeParams.branch) {
-      branchId = $routeParams.branch; 
+      branchId = $routeParams.branch;
       for(var i in $scope.branches) {
         if ($scope.branches[i]._id == branchId) {
           $scope.branchTitle = $scope.branches[i].name;
@@ -1519,7 +1525,20 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   BranchService.query().$promise.then(function (branches) {
     $scope.branches = branches;
     $scope.getWeek(new Date());
+    $scope.checkBranch();
   });
+
+  $scope.checkBranch = function() {
+    var selectedBranch = $routeParams.branch;
+    var isActiveBranch = false;
+    angular.forEach($scope.branches, function(branch) {
+      if(selectedBranch == branch._id) isActiveBranch = true;
+    });
+
+    if(!selectedBranch || !isActiveBranch) {
+      $location.path('/schedule/' + $scope.branches[0]._id);
+    }
+  }
 
   $scope.nextWeek = function () {
     var now = new Date();
@@ -1538,7 +1557,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     if (((now - pWeek) / (24 * 60 * 60 * 1000)) < 7) {
       $scope.getWeek(pWeek);
     }
-  }  
+  }
 });
 
 ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService, $routeParams) {
@@ -1761,7 +1780,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
       });
     });
   }
-  
+
 });
 
 ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) {

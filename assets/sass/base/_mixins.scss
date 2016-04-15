@@ -135,3 +135,13 @@
     }
   }
 }
+
+
+/**
+ * Convert px to em
+ */
+
+ @function em($px) {
+  $base-font-size : 16;
+  @return #{$px/$base-font-size}em;
+ }

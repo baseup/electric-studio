@@ -56,7 +56,7 @@
           <li><a ng-class="{ active : activeMainNav('/instructors') }" href="#/instructors">Instructors</a></li>
           <li class="on-mobile"><a ng-class="{ active : activeMainNav('/workouts') }" href="#/workouts">Workouts</a></li>
           <li class="on-mobile"><a ng-class="{ active : activeMainNav('/rates-and-packages') }" href="#/rates-and-packages">Rates &plus; Packages</a></li>
-          <li><a ng-class="{ active : activeMainNav('/schedule') }" href="#/schedule">Schedules</a></li>
+          <li><a ng-class="{ active : activeMainNav('/schedule') }" href="#/schedule">Classes</a></li>
           <li class="on-mobile"><a ng-class="{ active : activeMainNav('/contact') }" href="#/contact">Contact</a></li>
           <li class="on-desktop"><a ng-class="{ active : activeMainNav('/whats-new') }" href="#/whats-new">What's New</a></li>
         </ul>
@@ -85,7 +85,7 @@
             </div>
             {% end %}
           </div>
-          
+
           {% if loginUser %}
           <span class="credits">{{ credits }}</span>
           {% end %}
@@ -125,7 +125,7 @@
         <input class="input-box" placeholder="Email" ng-model="login.email" required>
         <input type="password" class="input-box" placeholder="Password" ng-model="login.password" required>
         <input type="submit" value="Log In" class="button" ng-click="signIn()">
-        <div class="copy"><a ng-click="forgotPass()" >Forgot password ?</a> <a ng-click="showSignup()">/ Sign up</a></div>
+        <div class="copy"><a ng-click="forgotPass()" >Forgot password?</a> / <a ng-click="showSignup()">Sign up</a></div>
       </form>
       <span class="close-btn">&times;</span>
     </div>
@@ -136,16 +136,25 @@
       <p class="notify" ng-show="signupError" ng-click="signupError = null"><span class="inner-wrapper">{{! signupError }}</span></p>
       <h2 class="h medium light">Sign Up</h2>
       <form class="signup-form" method="post">
-        <input class="input-box" placeholder="First Name" ng-model="user.first_name">
-        <input class="input-box" placeholder="Last Name" ng-model="user.last_name">
-        <input class="input-box" placeholder="Email Address" ng-model="user.email">
-        <input class="input-box" placeholder="Mobile Number" ng-model="user.phone_number">
-        <input type="password" class="input-box" placeholder="Password (minimum 6 character)" ng-model="user.password">
-        <input type="password" required compare-to="user.password" class="input-box" placeholder="Re-type Password" ng-model="user.confirm_password">
-        <br><br>
-        <input type="checkbox" ng-model="terms"> I have read and agree to the <a href="#/terms">Terms &amp; Conditions</a>.
-        <br><br>
-        <input ng-disabled="signingUp" type="submit" value="Sign Up" class="button" ng-click="signUp()">
+        <div class="clearfix">
+          <input class="input-box" placeholder="First Name" ng-model="user.first_name">
+          <input class="input-box" placeholder="Last Name" ng-model="user.last_name">
+          <input class="input-box" placeholder="Email Address" ng-model="user.email">
+          <input ng-disabled="signingUp" type="submit" value="Sign Up" class="button" ng-click="signUp()">
+        </div>
+        <div class="clearfix">
+          <input class="input-box" placeholder="Mobile Number" ng-model="user.phone_number">
+          <input type="password" class="input-box" placeholder="Password" ng-model="user.password">
+          <input type="password" required compare-to="user.password" class="input-box" placeholder="Re-type Password" ng-model="user.confirm_password">
+          <span>
+            <input type="checkbox" id="checkTerms" ng-model="terms">
+            <label class="checkTerms-label" for="checkTerms"></label>
+            <span>
+              I have read and agree to the <a href="#/terms">terms &amp; conditions</a>.
+            </span>
+          </span>
+        </div>
+
       </form>
       <span class="close-btn">&times;</span>
     </div>
