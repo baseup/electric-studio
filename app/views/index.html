@@ -159,9 +159,15 @@
       <span class="close-btn">&times;</span>
     </div>
     <div class="wrapper" ng-show="registered">
-      <h2 class="h medium light">Check your Email!</h2><br/><br/><br/>
-      <button class="h small btn" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
-      <span class="close-btn">X</span>
+      <p class="notify">
+        <span class="inner-wrapper">
+          <span class="icon icon--info"></span>
+          YOU’RE ALL SIGNED UP! PLEASE CHECK YOUR E-MAIL TO VERIFY YOUR ACCOUNT AND COMPLETE REGISTRATION.
+        </span>
+        <button class="btn center btn--quinary" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
+        <span class="close-btn">X</span>  
+        <!-- <h2 class="h medium light">Check your Email!</h2><br/><br/><br/> -->        
+      </p>      
     </div>
   </div>
 

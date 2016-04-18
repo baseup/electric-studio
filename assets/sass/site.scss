@@ -3433,6 +3433,21 @@ body {
   }
 }
 
+.col-3 {
+  @include breakpoint(md) {
+    moz-column-count: 3;
+    -moz-column-gap: 2em;
+    -webkit-column-count: 3;
+    -webkit-column-gap: 2em;
+    column-count: 3;
+    column-gap: 2em;
+
+    .input {
+      display: inline-block;
+    }
+  }
+}
+
 /* Instagram */
 .image-box {
   @include breakpoint(md) {

@@ -106,6 +106,8 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
   signupToggle.off('click').on('click', function () {
     signup.toggleClass('show');
     login.add(book).removeClass('show');
+    $scope.registered = true; // test
+    console.log('registered',$scope.registered);
   });
 
   menuToggle.off('click').click(function () {

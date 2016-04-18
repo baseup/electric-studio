@@ -1,0 +1,44 @@
+// Styles specific for account page
+
+.account-page {
+
+	.h {
+		font-family: 'Tungsten Medium';
+	}
+
+	label {
+		padding: 10px 0px;
+		margin-top: 17px;
+		border-bottom: 2px solid transparent;
+	}
+	
+	input {
+		padding-left: 0;
+		padding-right: 0;
+		border-bottom: 2px solid $color-text-gray;
+	}
+
+	.sidebar.sidebar {
+
+		@include breakpoint(sm) {
+			width: 260px !important;
+		}
+
+		@include breakpoint(md) {
+			width: 328px !important;
+		}
+
+		h3 {
+			font-size: 30px;
+			margin-bottom: 10px;
+			color: $color-text-lightgray;
+		}
+
+		.link.white {
+			@include link-colors(white);
+			display: block;
+			line-height: 2;
+		}
+	}
+
+}

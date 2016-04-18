@@ -145,3 +145,25 @@
   $base-font-size : 16;
   @return #{$px/$base-font-size}em;
  }
+
+
+ // Link colors -----------------------------------------------------------------
+//
+// First value is for the default/visited color,
+// second value is for hover/active/focus states.
+// -----------------------------------------------------------------------------
+
+@mixin link-colors($default, $activated: false) {
+  color: $default;
+  &:link,
+  &:visited,
+  &:focus { color: $default; }
+
+  @if $activated {
+    &:hover,
+    &:active { color: $activated; }
+  } @else {
+    &:hover,
+    &:active { color: $default; }
+  }
+}
