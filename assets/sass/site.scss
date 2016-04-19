@@ -753,15 +753,15 @@ body {
   font-family: 'Tungsten', sans-serif;
 
   &.large {
-    font-size: 2.2em;
-  }
-
-  &.medium {
     font-size: 2em;
   }
 
+  &.medium {
+    font-size: 1.6em;
+  }
+
   &.small {
-    font-size: 1.4em;
+    font-size: 1em;
   }
 
   &.light {
@@ -1918,6 +1918,26 @@ body {
 /* Contacts */
 .contact {
 
+  @include breakpoint(md) {
+    &:before {
+      content: '';
+      position: absolute;
+      background: $brand-color-secondary;
+      margin-top: -40px;
+      padding-top: 90px;
+      position: absolute;
+      left: 50%;
+      right: 0;
+      bottom: 0;
+      height: auto;
+      top: 0;
+    }
+  }
+
+  .wrapper {
+    overflow: visible!important;
+  }
+
   .info{
     h2{
       margin-top: 30px;
@@ -1944,30 +1964,29 @@ body {
       line-height: 40px;
       text-align: center;
       border-radius: 50%;
-      background: #fff;
-      color: $brand-color-primary;
+      background: $brand-color-primary;
+      color: #fff;
       font-size: 21px;
       padding-left: 3px;
     }
   }
 
   .map {
-    min-height: 400px;
-    background: darken($brand-color-secondary, 20%);
-    padding: 0;
-    height: 300px;
+    position: relative;
 
     @include breakpoint(md) {
-      float: left;
-      width: 70%;
-      margin-top: 40px;
-      height: 520px;
-      height: 480px;
+      color: #fff;
+    }
+
+    p {
+      max-width: 80%;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     iframe {
-      max-width: 100%;
-      max-height: 100%;
+      max-width: 80%;
+      min-height: 300px;
     }
   }
 }
@@ -3412,14 +3431,6 @@ body {
       text-align: left;
     }
 
-  }
-
-  /* Contacts */
-  .contact {
-    .info {
-      float: left;
-      width: 30%;
-    }
   }
 
   .footer-links {
