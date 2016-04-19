@@ -44,6 +44,7 @@
 @import "pages/about";
 @import "pages/account";
 @import "pages/instructors";
+@import "pages/faq";
 
 
 
@@ -84,6 +85,8 @@ body {
   padding-top: 30px + ($base-spacing-unit * 2);
   overflow-x: hidden;
   -webkit-overflow-x: hidden;
+  font-size: 22px;
+  font-family: 'Brandon_Grotesque', sans-serif;
 
   @include breakpoint(md) {
     padding-top: 0;
@@ -745,21 +748,20 @@ body {
 
 .h {
   text-transform: uppercase;
-  font-weight: bold;
+  font-weight: normal;
   margin: 20px 0;
-  font-family: 'Brandon_Grotesque';
+  font-family: 'Tungsten', sans-serif;
 
   &.large {
-    font-size: 2em;
-    font-family: 'Brandon_Grotesque';
+    font-size: 2.2em;
   }
 
   &.medium {
-    font-size: 1.4em;
+    font-size: 2em;
   }
 
   &.small {
-    font-size: 1em;
+    font-size: 1.4em;
   }
 
   &.light {
@@ -806,6 +808,23 @@ body {
     @include breakpoint(sm) {
       font-size: 70px;
     }
+  }
+}
+
+.watermark {
+  font-family: 'Tungsten', sans-serif;
+  font-size: 100px;
+  color: #E6E7E8;
+  z-index: -1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  letter-spacing: 2px;
+  font-weight: normal;
+
+  @include breakpoint(md) {
+    font-size: 250px;
+    letter-spacing: 5px;
   }
 }
 
@@ -1975,25 +1994,7 @@ body {
   }
 }
 
-/* faq */
-.faq.content {
 
-  ul{
-    padding-left: 10px;
-    margin: 20px 0 0 10px;
-
-    li{
-      margin-bottom: 20px;
-      font-size: 14px;
-
-      strong{
-        display: inline-block;
-        padding-bottom: 5px;
-      }
-    }
-  }
-
-}
 
 /* Sidebar Layout */
 .content.sidebar-layout {
@@ -2021,6 +2022,14 @@ body {
     color: $color-text-light;
   }
 
+  a {
+    text-transform: none;
+    display: block;
+    color: inherit;
+    line-height: normal;
+    font-weight: normal;
+  }
+
   @include breakpoint(md) {
     padding: 0;
     overflow: hidden;
@@ -2036,7 +2045,7 @@ body {
       position: absolute;
       top: 0;
       right: 0;
-      width: 280px;
+      width: 328px;
       min-height: 100%;
       padding: 40px 20px;
 
