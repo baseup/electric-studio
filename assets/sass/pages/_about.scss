@@ -1,9 +1,11 @@
 /* About */
-.content {
+.page.about {
+  background: #fff;
+
   .h {
-    font-family: 'Tungsten', sans-serif;
     font-weight: 400;
     font-size: 30px;
+    font-family: 'Tungsten', sans-serif;
 
     @include breakpoint(md) {
       font-size: 46px;
@@ -17,10 +19,6 @@
       font-size: 20px;
     }
   }
-}
-
-.page.about {
-  background: #fff;
 }
 
 .content.about-section-1 {
