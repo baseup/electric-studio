@@ -39,7 +39,7 @@
   {% end %}
   <script type="text/javascript">(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-64306317-1', 'auto');ga('send', 'pageview');</script>
 </head>
-<body ng-controller="SiteCtrl">
+<body ng-controller="SiteCtrl" ng-class="{ 'show' : isNavOpen, 'book-nav-open':isBookNavOpen }">
   <header class="main-header">
     <div class="wrapper">
       <h1 class="brand">
@@ -49,7 +49,7 @@
         <img src="{{ static_url('images/electricstudio-logo.png') }}" class="logo">
       </h1>
 
-      <div class="menu-wrapper">
+      <div class="menu-wrapper" ng-class="{ show : isNavOpen, opaque:isNavOpen, transparent:!isNavOpen }">
 
         <ul class="main-menu">
           <li><a ng-class="{ active : activeMainNav('/about') }" href="#/about">About Us</a></li>
@@ -60,6 +60,28 @@
           <li class="on-mobile"><a ng-class="{ active : activeMainNav('/contact') }" href="#/contact">Contact</a></li>
           <li class="on-desktop"><a ng-class="{ active : activeMainNav('/whats-new') }" href="#/whats-new">What's New</a></li>
         </ul>
+
+        <div class="book-menu">
+          <!-- lets ride menu -->
+          <div class="lets-ride-menu bgLightGray" ng-class="{'lets-ride-submenu-open':isLetsRideOpen}">
+            <div class="lets-ride-toggle" ng-click="isLetsRideOpen=!isLetsRideOpen">
+              LET'S RIDE
+              <i class="fa fa-chevron-down"></i>
+            </div>
+            <ul class="lets-ride-submenu">
+              <li><a href="#">SCHEDULES</a></li>
+              <li><a href="#">GIFT CARD</a></li>
+              <li><a href="#">WHAT TO EXPECT</a></li>
+              <li><a href="#">FAQs</a></li>
+            </ul>
+          </div>
+          <!-- branches -->
+          <ul class="book-menu-branches" ng-click="isNavOpen=false; isBookNavOpen=false">
+            {% for branch in branches %}
+              <li><a ng-click="" href="#/schedule/{{ branch._id }}">{{ branch.name }}</a></li>
+            {% end %}
+          </ul>
+        </div>
 
         <div class="user-menu">
           <div class="account-menu">
@@ -91,7 +113,7 @@
           {% end %}
 
           <div class="book-buy">
-            <span class="book-ride-btn" href="#/schedule">
+            <span class="book-ride-btn" ng-click="isBookNavOpen = !isBookNavOpen" href="#/schedule">
               <span>Buy/Book Rides</span>
               <div class="dropdown-holder">
                 <ul class="dropdown">
@@ -105,9 +127,14 @@
           </div>
         </div>
 
+
+
       </div>
 
-      <a class="menu-toggle"><i class="fa fa-bars"></i></a>
+      <a class="menu-toggle" ng-click=" isNavOpen = !isNavOpen; isLetsRideOpen = false ">
+        <i class="fa fa-bars" ng-class="{ opaque : !isNavOpen, transparent:isNavOpen }"></i>
+        <span class="close-btn" ng-class="{ opaque : isNavOpen, transparent:!isNavOpen }">&times;</span>
+      </a>
 
     </div>
   </header>

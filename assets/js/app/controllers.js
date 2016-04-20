@@ -17,6 +17,9 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 
 ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService, $routeParams) {
 
+  $scope.isNavOpen = false;
+  $scope.isBookNavOpen = false;
+
   $scope.loginUser = AuthService.getCurrentUser();
   $scope.reloadUser = function (user) {
     UserService.get(function (user) {
@@ -74,7 +77,9 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       loginToggle = angular.element('.login-toggle'),
       signupToggle = angular.element('.signup-toggle'),
       bookToggle = angular.element('.book-toggle'),
-      menuToggle = angular.element('.menu-toggle');
+      menuToggle = angular.element('.menu-toggle'),
+      menuWrapper = angular.element('.menu-wrapper'),
+      body = angular.element('body');
 
 
   angular.element('.datepicker').pickadate({
@@ -108,10 +113,6 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
     login.add(book).removeClass('show');
     $scope.registered = true; // test
     console.log('registered',$scope.registered);
-  });
-
-  menuToggle.off('click').click(function () {
-    angular.element('.menu-wrapper').toggleClass('show');
   });
 
   $(window).resize(function () {
