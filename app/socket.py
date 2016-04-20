@@ -5,14 +5,24 @@ from app.models.admins import Setting
 from app.helper import GMT8
 from bson.objectid import ObjectId
 from motorengine import Q
-import tornado
+from tornado import gen
+from app.settings import REDIS_HOST, REDIS_PORT
+from hurricane.helpers import to_json
 
-def find(self):
+import redis
+import tornado
+import tornado.websocket
+
+redis_db = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+
+clients = []
+
+@gen.coroutine
+def get_schedule(date, ins, branch):
+    redis_db.set('es_schedules_loading', True)
+
     gmt8 = GMT8()
 
-    date = self.get_query_argument('date')
-    ins = self.get_query_argument('ins')
-    branch = self.get_query_argument('branch')
     if not date:
         date = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
     else:
@@ -87,8 +97,45 @@ def find(self):
     scheds['releases'] = sched_releases
     scheds['now'] = str(now)
 
-    self.render_json(scheds)
+    scheds_data = to_json(scheds)
+    redis_db.set('es_schedules', scheds_data)
+    for cli in clients:
+        cli.write_message(scheds_data)
 
-def find_one(self, id):
-    sched = yield InstructorSchedule.objects.get(id)
-    self.render_json(sched)
+    redis_db.delete('es_schedules_loading')
+
+class Handler(tornado.websocket.WebSocketHandler):
+
+    def check_origin(self, origin):
+        return True
+
+    def open(self):
+        print('WebSocket opened')
+        clients.append(self)
+
+        msg = '{}'
+        if redis_db.exists('es_schedules') and redis_db.get('es_schedules'):
+            msg = redis_db.get('es_schedules').decode('utf-8')
+        self.write_message(msg)
+
+    def on_message(self, message):
+        if not redis_db.exists('es_schedules_loading'):
+            params = tornado.escape.json_decode(message)
+            date, ins, branch = None, None, None
+            if 'date' in params:
+                date = params['date']
+            if 'ins' in params:
+                ins = params['ins']
+            if 'branch' in params:
+                branch = params['branch']
+
+            get_schedule(date, ins, branch)
+
+        msg = '{}'
+        if redis_db.exists('es_schedules') and redis_db.get('es_schedules'):
+            msg = redis_db.get('es_schedules').decode('utf-8')
+        self.write_message(msg)
+
+    def on_close(self):
+        print('WebSocket closed')
+        clients.remove(self)

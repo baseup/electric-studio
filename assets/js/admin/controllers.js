@@ -250,7 +250,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 });
 
-ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserService, PackageService, TransactionService, ClassService, SecurityService, EmailVerifyService) {
+ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location, UserService, PackageService, TransactionService, ClassService, SecurityService, EmailVerifyService) {
 
   var qstring = $location.search();
   if (qstring.s) {
@@ -924,7 +924,35 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     if (!emailFilter) {
       emailFilter = '';
     }
-    window.location = '/admin/export/download-user-accounts?email=' + emailFilter + '&past_month=' + past_month
+
+
+    $.Alert('Please wait ...', true);
+    var url = '/admin/export/download-user-accounts?email=' + emailFilter + '&past_month=' + past_month + '&start=now';
+    $.get(url, function (response) {
+      if(response.success && response.data){
+        $.Alert('exporting users ' + response.data, true);
+      } else if (response.file) {
+        $interval.cancel(timeInval);
+        window.location = response.file;  
+      } 
+    });
+
+    // get export status
+    var timeInval = $interval(function () {
+      var url = '/admin/export/download-user-accounts';
+      $.get(url, function (response) {
+        if(response.success && response.data){
+          $.Alert('exporting ' + response.data, true);
+        } else if (response.file) {
+          $interval.cancel(timeInval);
+          $.Alert('Successfully exported accounts');
+          window.location = response.file;  
+        } 
+      });
+    }, 3000)
+
+    
+    // window.location = '/admin/export/download-user-accounts?email=' + emailFilter + '&past_month=' + past_month
   }
 
 });
@@ -1098,6 +1126,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var minutes = dTime.getMinutes();
     var chkDate = new Date($scope.newBook.date);
     chkDate.setHours(hours, minutes, 0, 0);
+    chkDate.setDate(chkDate.getDate() + 1);
     if (chkDate < now) {
       $.Notify({ content: 'Booking is not allowed anymore' });
       return;

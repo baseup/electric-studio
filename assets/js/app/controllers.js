@@ -1243,6 +1243,17 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 
 ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
 
+  WS.onmessage = function(evt) {
+    try {
+      var schedata = JSON.parse(evt.data);
+      $scope.$apply(function () {
+        $scope.schedules = schedata;
+        $scope.loadingSchedules = false;
+      });
+    } catch (e) {
+      console.log(evt.data);
+    }
+  };
 
   $timeout(function() {
     var scheduleRow = angular.element('.schedule .row').not('.unavailable');
@@ -1339,6 +1350,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
       if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
         $.Alert('Not enough credits.');
+        return;
       }
 
       var today = new Date();
@@ -1496,12 +1508,16 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       }
     }
 
-    $scope.schedules = ScheduleService.query({ date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate(), branch: branchId });
+    // $scope.schedules = ScheduleService.query({ date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate(), branch: branchId });
+    // $scope.loadingSchedules = true;
+    // $scope.schedules.$promise.then(function (data) {
+    //   $scope.schedules = data;
+    //   $scope.loadingSchedules = false;
+    // });
     $scope.loadingSchedules = true;
-    $scope.schedules.$promise.then(function (data) {
-      $scope.schedules = data;
-      $scope.loadingSchedules = false;
-    });
+    WS.send(JSON.stringify({
+      date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate(), branch: branchId
+    }));
 
   }
 
