@@ -2,9 +2,12 @@
   color: $brand-color-secondary;
 
   .package {
-    display: inline-block;
-    width: 25%;
-    vertical-align: top;
+
+    @include breakpoint(md) {
+      display: inline-block;
+      width: 25%;
+      vertical-align: top;
+    }
 
     .rides, .description {
       font-family: 'Tungsten', sans-serif;
