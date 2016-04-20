@@ -1,0 +1,37 @@
+/*------------------------------------*\
+    #ICONS
+\*------------------------------------*/
+/**
+ * Base icon styles
+ */
+
+.icon {
+	border-radius: 50%;	
+	width: 30px;
+	height: 30px;
+	position: relative;
+
+	&:after {
+		position: absolute;
+		color: white;
+		top: 50%;
+		left: 50%;
+		transform: translate(50%,-50%);
+	}
+}
+
+
+/*------------------------------------*\
+    $FUNCTIONS
+\*------------------------------------*/
+/**
+ * Icon function modifiers
+ */
+
+.icon--info {
+	background-color: $brand-color-primary;
+
+	&:after {
+		content: '!';
+	}
+}

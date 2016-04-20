@@ -139,11 +139,25 @@
 /**
  * Center content
  */
- .center {
-   margin-left: auto;
-   margin-right: auto;
-   float: none!important;
- }
+.center {
+ margin-left: auto;
+ margin-right: auto;
+ float: none!important;
+}
+
+
+.relative {
+ position: relative;
+}
+
+.visible {
+  visibility: visible;
+  overflow: visible!important;
+}
+
+.font-large {
+ font-size: 20px;
+}
 
 
 /**

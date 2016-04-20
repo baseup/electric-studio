@@ -38,12 +38,19 @@
 @import "framework";
 
 @import "components/base";
-
 @import "components/overrides";
-
 @import "components/_gift-card";
 
-@import "components/_site-about";
+@import "pages/about";
+@import "pages/account";
+@import "pages/instructors";
+@import "pages/faq";
+@import "pages/contact";
+@import "pages/rates";
+@import "pages/workouts";
+@import "pages/giftcard";
+@import "pages/first-ride";
+
 
 
 @mixin border-radius($radius: 50%) {
@@ -83,6 +90,8 @@ body {
   padding-top: 30px + ($base-spacing-unit * 2);
   overflow-x: hidden;
   -webkit-overflow-x: hidden;
+  font-size: 16px;
+  font-family: 'Brandon_Grotesque', sans-serif;
 
   @include breakpoint(md) {
     padding-top: 0;
@@ -200,17 +209,17 @@ body {
   right: 0;
   background: #fff;
   padding: $base-spacing-unit;
-  display: none;
-
-  &.show {
-    display: block;
-  }
+  transition: all .3s ease;
 
   @include breakpoint(md) {
-    display: block!important;
     position: static;
     background: none;
     padding: 0;
+
+    display: block!important;
+    opacity: 1!important;
+    pointer-events: auto !important;
+    visibility: visible!important;
   }
 }
 
@@ -219,9 +228,11 @@ body {
   cursor: default;
   font-size: 20px;
   display: block;
+  visibility: visible;
   padding: $base-spacing-unit / 2 0;
   text-align: left;
   margin-top: 30px;
+  transition: all .3s ease;
 
   @include breakpoint(md) {
     padding: 0;
@@ -232,6 +243,14 @@ body {
     left: 14px;
     font-size: 14px;
     margin-top: 0;
+  }
+
+  .book-nav-open & {
+    @media ( max-width: $bp-sm ) {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
   }
 
   & > li {
@@ -282,7 +301,120 @@ body {
 
 }
 
+
+.book-menu {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  background-color: #fff;
+  transition: all .3s ease;
+
+  .book-nav-open &  {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  @include breakpoint(md) {
+    display: none !important;
+  }
+}
+
+
+.lets-ride-menu {
+    color: #fff;
+    position: relative;
+}
+
+.lets-ride-toggle {
+  text-align: center;
+  position: relative;
+  font-family: 'Tungsten';
+  font-size: 20px;
+  padding: 10px 0;
+  background-color: lighten($color-text-lightgray,20);
+
+  .fa {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    padding: 10px 0;
+  }
+}
+
+.lets-ride-submenu {
+  position: absolute;
+  top: 95%;
+  left: 0;
+  width: 100%;
+  background-color: lighten($color-text-lightgray,20);
+  color: #fff;
+  padding: 10px 0;
+  transition: all .3s ease;
+
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+
+  li a {
+    display: block;
+    @include link-colors(#fff);
+    text-align: center;
+    padding: 12px 0;
+  }
+
+  .lets-ride-submenu-open & {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+
+.book-menu-branches {
+  display: block;
+  margin: 0px;
+  padding: 10px;
+
+  ul {
+    display: block;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    display: block;
+    list-style: none;
+  }
+
+  a {
+    display: block;
+    @include link-colors(lighten($color-text-lightgray,35));
+    font-family: 'Tungsten';
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 100px;
+    padding: 10px
+  }
+
+}
+
 .user-menu {
+  transition: all .3s ease;
+
+  .book-nav-open & {
+    @media ( max-width: $bp-sm ) {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
 
   @include breakpoint(md) {
     padding: $base-spacing-unit;
@@ -736,6 +868,20 @@ body {
   @include breakpoint(md) {
     display: none;
   }
+
+  .close-btn, .fa-bars {
+    transition: all .3s ease;
+    color: inherit;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-weight: lighter;
+    font-size: 60px;
+    line-height: .6;
+  }
 }
 
 .color-secondary {
@@ -744,17 +890,16 @@ body {
 
 .h {
   text-transform: uppercase;
-  font-weight: bold;
+  font-weight: normal;
   margin: 20px 0;
-  font-family: 'Brandon_Grotesque';
+  font-family: 'Tungsten', sans-serif;
 
   &.large {
     font-size: 2em;
-    font-family: 'Brandon_Grotesque';
   }
 
   &.medium {
-    font-size: 1.4em;
+    font-size: 1.6em;
   }
 
   &.small {
@@ -805,6 +950,23 @@ body {
     @include breakpoint(sm) {
       font-size: 70px;
     }
+  }
+}
+
+.watermark {
+  font-family: 'Tungsten', sans-serif;
+  font-size: 100px;
+  color: #E6E7E8;
+  z-index: -1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  letter-spacing: 2px;
+  font-weight: normal;
+
+  @include breakpoint(md) {
+    font-size: 250px;
+    letter-spacing: 5px;
   }
 }
 
@@ -1457,7 +1619,11 @@ body {
   font-family: 'Brandon_Grotesque';
 
   .copyright {
-    text-align: left;
+    text-align: center;
+
+    @include breakpoint(md) {
+      text-align: left;
+    }
   }
 
   .credit-link {
@@ -1765,228 +1931,6 @@ body {
   }
 }
 
-/* Instructors */
-.instructors-info {
-  text-align: center;
-
-  .image {
-    width: 100%;
-    height: auto;
-    overflow: hidden;
-    margin: 0 auto;
-    @include vendor(transition, all 0.4s ease);
-    box-shadow: none;
-    position: relative;
-    cursor: pointer;
-
-    &:hover {
-
-      &:before {
-        background: rgba(#000, 0.3);
-      }
-
-      &:after, .name {
-        opacity: 1;
-      }
-    }
-
-    &:before {
-      content: '';
-      display: block;
-      padding-bottom: 100%;
-      position: relative;
-      z-index: 2;
-      transition: background 0.4s ease;
-    }
-
-    &:after {
-      content: '';
-      background-image: url("/assets/images/stripe-gray.png");
-      background-size: 6px;
-      position: absolute;
-      top: -25%;
-      left: -25%;
-      width: 150%;
-      height: 150%;
-      transform: rotate(135deg);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    &.focus {
-      box-shadow: 0 0 0 6px $brand-color-primary;
-    }
-
-    img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      min-height: 100%;
-      min-width: 100%;
-      filter: gray; /* IE6-9 */
-      filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
-      -webkit-filter: grayscale(1);
-    }
-
-    .name {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      margin: 0 auto;
-      color: #fff;
-      z-index: 2;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      font-family: 'Tungsten', sans-serif;
-      font-size: 48px;
-      font-weight: 400;
-
-      &:before {
-        content: '';
-        display: inline-block;
-        height: 100%;
-        vertical-align: middle;
-      }
-
-      span {
-        display: inline-block;
-        vertical-align: middle;
-      }
-    }
-  }
-
-  p {
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 0.9em;
-    line-height: 1.5em;
-  }
-}
-
-
-.instructor-modal {
-
-  .modal__box {
-    max-width: 640px;
-    width: 90%;
-  }
-
-  .modal-close {
-    background: $brand-color-secondary;
-    height: 35px;
-    width: 35px;
-    text-align: center;
-    color: #fff;
-    font-weight: bold;
-  }
-
-  .image {
-    width: 100%;
-    height: 300px;
-    overflow: hidden;
-
-    @include breakpoint(sm) {
-      width: 200px;
-      height: 200px;
-      float: left;
-    }
-  }
-
-  .details {
-    @include breakpoint(sm) {
-      float: left;
-      padding-left: 20px;
-      width: 380px;
-    }
-
-    .name {
-      font-family: 'Tungsten', sans-serif;
-      font-size: 52px;
-      font-weight: 400;
-    }
-  }
-
-  .schedule {
-    position: relative;
-    margin: 0 30px;
-
-    &.no-slide {
-      margin: 0;
-
-      .arrow {
-        display: none;
-      }
-    }
-
-    &.full-right {
-      margin-right: 0;
-
-      .arrow.right {
-        display: none;
-      }
-    }
-
-    &.full-left {
-      margin-left: 0;
-
-      .arrow.left {
-        display: none;
-      }
-    }
-
-    .arrow {
-      position: absolute;
-      height: 30px;
-      width: 30px;
-      font-size: 24px;
-      line-height: 30px;
-      text-align: center;
-      top: 0;
-      bottom: 0;
-      margin: auto;
-      cursor: pointer;
-
-      &:hover {
-        color: $brand-color-primary;
-      }
-
-      &.left {
-        left: -30px;
-      }
-
-      &.right {
-        right: -30px;
-      }
-
-      &.hide {
-        display: none;
-      }
-    }
-
-    .schedule-slider-wrapper {
-      width: 100%;
-      overflow: hidden;
-    }
-
-    .schedule-slider {
-      transition: margin 0.4s ease;
-      overflow: hidden;
-    }
-  }
-
-  .row {
-    float: left;
-    width: 50%;
-    border: 1px solid #fff;
-
-    @include breakpoint(sm) {
-      width: 25%;
-    }
-  }
-}
 
 
 .group-pic {
@@ -2113,62 +2057,6 @@ body {
 }
 
 
-/* Contacts */
-.contact {
-
-  .info{
-    h2{
-      margin-top: 30px;
-      margin-bottom: 5px;
-
-      &:first-child{
-        margin-top: 15px;
-      }
-    }
-  }
-  .social {
-    list-style: none;
-    padding: 0;
-
-    li {
-      display: inline-block;
-      padding-right: 15px;
-    }
-
-    a {
-      display: block;
-      height: 40px;
-      width: 40px;
-      line-height: 40px;
-      text-align: center;
-      border-radius: 50%;
-      background: #fff;
-      color: $brand-color-primary;
-      font-size: 21px;
-      padding-left: 3px;
-    }
-  }
-
-  .map {
-    min-height: 400px;
-    background: darken($brand-color-secondary, 20%);
-    padding: 0;
-    height: 300px;
-
-    @include breakpoint(md) {
-      float: left;
-      width: 70%;
-      margin-top: 40px;
-      height: 520px;
-      height: 480px;
-    }
-
-    iframe {
-      max-width: 100%;
-      max-height: 100%;
-    }
-  }
-}
 
 /* First Ride */
 .num {
@@ -2192,25 +2080,7 @@ body {
   }
 }
 
-/* faq */
-.faq.content {
 
-  ul{
-    padding-left: 10px;
-    margin: 20px 0 0 10px;
-
-    li{
-      margin-bottom: 20px;
-      font-size: 14px;
-
-      strong{
-        display: inline-block;
-        padding-bottom: 5px;
-      }
-    }
-  }
-
-}
 
 /* Sidebar Layout */
 .content.sidebar-layout {
@@ -2223,20 +2093,40 @@ body {
     background: $brand-color-secondary;
     color: #fff;
     padding: 20px;
+    font-size: 20px;
 
     &.light {
       background: #fff;
       color: $color-text;
     }
+
+    .h {
+      font-family: 'Tungsten', sans-serif;
+    }
+
+    a {
+      text-transform: none;
+      display: block;
+      color: inherit;
+      line-height: normal;
+      font-weight: normal;
+    }
+
   }
 
   .main {
     padding: 20px;
   }
 
+
   .h {
     color: $color-text-light;
   }
+
+  .sidebar-links {
+    margin-bottom: 50px;
+  }
+
 
   @include breakpoint(md) {
     padding: 0;
@@ -2253,7 +2143,7 @@ body {
       position: absolute;
       top: 0;
       right: 0;
-      width: 280px;
+      width: 328px;
       min-height: 100%;
       padding: 40px 20px;
 
@@ -3433,6 +3323,21 @@ body {
   }
 }
 
+.col-3 {
+  @include breakpoint(md) {
+    moz-column-count: 3;
+    -moz-column-gap: 2em;
+    -webkit-column-count: 3;
+    -webkit-column-gap: 2em;
+    column-count: 3;
+    column-gap: 2em;
+
+    .input {
+      display: inline-block;
+    }
+  }
+}
+
 /* Instagram */
 .image-box {
   @include breakpoint(md) {
@@ -3605,14 +3510,6 @@ body {
       text-align: left;
     }
 
-  }
-
-  /* Contacts */
-  .contact {
-    .info {
-      float: left;
-      width: 30%;
-    }
   }
 
   .footer-links {

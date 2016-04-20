@@ -1,0 +1,156 @@
+.workouts.page {
+  font-size: 18px;
+  color: $brand-color-secondary;
+
+  .section-1 {
+
+    @include breakpoint(md) {
+      padding: 0;
+      overflow: visible;
+    }
+
+    .wrapper {
+      background: $brand-color-quinary;
+
+      @include breakpoint(md) {
+        position: absolute;
+        margin: auto;
+        left: 0;
+        right: 0;
+        bottom: -80px;
+        overflow: visible;
+        z-index: 2;
+        padding: 0;
+        background: none;
+      }
+    }
+
+    .intro {
+      background: $brand-color-quinary;
+      color: #fff;
+      text-align: center;
+
+      @include breakpoint(md) {
+        text-align: left;
+        width: 60%;
+        padding: 20px;
+      }
+    }
+
+    .first-ride-link {
+      display: none;
+
+      @include breakpoint(md) {
+        display: block;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        border: 2px solid $brand-color-secondary;
+        font-size: 14px;
+        text-transform: uppercase;
+        color: $brand-color-secondary;
+        padding: 12px;
+        font-weight: 600;
+        text-align: center;
+        background: #fff;
+      }
+
+      @include breakpoint(lg) {
+        right: 80px;
+      }
+    }
+
+    .image-banner {
+      background-image: url(/assets/images/image2587.png);
+      height: 280px;
+      background-position: center;
+      background-size: cover;
+      -webkit-filter: grayscale(100%);
+      filter: gray;
+
+      @include breakpoint(md) {
+        height: 320px;
+      }
+    }
+  }
+
+
+  .section-2 {
+    text-align: center;
+
+    @include breakpoint(md) {
+      padding-top: 100px;
+    }
+
+    .workout {
+      text-align: center;
+      padding: 20px 0;
+
+      @include breakpoint(md) {
+        display: inline-block;
+        width: 33%;
+        vertical-align: top;
+        padding: 20px;
+      }
+
+      .display {
+        margin-bottom: 15px;
+
+        .circle {
+          display: inline-block;
+          height: 100px;
+          width: 100px;
+          background-size: 6px;
+          border-radius: 50%;
+
+          @include breakpoint(md) {
+            height: 120px;
+            width: 120px;
+          }
+
+          &.type-1 {
+            background-image: url('/assets/images/stripe-orange.png');
+          }
+
+          &.type-2 {
+            background-image: url('/assets/images/stripe-gray.png');
+          }
+
+          &.type-3 {
+            background-image: url('/assets/images/stripe-purple.png');
+          }
+
+          &.diagonal, &.diagonal-1 {
+            transform: rotate(-45deg);
+          }
+
+          &.diagonal-2 {
+            transform: rotate(45deg);
+          }
+
+          &.vertical {
+            transform: rotate(90deg);
+          }
+        }
+
+        .logo {
+          position: relative;
+          z-index: 1;
+          background-image: url(/assets/images/electricstudio-logo-2.png);
+          background-position: center;
+          background-size: contain;
+        }
+
+        .pull {
+          margin-left: -50px;
+
+          @include breakpoint(md) {
+            margin-left: -60px;
+          }
+        }
+      }
+
+    }
+  }
+
+}

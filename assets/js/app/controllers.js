@@ -17,6 +17,9 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 
 ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService, $routeParams) {
 
+  $scope.isNavOpen = false;
+  $scope.isBookNavOpen = false;
+
   $scope.loginUser = AuthService.getCurrentUser();
   $scope.reloadUser = function (user) {
     UserService.get(function (user) {
@@ -74,7 +77,9 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       loginToggle = angular.element('.login-toggle'),
       signupToggle = angular.element('.signup-toggle'),
       bookToggle = angular.element('.book-toggle'),
-      menuToggle = angular.element('.menu-toggle');
+      menuToggle = angular.element('.menu-toggle'),
+      menuWrapper = angular.element('.menu-wrapper'),
+      body = angular.element('body');
 
 
   angular.element('.datepicker').pickadate({
@@ -106,10 +111,8 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
   signupToggle.off('click').on('click', function () {
     signup.toggleClass('show');
     login.add(book).removeClass('show');
-  });
-
-  menuToggle.off('click').click(function () {
-    angular.element('.menu-wrapper').toggleClass('show');
+    $scope.registered = true; // test
+    console.log('registered',$scope.registered);
   });
 
   $(window).resize(function () {
@@ -678,7 +681,8 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   $scope.packages.$promise.then(function (data) {
     $scope.packages = data;
     $scope.loadingPackages = false;
-    gcPackageSelectize(data);
+
+    $scope.selectGCPackage(0);
   });
 
   var port = '';
@@ -726,10 +730,9 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
       data.pin = $scope.gcPin;
       data.checkOnly = true;
 
-      GCRedeemService.redeem(data).$promise.then(function (data){
-        $.Alert('<div style="text-align: left">Package: ' + data.package_id.name + '<br>' +
-                'Credits: ' + data.credits + '<br>' +
-                'Validity: ' + data.validity + ' days</div>');
+      GCRedeemService.redeem(data).$promise.then(function (data) {
+        $scope.checkGCCredits = data.credits;
+        $scope.checkGCValidity = data.validity;
       }, function (error) {
         $.Alert(error.data);
       });
@@ -775,39 +778,27 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   }
 
 
-  function gcPackageSelectize(data) {
-    var $packageSelect = $('#select-gc-package');
-    if(!$packageSelect[0]) return;
+  $scope.prevGCPackage = function() {
+    var index = $scope.selectedGCPackageIndex == 0 ? $scope.packages.length - 1 : $scope.selectedGCPackageIndex - 1;
+    $scope.selectGCPackage(index);
+  }
 
-    var selectize = $packageSelect[0].selectize;
-    if(selectize) selectize.destroy();
-
-    $packageSelect.selectize({
-      create: false,
-      labelField: 'credits',
-      valueField: 'value',
-      render: {
-        option: function(item, escape) {
-          return item.credits ? '<div class="pad--half-ends">' + escape(item.name) + '</div>' : '';
-        }
-      }
-    });
-
-    angular.forEach(data, function(item) {
-      $packageSelect[0].selectize.addOption({name: item.name, credits: item.credits, value: JSON.stringify(item)});
-    });
+  $scope.nextGCPackage = function() {
+    var index = $scope.selectedGCPackageIndex == $scope.packages.length - 1 ? 0 : $scope.selectedGCPackageIndex + 1;
+    $scope.selectGCPackage(index);
   }
 
 
-  $scope.selectGCPackage = function(){
+  $scope.selectGCPackage = function(index) {
+    $scope.selectedGCPackageIndex = index;
+    $scope.selectedGCPackage = $scope.packages[index];
 
-    var jsonPackage = JSON.parse($scope.gcPackage);
-    $('input#item_name').val(jsonPackage.name);
-    $('input#item_number').val(jsonPackage._id);
-    $('input#amount').val(jsonPackage.fee);
-    $scope.gcAmount = jsonPackage.fee;
-    $scope.gcValidity = jsonPackage.expiration;
-    $scope.gcPackageFirstTimer = jsonPackage.first_timer;
+    $('input#item_name').val($scope.selectedGCPackage.name);
+    $('input#item_number').val($scope.selectedGCPackage._id);
+    $('input#amount').val($scope.selectedGCPackage.fee);
+    $scope.gcAmount = $scope.selectedGCPackage.fee;
+    $scope.gcValidity = $scope.selectedGCPackage.expiration;
+    $scope.gcPackageFirstTimer = $scope.selectedGCPackage.first_timer;
   }
 
   $scope.emailTo = 'sender';

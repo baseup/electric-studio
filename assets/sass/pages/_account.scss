@@ -1,0 +1,53 @@
+// Styles specific for account page
+
+.account-page {
+	
+	h1 {
+		font-family: 'Tungsten';
+		text-align: center;
+		color: $color-text-gray;
+		font-size: 50px;
+	}
+
+	h5.h {
+		font-family: 'Brandon_Grotesque';
+		font-size: 20px;
+		font-weight: bolder;
+		color: $color-text-gray !important;
+	}
+
+	label {
+		padding: 0px;
+		margin-top: 26px;
+		margin-bottom: 4px;
+		border-bottom: 2px solid transparent;
+		font-family: 'Brandon_Grotesque';
+	}
+
+	input {
+		padding: 0px;
+		border-bottom: 2px solid $color-text-gray;
+		margin-bottom: 0;
+		margin-top: 20px;
+	}
+
+	.sidebar.sidebar {
+
+		@include breakpoint(sm) {
+			width: 260px !important;
+		}
+
+		@include breakpoint(md) {
+			width: 328px !important;
+		}
+	}
+
+	.button {
+		display: inline-table;
+		border: 2px solid $brand-color-primary;
+		font-size: 12px;
+		padding: 10px;
+		min-width: 0px;
+	}
+
+}

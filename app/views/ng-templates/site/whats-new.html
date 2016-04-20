@@ -1,8 +1,9 @@
 <div ng-controller="WhatsnewCtrl" class="content">
-  <div class="wrapper">
-    <h2 class="h large primary pad--bottom">What's New</h2>
-    
-    <div class="grid space--ends">
+  <div class="wrapper relative">
+    <h2 class="watermark">What's New</h2>
+
+    <div class="grid space--ends pad--top">
+      <div class="spacer"></div>
       <div ng-repeat="photo in instagram" class="grid__item grid__item--inline bp-md-one-third bp-sm-one-half space--bottom">
         <a class="instagram-link" href="{{photo.link}}">
           <img ng-src="{{photo.images.standard_resolution.url}}">
@@ -14,5 +15,5 @@
         </a>
       </div>
     </div>
-  </div>  
+  </div>
 </div>

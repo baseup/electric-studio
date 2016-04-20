@@ -22,6 +22,10 @@
 @import "components/overrides";
 
 
+body {
+  font-family: 'Lato';
+}
+
 /**
  * Ensure that media queries are compiled mobile-first
  */

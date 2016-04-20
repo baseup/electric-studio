@@ -4,43 +4,57 @@
     </div>
   </div>
 
-  <div class="content bg-lightGray sidebar-layout">
+  <div class="content account-page sidebar-layout">
+
+    <div ng-include="'/site/account-nav'"></div>
+
     <div class="wrapper">
       <div ng-controller="SignUpCtrl" ng-show="isVerified">
           <h2 class="h large">Please check your email for confirmation</h2>
           <a class="button large pads primary" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</a>
       </div>
       <div class="main" ng-controller="AccountCtrl">
-        <h2 class="h large">Your Account Info</h2>
+        <h1 class="h large">My Account</h1>
         <section>
-          <h3 class="h medium gray">Personal Info</h3>
-          <div class="col-2">
+          <h5 class="h medium gray">Personal Info</h5>
+          <div class="col-3">
             <input class="input" placeholder="First Name" ng-model="account.first_name">
             <input class="input" placeholder="Last Name" ng-model="account.last_name">
             <input class="input" placeholder="Email Address" ng-model="account.email">
             <input class="input" placeholder="Mobile Number" ng-model="account.phone_number">
-            <input class="input" placeholder="Address" ng-model="account.address">
+            <input class="input" placeholder="Address Line 1" ng-model="account.address">
+            <input class="input" placeholder="Address Line 2" ng-model="account.address">
+            <div class="input-group">
+              <label for="input-bday">Birthday</label>
+              <input class="input datepicker" placeholder="yyyy-mm-dd" ng-model="account.birthdate" id="input-bday">
+            </div>
+          </div>          
+        </section>
+        <section>
+            <h5 class="h small">Emergency Contact</h5>
+            <div class="col-3">
+              <input class="input" placeholder="Contact Full Name" ng-model="account.contact_person">
+              <input class="input" placeholder="Contact Number" ng-model="account.emergency_contact">  
+              <a class="button pads primary" ng-click="updateAccount()" >Save</a> 
+            </div>            
+        </section>
+        
+        <section>
+          <h5 class="h medium gray">Change Password</h5>
+          <div class="col-3"> 
+            <div>
+              <input class="input" type="password" ng-model="pass.current_password" placeholder="Current Password">
+              <input class="input" type="password" ng-model="pass.password" placeholder="New Password (min. 6 character)">
+            </div>
+            <!-- dummy --> <input type="text" class="transparent input"> 
+            <input class="input" type="password" ng-model="pass.confirm_password" placeholder="Retype New Password">
+            <!-- dummy --> <input type="text" class="transparent input"> 
+            <a class="button pads primary" ng-click="changePassword()">Update</a> 
           </div>
-
-          <h4 class="h small">Birthday</h4>
-          <input class="input datepicker" placeholder="yyyy-mm-dd" ng-model="account.birthdate">
-        </section>
-        <section>
-            <h4 class="h small">Emergency Contact</h4>
-            <input class="input" placeholder="Contact Full Name" ng-model="account.contact_person">
-            <input class="input" placeholder="Contact Number" ng-model="account.emergency_contact">
-        </section>
-        <a class="button small pads primary" ng-click="updateAccount()" >Save</a> 
-        <section>
-          <h3 class="h medium gray">Change Password</h3>
-          <input class="input" type="password" ng-model="pass.current_password" placeholder="Current Password">
-          <input class="input" type="password" ng-model="pass.password" placeholder="New Password (min. 6 character)">
-          <input class="input" type="password" ng-model="pass.confirm_password" placeholder="Retype New Password">
-          <a class="button small pads primary" ng-click="changePassword()">Update Password</a> 
         </section>
         
         <section class="hidden" id="billing">
-          <h3 class="h medium gray">Billing</h3>
+          <h5 class="h medium gray">Billing</h5>
           <div class="col-2">
             <input class="input" ng-model="billing.first_name" placeholder="First Name" >
             <input class="input" ng-model="billing.last_name" placeholder="Last Name" >
@@ -58,11 +72,11 @@
           </select>
           <input class="input" ng-model="billing.card_expiration" placeholder="Expiration date (MM/YY)" >
           <input class="input" type="password" ng-model="billing.csc" placeholder="CSC" >
-          <a class="button small pads primary" ng-click="updateBilling()">Save Billing Info</a> 
+          <a class="button pads primary" ng-click="updateBilling()">Save Billing Info</a> 
         </section>
         
         <section id="packages">
-          <h3 class="h medium gray">Packages</h3>
+          <h5 class="h medium gray">Packages</h5>
           <div class="grid">
             <div ng-repeat="trans in transactions" class="grid__item bp-md-one-half bp-lg-one-third">
               <div class="account__item box--bordered box--white space--bottom cf">
@@ -85,12 +99,11 @@
               </div>
             </div>
           </div>
-          <a href="#/rates" class="button small pads primary">Buy Package</a>
+          <a href="#/rates" class="button pads primary">Buy</a>
         </section>
         <hr/>
-        <a class="float--right button small pads primary" ng-click="deactivateAccount()">Delete Account</a>
-      </div>
+        <a class="float--right button pads primary" ng-click="deactivateAccount()">Delete Account</a>
+      </div>     
       
-      <div ng-include="'/site/account-nav'"></div>
     </div>
   </div>
