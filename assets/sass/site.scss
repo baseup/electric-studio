@@ -46,6 +46,7 @@
 @import "pages/instructors";
 @import "pages/faq";
 @import "pages/contact";
+@import "pages/account";
 
 
 
@@ -2088,29 +2089,60 @@ body {
   .sidebar {
     background: $brand-color-secondary;
     color: #fff;
-    padding: 20px;
+    padding: 0px 20px;
 
     &.light {
       background: #fff;
       color: $color-text;
     }
+
+    h3 {
+      color: $color-text-lightgray;
+      margin: 0;
+      font-size: 25px;
+      font-family: 'Tungsten';
+      font-weight: lighter;
+    }
+
+    a {
+      text-transform: none;
+      display: block;
+      color: inherit;
+      line-height: normal;
+      font-weight: normal;
+      text-transform: uppercase;
+      transition: color .3s ease;
+      margin: 10px 0;
+      font-size: 16px;
+
+      @include link-colors(#fff,$brand-color-primary);
+    }
+
+    p {
+      font-size: 16px;
+      text-transform: uppercase;
+    }
+
+    .button {
+      display: inline-table;
+    }
+
+    .btn-white {
+      display: inline-table;
+      padding: 5px 10px;
+      font-weight: bold;
+    }
+
   }
 
   .main {
     padding: 20px;
-  }
+  }  
 
-  .h {
-    color: $color-text-light;
+  .sidebar-links {
+    margin-bottom: 50px;
   }
-
-  a {
-    text-transform: none;
-    display: block;
-    color: inherit;
-    line-height: normal;
-    font-weight: normal;
-  }
+  
 
   @include breakpoint(md) {
     padding: 0;
