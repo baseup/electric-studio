@@ -46,6 +46,7 @@
 @import "pages/instructors";
 @import "pages/faq";
 @import "pages/contact";
+@import "pages/rates";
 
 
 
@@ -86,7 +87,7 @@ body {
   padding-top: 30px + ($base-spacing-unit * 2);
   overflow-x: hidden;
   -webkit-overflow-x: hidden;
-  font-size: 22px;
+  font-size: 16px;
   font-family: 'Brandon_Grotesque', sans-serif;
 
   @include breakpoint(md) {
@@ -1952,10 +1953,23 @@ body {
     background: $brand-color-secondary;
     color: #fff;
     padding: 20px;
+    font-size: 20px;
 
     &.light {
       background: #fff;
       color: $color-text;
+    }
+
+    .h {
+      font-family: 'Tungsten', sans-serif;
+    }
+
+    a {
+      text-transform: none;
+      display: block;
+      color: inherit;
+      line-height: normal;
+      font-weight: normal;
     }
   }
 
@@ -1965,14 +1979,6 @@ body {
 
   .h {
     color: $color-text-light;
-  }
-
-  a {
-    text-transform: none;
-    display: block;
-    color: inherit;
-    line-height: normal;
-    font-weight: normal;
   }
 
   @include breakpoint(md) {
