@@ -1,6 +1,7 @@
 /* Instructors */
 .instructors-info {
   text-align: center;
+  color: $brand-color-secondary;
 
   .image {
     width: 100%;
@@ -89,17 +90,46 @@
 .instructor-modal {
 
   .modal__box {
-    max-width: 640px;
+    max-width: 740px;
     width: 90%;
+    padding: 30px!important;
+
+    @include breakpoint(md) {
+      padding: 40px!important;
+    }
   }
 
   .modal-close {
-    background: $brand-color-secondary;
-    height: 35px;
-    width: 35px;
-    text-align: center;
-    color: #fff;
-    font-weight: bold;
+    color: #fff!important;
+    top: 20px;
+    right: 20px;
+
+
+    &:after, &:before {
+      content: '';
+      display: block;
+      height: 30px;
+      border-width: 1px;
+      border-style: solid;
+      border-color: $brand-color-secondary;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+    }
+
+    &:before {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    &:after {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    &:hover {
+      &:before, &:after {
+        border-color: $brand-color-primary;
+      }
+    }
   }
 
   .image {
@@ -108,17 +138,19 @@
     overflow: hidden;
 
     @include breakpoint(sm) {
-      width: 200px;
-      height: 200px;
+      width: 300px;
+      height: 300px;
       float: left;
     }
   }
 
   .details {
+    font-size: 20px;
+
     @include breakpoint(sm) {
       float: left;
       padding-left: 20px;
-      width: 380px;
+      width: 340px;
     }
 
     .name {
@@ -136,7 +168,8 @@
 
   .schedule {
     position: relative;
-    margin: 0 30px;
+    margin: 0;
+    margin-left: -2px;
 
     &.no-slide {
       margin: 0;
@@ -166,7 +199,7 @@
       position: absolute;
       height: 30px;
       width: 30px;
-      font-size: 24px;
+      font-size: 34px;
       line-height: 30px;
       text-align: center;
       top: 0;
@@ -199,6 +232,42 @@
     .schedule-slider {
       transition: margin 0.4s ease;
       overflow: hidden;
+    }
+
+    .sched-item {
+      border-width: 2px 0 2px 2px;
+      border-color: $brand-color-tertiary;
+      border-style: solid;
+
+      &:last-child {
+        border-right-width: 2px!important;
+      }
+
+      &:nth-child(2n+2) {
+        border-right-width: 2px;
+        @include breakpoint(md) {
+          border-right-width: 0;
+        }
+      }
+
+      &:nth-child(4n+4) {
+        @include breakpoint(md) {
+          border-right-width: 2px;
+        }
+      }
+    }
+
+    .schedtype {
+      font-size: 18px;
+    }
+
+    .time {
+      font-weight: bold;
+    }
+
+    .branch {
+      color: $brand-color-primary;
+      font-weight: 600;
     }
   }
 

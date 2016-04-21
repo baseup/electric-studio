@@ -1025,7 +1025,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
             } else {
               SharedService.set('selectedSched', sched);
               SharedService.set('backToInstructors', true);
-              $location.path('/class/'+branch);
+              $location.path('/class/' + branch.toLowerCase());
             }
           });
         }
