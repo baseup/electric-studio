@@ -2,11 +2,12 @@
 
 .account-page {
 	
-	h1 {
-		font-family: 'Tungsten';
+	h1.large {
+		font-family: 'Tungsten-Medium';
 		text-align: center;
 		color: $color-text-gray;
 		font-size: 50px;
+		margin-top: 0px;
 	}
 
 	h5.h {

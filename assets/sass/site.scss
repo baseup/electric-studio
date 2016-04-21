@@ -253,6 +253,10 @@ body {
     left: 14px;
     font-size: 14px;
     margin-top: 0;
+
+    width: calc(100% - 410px);
+    display: block;
+    margin-left: 150px;
   }
 
   .book-nav-open & {
@@ -1122,10 +1126,10 @@ body {
   }
 
   &.center {
-    display: block;
-    width: 240px;
-    padding-left: 0;
-    padding-right: 0;
+    display: table;
+    width: auto;
+    padding-left: 20px;
+    padding-right: 20px;
     text-align: center;
     clear: both;
     margin: 20px auto;
@@ -1193,6 +1197,12 @@ body {
           color: $brand-color-tertiary;
         }
       }
+    }
+
+    .btn-unverified {
+      display: table;
+      margin: auto;
+      float: none;
     }
   }
 
@@ -2115,15 +2125,27 @@ body {
     }
 
     .h {
-      font-family: 'Tungsten', sans-serif;
+      font-family: 'Tungsten-Medium', sans-serif;
+      color: $color-text-lightgray;
+      font-size: 35px;
+      margin: 0px;
     }
 
     a {
-      text-transform: none;
+      text-transform: uppercase;
       display: block;
       color: inherit;
       line-height: normal;
       font-weight: normal;
+      padding: 5px 0px;
+      @include link-colors(white,$brand-color-primary);
+    }
+
+    .btn {
+      display: table;
+      margin-top: 20px;
+      padding-left: 20px;
+      padding-right: 20px; 
     }
 
   }
@@ -2138,7 +2160,7 @@ body {
   }
 
   .sidebar-links {
-    margin-bottom: 50px;
+    margin-bottom: 40px;
   }
 
 
