@@ -114,9 +114,7 @@ class Handler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
-        print('WebSocket opened')
         clients.append(self)
-
         msg = '{}'
         if redis_db.exists('es_schedules') and redis_db.get('es_schedules'):
             msg = redis_db.get('es_schedules').decode('utf-8')
@@ -141,5 +139,4 @@ class Handler(tornado.websocket.WebSocketHandler):
         self.write_message(msg)
 
     def on_close(self):
-        print('WebSocket closed')
         clients.remove(self)
