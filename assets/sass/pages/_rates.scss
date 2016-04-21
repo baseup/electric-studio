@@ -60,3 +60,58 @@
   }
 
 }
+
+
+
+.giftcard-section {
+  background: $brand-color-secondary;
+  color: #fff;
+  overflow: auto;
+  position: relative;
+
+  .side-image {
+    background-image: url('/assets/images/gift-card-image.png');
+    background-position: center;
+    background-size: cover;
+    display: none;
+
+    @include breakpoint(md) {
+      display: block;
+      width: 50%;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+
+  .content {
+    background: $brand-color-secondary;
+    padding: 20px;
+    text-align: center;
+    font-size: 18px;
+
+    @include breakpoint(md) {
+      width: 50%;
+      margin-left: 50%;
+      float: left;
+    }
+
+    .content-1, .content-2 {
+      @include breakpoint(md) {
+        width: 50%;
+        float: left;
+      }
+    }
+
+    .h {
+      margin-bottom: 0;
+      font-size: 40px;
+
+      @include breakpoint(md) {
+        font-size: 46px;
+      }
+    }
+  }
+
+}

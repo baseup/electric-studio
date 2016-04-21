@@ -26,6 +26,12 @@
 }
 
 @font-face {
+  font-family: 'Tungsten';
+  src: url('../fonts/Tungsten-Medium.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
   font-family: 'Tungsten-Medium';
   src: url('../fonts/Tungsten-Medium.ttf') format('truetype');
   font-weight: normal;
@@ -303,7 +309,7 @@ body {
 
       @include breakpoint(md) {
         color: $color-text-light !important;
-      }      
+      }
     }
   }
 
