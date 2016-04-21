@@ -115,6 +115,13 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
     console.log('registered',$scope.registered);
   });
 
+  // Close the menus on click of anchors
+  menuWrapper.find('a[href]').on('click',function () {
+    $scope.isLetsRideOpen = false;
+    $scope.isBookNavOpen = false;
+    $scope.isNavOpen = false;
+  });
+
   $(window).resize(function () {
     var winH = angular.element(this).height(),
         headerH = angular.element('.main-header').outerHeight(),

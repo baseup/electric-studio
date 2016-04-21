@@ -70,10 +70,10 @@
               <i class="fa fa-chevron-down"></i>
             </div>
             <ul class="lets-ride-submenu">
-              <li><a href="#">SCHEDULES</a></li>
-              <li><a href="#">GIFT CARD</a></li>
-              <li><a href="#">WHAT TO EXPECT</a></li>
-              <li><a href="#">FAQs</a></li>
+              <li><a href="/#/schedule">SCHEDULES</a></li>
+              <li><a href="/#/gift-cards">GIFT CARD</a></li>
+              <li><a href="/#/first-ride">WHAT TO EXPECT</a></li>
+              <li><a href="/#/faq">FAQs</a></li>
             </ul>
           </div>
           <!-- branches -->
@@ -138,6 +138,16 @@
       </a>
 
     </div>
+
+    <nav class="secondary-nav">
+      <ul class="secondary-nav-list">
+        <li><a href="/#/workouts" ng-class="{ active : activeMainNav('/workouts') }">Workouts</a></li>
+        <li><a href="/#/rates" ng-class="{ active : activeMainNav('/rates') }">Rates + Packages</a></li>
+        <li><a href="/#/first-ride" ng-class="{ active : activeMainNav('/first-ride') }">What to Expect</a></li>
+        <li><a href="/#/schedule" ng-class="{ active : activeMainNav('/schedule') }">Schedules</a></li>
+      </ul>
+    </nav>
+
   </header>
 
   <div class="header-form-container login" ng-controller="LoginCtrl">

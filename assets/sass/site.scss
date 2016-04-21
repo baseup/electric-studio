@@ -26,7 +26,7 @@
 }
 
 @font-face {
-  font-family: 'Tungsten';
+  font-family: 'Tungsten-Medium';
   src: url('../fonts/Tungsten-Medium.ttf') format('truetype');
   font-weight: normal;
 }
@@ -40,6 +40,7 @@
 @import "components/base";
 @import "components/overrides";
 @import "components/_gift-card";
+@import "components/_secondary-menu";
 
 @import "pages/about";
 @import "pages/account";
@@ -127,6 +128,8 @@ body {
 
   .wrapper {
     position: relative;
+    background: $brand-color-primary;
+    z-index: 1;
 
     &:after {
       content: '';
@@ -296,7 +299,11 @@ body {
     }
 
     &:hover, &.active {
-      color: $color-text-light!important;
+      @include link-colors($brand-color-primary);
+
+      @include breakpoint(md) {
+        color: $color-text-light !important;
+      }      
     }
   }
 
