@@ -6,11 +6,13 @@
 		position: absolute;		
 		left: 0;
 		width: 100%;
+		width: 100vw;
 		background-color: #eee;
 		z-index: 0;
-		transition: all .3s ease;
+		margin-top: -10px;
+		transition: all .3s ease;		
 
-		top: 90%;
+		top: 100%;
 		visibility: hidden;
 		pointer-events: none;
 		opacity: 0;
@@ -35,10 +37,10 @@
 		font-size: 14px;
 		font-weight: bold;
 		transition: all .3s ease;
-		@include link-colors($brand-color-secondary,$brand-color-primary);
+		@include link-colors($brand-color-secondary !important,$brand-color-primary !important);
 
 		&.active {
-			@include link-colors($brand-color-primary);
+			@include link-colors($brand-color-primary !important);
 		}
 	}
 }
@@ -47,9 +49,9 @@
 // Hover states
 // ------------------------------------------------------------
 
-.main-header:hover .secondary-nav {
+.nav-item-schedule:hover .secondary-nav {
 	@include breakpoint(md) {
-		top: 100%;
+		margin-top: 0px;
 		visibility: visible;
 		pointer-events: auto;
 		opacity: 1;
