@@ -3,16 +3,16 @@
 
 	@include breakpoint(md) {
 		display: block;
-		position: absolute;		
+		position: fixed;
+		top: 83px;
 		left: 0;
 		width: 100%;
 		width: 100vw;
 		background-color: #eee;
 		z-index: 0;
 		margin-top: -10px;
-		transition: all .3s ease;		
-
-		top: 100%;
+		transition: all .3s ease;	
+		
 		visibility: hidden;
 		pointer-events: none;
 		opacity: 0;
