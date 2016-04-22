@@ -1,9 +1,10 @@
 .secondary-nav {
 	display: none;
+	max-width: 1300px;
 
 	@include breakpoint(md) {
 		display: block;
-		position: fixed;
+		position: absolute;
 		top: 83px;
 		left: 0;
 		width: 100%;
@@ -11,11 +12,21 @@
 		background-color: #eee;
 		z-index: 0;
 		margin-top: -10px;
-		transition: all .3s ease;	
-		
+		transition: all .3s ease;
+
 		visibility: hidden;
 		pointer-events: none;
 		opacity: 0;
+	}
+
+	&:before {
+		content: '';
+		background: #eee;
+		position: absolute;
+		height: 100%;
+		left: -100%;
+		right: -100%;
+		z-index: -1;
 	}
 }
 

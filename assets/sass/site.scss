@@ -213,6 +213,7 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
+  top: 70px;
   background: #fff;
   padding: $base-spacing-unit;
   transition: all .3s ease;
@@ -245,7 +246,6 @@ body {
     padding: 0;
     display: inline-block;
     margin: 0;
-    position: relative;
     font-size: 14px;
     margin-top: 28px;
 
@@ -2139,7 +2139,7 @@ body {
       display: table;
       margin-top: 20px;
       padding-left: 20px;
-      padding-right: 20px; 
+      padding-right: 20px;
     }
 
   }
