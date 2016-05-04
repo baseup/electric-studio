@@ -1,6 +1,10 @@
 .rates.page {
   color: $brand-color-secondary;
 
+  @include breakpoint(lg) {
+    margin-top: 50px;
+  }
+
   .package {
 
     @include breakpoint(md) {

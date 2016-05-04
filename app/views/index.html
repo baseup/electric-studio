@@ -59,7 +59,7 @@
           <li class="on-mobile"><a ng-class="{ active : activeMainNav('/rates-and-packages') }" href="#/rates-and-packages">Rates &plus; Packages</a></li>
           <li class="nav-item-schedule">
             <a ng-class="{ active : activeMainNav('/schedule') }" href="#/schedule">Classes</a>
-            <nav class="secondary-nav">
+            <nav class="secondary-nav" ngclass="{ active : activeMainNav('\/(workouts|rates|first-ride)',true) }">
               <ul class="secondary-nav-list">
                 <li><a href="/#/workouts" ng-class="{ active : activeMainNav('/workouts') }">Workouts</a></li>
                 <li><a href="/#/rates" ng-class="{ active : activeMainNav('/rates') }">Rates + Packages</a></li>

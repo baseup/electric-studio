@@ -1,10 +1,18 @@
-.first-ride.page {
+.first-ride.page.content.sidebar-layout {
+
+  @include breakpoint(lg) {
+    padding-top: 80px;
+  }
 
   .sidebar {
     background: none!important;
 
     &:before {
       background: none!important;
+    }
+
+    @include breakpoint(lg) {
+      top: 90px;
     }
   }
 
