@@ -258,7 +258,7 @@ ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
             ? $(this).find('.preloaded-img.desktop').attr('src')
             : $(this).find('.preloaded-img.mobile').attr('src');
 
-          if(image) $(this).css('background-image', 'url(' + image + ')').removeClass('loading');
+          if(image) $(this).css('background-image', "url('" + image + "')").removeClass('loading');
         });
       });
 
