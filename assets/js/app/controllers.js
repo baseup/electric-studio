@@ -188,6 +188,19 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
     angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
   }
 
+  function scrollToUnavailable() {
+    $timeout(function () {
+      var scheduleRow = angular.element('.schedule .row').not('.unavailable');
+      var scrollableView = scheduleRow.length ? scheduleRow.offset().top : 0;
+      angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+    }, 100);    
+  }
+
+  scrollToUnavailable();
+  angular.element('[href^="#/schedule/"]')
+    .off('click',scrollToUnavailable)
+    .on('click',scrollToUnavailable);
+
 });
 
 ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
@@ -1258,12 +1271,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     }
   };
 
-  $timeout(function() {
-    var scheduleRow = angular.element('.schedule .row').not('.unavailable');
-    var scrollableView = scheduleRow.length ? scheduleRow.offset().top : 0;
-    angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-  }, 100);
-
   $scope.resched = SharedService.get('resched');
 
   $scope.blockedBikes = {};
@@ -1579,6 +1586,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       $scope.getWeek(pWeek);
     }
   }
+
 });
 
 ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService, $routeParams) {
