@@ -1,7 +1,7 @@
 /**
  * Import typefaces, icons etc
  */
-@import url(http://fonts.googleapis.com/css?family=Lato:400,700);
+@import url('//fonts.googleapis.com/css?family=Lato:400,700');
 @import "../vendor/fontawesome/css/font-awesome.min.css";
 
 
@@ -37,7 +37,7 @@ body {
     display: block;
     margin: 0 auto;
     margin-top: $base-spacing-unit;
-    
+
     @include breakpoint(sm) {
       display: inline-block;
       margin: 0 0 0 $base-spacing-unit;
@@ -60,11 +60,11 @@ body {
 .page-content {
   padding: 60px $base-spacing-unit;
   background: #fff;
-  
+
   h1 {
     line-height: 1.4em;
     margin: $base-spacing-unit 0;
-    
+
     @include breakpoint(sm) {
       margin-top: 100px;
     }
@@ -75,7 +75,7 @@ body {
   a {
     display: block;
     margin: $base-spacing-unit;
-    
+
     @include breakpoint(sm) {
       display: inline-block;
     }
@@ -85,7 +85,7 @@ body {
 
 .main-footer {
   background: $brand-color-tertiary;
-  
+
   @include breakpoint(sm) {
     position: absolute;
     bottom: 0;
@@ -101,39 +101,39 @@ body {
   text-align: center;
   color: #fff;
   text-transform: uppercase;
-  
+
   @include breakpoint(sm) {
     margin-bottom: 20px;
   }
-  
+
   @include breakpoint(md) {
     float: left;
     margin: 0;
   }
-  
+
   li {
     padding-bottom: 15px;
-    
+
     @include breakpoint(sm) {
       display: inline-block;
       margin: 0 15px;
     }
-    
+
     @include breakpoint(md) {
       padding: 0;
       margin: 0 30px 0 0;
     }
   }
-  
+
   a {
     text-decoration: none;
     color: inherit;
-    
+
     @include breakpoint(md) {
       height: 40px;
       line-height: 40px;
     }
-    
+
     &:hover {
       color: $color-text;
     }
@@ -145,16 +145,16 @@ body {
   padding: 0;
   margin: 0;
   text-align: center;
-  
+
   @include breakpoint(md) {
     float: right;
   }
-  
+
   li {
     display: inline-block;
     margin: 0 5px;
   }
-  
+
   a {
     display: block;
     height: 34px;
@@ -166,13 +166,13 @@ body {
     color: $brand-color-primary;
     font-size: 22px;
     text-decoration: none;
-    
+
     @include breakpoint(md) {
       height: 40px;
       width: 40px;
       line-height: 40px;
     }
-    
+
     i {
       margin-left: 2px;
     }
@@ -202,21 +202,21 @@ body {
  * Breakpoint trump! Ensure that media queries are compiled mobile-first
  */
 .cssc {
-  
+
   @include breakpoint(xs) {
     display: none;
   }
-  
+
   @include breakpoint(sm) {
     display: none;
   }
-  
+
   @include breakpoint(md) {
     display: none;
   }
-  
+
   @include breakpoint(lg) {
     display: none;
   }
-  
+
 }
