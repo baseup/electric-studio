@@ -765,6 +765,7 @@ body {
     padding: 0;
     top: 28px;
     padding-right: 80px;
+    line-height: 1.2;
   }
 }
 .book-ride-btn {
@@ -787,6 +788,7 @@ body {
 
   span{
     display: block;
+    line-height: 1;
   }
 
   div.dropdown-holder{
@@ -1598,6 +1600,13 @@ body {
 
     @include breakpoint(md) {
       text-align: left;
+    }
+
+    a {
+      @include breakpoint(md) {
+        margin-left: 1.6em;
+        @include link-colors($brand-color-primary);
+      }
     }
   }
 
@@ -3504,14 +3513,14 @@ body {
     float: left;
     margin: 0;
 
+    @include breakpoint(md) {
+      padding-top: 10px;
+    }
+
     li {
       padding: 0;
       margin: 0 30px 0 0;
-    }
-
-    a {
-      height: 40px;
-      line-height: 40px;
+      vertical-align: top;
     }
   }
 
