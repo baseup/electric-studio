@@ -174,10 +174,10 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
     var scrollableView = workouts.offset().top;
     angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
   }
-  if (firstRide.length) {
-    var scrollableView = firstRide.offset().top;
-    angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-  }
+  // if (firstRide.length) {
+  //   var scrollableView = firstRide.offset().top;
+  //   angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+  // }
 
   if (packages_section.length && window.location.hash.indexOf('package') > 0) {
     var scrollableView = packages_section.offset().top;
