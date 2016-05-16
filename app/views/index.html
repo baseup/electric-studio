@@ -97,16 +97,20 @@
         <div class="user-menu">
           <div class="account-menu">
             <div class="account-menu__options">
-            {% if not loginUser %}
-              <a class="login-toggle">Login</a> /
-              <a class="signup-toggle">Sign up</a>
-              <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
-            {% else %}
-              <a href="javascript:void(0)" class="user-loggedin">
-                Hi <strong>{{ loginUser }}</strong>!
-                <i class="fa fa-caret-down"></i>
-              </a>
-            {% end %}
+              {% if not loginUser %}
+                <a class="login-toggle">Login</a> /
+                <a class="signup-toggle">Sign up</a>
+                <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
+              {% else %}
+                <a href="javascript:void(0)" class="user-loggedin">
+                  Hi <strong>{{ loginUser }}</strong>!
+                  <i class="fa fa-caret-down"></i>
+                </a>
+                <div class="account-menu__credits-block">
+                  <span class="credits">{{ credits }}</span>
+                  <div class="brand-icon"></div>
+                </div>
+              {% end %}
             </div>
             {% if loginUser %}
             <div class="account-menu__list">
@@ -118,10 +122,6 @@
             </div>
             {% end %}
           </div>
-
-          {% if loginUser %}
-          <span class="credits">{{ credits }}</span>
-          {% end %}
 
           <div class="book-buy">
             <span class="book-ride-btn" ng-click="isBookNavOpen = !isBookNavOpen" href="#/schedule">

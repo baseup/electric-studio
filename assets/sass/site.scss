@@ -435,6 +435,7 @@ body {
     right: 0;
     bottom: 0;
     background: #fff;
+    vertical-align: middle;
   }
 
   &:before {
@@ -447,42 +448,54 @@ body {
       bottom: 0;
       width: 500%;
     }
-  }
-
-  &:after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: $base-spacing-unit;
-    height: 30px;
-    width: 30px;
-    background-image: url(/assets/images/electricstudio-logo-2.png);
-    background-size: contain;
-    -webkit-animation-duration: 2s;
-    animation-duration: 2s;
-    -webkit-animation-fill-mode: both;
-    animation-fill-mode: both;
-    -webkit-animation-iteration-count: infinite;
-    animation-iteration-count: infinite;
-    -webkit-animation-name: rotate;
-    animation-name: rotate;
-    display: none;
-
-    @include breakpoint(md) {
-      display: block;
-    }
-  }
+  }  
 
   .credits {
     display: none;
     font-weight: bold;
+    font-family: 'Tungsten';
+    letter-spacing: 2px;
 
     @include breakpoint(md) {
-      position: absolute;
-      right: 40px;
-      display: block;
-      margin-top: 6px;
+      display: inline;
+      font-size: 16px;
+      line-height: 16px;
+      vertical-align: top;
     }
+  }
+
+  .brand-icon {
+    display: none;
+
+    @include breakpoint(md) {
+      display: inline-block;
+      vertical-align: middle;
+      height: 30px;
+      width: 30px;
+      background-image: url(/assets/images/electricstudio-logo-2.png);
+      background-size: contain;
+      -webkit-animation-duration: 2s;
+      animation-duration: 2s;
+      -webkit-animation-fill-mode: both;
+      animation-fill-mode: both;
+      -webkit-animation-iteration-count: infinite;
+      animation-iteration-count: infinite;
+      -webkit-animation-name: rotate;
+      animation-name: rotate;
+      margin-top: -10px;
+    }
+  }
+}
+
+.account-menu__credits-block {
+  float: right;
+
+  @include breakpoint(md) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-block;
+    text-align: right;
   }
 }
 
@@ -491,7 +504,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 2px;
   cursor: default;
-  padding: 15px 0 10px 0;
+  padding: 20px 0 10px 0;
   font-weight: bold;
   position: absolute;
   top: 0;
@@ -501,11 +514,11 @@ body {
   }
 
   @include breakpoint(md) {
+    width: 100%;
 
     .account-menu__list.active {
       display: none;
     }
-
 
     &:hover {
       .account-menu__list {
@@ -521,6 +534,10 @@ body {
 
     @include breakpoint(md) {
       font-size: 14px;
+      width: 100%;
+      position: relative;
+      line-height: 16px;
+      height: 16px;
     }
 
     a {
@@ -551,6 +568,11 @@ body {
       &:hover {
         color: $color-text-light;
       }
+
+      @include breakpoint(md) {
+        font-size: 11px;
+      }
+
     }
   }
 
@@ -568,7 +590,7 @@ body {
     top: auto;
     left: -$base-spacing-unit;
     right: -20px;
-    padding-top: 46px;
+    padding-top: 47px;
     display: none;
 
     @include breakpoint(md) {
@@ -741,7 +763,7 @@ body {
     position: relative;
     background: #fff;
     padding: 0;
-    top: 30px;
+    top: 28px;
     padding-right: 80px;
   }
 }
@@ -780,10 +802,6 @@ body {
       background: $brand-color-secondary;
       margin-top: 20px;
       width: 100%;
-
-      @include breakpoint(md) {
-        margin-top: 15px;
-      }
 
       li{
         text-align: center;
