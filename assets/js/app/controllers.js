@@ -174,10 +174,25 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
     var scrollableView = workouts.offset().top;
     angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
   }
-  // if (firstRide.length) {
-  //   var scrollableView = firstRide.offset().top;
-  //   angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-  // }
+
+  if (firstRide.length) {
+    // var scrollableView = firstRide.offset().top;
+    // angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
+    var body = angular.element('body'),
+        backToTop = angular.element('.back-to-top');
+
+    backToTop.on('click',function () {
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+    });
+
+    angular.element(window).on('scroll',function () {
+      if ( body.scrollTop() >= 1000 ) {
+        backToTop.fadeIn(100);
+        return;
+      }
+      backToTop.fadeOut(100);
+    });
+  }
 
   if (packages_section.length && window.location.hash.indexOf('package') > 0) {
     var scrollableView = packages_section.offset().top;
