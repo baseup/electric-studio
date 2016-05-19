@@ -14,6 +14,7 @@ import json
 import yaml
 import sys
 import time
+import concurrent
 
 class BookingTest:
     base_url     = ''
@@ -36,7 +37,6 @@ class BookingTest:
             config = yaml.load(stream)
 
             self.base_url = config['base_url']
-            self.bike_seats = config['bike_seats']
 
         self.io_loop = connect_db()
         self.io_loop.run_sync(self.find_all_test_users)
@@ -115,21 +115,49 @@ class BookingTest:
     @gen.coroutine
     def schedule_bookings(self):
         with ProcessPoolExecutor() as pool:
+            requests = []
+
             for booking in self.bookings:
                 for session in self.sessions:
-                    pool.submit(book, self.base_url, booking, session)
+                    requests.append({'base_url': self.base_url, 'booking': booking, 'session': session})
 
-def book(base_url, booking, session):
+            futures = [pool.submit(book, request) for request in requests]
+            done, not_done = concurrent.futures.wait(futures)
+
+            bookings = []
+            overbooking = 0
+
+            for future in done:
+                info = future.result()
+
+                if info in bookings:
+                    overbooking = overbooking + 1
+                else:
+                    bookings.append(info)
+
+            if overbooking:
+                print('Tests \033[91mFailed\033[0m')
+                print('Found ' + overbooking)
+            else:
+                print('Tests \033[92mOK\033[0m')
+
+def book(request):
+    base_url = request['base_url']
+    booking = request['booking']
+    session = request['session']
+
     # send request payload
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     response = session['session'].post(base_url + '/api/book', data=json.dumps(booking), headers=headers)
 
-    info = '(ms=' + str(int(round(time.time() * 1000))) + ', email=' + session['user']['email'] + ', date=' + booking['date'] + ', seats=[' + ','.join(str(seat) for seat in booking['seats']) + '])'
+    info = '(ms=' + str(int(round(time.time() * 1000))) + ', email=' + session['user']['email'] + ', date=' + booking['date'] + ', seats=[' + ','.join(str(seat) for seat in booking['seats']) + '], sched_id=' + booking['sched_id'] + ')'
 
     if response.status_code == 200:
-        print('Success: Booking successful ' + info)
+        print('\033[92mSuccess: Booking successful ' + info + '\033[0m')
     else:
-        print('Error: Booking failed' + info)
-        print(response.content.decode('UTF-8'))
+        print('\033[91mError: Booking failed' + info + '\033[0m')
+        print('\033[91m' + response.content.decode('UTF-8') + '\033[0m')
+
+    return info
 
 test = BookingTest()
