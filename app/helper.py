@@ -19,11 +19,10 @@ class Lock(object):
     @staticmethod
     def lock(key):
         Lock.redis_db.set(key, True)
-    
+
     @staticmethod
     def unlock(key):
-        if Lock.redis_db.exists(key):
-            Lock.redis_db.delete(key)
+        Lock.redis_db.delete(key)
 
 class GMT8(tzinfo):
     def utcoffset(self, dt):
@@ -102,7 +101,7 @@ def send_email_verification(user, content):
             ]
         }
         mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
-    except mandrill.Error:    
+    except mandrill.Error:
         raise
 
 def send_email_booking(user, content):
