@@ -6,6 +6,7 @@ from app.helper import GMT8
 from bson.objectid import ObjectId
 from motorengine import Q
 import tornado
+import re
 
 def find(self):
     gmt8 = GMT8()
@@ -24,7 +25,7 @@ def find(self):
     wr = yield Setting.objects.get(key='week_release');
 
     week_release = tornado.escape.json_decode(wr.value);
-    week_release['date'] = datetime.strptime(week_release['date'].replace('+08:00',''),'%Y-%m-%d %H:%M:%S.%f')
+    week_release['date'] = datetime.strptime(re.sub('\+\d{2}:\d{2}$', '', week_release['date']), '%Y-%m-%d %H:%M:%S.%f')
 
     updateWeek = week_release['date'] + timedelta(days=-week_release['date'].weekday() + 6)
     updateWeek = updateWeek.replace(tzinfo=gmt8)
@@ -77,11 +78,11 @@ def find(self):
                     if waitlist_count == 0:
                         book_count = (yield BookedSchedule.objects.filter(status='booked', schedule=s._id).count())
                     counts[str(s._id)] = { 'books': book_count, 'waitlist': waitlist_count }
-        
+
         date += timedelta(days=1)
 
         scheds[day] = sched
-    
+
 
     scheds['counts'] = counts
     scheds['releases'] = sched_releases

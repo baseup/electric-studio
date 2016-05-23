@@ -39,4 +39,4 @@ class UserRegistrationTest:
 
         self.io_loop.stop()
 
-user_registration = UserRegistrationTest(400)
+user_registration = UserRegistrationTest(5)

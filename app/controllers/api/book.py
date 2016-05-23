@@ -7,13 +7,14 @@ from app.models.users import User
 from bson.objectid import ObjectId
 from datetime import datetime, timedelta, time
 from app.helper import Lock, GMT8
-from tornado import gen
+from tornado import gen, locks
 
 import tornado
 import json
 import sys
 import tornado.escape
 
+lock = locks.Lock()
 
 def find(self):
 
@@ -73,7 +74,7 @@ def create(self):
         try:
             user = yield User.objects.get(user_id)
             if user.status != 'Frozen' and user.status != 'Unverified':
-                
+
                 sched = yield InstructorSchedule.objects.get(data['sched_id']);
 
                 gmt8 = GMT8()
@@ -88,7 +89,7 @@ def create(self):
                 if sched.type == 'Electric Endurance':
                     deduct_credits = 2
 
-                if user.credits > (deduct_credits - 1):    
+                if user.credits > (deduct_credits - 1):
 
                     seats = data['seats']
                     if user.credits < len(seats):
@@ -98,33 +99,35 @@ def create(self):
                         return;
 
                     seat_locked = []
-                    for s in seats:
-                        lock_key = 'book.create_' + data['sched_id'] + '_' + str(s)
-                        if Lock.is_locked(lock_key):
-                            seat_locked.append(s)
-                        else:
-                            Lock.lock(lock_key)
-                            locked_keys.append(lock_key)
+                    with (yield lock.acquire()):
+                        for s in seats:
+                            lock_key = 'book.create_' + data['sched_id'] + '_' + str(s)
+                            if Lock.is_locked(lock_key):
+                                seat_locked.append(s)
+                            else:
+                                Lock.lock(lock_key)
+                                locked_keys.append(lock_key)
 
                     if len(seat_locked):
                         self.set_status(403)
                         msg = 'Bikes ' if len(seat_locked) > 1 else 'Bike '
                         self.write('Unable to book a ride: '+ msg + str(seat_locked) +' unavailable');
                         self.finish()
-                        for lk in locked_keys:
-                            Lock.unlock(lk)
+                        with (yield lock.acquire()):
+                            for lk in locked_keys:
+                                Lock.unlock(lk)
                         return;
 
                     book_status = 'booked'
                     if 'status' in data:
                         book_status = data['status']
-                    
+
                     if book_status == 'booked':
                         seats_unavailable = []
                         seats_reserved = yield BookedSchedule.objects.filter({'seat_number':{'$in':seats}}) \
                                                                     .filter(schedule=sched._id) \
                                                                     .filter(status=book_status).find_all()
-                        
+
                         if len(seats_reserved):
                             for i, seat_reserved in enumerate(seats_reserved):
                                 seats_unavailable.append(seat_reserved.seat_number)
@@ -133,20 +136,21 @@ def create(self):
                             msg = 'Bikes ' if len(seats_unavailable) > 1 else 'Bike '
                             self.write('Unable to book a ride: '+ msg + str(seats_unavailable) +' unavailable');
                             self.finish()
-                            for lk in locked_keys:
-                                Lock.unlock(lk)
+                            with (yield lock.acquire()):
+                                for lk in locked_keys:
+                                    Lock.unlock(lk)
                             return;
 
                     elif book_status == 'waitlisted':
                         seats.append(0)
-                    
+
                     for seat in seats:
-                        book = BookedSchedule(user_id=user._id, 
+                        book = BookedSchedule(user_id=user._id,
                                               date=datetime.strptime(data['date'],'%Y-%m-%d'),
                                               schedule=sched._id,
                                               seat_number=seat,
                                               status=book_status);
-                            
+
                         if book:
 
                             user.credits -= deduct_credits
@@ -155,6 +159,7 @@ def create(self):
 
                             user_packs = []
                             if user_packages:
+
                                 has_valid_package = False
                                 for i, user_package in enumerate(user_packages):
                                     # check expiration
@@ -166,40 +171,40 @@ def create(self):
 
                                     if len(user_packs) > 0:
                                         user_package.remaining_credits -= 1
-                                        yield user_package.save() 
+                                        yield user_package.save()
                                         user_packs.append(str(user_package._id))
                                     else:
                                         if user_package.remaining_credits >= deduct_credits:
                                             user_package.remaining_credits -= deduct_credits
-                                            yield user_package.save() 
+                                            yield user_package.save()
                                             user_packs.append(str(user_package._id))
                                         else:
                                             user_package.remaining_credits -= 1
-                                            yield user_package.save() 
+                                            yield user_package.save()
                                             user_packs.append(str(user_package._id))
                                             continue
 
                                     book.user_package = user_packs
-                                    
+
                                     yield book.save()
                                     user = yield user.save()
 
                                     serialized_user = (yield User.objects.get(user._id)).serialize()
                                     if book_status == 'booked':
-                                        content = str(self.render_string('emails/booking', 
-                                                                         date=sched.date.strftime('%A, %B %d, %Y'), 
-                                                                         type=sched.type, 
-                                                                         user=serialized_user, 
-                                                                         instructor=sched.instructor, 
-                                                                         time=sched.start.strftime('%I:%M %p'), 
+                                        content = str(self.render_string('emails/booking',
+                                                                         date=sched.date.strftime('%A, %B %d, %Y'),
+                                                                         type=sched.type,
+                                                                         user=serialized_user,
+                                                                         instructor=sched.instructor,
+                                                                         time=sched.start.strftime('%I:%M %p'),
                                                                          seat_number=str(book.seat_number)), 'UTF-8')
                                         yield self.io.async_task(send_email_booking, user=serialized_user, content=content)
                                     elif book_status == 'waitlisted':
-                                        content = str(self.render_string('emails/waitlist', 
-                                                                         date=sched.date.strftime('%A, %B %d, %Y'), 
-                                                                         type=sched.type, 
-                                                                         user=serialized_user, 
-                                                                         instructor=sched.instructor, 
+                                        content = str(self.render_string('emails/waitlist',
+                                                                         date=sched.date.strftime('%A, %B %d, %Y'),
+                                                                         type=sched.type,
+                                                                         user=serialized_user,
+                                                                         instructor=sched.instructor,
                                                                          time=sched.start.strftime('%I:%M %p')), 'UTF-8')
                                         yield self.io.async_task(send_email, user=serialized_user, content=content, subject='Waitlisted')
                                     break
@@ -207,7 +212,9 @@ def create(self):
                                 if not has_valid_package:
                                     self.set_status(403)
                                     self.write('Unable to book a ride: Account doesnt have a valid package.');
-
+                            else:
+                                self.set_status(403)
+                                self.write('Unable to book a ride: Account doesnt have a valid package.');
                 else:
                     self.set_status(403)
                     self.write('Unable to book a ride: Insuficient credits');
@@ -222,9 +229,10 @@ def create(self):
         self.set_status(403)
         self.write('Please sign up or log in to your Electric account.')
     self.finish()
-    if len(locked_keys): 
-        for lk in locked_keys:
-            Lock.unlock(lk)
+    if len(locked_keys):
+        with (yield lock.acquire()):
+            for lk in locked_keys:
+                Lock.unlock(lk)
 
 def update(self, id):
     gmt8 = GMT8()
@@ -295,37 +303,37 @@ def update(self, id):
                         yield upack2.save()
 
                 if ref_book_status == 'waitlisted':
-                    content = str(self.render_string('emails/waitlist_removed', 
-                                                      date=book.date.strftime('%A, %B %d, %Y'), 
-                                                      user=user.to_dict(), 
+                    content = str(self.render_string('emails/waitlist_removed',
+                                                      date=book.date.strftime('%A, %B %d, %Y'),
+                                                      user=user.to_dict(),
                                                       type=book.schedule.type,
-                                                      seat_number=book.seat_number, 
-                                                      instructor=book.schedule.instructor, 
+                                                      seat_number=book.seat_number,
+                                                      instructor=book.schedule.instructor,
                                                       time=book.schedule.start.strftime('%I:%M %p')), 'UTF-8')
                     yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Removed from Waitlist')
                 else:
                     yield self.io.async_task(
                         send_email_cancel,
                         user=user.to_dict(),
-                        content=str(self.render_string('emails/cancel', 
-                                                       type=book.schedule.type, 
-                                                       instructor=book.schedule.instructor, 
-                                                       user=user.to_dict(), 
-                                                       date=book.date.strftime('%A, %B %d, %Y'), 
-                                                       seat_number=book.seat_number, 
+                        content=str(self.render_string('emails/cancel',
+                                                       type=book.schedule.type,
+                                                       instructor=book.schedule.instructor,
+                                                       user=user.to_dict(),
+                                                       date=book.date.strftime('%A, %B %d, %Y'),
+                                                       seat_number=book.seat_number,
                                                        time=book.schedule.start.strftime('%I:%M %p')), 'UTF-8')
-                        
+
                     )
             elif 'sched_id' in data and str(ref_sched_id) != str(data['sched_id']):
                 user = yield User.objects.get(user_id)
                 yield self.io.async_task(
                     send_email_move,
-                    content=str(self.render_string('emails/moved', 
-                                                   type=sched.type, 
-                                                   user=user.to_dict(), 
-                                                   instructor=sched.instructor, 
-                                                   date=book.date.strftime('%A, %B %d, %Y'), 
-                                                   seat_number=book.seat_number, 
+                    content=str(self.render_string('emails/moved',
+                                                   type=sched.type,
+                                                   user=user.to_dict(),
+                                                   instructor=sched.instructor,
+                                                   date=book.date.strftime('%A, %B %d, %Y'),
+                                                   seat_number=book.seat_number,
                                                    time=sched.start.strftime('%I:%M %p')), 'UTF-8'),
                     user=user.to_dict()
                 )
