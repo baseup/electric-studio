@@ -3,14 +3,17 @@
 var app = angular.module('elstudio-admin', [
   'ngRoute',
   'ngSanitize',
-  'elstudio.services', 
+  'elstudio.services',
   'elstudio.templates',
   'elstudio.controllers.base',
   'elstudio.controllers.admin'
 ]);
 
-app.config(function ($routeProvider, $httpProvider) {
-  
+app.config(function ($routeProvider, $httpProvider, webSocketProvider) {
+
+  var protocol = 'ws' + (location.protocol == 'https') ? 's' : '';
+  webSocketProvider.defaults.uri = protocol + '://' + location.host + '/ws';
+
   var routes = {
     '/': {
       redirectTo: 'accounts'
@@ -88,7 +91,7 @@ app.config(function ($routeProvider, $httpProvider) {
     // });
     $routeProvider.when(path, route);
   });
-  
+
   $routeProvider.otherwise({
     redirectTo: '/notfound'
   });
@@ -119,7 +122,7 @@ app.filter('formatTime', function() {
       var minutes = date.getMinutes();
       var ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12;
-      hours = hours ? hours : 12; 
+      hours = hours ? hours : 12;
       minutes = minutes < 10 ? '0' + minutes : minutes;
 
       return hours + ':' + minutes + ' ' + ampm;

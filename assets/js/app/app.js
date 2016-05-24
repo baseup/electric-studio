@@ -8,7 +8,10 @@ var app = angular.module('elstudio', [
   'elstudio.controllers.site'
 ]);
 
-app.config(function ($routeProvider, $httpProvider) {
+app.config(function ($routeProvider, $httpProvider, webSocketProvider) {
+
+  var protocol = 'ws' + (location.protocol == 'https') ? 's' : '';
+  webSocketProvider.defaults.uri = protocol + '://' + location.host + '/ws';
 
   var routes = {
     '/': {

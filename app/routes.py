@@ -129,6 +129,10 @@ routes.prefix('/api', [
     ('get', '/request_token', 'pos.request_token')
 ])
 
+routes.prefix('/ws', [
+    ('websocket', '/schedules', 'ws.schedules')
+])
+
 routes.subdomain('api.electric-studio.dev', [
     ('resource', 'user', 'api.user')
 ])
