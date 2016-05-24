@@ -1485,8 +1485,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     defaultView: 'agendaWeek',
     allDaySlot: false,
     allDay: false,
-    minTime: '05:00:00',
-    maxTime: '23:00:00',
     events: function (start, end, timezone, callback) {
       var events = [];
       ScheduleService.query({ start: start.unix(), end: end.unix(), branch: $scope.selectedBranchId }, function (scheds) {
@@ -1711,17 +1709,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       $scope.newSpecSched.end = strTimeToDate(angular.element('#add-time-end').val());
     }
 
-    var startTimeHour = 5;
-    var endTimeHour = 23;
-
-    if($scope.newSpecSched.start.getHours() < startTimeHour ||
-       $scope.newSpecSched.start.getHours() >= endTimeHour ||
-       $scope.newSpecSched.end.getHours() < startTimeHour ||
-       ($scope.newSpecSched.end.getHours() + $scope.newSpecSched.end.getMinutes() / 60) > endTimeHour) {
-      $.Alert('Schedule set before or after office hours is not allowed!');
-      return;
-    }
-
     if (!$scope.newSpecSched.date ||
         !$scope.newSpecSched.type ||
         !$scope.newSpecSched.instructor ||
@@ -1763,17 +1750,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     if ( $('[type="time"]').prop('type') != 'time' ) {
       $scope.editSched.start = strTimeToDate(angular.element('#edit-time-start').val());
       $scope.editSched.end = strTimeToDate(angular.element('#edit-time-end').val());
-    }
-
-    var startTimeHour = 5;
-    var endTimeHour = 23;
-
-    if($scope.editSched.start.getHours() < startTimeHour ||
-       $scope.editSched.start.getHours() >= endTimeHour ||
-       $scope.editSched.end.getHours() < startTimeHour ||
-       ($scope.editSched.end.getHours() + $scope.editSched.end.getMinutes() / 60) > endTimeHour) {
-      $.Alert('Schedule set before or after office hours is not allowed!');
-      return;
     }
 
     if (!$scope.editSched.date ||

@@ -208,7 +208,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       var scheduleRow = angular.element('.schedule .row').not('.unavailable');
       var scrollableView = scheduleRow.length ? scheduleRow.offset().top : 0;
       angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-    }, 100);    
+    }, 100);
   }
 
   scrollToUnavailable();
@@ -1460,23 +1460,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       return true;
 
     return false;
-  }
-
-
-  $scope.checkSchedTime = function(sched) {
-    var schedStartTime = new Date(sched.start);
-    var schedEndTime = new Date(sched.end);
-    var startTimeHour = 5;
-    var endTimeHour = 23;
-
-    if(schedStartTime.getHours() < startTimeHour ||
-       schedStartTime.getHours() >= endTimeHour ||
-       schedEndTime.getHours() < startTimeHour ||
-       (schedEndTime.getHours() + schedEndTime.getMinutes() / 60) > endTimeHour) {
-      return false;
-    }
-
-    return true;
   }
 
   $scope.getWeek = function (date) {
