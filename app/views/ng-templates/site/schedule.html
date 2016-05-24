@@ -20,7 +20,7 @@
           <h2 class="day">M</h2>
           <h3 class="date">{{ monM }} {{ monD }}</h3>
           <div class="column-rows">
-            <a ng-class="{ row: monday, unavailable: chkSched(monDate, monday), full: isFull(monday) }" ng-repeat="monday in schedules.mon" ng-if="checkSchedTime(monday)">
+            <a ng-class="{ row: monday, unavailable: chkSched(monDate, monday), full: isFull(monday) }" ng-repeat="monday in schedules.mon">
               <span class="time">{{ monday.start | formatTime }}</span>
               <span class="instructor">
                 {{ monday.instructor.admin.first_name }}
@@ -39,7 +39,7 @@
           <h2 class="day">T</h2>
           <h3 class="date">{{ tueM }} {{ tueD }}</h3>
           <div class="column-rows">
-            <a ng-class="{ row: tuesday, unavailable: chkSched(tueDate, tuesday), full: isFull(tuesday) }" ng-repeat="tuesday in schedules.tue" ng-if="checkSchedTime(tuesday)">
+            <a ng-class="{ row: tuesday, unavailable: chkSched(tueDate, tuesday), full: isFull(tuesday) }" ng-repeat="tuesday in schedules.tue">
               <span class="time">{{ tuesday.start | formatTime }}</span>
               <span class="instructor">
                 {{ tuesday.instructor.admin.first_name }}
@@ -58,7 +58,7 @@
           <h2 class="day">W</h2>
           <h3 class="date">{{ wedM }} {{ wedD }}</h3>
           <div class="column-rows">
-            <a ng-class="{ row: wednesday, unavailable: chkSched(wedDate, wednesday), full: isFull(wednesday) }" ng-repeat="wednesday in schedules.wed" ng-if="checkSchedTime(wednesday)">
+            <a ng-class="{ row: wednesday, unavailable: chkSched(wedDate, wednesday), full: isFull(wednesday) }" ng-repeat="wednesday in schedules.wed">
               <span class="time">{{ wednesday.start | formatTime }}</span>
               <span class="instructor">
                 {{ wednesday.instructor.admin.first_name }}
@@ -77,7 +77,7 @@
           <h2 class="day">Th</h2>
           <h3 class="date">{{ thuM }} {{ thuD }}</h3>
           <div class="column-rows">
-            <a ng-class="{ row: thursday, unavailable: chkSched(thuDate, thursday), full: isFull(thursday) }" ng-repeat="thursday in schedules.thu" ng-if="checkSchedTime(thursday)">
+            <a ng-class="{ row: thursday, unavailable: chkSched(thuDate, thursday), full: isFull(thursday) }" ng-repeat="thursday in schedules.thu">
               <span class="time">{{ thursday.start | formatTime }}</span>
               <span class="instructor">
                 {{ thursday.instructor.admin.first_name }}
@@ -96,7 +96,7 @@
           <h2 class="day">F</h2>
           <h3 class="date">{{ friM }} {{ friD }}</h3>
           <div class="column-rows">
-            <a ng-class="{ row: friday, unavailable: chkSched(friDate, friday), full: isFull(friday) }" ng-repeat="friday in schedules.fri" ng-if="checkSchedTime(friday)">
+            <a ng-class="{ row: friday, unavailable: chkSched(friDate, friday), full: isFull(friday) }" ng-repeat="friday in schedules.fri">
               <span class="time">{{ friday.start | formatTime }}</span>
               <span class="instructor">
                 {{ friday.instructor.admin.first_name }}
@@ -116,7 +116,7 @@
           <h2 class="day">S</h2>
           <h3 class="date">{{ satM }} {{ satD }}</h3>
           <div class="column-rows">
-            <a ng-class="{ row: saturday, unavailable: chkSched(satDate, saturday), full: isFull(saturday) }" ng-repeat="saturday in schedules.sat" ng-if="checkSchedTime(saturday)">
+            <a ng-class="{ row: saturday, unavailable: chkSched(satDate, saturday), full: isFull(saturday) }" ng-repeat="saturday in schedules.sat">
               <span class="time">{{ saturday.start | formatTime }}</span>
               <span class="instructor">
                 {{ saturday.instructor.admin.first_name }}
@@ -135,7 +135,7 @@
           <h2 class="day">Su</h2>
           <h3 class="date">{{ sunM }} {{ sunD }}</h3>
           <div class="column-rows">
-            <a ng-class="{ row: sunday, unavailable: chkSched(sunDate, sunday), full: isFull(sunday) }" ng-repeat="sunday in schedules.sun" ng-if="checkSchedTime(sunday)">
+            <a ng-class="{ row: sunday, unavailable: chkSched(sunDate, sunday), full: isFull(sunday) }" ng-repeat="sunday in schedules.sun">
               <span class="time">{{ sunday.start | formatTime }}</span>
               <span class="instructor">
                 {{ sunday.instructor.admin.first_name }}
@@ -154,7 +154,7 @@
           <h2 class="day">M</h2>
           <h3 class="date">{{ nmonM }} {{ nmonD }}</h3>
           <div class="column-rows">
-            <a ng-class="{ row: monday, unavailable: chkSched(nmonDate, monday), full: isFull(monday) }" ng-repeat="monday in schedules.nmon" ng-if="checkSchedTime(monday)">
+            <a ng-class="{ row: monday, unavailable: chkSched(nmonDate, monday), full: isFull(monday) }" ng-repeat="monday in schedules.nmon">
               <span class="time">{{ monday.start | formatTime }}</span>
               <span class="instructor">
                 {{ monday.instructor.admin.first_name }}
