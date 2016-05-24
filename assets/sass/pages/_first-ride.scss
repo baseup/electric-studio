@@ -1,10 +1,28 @@
-.first-ride.page {
+.first-ride.page.content.sidebar-layout {
+
+  @include breakpoint(lg) {
+    padding-top: 80px;
+  }
 
   .sidebar {
     background: none!important;
 
     &:before {
       background: none!important;
+    }
+
+    @include breakpoint(lg) {
+      top: 90px;
+    }
+
+    .h {
+     color: $color-text-gray;
+    }
+
+    p {
+      color: $color-text-gray;
+      line-height: 1.2;
+      margin-bottom: 20px;
     }
   }
 
@@ -24,6 +42,8 @@
     .h {
       @include breakpoint(md) {
         font-size: 52px;
+        margin-top: 30px;
+        margin-bottom: 0;
       }
     }
 
@@ -32,6 +52,16 @@
       font-size: 20px;
     }
 
+  }
+
+  #firstride-section {
+    .h, p {
+      color: $color-text-gray;
+    }
+
+    p {
+      line-height: 1.2;
+    }
   }
 
   .banner-image {
@@ -85,8 +115,8 @@
         background: #fff;
         margin-top: -80px;
         margin-bottom: 0;
-        padding: 20px;
         margin-left: 10%;
+        padding-top: 30px;
       }
     }
 
@@ -184,10 +214,17 @@
 
       @include breakpoint(md) {
         height: 500px;
+        text-align: left;
       }
     }
 
     .h {
+
+      @include breakpoint(md) {
+        margin-top: 0;
+        margin-left: -65px;
+        margin-bottom: 20px;
+      }
 
       i {
         font-size: 0.5em;
@@ -199,6 +236,10 @@
         text-align: center;
         border-radius: 50%;
         vertical-align: middle;
+
+        @include breakpoint(md) {
+          margin-right: 15px;
+        }
       }
 
       span {
@@ -212,16 +253,23 @@
       list-style: none;
       max-width: 800px;
       margin: 0 auto;
+      padding-left: 70px;
 
       @include breakpoint(md) {
         columns: 2;
         -webkit-columns: 2;
         -moz-columns: 2;
         text-align: left;
+        margin-top: 35px;
+        padding-left: 65px;
       }
 
       li {
         counter-increment: item;
+
+        @include breakpoint(md) {
+          line-height: 1.2;
+        }
 
         &:before {
           content: counter(item);
@@ -238,6 +286,16 @@
         }
       }
     }
+  }
+
+  .back-to-top {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 900;
+    cursor: pointer;
+    display: none;
   }
 
 }

@@ -59,12 +59,12 @@
           <li class="on-mobile"><a ng-class="{ active : activeMainNav('/rates-and-packages') }" href="#/rates-and-packages">Rates &plus; Packages</a></li>
           <li class="nav-item-schedule">
             <a ng-class="{ active : activeMainNav('/schedule') }" href="#/schedule">Classes</a>
-            <nav class="secondary-nav">
+            <nav class="secondary-nav" ngclass="{ active : activeMainNav('\/(workouts|rates|first-ride)',true) }">
               <ul class="secondary-nav-list">
                 <li><a href="/#/workouts" ng-class="{ active : activeMainNav('/workouts') }">Workouts</a></li>
                 <li><a href="/#/rates" ng-class="{ active : activeMainNav('/rates') }">Rates + Packages</a></li>
                 <li><a href="/#/first-ride" ng-class="{ active : activeMainNav('/first-ride') }">What to Expect</a></li>
-                <li><a href="/#/schedule" ng-class="{ active : activeMainNav('/schedule') }">Schedules</a></li>
+                <!-- <li><a href="/#/schedule" ng-class="{ active : activeMainNav('/schedule') }">Schedules</a></li> -->
               </ul>
             </nav>
           </li>
@@ -97,16 +97,20 @@
         <div class="user-menu">
           <div class="account-menu">
             <div class="account-menu__options">
-            {% if not loginUser %}
-              <a class="login-toggle">Login</a> /
-              <a class="signup-toggle">Sign up</a>
-              <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
-            {% else %}
-              <a href="javascript:void(0)" class="user-loggedin">
-                Hi <strong>{{ loginUser }}</strong>!
-                <i class="fa fa-caret-down"></i>
-              </a>
-            {% end %}
+              {% if not loginUser %}
+                <a class="login-toggle">Login</a> /
+                <a class="signup-toggle">Sign up</a>
+                <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
+              {% else %}
+                <a href="javascript:void(0)" class="user-loggedin">
+                  Hi <strong>{{ loginUser }}</strong>!
+                  <i class="fa fa-caret-down"></i>
+                </a>
+                <div class="account-menu__credits-block">
+                  <span class="credits">{{ credits }}</span>
+                  <div class="brand-icon"></div>
+                </div>
+              {% end %}
             </div>
             {% if loginUser %}
             <div class="account-menu__list">
@@ -118,10 +122,6 @@
             </div>
             {% end %}
           </div>
-
-          {% if loginUser %}
-          <span class="credits">{{ credits }}</span>
-          {% end %}
 
           <div class="book-buy">
             <span class="book-ride-btn" ng-click="isBookNavOpen = !isBookNavOpen" href="#/schedule">
@@ -223,6 +223,7 @@
         <li><a href="#/career">Careers</a></li>
         <li><a href="#/contact">Contact Us</a></li>
         <li><a href="#/terms">Terms</a></li>
+        <li><a href="#/gift-cards">Gift Cards</a></li>
       </ul>
 
       <ul class="social-links">
@@ -235,9 +236,9 @@
         <li>
           <a href="http://instagram.com/teamelectricph/"><i class="fa fa-instagram"></i></a>
         </li>
-        <li>
+        <!-- <li>
           <a href="https://twitter.com/teamelectricph"><i class="fa fa-twitter"></i></a>
-        </li>
+        </li> -->
       </ul>
     </div>
   </footer>

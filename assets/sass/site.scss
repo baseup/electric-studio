@@ -37,6 +37,12 @@
   font-weight: normal;
 }
 
+@font-face {
+  font-family: 'Round';
+  src: url('../fonts/WhitnIndWhiRouBd') format('opentype');
+  font-weight: normal;
+}
+
 
 /**
  * Add the core framework
@@ -435,6 +441,7 @@ body {
     right: 0;
     bottom: 0;
     background: #fff;
+    vertical-align: middle;
   }
 
   &:before {
@@ -447,42 +454,54 @@ body {
       bottom: 0;
       width: 500%;
     }
-  }
-
-  &:after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: $base-spacing-unit;
-    height: 30px;
-    width: 30px;
-    background-image: url(/assets/images/electricstudio-logo-2.png);
-    background-size: contain;
-    -webkit-animation-duration: 2s;
-    animation-duration: 2s;
-    -webkit-animation-fill-mode: both;
-    animation-fill-mode: both;
-    -webkit-animation-iteration-count: infinite;
-    animation-iteration-count: infinite;
-    -webkit-animation-name: rotate;
-    animation-name: rotate;
-    display: none;
-
-    @include breakpoint(md) {
-      display: block;
-    }
-  }
+  }  
 
   .credits {
     display: none;
     font-weight: bold;
+    font-family: 'Tungsten';
+    letter-spacing: 2px;
 
     @include breakpoint(md) {
-      position: absolute;
-      right: 40px;
-      display: block;
-      margin-top: 6px;
+      display: inline;
+      font-size: 16px;
+      line-height: 16px;
+      vertical-align: top;
     }
+  }
+
+  .brand-icon {
+    display: none;
+
+    @include breakpoint(md) {
+      display: inline-block;
+      vertical-align: middle;
+      height: 30px;
+      width: 30px;
+      background-image: url(/assets/images/electricstudio-logo-2.png);
+      background-size: contain;
+      -webkit-animation-duration: 2s;
+      animation-duration: 2s;
+      -webkit-animation-fill-mode: both;
+      animation-fill-mode: both;
+      -webkit-animation-iteration-count: infinite;
+      animation-iteration-count: infinite;
+      -webkit-animation-name: rotate;
+      animation-name: rotate;
+      margin-top: -10px;
+    }
+  }
+}
+
+.account-menu__credits-block {
+  float: right;
+
+  @include breakpoint(md) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-block;
+    text-align: right;
   }
 }
 
@@ -491,7 +510,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 2px;
   cursor: default;
-  padding: 15px 0 10px 0;
+  padding: 20px 0 10px 0;
   font-weight: bold;
   position: absolute;
   top: 0;
@@ -501,11 +520,11 @@ body {
   }
 
   @include breakpoint(md) {
+    width: 100%;
 
     .account-menu__list.active {
       display: none;
     }
-
 
     &:hover {
       .account-menu__list {
@@ -521,6 +540,10 @@ body {
 
     @include breakpoint(md) {
       font-size: 14px;
+      width: 100%;
+      position: relative;
+      line-height: 16px;
+      height: 16px;
     }
 
     a {
@@ -551,6 +574,11 @@ body {
       &:hover {
         color: $color-text-light;
       }
+
+      @include breakpoint(md) {
+        font-size: 11px;
+      }
+
     }
   }
 
@@ -568,7 +596,7 @@ body {
     top: auto;
     left: -$base-spacing-unit;
     right: -20px;
-    padding-top: 46px;
+    padding-top: 47px;
     display: none;
 
     @include breakpoint(md) {
@@ -741,8 +769,9 @@ body {
     position: relative;
     background: #fff;
     padding: 0;
-    top: 30px;
+    top: 28px;
     padding-right: 80px;
+    line-height: 1.2;
   }
 }
 .book-ride-btn {
@@ -765,6 +794,7 @@ body {
 
   span{
     display: block;
+    line-height: 1;
   }
 
   div.dropdown-holder{
@@ -780,10 +810,6 @@ body {
       background: $brand-color-secondary;
       margin-top: 20px;
       width: 100%;
-
-      @include breakpoint(md) {
-        margin-top: 15px;
-      }
 
       li{
         text-align: center;
@@ -1080,67 +1106,6 @@ body {
   background: #fff;
   padding: 0 10px;
   outline: none;
-}
-
-.button {
-  display: inline-block;
-  height: 34px;
-  padding: 0 60px;
-  min-width: 240px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #fff;
-  background: none;
-  border: 2px solid #fff;
-  font-size: 18px;
-  cursor: pointer;
-  font-weight: bold;
-  -webkit-transition: all 0.4s ease;
-  transition: all 0.4s ease;
-  box-sizing: border-box;
-
-  &:hover {
-    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.6);
-    border: 2px solid $brand-color-primary;
-  }
-
-  &.large {
-    height: auto;
-    padding: 15px 80px;
-    line-height: 40px;
-    font-size: 1.2em;
-    color: $brand-color-primary;
-    background-color: #fff;
-  }
-
-  &.small {
-    height: auto;
-    padding: 10px 40px;
-    min-width: 0;
-  }
-
-  &.center {
-    display: table;
-    width: auto;
-    padding-left: 20px;
-    padding-right: 20px;
-    text-align: center;
-    clear: both;
-    margin: 20px auto;
-  }
-
-  &.pads {
-    margin: 20px 0;
-  }
-
-  &.primary {
-    color: $brand-color-primary!important;
-    background-color: #fff;
-  }
-
-  &:focus {
-    outline: 0;
-  }
 }
 
 .header-form-container {
@@ -1641,6 +1606,13 @@ body {
 
     @include breakpoint(md) {
       text-align: left;
+    }
+
+    a {
+      @include breakpoint(md) {
+        margin-left: 1.6em;
+        @include link-colors($brand-color-primary);
+      }
     }
   }
 
@@ -3223,6 +3195,10 @@ body {
 .buttons {
   display: table;
   margin: auto;
+
+  .button {
+    width: 258px;
+  }
 }
 
 
@@ -3384,8 +3360,6 @@ body {
 
 @media only screen and (min-width: 740px){
 
-
-
   .slide, .banner {
     font-size: 100px;
 
@@ -3400,6 +3374,7 @@ body {
 
   .footer-links {
     margin-bottom: 20px;
+    line-height: 1.3;
 
     li {
       display: inline-block;
@@ -3543,14 +3518,14 @@ body {
     float: left;
     margin: 0;
 
+    @include breakpoint(md) {
+      padding-top: 10px;
+    }
+
     li {
       padding: 0;
       margin: 0 30px 0 0;
-    }
-
-    a {
-      height: 40px;
-      line-height: 40px;
+      vertical-align: top;
     }
   }
 
