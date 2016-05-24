@@ -1462,23 +1462,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     return false;
   }
 
-
-  $scope.checkSchedTime = function(sched) {
-    var schedStartTime = new Date(sched.start);
-    var schedEndTime = new Date(sched.end);
-    var startTimeHour = 5;
-    var endTimeHour = 23;
-
-    if(schedStartTime.getHours() < startTimeHour ||
-       schedStartTime.getHours() >= endTimeHour ||
-       schedEndTime.getHours() < startTimeHour ||
-       (schedEndTime.getHours() + schedEndTime.getMinutes() / 60) > endTimeHour) {
-      return false;
-    }
-
-    return true;
-  }
-
   $scope.getWeek = function (date) {
 
     var now = date? new Date(date) : new Date();
