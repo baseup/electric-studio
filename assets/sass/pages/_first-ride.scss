@@ -1,0 +1,243 @@
+.first-ride.page {
+
+  .sidebar {
+    background: none!important;
+
+    &:before {
+      background: none!important;
+    }
+  }
+
+  .wrapper {
+  }
+
+
+  .main {
+    font-size: 20px;
+    text-align: center;
+    padding: 0!important;
+
+    @include breakpoint(md) {
+      padding: 40px 240px 40px 0!important;
+    }
+
+    .h {
+      @include breakpoint(md) {
+        font-size: 52px;
+      }
+    }
+
+    p {
+      padding: 0 20px;
+      font-size: 20px;
+    }
+
+  }
+
+  .banner-image {
+    background-position: center;
+    background-size: cover;
+    min-height: 240px;
+  }
+
+  .section-1 {
+    @include breakpoint(md) {
+      padding-top: 120px;
+    }
+
+    p {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+
+  .section-2 {
+    .banner-image {
+      background-image: url('/assets/images/first-ride-clothing.png');
+      max-width: 800px;
+      margin: 0 auto;
+
+      @include breakpoint(md) {
+        height: 320px;
+      }
+    }
+
+    p {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+
+  .section-3 {
+    .banner-image {
+      background-image: url('/assets/images/first-ride-shoes.png');
+      max-width: 800px;
+      margin: 0 auto;
+
+      @include breakpoint(md) {
+        height: 320px;
+      }
+    }
+
+    .h {
+      @include breakpoint(md) {
+        width: 40%;
+        background: #fff;
+        margin-top: -80px;
+        margin-bottom: 0;
+        padding: 20px;
+        margin-left: 10%;
+      }
+    }
+
+    p {
+      max-width: 600px;
+      margin: 0 auto;
+
+      @include breakpoint(md) {
+        width: 40%;
+        background: #fff;
+        margin: 0;
+        margin-left: 10%;
+      }
+    }
+  }
+
+  .section-4{
+    .banner-image {
+      background-image: url('/assets/images/first-ride-amenities.png');
+
+      @include breakpoint(md) {
+        width: 400px;
+        max-width: 50%;
+        margin-left: 50%;
+        height: 400px;
+      }
+    }
+
+    p, .h {
+      @include breakpoint(md) {
+        max-width: 400px;
+        margin-left: 50%;
+      }
+    }
+  }
+
+  .section-5 {
+
+    @include breakpoint(md) {
+      margin-top: -440px;
+      margin-left: 60px;
+    }
+
+    .banner-image {
+      background-image: url('/assets/images/first-ride-water.png');
+
+      @include breakpoint(md) {
+        width: 400px;
+        max-width: 50%;
+        height: 360px;
+      }
+    }
+
+    p, .h {
+      @include breakpoint(md) {
+        max-width: 400px;
+      }
+    }
+  }
+
+  .section-6 {
+    .banner-image {
+      background-image: url('/assets/images/first-ride-hello.png');
+      max-width: 800px;
+      margin: 0 auto;
+
+      @include breakpoint(md) {
+        height: 320px;
+      }
+    }
+
+    .h {
+      background: #fff;
+      padding: 20px;
+      max-width: 540px;
+      margin: 0 auto;
+
+      @include breakpoint(md) {
+        margin: -60px auto 0;
+      }
+    }
+
+    p {
+      max-width: 540px;
+      margin: 0 auto;
+      background: #fff;
+    }
+  }
+
+  .section-7 {
+    .banner-image {
+      background-image: url('/assets/images/first-ride-safety.png');
+      max-width: 800px;
+      margin: 0 auto;
+
+      @include breakpoint(md) {
+        height: 500px;
+      }
+    }
+
+    .h {
+
+      i {
+        font-size: 0.5em;
+        background: $brand-color-primary;
+        color: #fff;
+        height: 40px;
+        width: 40px;
+        line-height: 40px;
+        text-align: center;
+        border-radius: 50%;
+        vertical-align: middle;
+      }
+
+      span {
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
+
+    ol {
+      padding: 0 20px;
+      list-style: none;
+      max-width: 800px;
+      margin: 0 auto;
+
+      @include breakpoint(md) {
+        columns: 2;
+        -webkit-columns: 2;
+        -moz-columns: 2;
+        text-align: left;
+      }
+
+      li {
+        counter-increment: item;
+
+        &:before {
+          content: counter(item);
+          font-size: 12px;
+          font-weight: 600;
+          border: 2px solid $brand-color-secondary;
+          height: 20px;
+          width: 20px;
+          line-height: 18px;
+          text-align: center;
+          display: inline-block;
+          border-radius: 50%;
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+
+}

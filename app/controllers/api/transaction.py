@@ -8,12 +8,18 @@ import tornado
 import json
     
 def find(self):
-    if not self.get_secure_cookie('loginUserID'):
+    user_id = None
+    if 'ES-USER-ID' in self.request.headers:
+        user_id = self.request.headers['ES-USER-ID']
+    else:
+        if self.get_secure_cookie('loginUserID'):
+            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+
+    if not user_id:
         self.set_status(403)
         self.write('User not login')
         self.finish()
     else:
-        user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
         transactions = yield UserPackage.objects.order_by('expire_date') \
                                                 .filter(user_id=ObjectId(user_id), remaining_credits__gt=0, status__ne='Expired').find_all()
         transactions = create_at_gmt8(transactions)

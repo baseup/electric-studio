@@ -37,9 +37,10 @@
   <noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6034010245867&amp;cd[value]=0.00&amp;cd[currency]=PHP&amp;noscript=1" /></noscript>
 
   {% end %}
-  <script type="text/javascript">(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-64306317-1', 'auto');ga('send', 'pageview');</script>
+  <script type="text/javascript">
+  var port = '';if (window.location.port)port = ':' + window.location.port;var WS = new WebSocket('ws://' + window.location.hostname + port + '/ws');(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-64306317-1', 'auto');ga('send', 'pageview');</script>
 </head>
-<body ng-controller="SiteCtrl">
+<body ng-controller="SiteCtrl" ng-class="{ 'show' : isNavOpen, 'book-nav-open':isBookNavOpen }">
   <header class="main-header">
     <div class="wrapper">
       <h1 class="brand">
@@ -49,17 +50,49 @@
         <img src="{{ static_url('images/electricstudio-logo.png') }}" class="logo">
       </h1>
 
-      <div class="menu-wrapper">
+      <div class="menu-wrapper" ng-class="{ show : isNavOpen, opaque:isNavOpen, transparent:!isNavOpen }">
 
         <ul class="main-menu">
           <li><a ng-class="{ active : activeMainNav('/about') }" href="#/about">About Us</a></li>
           <li><a ng-class="{ active : activeMainNav('/instructors') }" href="#/instructors">Instructors</a></li>
           <li class="on-mobile"><a ng-class="{ active : activeMainNav('/workouts') }" href="#/workouts">Workouts</a></li>
           <li class="on-mobile"><a ng-class="{ active : activeMainNav('/rates-and-packages') }" href="#/rates-and-packages">Rates &plus; Packages</a></li>
-          <li><a ng-class="{ active : activeMainNav('/schedule') }" href="#/schedule">Schedules</a></li>
+          <li class="nav-item-schedule">
+            <a ng-class="{ active : activeMainNav('/schedule') }" href="#/schedule">Classes</a>
+            <nav class="secondary-nav">
+              <ul class="secondary-nav-list">
+                <li><a href="/#/workouts" ng-class="{ active : activeMainNav('/workouts') }">Workouts</a></li>
+                <li><a href="/#/rates" ng-class="{ active : activeMainNav('/rates') }">Rates + Packages</a></li>
+                <li><a href="/#/first-ride" ng-class="{ active : activeMainNav('/first-ride') }">What to Expect</a></li>
+                <li><a href="/#/schedule" ng-class="{ active : activeMainNav('/schedule') }">Schedules</a></li>
+              </ul>
+            </nav>
+          </li>
           <li class="on-mobile"><a ng-class="{ active : activeMainNav('/contact') }" href="#/contact">Contact</a></li>
           <li class="on-desktop"><a ng-class="{ active : activeMainNav('/whats-new') }" href="#/whats-new">What's New</a></li>
         </ul>
+
+        <div class="book-menu">
+          <!-- lets ride menu -->
+          <div class="lets-ride-menu bgLightGray" ng-class="{'lets-ride-submenu-open':isLetsRideOpen}">
+            <div class="lets-ride-toggle" ng-click="isLetsRideOpen=!isLetsRideOpen">
+              LET'S RIDE
+              <i class="fa fa-chevron-down"></i>
+            </div>
+            <ul class="lets-ride-submenu">
+              <li><a href="/#/schedule">SCHEDULES</a></li>
+              <li><a href="/#/gift-cards">GIFT CARD</a></li>
+              <li><a href="/#/first-ride">WHAT TO EXPECT</a></li>
+              <li><a href="/#/faq">FAQs</a></li>
+            </ul>
+          </div>
+          <!-- branches -->
+          <ul class="book-menu-branches" ng-click="isNavOpen=false; isBookNavOpen=false">
+            {% for branch in branches %}
+              <li><a ng-click="" href="#/schedule/{{ branch._id }}">{{ branch.name }}</a></li>
+            {% end %}
+          </ul>
+        </div>
 
         <div class="user-menu">
           <div class="account-menu">
@@ -85,17 +118,19 @@
             </div>
             {% end %}
           </div>
-          
+
           {% if loginUser %}
           <span class="credits">{{ credits }}</span>
           {% end %}
 
           <div class="book-buy">
-            <span class="book-ride-btn" href="#/schedule">
+            <span class="book-ride-btn" ng-click="isBookNavOpen = !isBookNavOpen" href="#/schedule">
               <span>Buy/Book Rides</span>
               <div class="dropdown-holder">
                 <ul class="dropdown">
-                  <li><a href="#/schedule">BGC</a></li>
+                  {% for branch in branches %}
+                    <li><a href="#/schedule/{{ branch._id }}">{{ branch.name }}</a></li>
+                  {% end %}
                   <li class="special"><a href="#/rates-and-packages">Buy Rides</a></li>
                 </ul>
               </div>
@@ -103,11 +138,17 @@
           </div>
         </div>
 
+
+
       </div>
 
-      <a class="menu-toggle"><i class="fa fa-bars"></i></a>
+      <a class="menu-toggle" ng-click=" isNavOpen = !isNavOpen; isLetsRideOpen = false ">
+        <i class="fa fa-bars" ng-class="{ opaque : !isNavOpen, transparent:isNavOpen }"></i>
+        <span class="close-btn" ng-class="{ opaque : isNavOpen, transparent:!isNavOpen }">&times;</span>
+      </a>
 
     </div>
+
   </header>
 
   <div class="header-form-container login" ng-controller="LoginCtrl">
@@ -115,16 +156,19 @@
       <p class="notify" ng-show="signInError" ng-click="signInError = null"><span class="inner-wrapper">{{! signInError }}</span></p>
       <h2 class="h medium light">Log In</h2>
 
-      <div class="wrapper" ng-controller="SignUpCtrl" ng-show="unverifiedLogin">
-        <button class="button" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
-      </div>
+      
 
       <form class="login-form" method="post" autocomplete="off">
         <input class="input-box" placeholder="Email" ng-model="login.email" required>
         <input type="password" class="input-box" placeholder="Password" ng-model="login.password" required>
         <input type="submit" value="Log In" class="button" ng-click="signIn()">
-        <div class="copy"><a ng-click="forgotPass()" >Forgot password ?</a> <a ng-click="showSignup()">/ Sign up</a></div>
+        <div class="copy"><a ng-click="forgotPass()" >Forgot password?</a> / <a ng-click="showSignup()">Sign up</a></div>
       </form>
+
+      <div class="wrapper" ng-controller="SignUpCtrl" ng-show="unverifiedLogin">
+        <button class="button btn-unverified" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
+      </div>
+
       <span class="close-btn">&times;</span>
     </div>
   </div>
@@ -134,23 +178,38 @@
       <p class="notify" ng-show="signupError" ng-click="signupError = null"><span class="inner-wrapper">{{! signupError }}</span></p>
       <h2 class="h medium light">Sign Up</h2>
       <form class="signup-form" method="post">
-        <input class="input-box" placeholder="First Name" ng-model="user.first_name">
-        <input class="input-box" placeholder="Last Name" ng-model="user.last_name">
-        <input class="input-box" placeholder="Email Address" ng-model="user.email">
-        <input class="input-box" placeholder="Mobile Number" ng-model="user.phone_number">
-        <input type="password" class="input-box" placeholder="Password (minimum 6 character)" ng-model="user.password">
-        <input type="password" required compare-to="user.password" class="input-box" placeholder="Re-type Password" ng-model="user.confirm_password">
-        <br><br>
-        <input type="checkbox" ng-model="terms"> I have read and agree to the <a href="#/terms">Terms &amp; Conditions</a>.
-        <br><br>
-        <input ng-disabled="signingUp" type="submit" value="Sign Up" class="button" ng-click="signUp()">
+        <div class="clearfix">
+          <input class="input-box" placeholder="First Name" ng-model="user.first_name">
+          <input class="input-box" placeholder="Last Name" ng-model="user.last_name">
+          <input class="input-box" placeholder="Email Address" ng-model="user.email">
+          <input ng-disabled="signingUp" type="submit" value="Sign Up" class="button" ng-click="signUp()">
+        </div>
+        <div class="clearfix">
+          <input class="input-box" placeholder="Mobile Number" ng-model="user.phone_number">
+          <input type="password" class="input-box" placeholder="Password" ng-model="user.password">
+          <input type="password" required compare-to="user.password" class="input-box" placeholder="Re-type Password" ng-model="user.confirm_password">
+          <span>
+            <input type="checkbox" id="checkTerms" ng-model="terms">
+            <label class="checkTerms-label" for="checkTerms"></label>
+            <span>
+              I have read and agree to the <a href="#/terms">terms &amp; conditions</a>.
+            </span>
+          </span>
+        </div>
+
       </form>
       <span class="close-btn">&times;</span>
     </div>
     <div class="wrapper" ng-show="registered">
-      <h2 class="h medium light">Check your Email!</h2><br/><br/><br/>
-      <button class="h small btn" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
-      <span class="close-btn">X</span>
+      <p class="notify">
+        <span class="inner-wrapper">
+          <span class="icon icon--info"></span>
+          YOU’RE ALL SIGNED UP! PLEASE CHECK YOUR E-MAIL TO VERIFY YOUR ACCOUNT AND COMPLETE REGISTRATION.
+        </span>
+        <button class="btn center btn--quinary" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
+        <span class="close-btn">X</span>  
+        <!-- <h2 class="h medium light">Check your Email!</h2><br/><br/><br/> -->        
+      </p>      
     </div>
   </div>
 

@@ -7,10 +7,17 @@ import tornado
 import json
     
 def find(self):
+
+    user_id = None
+    if 'ES-USER-ID' in self.request.headers:
+        user_id = self.request.headers['ES-USER-ID']
+    else:
+        if self.get_secure_cookie('loginUserID'):
+            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+
     has_first_timer = False
     is_gc = self.get_query_argument('gc')
-    if self.get_secure_cookie('loginUserID') and not is_gc:
-        user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+    if user_id and not is_gc:
         ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
         if ft_package_count > 0:
             has_first_timer = True

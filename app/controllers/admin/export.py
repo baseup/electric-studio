@@ -4,8 +4,14 @@ from app.models.users import User
 from app.models.packages import UserPackage, GiftCertificate
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
-import csv
+from tornado import gen
+from app.settings import REDIS_HOST, REDIS_PORT
 from dateutil.relativedelta import relativedelta
+
+import os
+import redis
+import csv
+
 
 def download_bookings(self):
     sched_id = self.get_query_argument('sched_id')
@@ -44,12 +50,12 @@ def download_bookings(self):
 
             for i in range(1, 38):
                 if i in bikeMap:
-                    book_counts = (yield BookedSchedule.objects.filter(status='completed', user_id=bikeMap[i].user_id, date__lte=bikeMap[i].date).count())
+                    book_counts = (yield BookedSchedule.objects.filter(status='completed', user_id=bikeMap[i].user_id, date__lte=bikeMap[i].date).limit(1).find_all())
                     writer.writerow({
                         'Bike Number': i,
                         'First': bikeMap[i].user_id.first_name,
                         'Last': bikeMap[i].user_id.last_name,
-                        '1st Timer': 'Y' if book_counts == 0 else '',
+                        '1st Timer': 'Y' if len(book_counts) == 0 else '',
                         'Signature': ''
                     })
                 else:
@@ -126,9 +132,9 @@ def download_gift_cards_report(self):
             self.write(data)
     self.finish()
 
-def download_user_accounts(self):
-    email = self.get_query_argument('email')
-    past_month = self.get_query_argument('past_month')
+
+@gen.coroutine
+def download_user_accounts(email, past_month, redis_db):
     date_range = None
     if past_month:
         date_range = datetime.now() - relativedelta(months=+int(past_month))
@@ -137,13 +143,19 @@ def download_user_accounts(self):
         query.filter(create_at__gte=date_range)
     accounts = yield query.find_all()
 
-    filename = 'user-accounts-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
+    path = 'assets/downloads'
+    os.makedirs(path, exist_ok=True)
+
+    filename = path + '/user-accounts-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
     with open(filename, 'w') as csvfile:
         fieldnames = ['Full Name', 'Mobile Number', 'Email Address', 'Account Status', '# of Rides Bought', 
                     '# of Rides Booked', '# of Active Rides', '# of Missed Class', 'Date Account Created', 'Date of Last Ride']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
+        count = 1
+        alen = len(accounts)
         for a in accounts:
+            redis_db.set('process_account_export', 'account %s (%d of %d)' % (str(a.email), count, alen))
             bookings = yield BookedSchedule.objects.filter(user_id=a._id).find_all()
             transactions = yield UserPackage.objects.filter(user_id=a._id).find_all()
             total_rides_bought, total_rides_missed, total_rides_booked  = 0, 0, 0
@@ -165,6 +177,7 @@ def download_user_accounts(self):
             if date_last_ride != '':
                 date_last_ride.strftime('%Y-%m-%d')
             fullname = a.first_name + ' ' + a.last_name
+
             if email.lower() in a.email.lower() or email.lower() in fullname.lower():
                 writer.writerow({
                     'Full Name': a.first_name+ " " + a.last_name,
@@ -179,17 +192,32 @@ def download_user_accounts(self):
                     'Date of Last Ride': date_last_ride
                 })
 
-    buf_size = 4096
-    self.set_header('Content-Type', 'application/octet-stream')
-    self.set_header('Content-Disposition', 'attachment; filename=' + filename)
-    with open(filename, 'r') as f:
-        while True:
-            data = f.read(buf_size)
-            if not data:
-                break
-            self.write(data)
-    self.finish()
-    # self.redirect('/admin/#/accounts')
+            count += 1
+
+    redis_db.delete('process_account_export')
+    redis_db.set('process_account_export_done', filename)
+    return {'success': True, 'file': filename}
+
+def download_user_accounts_progress(self):
+    redis_db = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+
+    start_export = self.get_query_argument('start')
+    if start_export:
+        redis_db.delete('process_account_export')
+
+    if redis_db.exists('process_account_export_done'):
+        file_export = redis_db.get('process_account_export_done')
+        redis_db.delete('process_account_export_done')
+        return self.render_json({ 'success': True, 'file': file_export.decode('utf-8') })
+    
+    if redis_db.exists('process_account_export'):
+        return self.render_json({ 'success': True, 'data': redis_db.get('process_account_export').decode('utf-8') })
+    else:
+        email = self.get_query_argument('email')
+        past_month = self.get_query_argument('past_month')
+        download_user_accounts(email, past_month, redis_db)
+
+    return self.render_json({ 'success': True, 'data':'initilize ...' })
 
 
 def waitlist(self):

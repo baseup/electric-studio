@@ -1,0 +1,70 @@
+.secondary-nav {
+	display: none;
+	max-width: 1300px;
+
+	@include breakpoint(md) {
+		display: block;
+		position: absolute;
+		top: 83px;
+		left: 0;
+		width: 100%;
+		width: 100vw;
+		background-color: #eee;
+		z-index: 0;
+		margin-top: -10px;
+		transition: all .3s ease;
+
+		visibility: hidden;
+		pointer-events: none;
+		opacity: 0;
+	}
+
+	&:before {
+		content: '';
+		background: #eee;
+		position: absolute;
+		height: 100%;
+		left: -100%;
+		right: -100%;
+		z-index: -1;
+	}
+}
+
+.secondary-nav-list {
+	display: block;
+	font-size: 0;
+
+	li {
+		display: inline-block;
+		width: 24%;
+		font-size: 1rem;
+		padding: 15px 0;
+	}
+
+	a {
+		display: block;
+		text-align: center;
+		text-transform: uppercase;
+		font-size: 14px;
+		font-weight: bold;
+		transition: all .3s ease;
+		@include link-colors($brand-color-secondary !important,$brand-color-primary !important);
+
+		&.active {
+			@include link-colors($brand-color-primary !important);
+		}
+	}
+}
+
+
+// Hover states
+// ------------------------------------------------------------
+
+.nav-item-schedule:hover .secondary-nav {
+	@include breakpoint(md) {
+		margin-top: 0px;
+		visibility: visible;
+		pointer-events: auto;
+		opacity: 1;
+	}
+}

@@ -32,8 +32,14 @@ def find(self):
             self.render_json(waitlist)
 
     else:
-        if self.get_secure_cookie('loginUserID'):
-            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
+        user_id = None
+        if 'ES-USER-ID' in self.request.headers:
+            user_id = self.request.headers['ES-USER-ID']
+        else:
+            if self.get_secure_cookie('loginUserID'):
+                user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+
+        if user_id:
             user = yield User.objects.get(user_id)
             if user:
                 books = yield BookedSchedule.objects.filter(user_id=user._id, status__ne='cancelled') \
@@ -56,9 +62,16 @@ def create(self):
 
     locked_keys = []
     data = tornado.escape.json_decode(self.request.body)
-    if self.get_secure_cookie('loginUserID'):
+
+    user_id = None
+    if 'ES-USER-ID' in self.request.headers:
+        user_id = self.request.headers['ES-USER-ID']
+    else:
+        if self.get_secure_cookie('loginUserID'):
+            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+
+    if user_id:
         try:
-            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
             user = yield User.objects.get(user_id)
             if user.status != 'Frozen' and user.status != 'Unverified':
 
@@ -224,7 +237,14 @@ def create(self):
 def update(self, id):
     gmt8 = GMT8()
     data = tornado.escape.json_decode(self.request.body)
-    if data and self.get_secure_cookie('loginUserID'):
+    user_id = None
+    if 'ES-USER-ID' in self.request.headers:
+        user_id = self.request.headers['ES-USER-ID']
+    else:
+        if self.get_secure_cookie('loginUserID'):
+            user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8')
+
+    if data and user_id:
         try:
             book = yield BookedSchedule.objects.get(id)
             ref_book_date = book.date
@@ -265,7 +285,6 @@ def update(self, id):
                 if book.schedule.type == 'Electric Endurance':
                     restore_credits = 2
 
-                user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
                 user = yield User.objects.get(user_id)
                 user.credits += restore_credits
                 user = yield user.save()
@@ -306,7 +325,6 @@ def update(self, id):
 
                     )
             elif 'sched_id' in data and str(ref_sched_id) != str(data['sched_id']):
-                user_id = str(self.get_secure_cookie('loginUserID'), 'UTF-8');
                 user = yield User.objects.get(user_id)
                 yield self.io.async_task(
                     send_email_move,

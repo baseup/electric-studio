@@ -1,5 +1,5 @@
 @import "../vendor/fontawesome/css/font-awesome.min.css";
-@import url(http://fonts.googleapis.com/css?family=Lato:400,700);
+@import url('//fonts.googleapis.com/css?family=Lato:400,700');
 
 @font-face {
   font-family: 'Brandon_Grotesque';
@@ -31,6 +31,12 @@
   font-weight: normal;
 }
 
+@font-face {
+  font-family: 'Tungsten-Medium';
+  src: url('../fonts/Tungsten-Medium.ttf') format('truetype');
+  font-weight: normal;
+}
+
 
 /**
  * Add the core framework
@@ -38,12 +44,21 @@
 @import "framework";
 
 @import "components/base";
-
 @import "components/overrides";
-
 @import "components/_gift-card";
+@import "components/_secondary-menu";
 
-@import "components/_site-about";
+@import "pages/about";
+@import "pages/account";
+@import "pages/instructors";
+@import "pages/faq";
+@import "pages/contact";
+@import "pages/rates";
+@import "pages/workouts";
+@import "pages/giftcard";
+@import "pages/first-ride";
+@import "pages/career";
+
 
 
 @mixin border-radius($radius: 50%) {
@@ -83,6 +98,8 @@ body {
   padding-top: 30px + ($base-spacing-unit * 2);
   overflow-x: hidden;
   -webkit-overflow-x: hidden;
+  font-size: 16px;
+  font-family: 'Brandon_Grotesque', sans-serif;
 
   @include breakpoint(md) {
     padding-top: 0;
@@ -117,6 +134,8 @@ body {
 
   .wrapper {
     position: relative;
+    background: $brand-color-primary;
+    z-index: 1;
 
     &:after {
       content: '';
@@ -125,7 +144,7 @@ body {
     }
 
     @include breakpoint(md) {
-      padding: 20px $base-spacing-unit;
+      padding: 20px 0 0 0;
     }
   }
 }
@@ -185,28 +204,29 @@ body {
   @include breakpoint(md) {
     vertical-align: bottom;
     float: left;
+    margin-left: 20px;
   }
 }
 
 .menu-wrapper {
   position: fixed;
-  top: 30px + ($base-spacing-unit * 2);
   bottom: 0;
   left: 0;
   right: 0;
+  top: 70px;
   background: #fff;
   padding: $base-spacing-unit;
-  display: none;
-
-  &.show {
-    display: block;
-  }
+  transition: all .3s ease;
 
   @include breakpoint(md) {
-    display: block!important;
     position: static;
     background: none;
     padding: 0;
+
+    display: block!important;
+    opacity: 1!important;
+    pointer-events: auto !important;
+    visibility: visible!important;
   }
 }
 
@@ -215,32 +235,42 @@ body {
   cursor: default;
   font-size: 20px;
   display: block;
+  visibility: visible;
   padding: $base-spacing-unit / 2 0;
   text-align: left;
   margin-top: 30px;
+  transition: all .3s ease;
+  white-space: nowrap;
 
   @include breakpoint(md) {
     padding: 0;
     display: inline-block;
     margin: 0;
-    position: relative;
-    top: 26px;
-    left: 14px;
     font-size: 14px;
-    margin-top: 0;
+    margin-top: 28px;
+
+    width: calc(100% - 260px);
+    display: block;
+    padding-left: 170px;
+  }
+
+  .book-nav-open & {
+    @media ( max-width: $bp-sm ) {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
   }
 
   & > li {
     display: block;
-    margin: 22px 0;
+    margin-top: 22px;
 
     @include breakpoint(md) {
+      width: calc(100% / 4);
       display: inline-block;
-      margin: 0 10px;
-    }
-
-    @include breakpoint(lg) {
-      margin: 0 15px;
+      padding: 0 0px 20px 0px;
+      margin-top: 0px;
     }
 
     &.on-mobile {
@@ -265,6 +295,7 @@ body {
     color: $color-text-light;
     text-decoration: none;
     font-weight: bold;
+    text-align: center;
 
     @include breakpoint(md) {
       padding: 0;
@@ -272,13 +303,130 @@ body {
     }
 
     &:hover, &.active {
-      color: $color-text-light!important;
+      @include link-colors($brand-color-primary);
+
+      @include breakpoint(md) {
+        color: $color-text-light !important;
+      }
     }
   }
 
 }
 
+
+.book-menu {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  background-color: #fff;
+  transition: all .3s ease;
+
+  .book-nav-open &  {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  @include breakpoint(md) {
+    display: none !important;
+  }
+}
+
+
+.lets-ride-menu {
+    color: #fff;
+    position: relative;
+}
+
+.lets-ride-toggle {
+  text-align: center;
+  position: relative;
+  font-family: 'Tungsten';
+  font-size: 20px;
+  padding: 10px 0;
+  background-color: lighten($color-text-lightgray,20);
+
+  .fa {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    padding: 10px 0;
+  }
+}
+
+.lets-ride-submenu {
+  position: absolute;
+  top: 95%;
+  left: 0;
+  width: 100%;
+  background-color: lighten($color-text-lightgray,20);
+  color: #fff;
+  padding: 10px 0;
+  transition: all .3s ease;
+
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+
+  li a {
+    display: block;
+    @include link-colors(#fff);
+    text-align: center;
+    padding: 12px 0;
+  }
+
+  .lets-ride-submenu-open & {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+
+.book-menu-branches {
+  display: block;
+  margin: 0px;
+  padding: 10px;
+
+  ul {
+    display: block;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    display: block;
+    list-style: none;
+  }
+
+  a {
+    display: block;
+    @include link-colors(lighten($color-text-lightgray,35));
+    font-family: 'Tungsten';
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 100px;
+    padding: 10px
+  }
+
+}
+
 .user-menu {
+  transition: all .3s ease;
+
+  .book-nav-open & {
+    @media ( max-width: $bp-sm ) {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
 
   @include breakpoint(md) {
     padding: $base-spacing-unit;
@@ -732,6 +880,20 @@ body {
   @include breakpoint(md) {
     display: none;
   }
+
+  .close-btn, .fa-bars {
+    transition: all .3s ease;
+    color: inherit;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-weight: lighter;
+    font-size: 60px;
+    line-height: .6;
+  }
 }
 
 .color-secondary {
@@ -740,17 +902,16 @@ body {
 
 .h {
   text-transform: uppercase;
-  font-weight: bold;
+  font-weight: normal;
   margin: 20px 0;
-  font-family: 'Brandon_Grotesque';
+  font-family: 'Tungsten', sans-serif;
 
   &.large {
     font-size: 2em;
-    font-family: 'Brandon_Grotesque';
   }
 
   &.medium {
-    font-size: 1.4em;
+    font-size: 1.6em;
   }
 
   &.small {
@@ -786,6 +947,10 @@ body {
     font-family: 'Brandon_Grotesque';
   }
 
+  &.face-secondary {
+    font-family: 'Tungsten', sans-serif;
+  }
+
   &.xl {
     font-family: 'Tungsten', sans-serif;
     font-weight: 300;
@@ -797,6 +962,23 @@ body {
     @include breakpoint(sm) {
       font-size: 70px;
     }
+  }
+}
+
+.watermark {
+  font-family: 'Tungsten', sans-serif;
+  font-size: 100px;
+  color: #E6E7E8;
+  z-index: -1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  letter-spacing: 2px;
+  font-weight: normal;
+
+  @include breakpoint(md) {
+    font-size: 250px;
+    letter-spacing: 5px;
   }
 }
 
@@ -909,15 +1091,17 @@ body {
   letter-spacing: 2px;
   color: #fff;
   background: none;
-  border: 3px solid #fff;
+  border: 2px solid #fff;
   font-size: 18px;
   cursor: pointer;
   font-weight: bold;
   -webkit-transition: all 0.4s ease;
   transition: all 0.4s ease;
+  box-sizing: border-box;
 
   &:hover {
-    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.6);
+    border: 2px solid $brand-color-primary;
   }
 
   &.large {
@@ -927,7 +1111,6 @@ body {
     font-size: 1.2em;
     color: $brand-color-primary;
     background-color: #fff;
-    border: 0;
   }
 
   &.small {
@@ -937,10 +1120,10 @@ body {
   }
 
   &.center {
-    display: block;
-    width: 240px;
-    padding-left: 0;
-    padding-right: 0;
+    display: table;
+    width: auto;
+    padding-left: 20px;
+    padding-right: 20px;
     text-align: center;
     clear: both;
     margin: 20px auto;
@@ -976,6 +1159,16 @@ body {
   left: 0;
   right: 0;
   color: #fff;
+  font-family: 'Brandon_Grotesque',sans-serif;
+  font-weight: 600;
+
+  .wrapper {
+    padding-left: 0;
+    @include breakpoint(lg) {
+      max-width: 1370px;
+      margin-right: 0;
+    }
+  }
 
   @include breakpoint(md) {
     text-align: left;
@@ -990,6 +1183,20 @@ body {
 
     &.signup .input-box {
       width: 280px;
+    }
+
+    .login-form {
+      .copy {
+        a:nth-child(2) {
+          color: $brand-color-tertiary;
+        }
+      }
+    }
+
+    .btn-unverified {
+      display: table;
+      margin: auto;
+      float: none;
     }
   }
 
@@ -1109,21 +1316,67 @@ body {
   }
 
   .close-btn {
+    width: 24px;
+    height: 24px;
+    color: transparent;
+    top: 20px;
+    right: 20px;
+    display: block;
     position: absolute;
-    color: #fff;
-    top: 8px;
-    right: $base-spacing-unit;
-    cursor: pointer;
-    font-size: 30px;
 
     &:hover {
-      color: $brand-color-primary;
+      &:before, &:after {
+        border-color: $brand-color-primary;
+      }
     }
 
-    @include breakpoint(md) {
-      font-size: 35px;
-      top: 15px;
+    &:before, &:after {
+      content: '';
+      display: block;
+      height: 33px;
+      border-width: 1px;
+      border-style: solid;
+      border-color: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
     }
+
+    &:before {
+      transform: translate(-50%,-50%) rotate(45deg);
+    }
+
+    &:after {
+      transform: translate(-50%,-50%) rotate(-45deg);
+    }
+  }
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  input[type="checkbox"]:checked + .checkTerms-label {
+    &:after {
+      content: '';
+      display: block;
+      border-right: 1px solid white;
+      transform: translate(-50%,-50%) rotate(45deg);
+      height: 16px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+    }
+  }
+
+  .checkTerms-label {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 1px solid white;
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 2.5em;
+    position: relative;
   }
 
 }
@@ -1384,7 +1637,11 @@ body {
   font-family: 'Brandon_Grotesque';
 
   .copyright {
-    text-align: left;
+    text-align: center;
+
+    @include breakpoint(md) {
+      text-align: left;
+    }
   }
 
   .credit-link {
@@ -1692,228 +1949,6 @@ body {
   }
 }
 
-/* Instructors */
-.instructors-info {
-  text-align: center;
-
-  .image {
-    width: 100%;
-    height: auto;
-    overflow: hidden;
-    margin: 0 auto;
-    @include vendor(transition, all 0.4s ease);
-    box-shadow: none;
-    position: relative;
-    cursor: pointer;
-
-    &:hover {
-
-      &:before {
-        background: rgba(#000, 0.3);
-      }
-
-      &:after, .name {
-        opacity: 1;
-      }
-    }
-
-    &:before {
-      content: '';
-      display: block;
-      padding-bottom: 100%;
-      position: relative;
-      z-index: 2;
-      transition: background 0.4s ease;
-    }
-
-    &:after {
-      content: '';
-      background-image: url("/assets/images/stripe-gray.png");
-      background-size: 6px;
-      position: absolute;
-      top: -25%;
-      left: -25%;
-      width: 150%;
-      height: 150%;
-      transform: rotate(135deg);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    &.focus {
-      box-shadow: 0 0 0 6px $brand-color-primary;
-    }
-
-    img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      min-height: 100%;
-      min-width: 100%;
-      filter: gray; /* IE6-9 */
-      filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
-      -webkit-filter: grayscale(1);
-    }
-
-    .name {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      margin: 0 auto;
-      color: #fff;
-      z-index: 2;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      font-family: 'Tungsten', sans-serif;
-      font-size: 48px;
-      font-weight: 400;
-
-      &:before {
-        content: '';
-        display: inline-block;
-        height: 100%;
-        vertical-align: middle;
-      }
-
-      span {
-        display: inline-block;
-        vertical-align: middle;
-      }
-    }
-  }
-
-  p {
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 0.9em;
-    line-height: 1.5em;
-  }
-}
-
-
-.instructor-modal {
-
-  .modal__box {
-    max-width: 640px;
-    width: 90%;
-  }
-
-  .modal-close {
-    background: $brand-color-secondary;
-    height: 35px;
-    width: 35px;
-    text-align: center;
-    color: #fff;
-    font-weight: bold;
-  }
-
-  .image {
-    width: 100%;
-    height: 300px;
-    overflow: hidden;
-
-    @include breakpoint(sm) {
-      width: 200px;
-      height: 200px;
-      float: left;
-    }
-  }
-
-  .details {
-    @include breakpoint(sm) {
-      float: left;
-      padding-left: 20px;
-      width: 380px;
-    }
-
-    .name {
-      font-family: 'Tungsten', sans-serif;
-      font-size: 52px;
-      font-weight: 400;
-    }
-  }
-
-  .schedule {
-    position: relative;
-    margin: 0 30px;
-
-    &.no-slide {
-      margin: 0;
-
-      .arrow {
-        display: none;
-      }
-    }
-
-    &.full-right {
-      margin-right: 0;
-
-      .arrow.right {
-        display: none;
-      }
-    }
-
-    &.full-left {
-      margin-left: 0;
-
-      .arrow.left {
-        display: none;
-      }
-    }
-
-    .arrow {
-      position: absolute;
-      height: 30px;
-      width: 30px;
-      font-size: 24px;
-      line-height: 30px;
-      text-align: center;
-      top: 0;
-      bottom: 0;
-      margin: auto;
-      cursor: pointer;
-
-      &:hover {
-        color: $brand-color-primary;
-      }
-
-      &.left {
-        left: -30px;
-      }
-
-      &.right {
-        right: -30px;
-      }
-
-      &.hide {
-        display: none;
-      }
-    }
-
-    .schedule-slider-wrapper {
-      width: 100%;
-      overflow: hidden;
-    }
-
-    .schedule-slider {
-      transition: margin 0.4s ease;
-      overflow: hidden;
-    }
-  }
-
-  .row {
-    float: left;
-    width: 50%;
-    border: 1px solid #fff;
-
-    @include breakpoint(sm) {
-      width: 25%;
-    }
-  }
-}
 
 
 .group-pic {
@@ -2040,62 +2075,6 @@ body {
 }
 
 
-/* Contacts */
-.contact {
-
-  .info{
-    h2{
-      margin-top: 30px;
-      margin-bottom: 5px;
-
-      &:first-child{
-        margin-top: 15px;
-      }
-    }
-  }
-  .social {
-    list-style: none;
-    padding: 0;
-
-    li {
-      display: inline-block;
-      padding-right: 15px;
-    }
-
-    a {
-      display: block;
-      height: 40px;
-      width: 40px;
-      line-height: 40px;
-      text-align: center;
-      border-radius: 50%;
-      background: #fff;
-      color: $brand-color-primary;
-      font-size: 21px;
-      padding-left: 3px;
-    }
-  }
-
-  .map {
-    min-height: 400px;
-    background: darken($brand-color-secondary, 20%);
-    padding: 0;
-    height: 300px;
-
-    @include breakpoint(md) {
-      float: left;
-      width: 70%;
-      margin-top: 40px;
-      height: 520px;
-      height: 480px;
-    }
-
-    iframe {
-      max-width: 100%;
-      max-height: 100%;
-    }
-  }
-}
 
 /* First Ride */
 .num {
@@ -2119,25 +2098,7 @@ body {
   }
 }
 
-/* faq */
-.faq.content {
 
-  ul{
-    padding-left: 10px;
-    margin: 20px 0 0 10px;
-
-    li{
-      margin-bottom: 20px;
-      font-size: 14px;
-
-      strong{
-        display: inline-block;
-        padding-bottom: 5px;
-      }
-    }
-  }
-
-}
 
 /* Sidebar Layout */
 .content.sidebar-layout {
@@ -2150,20 +2111,52 @@ body {
     background: $brand-color-secondary;
     color: #fff;
     padding: 20px;
+    font-size: 20px;
 
     &.light {
       background: #fff;
       color: $color-text;
     }
+
+    .h {
+      font-family: 'Tungsten-Medium', sans-serif;
+      color: $color-text-lightgray;
+      font-size: 35px;
+      margin: 0px;
+    }
+
+    a {
+      text-transform: uppercase;
+      display: block;
+      color: inherit;
+      line-height: normal;
+      font-weight: normal;
+      padding: 5px 0px;
+      @include link-colors(white,$brand-color-primary);
+    }
+
+    .btn {
+      display: table;
+      margin-top: 20px;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
   }
 
   .main {
     padding: 20px;
   }
 
+
   .h {
     color: $color-text-light;
   }
+
+  .sidebar-links {
+    margin-bottom: 40px;
+  }
+
 
   @include breakpoint(md) {
     padding: 0;
@@ -2180,7 +2173,7 @@ body {
       position: absolute;
       top: 0;
       right: 0;
-      width: 280px;
+      width: 328px;
       min-height: 100%;
       padding: 40px 20px;
 
@@ -2263,46 +2256,117 @@ body {
 }
 
 
+.branch-watermark {
+  position: absolute;
+  display: block;
+  height: 266px;
+  top: 0;
+  left: 0;
+  font-family: 'Tungsten-Medium';
+  font-size: 150px;
+  color: $color-watermark;
+  line-height: 1;
+  z-index: -1;
+
+  @media (min-width: 768px) {
+    font-size: 250px;
+  }
+
+  @include breakpoint(md) {
+    top: -18px;
+    left: 53px;
+    font-size: 380px;
+  }
+
+}
+
+
 /* Schedule */
 .schedule {
 
+  .table {
+    display: block;
+    margin: auto;
+
+    &:before, &:after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+
+    @include breakpoint(md) {
+      margin-top: 70px;
+    }
+
+  }
+
   .day {
-    font-size: 1.4em;
-    color: $brand-color-tertiary;
+    color: $color-text-gray;
     padding: 0 10px;
-    margin: 20px 0;
-    font-family: 'Brandon_Grotesque';
+    margin: 0;
+    font-size: 2.125em;
+    font-family: 'Tungsten-Medium';
+    font-weight: lighter;
+    line-height: 1;
+    display: inline-block;
+
+    @include breakpoint(md) {
+      display: block;
+      border-left: 2px solid transparent;
+    }
   }
 
   .date {
     margin: 0;
     padding: 10px;
-    border-top: 2px solid #fff;
-    border-bottom: 2px solid #fff;
+    padding-top: 0;
+    border: 2px solid transparent;
     color: $brand-color-primary;
-    font-size: 1.04em;
-    font-family: 'Brandon_Grotesque';
+    font-size: 2.125em;
+    font-family: 'Tungsten-Medium';
+    font-weight: lighter;
     text-transform: uppercase;
+    line-height: 1;
+    display: inline-block;
 
     @include breakpoint(md) {
       border-right: 1px solid #fff;
+      display: block;
+    }
+  }
+
+  .column-rows {
+    border: 2px solid $brand-color-tertiary;
+    border-width: 2px 0 0 0;
+
+    @include breakpoint(md) {
+      border-width: 2px 2px 0 2px;
     }
   }
 
   .row {
     display: block;
-    border-bottom: 2px solid #fff;
     padding: 10px;
     line-height: 1.4em;
     color: $color-text-light;
     position: relative;
+    width: 100%;
+
+    @include breakpoint(md) {
+      border-bottom: 2px solid $brand-color-tertiary;
+    }
 
     button {
-      visibility: hidden;
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      margin: auto;
+      -webkit-transform: translate(0, -50%);
+      transform: translate(0, -50%);
 
       @include breakpoint(md) {
-        position: absolute;
-        top: 50%;
+        visibility: hidden;
+        right: auto;
         left: 50%;
         -webkit-transform: translate(-50% ,-50%);
         transform: translate(-50% ,-50%);
@@ -2315,6 +2379,10 @@ body {
       .link {
         opacity: 0;
         visibility: hidden;
+      }
+
+      button {
+        display: none;
       }
     }
 
@@ -2349,6 +2417,10 @@ body {
     .instructor {
       font-size: 0.9em;
       font-weight: bold;
+      font-family: 'Tungsten-Medium';
+      font-weight: lighter;
+      font-size: em(30);
+      margin-top: 5px;
     }
 
     .link {
@@ -2361,16 +2433,16 @@ body {
   }
 
   .column {
+    margin-bottom: 15px;
+
     @include breakpoint(md) {
       float: left;
       width: 12.5%;
+      margin-left: -2px; // make the border overlap
+      margin-bottom: 0;
 
       &:last-child {
         .row {
-          border-right: none;
-        }
-
-        .date {
           border-right: none;
         }
       }
@@ -2384,23 +2456,30 @@ body {
   .header {
     position: relative;
     text-align: center;
-    margin: 20px 0;
+    margin: 40px 0;
     font-family: 'Brandon_Grotesque';
 
     @include breakpoint(sm) {
-      width: 440px;
+      width: 480px;
       margin: 20px auto;
       line-height: 2em;
+      margin-top: 35px;
     }
 
     .range {
       font-size: 1.4em;
-      color: $brand-color-primary;
+      color: $color-text-gray;
+      font-family: 'Tungsten-Medium';
+      font-weight: lighter;
       text-transform: uppercase;
       margin: 0;
 
       @include breakpoint(sm) {
         font-size: 1.5em;
+      }
+
+      @include breakpoint(md) {
+        font-size: 50px;
       }
 
       span {
@@ -2413,7 +2492,7 @@ body {
       position: absolute;
       top: 0;
       font-size: 1.4em;
-      color: $brand-color-primary;
+      color: $color-text-gray;
       padding: 0 15px;
       @include transition(all 0.4s ease);
       cursor: pointer;
@@ -2560,6 +2639,9 @@ body {
     text-align: center;
     margin: 0 auto;
     width: 280px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
     @media (min-width: 360px) {
       width: 310px;
@@ -2573,7 +2655,15 @@ body {
       width: 911px;
 
       &:first-child{
-        margin-top: 60px;
+        margin-top: 50px;
+      }
+    }
+
+    @include breakpoint(lg) {
+      width: 1160px;
+
+      &:first-child{
+        margin-top: 50px;
       }
     }
 
@@ -2583,7 +2673,12 @@ body {
       display: block;
     }
 
-    .seats{
+    &.back {
+      display: block;
+      margin-top: 20px;
+    }
+
+    .seats {
       max-width: 100%;
       &:after{
         content: '';
@@ -2593,25 +2688,25 @@ body {
 
       span{
         float: left;
-        border: solid 1px transparent;
         font-size: 8px;
         height: 18px;
         width: 18px;
-        background: #fff none repeat scroll 0 0;
+        background: transparent;
         border-radius: 50%;
+        border-style: solid;
+        border-width: 1px;
         color: #666;
         cursor: pointer;
         display: inline-block;
         font-weight: bold;
         text-align: center;
-        margin: 2px 1px;
         transition: all 1000ms;
         cursor: pointer;
         padding-left: 2px;
         line-height: 16px;
 
         @media (min-width: 360px) {
-          margin: 3px 2px;
+          // margin: 3px 2px;
         }
 
         @media (min-width: 768px) {
@@ -2619,17 +2714,18 @@ body {
           height: 32px;
           line-height: 30px;
           font-size: 12px;
-          margin: 5px 6px;
+          // margin: 5px 6px;
         }
 
         @include breakpoint(md) {
-          border-width: 3px;
+          border-width: 1px;
+          border-color: black;
           float: left;
-          margin: 8px 10px;
+          // margin: 8px 10px;
           font-size: 14px;
-          line-height: 40px;
-          height: 45px;
-          width: 45px;
+          line-height: 50px;
+          height: 50px;
+          width: 50px;
         }
 
         &:hover{
@@ -2637,12 +2733,15 @@ body {
         }
 
         &.unavailable {
-          background: $brand-color-tertiary;
+          background: $color-text-gray;
+          border-color: $color-text-gray;
+          color: #fff;
           cursor: default;
         }
 
         &.selected {
           background: $brand-color-primary;
+          border-color: $brand-color-primary;
           color: #fff;
         }
 
@@ -2654,44 +2753,76 @@ body {
     }
 
     .front {
-      width: 40px;
-      display: inline-block;
+      width: 105px;
+      display: inline-table;
       position: relative;
-      vertical-align: middle;
-      margin-bottom: 10px;
-
-      @media (min-width: 360px) {
-        width: 44px;
-      }
+      margin-left: 0;
+      margin-right: 0;
 
       @media (min-width: 768px) {
-        width: 88px;
+        width: 233px;
       }
 
       @include breakpoint(md) {
-        width: 130px;
-        margin-bottom: 30px;
+        width: 380.5px;
+        // margin-bottom: 30px;
       }
-    }
+
+      @include breakpoint(lg) {
+        width: 445px;
+        margin-top: 70px;
+      }
+    } // front
 
     .back {
       text-align: left;
-    }
+      display: block;
+      margin-bottom: 40px;
+
+      &.left {
+        width: 50%;
+        float: left;
+      }
+
+      &.right {
+        width: 50%;
+        float: right;
+      }
+
+      &.wide {
+        clear: both;
+        width: 100%;
+      }
+
+      &.center {
+        margin: auto;
+        margin-bottom: 40px;
+        width: 117px;
+
+        @media (min-width: 768px) {
+          width: 230px;
+        }
+
+        @include breakpoint(md) {
+          width: 340px;
+        }
+
+        @include breakpoint(lg) {
+          width: 430px;
+        }
+      }
+    } // back
 
     .instructor{
       text-align: center;
-      width: 150px;
+      width: 100px;
 
       @media (min-width: 768px) {
-        width: 270px;
-      }
-
-      @include breakpoint(md) {
-        width: 350px;
+        width: 150px;
       }
 
       .image{
-        border-radius: 150px;
+        border-radius: 50%;
         height: 80px;
         overflow: hidden;
         position: relative;
@@ -2741,18 +2872,377 @@ body {
         }
       }
     }
+  } // formation
+
+  // 13-seat rows
+  &.seats-13 {
+
+    .front {
+
+      &:nth-child(3) {
+        text-align: right;
+
+        & span {
+          float: right;
+          margin-right: 0;
+          margin-left: 6.3333333px;
+
+          @media (min-width: 768px) {
+            margin-left: 16.6666667px;
+          }
+
+          @include breakpoint(md) {
+            margin-left: 21.75px;
+          }
+
+          @include breakpoint(lg) {
+            margin-left: 42px;
+          }
+
+          &:nth-child(4n) {
+            margin-left: 0;
+          }
+
+          &:nth-child(n+5) {
+            margin-top: 40px;
+          }
+        }
+      }
+
+      span {
+        margin-left: 0;
+        margin-right: 6.3333333px;
+
+        @media (min-width: 768px) {
+          margin-right: 16.6666667px;
+        }
+
+        @include breakpoint(md) {
+          margin-right: 21.75px;
+        }
+
+        @include breakpoint(lg) {
+          margin-right: 42px;
+        }
+
+        &:nth-child(4n) {
+          margin-right: 0;
+        }
+
+        &:nth-child(n+5) {
+          margin-top: 40px;
+        }
+      }
+    } // front
+
+    .back {
+
+      span {
+        float: right;
+        margin-right: 0;
+        margin-left: 6.3333333px;
+
+        @media (min-width: 768px) {
+          margin-left: 16.6666667px;
+        }
+
+        @include breakpoint(md) {
+          margin-left: 21.75px;
+        }
+
+        @include breakpoint(lg) {
+          margin-left: 42px;
+        }
+
+        &:nth-child(13n) {
+          margin-left: 0;
+        }
+
+        &:nth-child(n+14) {
+          margin-top: 40px;
+        }
+      }
+
+      .left {
+        span {
+          float: left;
+          margin-left: 0;
+          margin-right: 6.3333333px;
+
+          @media (min-width: 768px) {
+            margin-right: 16.6666667px;
+          }
+
+          @include breakpoint(md) {
+            margin-right: 21.75px;
+          }
+
+          @include breakpoint(lg) {
+            margin-right: 42px;
+          }
+        }
+      } // .back.left
+    }
+
+  } // 13
+
+  &.seats-13 {
+
+    .front {
+
+      &:nth-child(3) {
+        text-align: right;
+
+        & span {
+          float: right;
+          margin-right: 0;
+          margin-left: 6.3333333px;
+
+          @media (min-width: 768px) {
+            margin-left: 16.6666667px;
+          }
+
+          @include breakpoint(md) {
+            margin-left: 21.75px;
+          }
+
+          @include breakpoint(lg) {
+            margin-left: 42px;
+          }
+
+          &:nth-child(4n) {
+            margin-left: 0;
+          }
+
+          &:nth-child(n+5) {
+            margin-top: 40px;
+          }
+        }
+      }
+
+      span {
+        margin-left: 0;
+        margin-right: 6.3333333px;
+
+        @media (min-width: 768px) {
+          margin-right: 16.6666667px;
+        }
+
+        @include breakpoint(md) {
+          margin-right: 21.75px;
+        }
+
+        @include breakpoint(lg) {
+          margin-right: 42px;
+        }
+
+        &:nth-child(4n) {
+          margin-right: 0;
+        }
+
+        &:nth-child(n+5) {
+          margin-top: 40px;
+        }
+      }
+    } // front
+
+    .back {
+
+      span {
+        float: right;
+        margin-right: 0;
+        margin-left: 6.3333333px;
+
+        @media (min-width: 768px) {
+          margin-left: 16.6666667px;
+        }
+
+        @include breakpoint(md) {
+          margin-left: 21.75px;
+        }
+
+        @include breakpoint(lg) {
+          margin-left: 42px;
+        }
+
+        &:nth-child(13n) {
+          margin-left: 0;
+        }
+
+        &:nth-child(n+14) {
+          margin-top: 40px;
+        }
+      }
+
+      .left {
+        span {
+          float: left;
+          margin-left: 0;
+          margin-right: 6.3333333px;
+
+          @media (min-width: 768px) {
+            margin-right: 16.6666667px;
+          }
+
+          @include breakpoint(md) {
+            margin-right: 21.75px;
+          }
+
+          @include breakpoint(lg) {
+            margin-right: 42px;
+          }
+        }
+      } // .back.left
+    }
+
+  } // .seats-13
+
+  &.seats-14 {
+
+    .front {
+
+      &.colums-2 {
+        width: 41px;
+        margin-left: 34px;
+        margin-right: 30px;
+
+        @media (min-width: 768px) {
+          width: 80px;
+          margin-left: 100px;
+          margin-right: 53px;
+        }
+
+        @include breakpoint(md) {
+          width: 117px;
+          margin-left: 163px;
+          margin-right: 100px;
+        }
+
+        @include breakpoint(lg) {
+          width: 150px;
+          margin-left: 195px;
+        }
+
+        &.right {
+          margin-right: 34px;
+          margin-left: 30px;
+
+          @media (min-width: 768px) {
+              margin-right: 100px;
+              margin-left: 53px;
+          }
+
+          @include breakpoint(md) {
+            margin-right: 163px;
+            margin-left: 100px;
+          }
+
+          @include breakpoint(lg) {
+            margin-right: 195px;
+          }
+        }
+
+        span {
+          &:nth-child(2n) {
+            margin-right: 0;
+          }
+
+          &:nth-child(n+3) {
+            margin-top: 20px;
+          }
+        }
+      }
+
+      span {
+        margin-left: 0;
+        margin-right: 4.46px;
+
+        @media (min-width: 768px) {
+          margin-right: 12.92px;
+        }
+
+        @include breakpoint(md) {
+          margin-right: 16.23px;
+        }
+
+        @include breakpoint(lg) {
+          margin-right: 35.38px;
+        }
+
+        &:nth-child(4n) {
+          margin-right: 0;
+        }
+
+        &:nth-child(n+5) {
+          margin-top: 40px;
+        }
+      }
+    } // front
+
+    .back {
+
+      span {
+        float: left;
+        margin-left: 0;
+        margin-right: 4.46px;
+
+        @media (min-width: 768px) {
+          margin-right: 12.92px;
+        }
+
+        @include breakpoint(md) {
+          margin-right: 16.23px;
+        }
+
+        @include breakpoint(lg) {
+          margin-right: 35.38px;
+        }
+
+        &:nth-child(14n) {
+          margin-right: 0;
+        }
+
+      }
+    } // back
+
+  } // .seats-14
+
+} // class
+
+.controls {
+  display: block;
+  position: relative;
+
+  &:before, &:after {
+    content: '';
+    display: table;
+    clear: both;
   }
+}
+
+.buttons {
+  display: table;
+  margin: auto;
 }
 
 
 .legend {
+  position: relative;
+  display: table;
   list-style: none;
   padding: 0;
-  margin: 30px 0 40px 0;
+  margin: auto;
   text-align: center;
   color: $color-text-light;
   font-size: 16px;
   font-family: 'Brandon_Grotesque';
+
+  @include breakpoint(md) {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 30px 0 40px 0;
+  }
 
   li {
     display: block;
@@ -2760,6 +3250,7 @@ body {
     padding: 10px 0 10px 20px;
     line-height: 30px;
     text-align: left;
+    text-transform: uppercase;
 
     &:before {
       content: '';
@@ -2769,6 +3260,7 @@ body {
       width: 30px;
       border-radius: 50%;
       margin-right: 10px;
+      border: 1px solid transparent;
     }
 
     &:first-child{
@@ -2779,19 +3271,15 @@ body {
 
     &.free:before {
       background: #fff;
+      border: 1px solid $color-text-gray;
     }
 
     &.reserved:before {
-      background: $brand-color-tertiary;
+      background: $color-text-gray;
     }
 
     &.selection:before {
       background: $brand-color-primary;
-    }
-
-    @include breakpoint(md) {
-      display: inline-block;
-      text-align: center;
     }
   }
 }
@@ -2859,6 +3347,21 @@ body {
     column-break-inside: avoid;
     break-inside: avoid-column;
     padding-bottom: 20px;
+  }
+}
+
+.col-3 {
+  @include breakpoint(md) {
+    moz-column-count: 3;
+    -moz-column-gap: 2em;
+    -webkit-column-count: 3;
+    -webkit-column-gap: 2em;
+    column-count: 3;
+    column-gap: 2em;
+
+    .input {
+      display: inline-block;
+    }
   }
 }
 
@@ -3034,14 +3537,6 @@ body {
       text-align: left;
     }
 
-  }
-
-  /* Contacts */
-  .contact {
-    .info {
-      float: left;
-      width: 30%;
-    }
   }
 
   .footer-links {

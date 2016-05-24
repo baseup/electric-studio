@@ -1,0 +1,41 @@
+.faq.page {
+
+  .wrapper {
+    @include breakpoint(md) {
+      padding-top: 60px!important;
+    }
+  }
+
+  .h.title {
+    font-family: 'Tungsten', sans-serif;
+    font-size: 30px;
+  }
+
+  ul{
+    padding-left: 10px;
+    margin: 20px 0 0 10px;
+
+    li{
+      margin-bottom: 20px;
+      font-size: 22px;
+
+      strong{
+        display: inline-block;
+        padding-bottom: 5px;
+      }
+    }
+  }
+
+  .corner-logo {
+    display: none;
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1;
+
+    @include breakpoint(md) {
+      display: block;
+    }
+  }
+
+}

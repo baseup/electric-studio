@@ -47,6 +47,10 @@ app.config(function ($routeProvider, $httpProvider) {
       templateUrl: '/admin/schedule',
       controller: 'AdminCtrl'
     },
+    '/branches': {
+      templateUrl: '/admin/branch',
+      controller: 'AdminCtrl'
+    },
     '/sliders': {
       templateUrl: '/admin/slider',
       controller: 'AdminCtrl'

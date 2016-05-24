@@ -1,90 +1,79 @@
-<div class="gc-buy content bg-lightGray">
-  <div class="wrapper color-secondary bp-lg-three-quarters">
-    <h2 class="h large pad--bottom">Buy Gift Card</h2>
 
-    <form class="grid" id="payForm" ng-controller="RatesCtrl" action="https://www.paypal.com/ph/cgi-bin/webscr" method="post">
+<div class="giftcard-banner-image"></div>
 
-      <div class="grid__item space--bottom bp-md-two-fifths bp-lg-one-half">
-        <small class="text-uppercase">Enter gift details</small>
-        <div class="gc-card space--ends">
-          <div class="grid">
+<div class="giftcard page content sidebar-layout" ng-controller="RatesCtrl">
 
-            <div class="gc-header grid">
-              <div class="grid__item bp-md-two-thirds">
-                <img src="assets/images/es-gc-card-header.png" alt="Electric Studio Logo" class="gc-card-nameplate">
-              </div>
-              <div class="grid__item bp-md-one-third">
-                <small ng-if="gcPackageFirstTimer" class="first-timer-label-top block text--left text-uppercase">First Timer Package</small>
-              </div>
-            </div>
+  <div class="wrapper text-color-light">
+    <div class="main">
+      <form id="payForm" action="https://www.paypal.com/ph/cgi-bin/webscr" method="post">
 
-            <div class="grid__item bp-md-two-thirds">
-              <div class="space--top pad--half-top">
-                <input ng-model="gcReceiver" class="text-input text-input--full space--bottom" placeholder="TO"/>
-                <input ng-model="gcSender" class="text-input text-input--full space--bottom" placeholder="FROM"/>
-                <small class="text-uppercase">VALIDITY: {{ gcValidity }} DAYS from the time the Gift Card is loaded into the account</small>
-              </div>
-            </div>
+      <section class="main-section">
+        <h1 class="h large title">Gift Card</h1>
 
-            <div class="grid__item bp-md-one-third">
-              <div class="gc-package-select">
-                <small ng-if="gcPackageFirstTimer" class="first-timer-label block text--left text-uppercase space--half-bottom">First Timer Package</small>
-                <select id="select-gc-package" class="gc-card__select" ng-change="selectGCPackage()" ng-model="gcPackage" hidden="hidden">
-                  <option ng-repeat="package in packages" value="{{ package }}">
-                    {{ package.credits }}
-                  </option>
-                </select>
-                <div class="text--right space--half-top">
-                  <small class="text-uppercase">Rides</small>
-                </div>
-              </div>
-            </div>
-
+        <div class="giftcard-select">
+          <div class="item">
+            <a class="arrow left" ng-click="prevGCPackage()"><i class="fa fa-angle-left"></i></a>
+            <a class="arrow right" ng-click="nextGCPackage()"><i class="fa fa-angle-right"></i></a>
+            <a class="arrow top" ng-click="prevGCPackage()"><i class="fa fa-angle-up"></i></a>
+            <a class="arrow bottom" ng-click="nextGCPackage()"><i class="fa fa-angle-down"></i></a>
+            <div class="rides"><span class="credits">{{ selectedGCPackage.credits }}</span> {{ selectedGCPackage.credits > 1 ? 'Rides' : 'Ride' }}</div>
+            <p class="description">{{ selectedGCPackage.description }}</p>
+            <p class="price">PHP {{ selectedGCPackage.fee | currency:'':0 }}</p>
+            <div class="giftcard-validity pad--half-ends">{{ gcValidity }} DAYS from the time the Gift Card is loaded into the account</div>
           </div>
         </div>
-        <small class="text-uppercase block weight--semibold space--half-bottom" ng-if="gcPackageFirstTimer">Valid only for new riders. First Timer Package may only be availed once per rider.</small>
-        <small class="text-uppercase">Physical Gift Cards are available in studio</small>
-      </div>
 
-      <!-- HIDDEN FIELDS -->
+        <input ng-model="gcReceiver" class="input" placeholder="TO"/>
+        <input ng-model="gcSender" class="input" placeholder="FROM"/>
 
-      <input type="hidden" id="cmd" name="cmd" value="_xclick">
-      <input type="hidden" id="no_note" name="no_note" value = "0">
-      <input type="hidden" id="bn" name="bn" value="PP-BuyNowBF">
-      <input type="hidden" id="rm" name="rm" value="2">
-      <input type="hidden" id="custom" name="custom" value="">
-      <input type="hidden" id="business" name="business" value="electric@electricstudio.ph">
-      <!-- electric@electricstudio.ph -->
-      <input type="hidden" id="item_name" name="item_name" value="">
-      <input type="hidden" id="item_number" name="item_number" value="">
-      <input type="hidden" id="amount" name="amount" value="">
-      <input type="hidden" id="currency_code" name="currency_code" value="PHP">
-      <input type="hidden" id="ipn_notification_url" name="ipn_notification_url" value="">
-      <input type="hidden" id="return" name="return" value="">
-      <input type="hidden" id="cancel_return" name="cancel_return" value="">
-      <input type="hidden" id="cbt" name="cbt" value="Return to Electric Studio">
+        <div class="validity pad--ends">
+          <h3 class="h medium">Validity</h3>
+          <div class="giftcard-validity space--top">{{ gcValidity }} DAYS from the time the Gift Card is loaded into the account</div>
+          <div class="space--top" ng-if="gcPackageFirstTimer"><b>Valid only for first-time riders.</b> Package may be available once per rider</div>
+        </div>
+      </section>
+
+      <section class="sub-section">
+        <!-- HIDDEN FIELDS -->
+        <input type="hidden" id="cmd" name="cmd" value="_xclick">
+        <input type="hidden" id="no_note" name="no_note" value = "0">
+        <input type="hidden" id="bn" name="bn" value="PP-BuyNowBF">
+        <input type="hidden" id="rm" name="rm" value="2">
+        <input type="hidden" id="custom" name="custom" value="">
+        <input type="hidden" id="business" name="business" value="electric@electricstudio.ph">
+        <!-- electric@electricstudio.ph -->
+        <input type="hidden" id="item_name" name="item_name" value="">
+        <input type="hidden" id="item_number" name="item_number" value="">
+        <input type="hidden" id="amount" name="amount" value="">
+        <input type="hidden" id="currency_code" name="currency_code" value="PHP">
+        <input type="hidden" id="ipn_notification_url" name="ipn_notification_url" value="">
+        <input type="hidden" id="return" name="return" value="">
+        <input type="hidden" id="cancel_return" name="cancel_return" value="">
+        <input type="hidden" id="cbt" name="cbt" value="Return to Electric Studio">
 
 
-      <div class="gc-form grid__item bp-md-three-fifths bp-lg-one-half">
-        <span class="label">Sender's email address</span>
-        <input type="email" ng-model="senderEmail" name="semail" class="text-input text-input--large text-input--full space--bottom" />
-
-        <span class="label">Recipient's email address <i>(optional)</i></span>
-        <input type="email" ng-model="receiverEmail" name="remail" class="text-input text-input--large text-input--full space--bottom">
-
-        <span class="label">Add message <i>(optional)</i></span>
-        <textarea rows="2" class="text-input text-input--full space--bottom" ng-model="gcMessage"> </textarea>
-
-        <big class="h medium">TOTAL: <span ng-if="gcAmount" class="brand-color">P {{ gcAmount || 0.00}}</span> <span ng-if="!gcAmount" class="brand-color"> P 0.00</span></big>
+        <input type="email" ng-model="senderEmail" name="semail" class="input" placeholder="SENDER'S EMAIL" />
+        <input type="email" ng-model="receiverEmail" name="remail" class="input" placeholder="RECIPIENT'S EMAIL">
+        <textarea rows="4" class="input" ng-model="gcMessage" placeholder="MESSAGE"> </textarea>
 
         <div class="space--top">
           <label class="weight--semibold"><input type="radio" ng-model="emailTo" value="sender"> email to sender</label>
           <label class="weight--semibold"><input type="radio" ng-model="emailTo" value="receiver"> email to recipient</label>
-          <input ng-click="buyGC()" class="btn btn--large btn--primary btn--full space--half-top" type="button" value="Buy Gift Card" />
         </div>
-      </div>
+      </section>
 
-    </form>
-
+      </form>
+    </div>
   </div>
+
+  <div class="sidebar dark">
+    <h3 class="h">Total</h3>
+    <div class="total">PHP {{ gcAmount | currency:'' }}</div>
+
+    <input ng-click="buyGC()" class="button" type="button" value="Buy Gift Card" />
+
+    <p class="pad--ends space--top">Already have a gift card?</p>
+    <a class="button">Redeem Gift Card</a>
+  </div>
+
 </div>

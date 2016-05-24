@@ -250,7 +250,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 });
 
-ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserService, PackageService, TransactionService, ClassService, SecurityService, EmailVerifyService) {
+ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location, UserService, PackageService, TransactionService, ClassService, SecurityService, EmailVerifyService) {
 
   var qstring = $location.search();
   if (qstring.s) {
@@ -924,7 +924,35 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $location, UserServi
     if (!emailFilter) {
       emailFilter = '';
     }
-    window.location = '/admin/export/download-user-accounts?email=' + emailFilter + '&past_month=' + past_month
+
+
+    $.Alert('Please wait ...', true);
+    var url = '/admin/export/download-user-accounts?email=' + emailFilter + '&past_month=' + past_month + '&start=now';
+    $.get(url, function (response) {
+      if(response.success && response.data){
+        $.Alert('exporting users ' + response.data, true);
+      } else if (response.file) {
+        $interval.cancel(timeInval);
+        window.location = response.file;  
+      } 
+    });
+
+    // get export status
+    var timeInval = $interval(function () {
+      var url = '/admin/export/download-user-accounts';
+      $.get(url, function (response) {
+        if(response.success && response.data){
+          $.Alert('exporting ' + response.data, true);
+        } else if (response.file) {
+          $interval.cancel(timeInval);
+          $.Alert('Successfully exported accounts');
+          window.location = response.file;  
+        } 
+      });
+    }, 3000)
+
+    
+    // window.location = '/admin/export/download-user-accounts?email=' + emailFilter + '&past_month=' + past_month
   }
 
 });
@@ -1098,6 +1126,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
     var minutes = dTime.getMinutes();
     var chkDate = new Date($scope.newBook.date);
     chkDate.setHours(hours, minutes, 0, 0);
+    chkDate.setDate(chkDate.getDate() + 1);
     if (chkDate < now) {
       $.Notify({ content: 'Booking is not allowed anymore' });
       return;
@@ -1440,7 +1469,7 @@ ctrls.controller('ClassTypeCtrl', function ($scope, ClassTypeService) {
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, InstructorService, ClassTypeService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, InstructorService, ClassTypeService, BranchService) {
 
   $scope.classTypesByName = {};
   $scope.classTypes = ClassTypeService.query();
@@ -1450,7 +1479,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       $scope.classTypesByName[ct.name] = ct;
     });
   });
-
+   
   var calendar = angular.element('.calendar');
   calendar.fullCalendar({
     defaultView: 'agendaWeek',
@@ -1460,7 +1489,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     maxTime: '23:00:00',
     events: function (start, end, timezone, callback) {
       var events = [];
-      ScheduleService.query({ start: start.unix(), end: end.unix() }, function (scheds) {
+      ScheduleService.query({ start: start.unix(), end: end.unix(), branch: $scope.selectedBranchId }, function (scheds) {
         $scope.schedules = scheds;
         angular.forEach(scheds, function (s, i) {
           s.index = i;
@@ -1515,6 +1544,25 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     //   angular.element('.calendar').fullCalendar('changeView', 'agendaDay');
     // }
   });
+
+  var bIds = {};
+  BranchService.query().$promise.then(function (branches) {
+    var branchSelectize = angular.element('#select-branch')[0].selectize;
+    angular.forEach(branches, function (branch) {
+      bIds[branch._id] = branch;
+      branchSelectize.addOption({ value: branch._id, text: branch.name });
+    });
+
+    branchSelectize.setValue(branches[0]._id);
+    $scope.selectedBranch = branches[0];
+    $scope.selectedBranchId = branches[0]._id;
+    calendar.fullCalendar('refetchEvents');
+  });
+
+  $scope.filterByBranch = function() {
+    $scope.selectedBranch = bIds[$scope.selectedBranchId];
+    calendar.fullCalendar('refetchEvents');
+  }
 
   if ( $('[type="time"]').prop('type') != 'time' ) {
     $('[type="time"]').pickatime({
@@ -1672,10 +1720,20 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       return;
     }
 
+    if($scope.selectedBranchId){
+      $scope.newSpecSched.branch = $scope.selectedBranchId;
+    }
+
+
     if (!$scope.isPastDate($scope.newSpecSched)) {
       var newSched = angular.copy($scope.newSpecSched);
       newSched.start = newSched.start.getHours() + ':' + newSched.start.getMinutes();
       newSched.end = newSched.end.getHours() + ':' + newSched.end.getMinutes();
+
+      if ($scope.selectedBranch) {
+        newSched.seats = $scope.selectedBranch.num_bikes;
+      }
+
       ScheduleService.save(newSched, function (response) {
         calendar.fullCalendar('refetchEvents');
         $scope.newSpecSched = {};
@@ -1710,6 +1768,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       var updatedSched = angular.copy($scope.editSched);
       updatedSched.start = updatedSched.start.getHours() + ':' + updatedSched.start.getMinutes();
       updatedSched.end = updatedSched.end.getHours() + ':' + updatedSched.end.getMinutes();
+
+      if ($scope.selectedBranch) {
+        updatedSched.seats = $scope.selectedBranch.num_bikes;
+      }
+
       ScheduleService.update(
         { scheduleId: updatedSched.id },
         updatedSched,
@@ -2649,7 +2712,7 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
     }
 });
 
-ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService) {
+ctrls.controller('StatisticCtrl', function ($scope, StatisticService, InstructorService, SettingService, BranchService) {
 
   $scope.resetTotals = function () {
     $scope.totalSeats = 0;
@@ -2799,6 +2862,14 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     angular.element('#list-users-modal').Modal();
   }
 
+  BranchService.query(function (branches) {
+    var bselectize = angular.element('#select-branch')[0].selectize;
+    bselectize.addOption({ value: '', text: 'All' });
+    angular.forEach(branches, function (b) {
+      if (b) bselectize.addOption({ value: b._id, text: b.name });
+    });
+  });
+
   InstructorService.query(function (instructors) {
     var select = angular.element('#search-instructor')[0].selectize;
     select.addOption({ value: '', text: 'All' });
@@ -2819,6 +2890,18 @@ ctrls.controller('StatisticCtrl', function ($scope, StatisticService, Instructor
     return true;
   }
 
+});
+
+
+ctrls.controller('BranchCtrl', function ($scope, BranchService) {
+
+  var reloadBranches = function () {
+    BranchService.query().$promise.then(function (data) {
+      $scope.branches = data;
+    });
+  }
+
+  reloadBranches();
 });
 
 ctrls.controller('SettingCtrl', function ($scope, $timeout, $filter, SettingService) {

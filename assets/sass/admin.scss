@@ -1,7 +1,7 @@
 /**
  * Import typefaces, icons etc
  */
-@import url(http://fonts.googleapis.com/css?family=Lato:400,700);
+@import url('//fonts.googleapis.com/css?family=Lato:400,700');
 @import "../vendor/fontawesome/css/font-awesome.min.css";
 
 
@@ -21,6 +21,10 @@
 @import "components/admin-content";
 @import "components/overrides";
 
+
+body {
+  font-family: 'Lato';
+}
 
 /**
  * Ensure that media queries are compiled mobile-first

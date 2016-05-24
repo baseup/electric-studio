@@ -1,5 +1,8 @@
 
-<div class="content bg-lightGray sidebar-layout" ng-controller="HistoryCtrl">
+<div class="content bg-lightGray account-page sidebar-layout" ng-controller="HistoryCtrl">
+  
+  <div ng-include="'/site/account-nav'"></div>
+
   <div class="wrapper">
 
     <div class="main">
@@ -25,7 +28,7 @@
       <section class="col-2">
         <div class="block" ng-repeat="book in histories.schedules">
           <h3 class="h small primary space--off pad--half-bottom">
-            {{ book.date | formatDate }} 
+            {{ book.date | formatDate }}
             <span ng-if="book.schedule">{{ book.schedule.start | formatTime }}</span>
           </h3>
           <span><span class="label inline">Type:</span> {{ book.schedule.type || '(class info not available)' }}</span><br>
@@ -35,7 +38,7 @@
           <span><span class="label inline">Created At:</span> {{ book.create_at | formatDate }}</span>
         </div>
       </section>
-      
+
       <ul class="pagination-nav nav nav--block text--center">
         <li><a ng-click="prevScheds($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
         <!-- <li><a href="" class="disabled">1</a></li>
@@ -44,7 +47,7 @@
         <li><a href="">4</a></li> -->
         <li><a ng-click="nextScheds($event)">Next <i class="fa fa-angle-right"></i></a></li>
       </ul>
-      
+
     </div>
 
     <div class="tab-pane" data-tab-pane="packages">
@@ -61,13 +64,13 @@
           <span><span class="label inline">Cost:</span> {{ package.package_fee | currency:"" }}</span><br>
           <span><span class="label inline">Rides Left:</span> {{ package.remaining_credits || 0 }}</span><br>
           <span>
-            <span ng-if="package.status != 'Expired'" class="label inline">Expires On:</span> 
-            <span ng-if="package.status == 'Expired'" class="label inline">Expired:</span> 
+            <span ng-if="package.status != 'Expired'" class="label inline">Expires On:</span>
+            <span ng-if="package.status == 'Expired'" class="label inline">Expired:</span>
             {{ package.create_at | addDay:package.expiration | formatDate }}
           </span>
         </div>
       </section>
-      
+
       <ul class="pagination-nav nav nav--block text--center">
         <li><a ng-click="prevTrans($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
         <!-- <li><a href="" class="disabled">1</a></li>
@@ -76,11 +79,10 @@
         <li><a href="">4</a></li> -->
         <li><a ng-click="nextTrans($event)">Next <i class="fa fa-angle-right"></i></a></li>
       </ul>
-      
-    </div>
 
     </div>
 
-    <div ng-include="'/site/account-nav'"></div>
+    </div>
+
   </div>
 </div>

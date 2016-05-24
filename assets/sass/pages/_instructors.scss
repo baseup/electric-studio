@@ -1,0 +1,283 @@
+/* Instructors */
+.instructors-info {
+  text-align: center;
+  color: $brand-color-secondary;
+
+  .image {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    margin: 0 auto;
+    @include vendor(transition, all 0.4s ease);
+    box-shadow: none;
+    position: relative;
+    cursor: pointer;
+
+    &:hover {
+
+      &:before {
+        background: rgba(#000, 0.45);
+      }
+
+      &:after, .name {
+        opacity: 1;
+      }
+    }
+
+    &:before {
+      content: '';
+      display: block;
+      padding-bottom: 100%;
+      position: relative;
+      z-index: 2;
+      transition: background 0.4s ease;
+    }
+
+    &.focus {
+      box-shadow: 0 0 0 6px $brand-color-primary;
+    }
+
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      min-height: 100%;
+      min-width: 100%;
+      filter: gray; /* IE6-9 */
+      filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
+      -webkit-filter: grayscale(1);
+    }
+
+    .name {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: 0 auto;
+      color: #fff;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      font-family: 'Tungsten', sans-serif;
+      font-size: 48px;
+      font-weight: 400;
+
+      &:before {
+        content: '';
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+      }
+
+      span {
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  p {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.9em;
+    line-height: 1.5em;
+  }
+}
+
+
+.instructor-modal {
+
+  .modal__box {
+    max-width: 740px;
+    width: 90%;
+    padding: 30px!important;
+
+    @include breakpoint(md) {
+      padding: 40px!important;
+    }
+  }
+
+  .modal-close {
+    color: #fff!important;
+    top: 20px;
+    right: 20px;
+
+
+    &:after, &:before {
+      content: '';
+      display: block;
+      height: 30px;
+      border-width: 1px;
+      border-style: solid;
+      border-color: $brand-color-secondary;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+    }
+
+    &:before {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    &:after {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    &:hover {
+      &:before, &:after {
+        border-color: $brand-color-primary;
+      }
+    }
+  }
+
+  .image {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+
+    @include breakpoint(sm) {
+      width: 300px;
+      height: 300px;
+      float: left;
+    }
+  }
+
+  .details {
+    font-size: 20px;
+
+    @include breakpoint(sm) {
+      float: left;
+      padding-left: 20px;
+      width: 340px;
+    }
+
+    .name {
+      font-family: 'Tungsten', sans-serif;
+      font-size: 52px;
+      font-weight: 400;
+    }
+  }
+
+  .albums {
+    .album {
+      padding: 0 6px;
+    }
+  }
+
+  .schedule {
+    position: relative;
+    margin: 0;
+    margin-left: -2px;
+
+    &.no-slide {
+      margin: 0;
+
+      .arrow {
+        display: none;
+      }
+    }
+
+    &.full-right {
+      margin-right: 0;
+
+      .arrow.right {
+        display: none;
+      }
+    }
+
+    &.full-left {
+      margin-left: 0;
+
+      .arrow.left {
+        display: none;
+      }
+    }
+
+    .arrow {
+      position: absolute;
+      height: 30px;
+      width: 30px;
+      font-size: 34px;
+      line-height: 30px;
+      text-align: center;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      cursor: pointer;
+
+      &:hover {
+        color: $brand-color-primary;
+      }
+
+      &.left {
+        left: -30px;
+      }
+
+      &.right {
+        right: -30px;
+      }
+
+      &.hide {
+        display: none;
+      }
+    }
+
+    .schedule-slider-wrapper {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .schedule-slider {
+      transition: margin 0.4s ease;
+      overflow: hidden;
+    }
+
+    .sched-item {
+      border-width: 2px 0 2px 2px;
+      border-color: $brand-color-tertiary;
+      border-style: solid;
+
+      &:last-child {
+        border-right-width: 2px!important;
+      }
+
+      &:nth-child(2n+2) {
+        border-right-width: 2px;
+        @include breakpoint(md) {
+          border-right-width: 0;
+        }
+      }
+
+      &:nth-child(4n+4) {
+        @include breakpoint(md) {
+          border-right-width: 2px;
+        }
+      }
+    }
+
+    .schedtype {
+      font-size: 18px;
+    }
+
+    .time {
+      font-weight: bold;
+    }
+
+    .branch {
+      color: $brand-color-primary;
+      font-weight: 600;
+    }
+  }
+
+  .row {
+    float: left;
+    width: 50%;
+    border: 1px solid #fff;
+
+    @include breakpoint(sm) {
+      width: 25%;
+    }
+  }
+}

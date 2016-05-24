@@ -46,7 +46,7 @@ def find(self):
         for s in schedules:
             list_scheds.append({
                 'id': str(s._id),
-                'text': s.start.strftime('%I:%M %p') + ' - ' + s.end.strftime('%I:%M %p')
+                'text': s.start.strftime('%I:%M %p') + ' - ' + s.end.strftime('%I:%M %p') + ' - ' + s.branch.name
             })
 
         if schedules:

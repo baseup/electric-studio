@@ -1,157 +1,176 @@
-
   <div ng-if="isFrozen" class="content">
     <div class="wrapper">
       <p class="brand-color">Your account is frozen. Please contact the studio for more details.</p>
     </div>
   </div>
-  
-  <div class="content schedule bg-lightGray" ng-controller="ScheduleCtrl">
+
+  <div class="content schedule" ng-controller="ScheduleCtrl">
     <div class="wrapper">
-      
-      <div ng-if="resched">
-        <h2 class="range">
-          <span>Rescheduling: </span> 
-          {{ resched.date | formatDate }} - {{ resched.schedule.start | formatTime }} - Seat {{ resched.seat_number }}</h2>
-          <a class="h small primary right" ng-click="cancelResched()">Cancel</a>
-        <hr/>
-      </div>
+
+     <div class="branch-watermark">{{ branchTitle | uppercase }}</div>
 
       <div class="header">
         <h2 class="range">{{ monD }} {{ monM }} - {{ nmonD }} {{ nmonM }}</h2>
         <div class="nav left" ng-click="prevWeek()"><i class="fa fa-angle-left"></i></div>
         <div class="nav right" ng-click="nextWeek()"><i class="fa fa-angle-right"></i></div>
       </div>
-      
-      <div class="column">
-        <h2 class="day">Mon</h2>
-        <h3 class="date">{{ monM }} {{ monD }}</h3>
-        <a ng-class="{ row: monday, unavailable: chkSched(monDate, monday), full: isFull(monday) }" ng-repeat="monday in schedules.mon">
-          <span class="time">{{ monday.start | formatTime }}</span>
-          <span class="instructor">
-            {{ monday.instructor.admin.first_name }} 
-            {{ monday.sub_instructor ? ' &amp; ' + monday.sub_instructor.admin.first_name : '' }}
-          </span>
-          <span class="schedtype">{{ monday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, monDate)">
-            {{ isFull(monday) ? 'waitlist' : 'reserve' }}
-          </button>
-        </a>
+
+      <div class="table">
+        <div class="column">
+          <h2 class="day">M</h2>
+          <h3 class="date">{{ monM }} {{ monD }}</h3>
+          <div class="column-rows">
+            <a ng-class="{ row: monday, unavailable: chkSched(monDate, monday), full: isFull(monday) }" ng-repeat="monday in schedules.mon">
+              <span class="time">{{ monday.start | formatTime }}</span>
+              <span class="instructor">
+                {{ monday.instructor.admin.first_name }}
+                {{ monday.sub_instructor ? ' &amp; ' + monday.sub_instructor.admin.first_name : '' }}
+              </span>
+              <span class="schedtype">{{ monday.type }}</span>
+              <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, monDate, branch)">
+                {{ isFull(monday) ? 'waitlist' : 'reserve' }}
+              </button>
+            </a>
+          </div>
+
+        </div>
+
+        <div class="column">
+          <h2 class="day">T</h2>
+          <h3 class="date">{{ tueM }} {{ tueD }}</h3>
+          <div class="column-rows">
+            <a ng-class="{ row: tuesday, unavailable: chkSched(tueDate, tuesday), full: isFull(tuesday) }" ng-repeat="tuesday in schedules.tue">
+              <span class="time">{{ tuesday.start | formatTime }}</span>
+              <span class="instructor">
+                {{ tuesday.instructor.admin.first_name }}
+                {{ tuesday.sub_instructor ? ' &amp; ' + tuesday.sub_instructor.admin.first_name : '' }}
+              </span>
+              <span class="schedtype">{{ tuesday.type }}</span>
+              <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate, branch)">
+                {{ isFull(tuesday) ? 'waitlist' : 'reserve' }}
+              </button>
+            </a>
+          </div>
+
+        </div>
+
+        <div class="column">
+          <h2 class="day">W</h2>
+          <h3 class="date">{{ wedM }} {{ wedD }}</h3>
+          <div class="column-rows">
+            <a ng-class="{ row: wednesday, unavailable: chkSched(wedDate, wednesday), full: isFull(wednesday) }" ng-repeat="wednesday in schedules.wed">
+              <span class="time">{{ wednesday.start | formatTime }}</span>
+              <span class="instructor">
+                {{ wednesday.instructor.admin.first_name }}
+                {{ wednesday.sub_instructor ? ' &amp; ' + wednesday.sub_instructor.admin.first_name : '' }}
+              </span>
+              <span class="schedtype">{{ wednesday.type }}</span>
+              <button class="btn btn--small btn--primary" ng-click="setSchedule(wednesday, wedDate, branch)">
+                {{ isFull(wednesday) ? 'waitlist' : 'reserve' }}
+              </button>
+            </a>
+          </div>
+
+        </div>
+
+        <div class="column">
+          <h2 class="day">Th</h2>
+          <h3 class="date">{{ thuM }} {{ thuD }}</h3>
+          <div class="column-rows">
+            <a ng-class="{ row: thursday, unavailable: chkSched(thuDate, thursday), full: isFull(thursday) }" ng-repeat="thursday in schedules.thu">
+              <span class="time">{{ thursday.start | formatTime }}</span>
+              <span class="instructor">
+                {{ thursday.instructor.admin.first_name }}
+                {{ thursday.sub_instructor ? ' &amp; ' + thursday.sub_instructor.admin.first_name : '' }}
+              </span>
+              <span class="schedtype">{{ thursday.type }}</span>
+              <button class="btn btn--small btn--primary" ng-click="setSchedule(thursday, thuDate, branch)">
+                {{ isFull(thursday) ? 'waitlist' : 'reserve' }}
+              </button>
+            </a>
+          </div>
+
+        </div>
+
+        <div class="column">
+          <h2 class="day">F</h2>
+          <h3 class="date">{{ friM }} {{ friD }}</h3>
+          <div class="column-rows">
+            <a ng-class="{ row: friday, unavailable: chkSched(friDate, friday), full: isFull(friday) }" ng-repeat="friday in schedules.fri">
+              <span class="time">{{ friday.start | formatTime }}</span>
+              <span class="instructor">
+                {{ friday.instructor.admin.first_name }}
+                {{ friday.sub_instructor ? ' &amp; ' + friday.sub_instructor.admin.first_name : '' }}
+              </span>
+              <span class="schedtype">{{ friday.type }}</span>
+              <button class="btn btn--small btn--primary" ng-click="setSchedule(friday, friDate, branch)">
+                {{ isFull(friday) ? 'waitlist' : 'reserve' }}
+              </button>
+            </a>
+          </div>
+
+
+        </div>
+
+        <div class="column">
+          <h2 class="day">S</h2>
+          <h3 class="date">{{ satM }} {{ satD }}</h3>
+          <div class="column-rows">
+            <a ng-class="{ row: saturday, unavailable: chkSched(satDate, saturday), full: isFull(saturday) }" ng-repeat="saturday in schedules.sat">
+              <span class="time">{{ saturday.start | formatTime }}</span>
+              <span class="instructor">
+                {{ saturday.instructor.admin.first_name }}
+                {{ saturday.sub_instructor ? ' &amp; ' + saturday.sub_instructor.admin.first_name : '' }}
+              </span>
+              <span class="schedtype">{{ saturday.type }}</span>
+              <button class="btn btn--small btn--primary" ng-click="setSchedule(saturday, satDate, branch)">
+                {{ isFull(saturday) ? 'waitlist' : 'reserve' }}
+              </button>
+            </a>
+          </div>
+
+        </div>
+
+        <div class="column">
+          <h2 class="day">Su</h2>
+          <h3 class="date">{{ sunM }} {{ sunD }}</h3>
+          <div class="column-rows">
+            <a ng-class="{ row: sunday, unavailable: chkSched(sunDate, sunday), full: isFull(sunday) }" ng-repeat="sunday in schedules.sun">
+              <span class="time">{{ sunday.start | formatTime }}</span>
+              <span class="instructor">
+                {{ sunday.instructor.admin.first_name }}
+                {{ sunday.sub_instructor ? ' &amp; ' + sunday.sub_instructor.admin.first_name : '' }}
+              </span>
+              <span class="schedtype">{{ sunday.type }}</span>
+              <button class="btn btn--small btn--primary" ng-click="setSchedule(sunday, sunDate, branch)">
+                {{ isFull(sunday) ? 'waitlist' : 'reserve' }}
+              </button>
+            </a>
+          </div>
+
+        </div>
+
+        <div class="column">
+          <h2 class="day">M</h2>
+          <h3 class="date">{{ nmonM }} {{ nmonD }}</h3>
+          <div class="column-rows">
+            <a ng-class="{ row: monday, unavailable: chkSched(nmonDate, monday), full: isFull(monday) }" ng-repeat="monday in schedules.nmon">
+              <span class="time">{{ monday.start | formatTime }}</span>
+              <span class="instructor">
+                {{ monday.instructor.admin.first_name }}
+                {{ monday.sub_instructor ? ' &amp; ' + monday.sub_instructor.admin.first_name : '' }}
+              </span>
+              <span class="schedtype">{{ monday.type }}</span>
+              <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, nmonDate, branch)">
+                {{ isFull(monday) ? 'waitlist' : 'reserve' }}
+              </button>
+            </a>
+          </div>
       </div>
-      
-      <div class="column">
-        <h2 class="day">Tue</h2>
-        <h3 class="date">{{ tueM }} {{ tueD }}</h3>
-        <a ng-class="{ row: tuesday, unavailable: chkSched(tueDate, tuesday), full: isFull(tuesday) }" ng-repeat="tuesday in schedules.tue">
-          <span class="time">{{ tuesday.start | formatTime }}</span>
-          <span class="instructor">
-            {{ tuesday.instructor.admin.first_name }}
-            {{ tuesday.sub_instructor ? ' &amp; ' + tuesday.sub_instructor.admin.first_name : '' }}
-          </span>
-          <span class="schedtype">{{ tuesday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate)">
-            {{ isFull(tuesday) ? 'waitlist' : 'reserve' }}
-          </button>
-        </a>
-      </div>
-      
-      <div class="column">
-        <h2 class="day">Wed</h2>
-        <h3 class="date">{{ wedM }} {{ wedD }}</h3>
-        <a ng-class="{ row: wednesday, unavailable: chkSched(wedDate, wednesday), full: isFull(wednesday) }" ng-repeat="wednesday in schedules.wed">
-          <span class="time">{{ wednesday.start | formatTime }}</span>
-          <span class="instructor">
-            {{ wednesday.instructor.admin.first_name }}
-            {{ wednesday.sub_instructor ? ' &amp; ' + wednesday.sub_instructor.admin.first_name : '' }}
-          </span>
-          <span class="schedtype">{{ wednesday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(wednesday, wedDate)">
-            {{ isFull(wednesday) ? 'waitlist' : 'reserve' }}
-          </button>
-        </a>
-      </div>
-      
-      <div class="column">
-        <h2 class="day">Thu</h2>
-        <h3 class="date">{{ thuM }} {{ thuD }}</h3>
-        <a ng-class="{ row: thursday, unavailable: chkSched(thuDate, thursday), full: isFull(thursday) }" ng-repeat="thursday in schedules.thu">
-          <span class="time">{{ thursday.start | formatTime }}</span>
-          <span class="instructor">
-            {{ thursday.instructor.admin.first_name }}
-            {{ thursday.sub_instructor ? ' &amp; ' + thursday.sub_instructor.admin.first_name : '' }}
-          </span>
-          <span class="schedtype">{{ thursday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(thursday, thuDate)">
-            {{ isFull(thursday) ? 'waitlist' : 'reserve' }}
-          </button>
-        </a>
-      </div>
-      
-      <div class="column">
-        <h2 class="day">Fri</h2>
-        <h3 class="date">{{ friM }} {{ friD }}</h3>
-        <a ng-class="{ row: friday, unavailable: chkSched(friDate, friday), full: isFull(friday) }" ng-repeat="friday in schedules.fri">
-          <span class="time">{{ friday.start | formatTime }}</span>
-          <span class="instructor">
-            {{ friday.instructor.admin.first_name }}
-            {{ friday.sub_instructor ? ' &amp; ' + friday.sub_instructor.admin.first_name : '' }}
-          </span>
-          <span class="schedtype">{{ friday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(friday, friDate)">
-            {{ isFull(friday) ? 'waitlist' : 'reserve' }}
-          </button>
-        </a>
 
       </div>
-      
-      <div class="column">
-        <h2 class="day">Sat</h2>
-        <h3 class="date">{{ satM }} {{ satD }}</h3>
-        <a ng-class="{ row: saturday, unavailable: chkSched(satDate, saturday), full: isFull(saturday) }" ng-repeat="saturday in schedules.sat">
-          <span class="time">{{ saturday.start | formatTime }}</span>
-          <span class="instructor">
-            {{ saturday.instructor.admin.first_name }}
-            {{ saturday.sub_instructor ? ' &amp; ' + saturday.sub_instructor.admin.first_name : '' }}
-          </span>
-          <span class="schedtype">{{ saturday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(saturday, satDate)">
-            {{ isFull(saturday) ? 'waitlist' : 'reserve' }}
-          </button>
-        </a>
-      </div>
-      
-      <div class="column">
-        <h2 class="day">Sun</h2>
-        <h3 class="date">{{ sunM }} {{ sunD }}</h3>
-        <a ng-class="{ row: sunday, unavailable: chkSched(sunDate, sunday), full: isFull(sunday) }" ng-repeat="sunday in schedules.sun">
-          <span class="time">{{ sunday.start | formatTime }}</span>
-          <span class="instructor">
-            {{ sunday.instructor.admin.first_name }}
-            {{ sunday.sub_instructor ? ' &amp; ' + sunday.sub_instructor.admin.first_name : '' }}
-          </span>
-          <span class="schedtype">{{ sunday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(sunday, sunDate)">
-            {{ isFull(sunday) ? 'waitlist' : 'reserve' }}
-          </button>
-        </a>
-      </div>
-
-      <div class="column">
-        <h2 class="day">Mon</h2>
-        <h3 class="date">{{ nmonM }} {{ nmonD }}</h3>
-        <a ng-class="{ row: monday, unavailable: chkSched(nmonDate, monday), full: isFull(monday) }" ng-repeat="monday in schedules.nmon">
-          <span class="time">{{ monday.start | formatTime }}</span>
-          <span class="instructor">
-            {{ monday.instructor.admin.first_name }}
-            {{ monday.sub_instructor ? ' &amp; ' + monday.sub_instructor.admin.first_name : '' }}
-          </span>
-          <span class="schedtype">{{ monday.type }}</span>
-          <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, nmonDate)">
-            {{ isFull(monday) ? 'waitlist' : 'reserve' }}
-          </button>
-        </a>
-      </div>
-    </div>  
+    </div>
     <span class="h small primary center" ng-show="loadingSchedules">
-      <i class="fa fa-spinner"></i> Loading schedules ... 
+      <i class="fa fa-spinner"></i> Loading schedules ...
     </span>
   </div>

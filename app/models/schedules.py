@@ -1,9 +1,10 @@
 from motorengine import *
-from .admins import Instructor
+from .admins import Instructor, Branch
 from .users import User
 from .packages import UserPackage
 from app.helper import mongo_to_dict
 from hurricane.db import Model
+from bson.objectid import ObjectId
 
 class InstructorSchedule(Model):
     __collection__ = 'instructor_schedules'
@@ -16,6 +17,7 @@ class InstructorSchedule(Model):
     start = DateTimeField()
     end = DateTimeField()
     seats = IntField(default=37)
+    branch = ReferenceField(reference_document_type=Branch, default=ObjectId("558272c288b5c73163343c45"))
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 

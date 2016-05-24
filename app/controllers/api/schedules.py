@@ -13,6 +13,7 @@ def find(self):
 
     date = self.get_query_argument('date')
     ins = self.get_query_argument('ins')
+    branch = self.get_query_argument('branch')
     if not date:
         date = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
     else:
@@ -43,11 +44,19 @@ def find(self):
 
     next_release = release_date + timedelta(weeks=1);
 
+    branch_filter = Q(branch=ObjectId(branch))
+    if branch == '558272c288b5c73163343c45':
+        branch_filter = Q(branch=ObjectId(branch)) | Q(branch__exists=False)
+
     scheds = {}
     week_days = ['mon','tue','wed','thu','fri','sat','sun','nmon']
     for day in week_days:
 
         sched_query = InstructorSchedule.objects.filter(date=date)
+
+        if branch:
+            sched_query.filter(branch_filter)
+
         if ins:
             qfilter = Q(instructor=ObjectId(ins)) | Q(sub_instructor=ObjectId(ins))
             sched_query.filter(qfilter).limit(4)

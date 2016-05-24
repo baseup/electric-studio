@@ -1,5 +1,11 @@
 'use strict';
 
+// transfer this on a better place once figured out where
+var branchTitles = {
+  'bgc' : 'BGC',
+  'salcedo' : 'SALCEDO'
+};
+
 var ctrls = angular.module('elstudio.controllers.site', [
   'elstudio.services'
 ]);
@@ -9,10 +15,12 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 });
 
 
-ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService) {
+ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService, $routeParams) {
+
+  $scope.isNavOpen = false;
+  $scope.isBookNavOpen = false;
 
   $scope.loginUser = AuthService.getCurrentUser();
-
   $scope.reloadUser = function (user) {
     UserService.get(function (user) {
       if ($scope.loginUser) {
@@ -69,7 +77,9 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       loginToggle = angular.element('.login-toggle'),
       signupToggle = angular.element('.signup-toggle'),
       bookToggle = angular.element('.book-toggle'),
-      menuToggle = angular.element('.menu-toggle');
+      menuToggle = angular.element('.menu-toggle'),
+      menuWrapper = angular.element('.menu-wrapper'),
+      body = angular.element('body');
 
 
   angular.element('.datepicker').pickadate({
@@ -101,10 +111,15 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
   signupToggle.off('click').on('click', function () {
     signup.toggleClass('show');
     login.add(book).removeClass('show');
+    $scope.registered = true; // test
+    console.log('registered',$scope.registered);
   });
 
-  menuToggle.off('click').click(function () {
-    angular.element('.menu-wrapper').toggleClass('show');
+  // Close the menus on click of anchors
+  menuWrapper.find('a[href]').on('click',function () {
+    $scope.isLetsRideOpen = false;
+    $scope.isBookNavOpen = false;
+    $scope.isNavOpen = false;
   });
 
   $(window).resize(function () {
@@ -139,6 +154,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       angular.element('.signup-toggle').click();
     }
   }
+
   var aboutUs = angular.element('#aboutus-section');
   var workouts = angular.element('#workouts-section');
   var firstRide = angular.element('#firstride-section');
@@ -166,6 +182,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
   if (faq.length) {;
     angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
   }
+
 });
 
 ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
@@ -671,7 +688,8 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   $scope.packages.$promise.then(function (data) {
     $scope.packages = data;
     $scope.loadingPackages = false;
-    gcPackageSelectize(data);
+
+    $scope.selectGCPackage(0);
   });
 
   var port = '';
@@ -719,10 +737,9 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
       data.pin = $scope.gcPin;
       data.checkOnly = true;
 
-      GCRedeemService.redeem(data).$promise.then(function (data){
-        $.Alert('<div style="text-align: left">Package: ' + data.package_id.name + '<br>' +
-                'Credits: ' + data.credits + '<br>' +
-                'Validity: ' + data.validity + ' days</div>');
+      GCRedeemService.redeem(data).$promise.then(function (data) {
+        $scope.checkGCCredits = data.credits;
+        $scope.checkGCValidity = data.validity;
       }, function (error) {
         $.Alert(error.data);
       });
@@ -768,39 +785,27 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   }
 
 
-  function gcPackageSelectize(data) {
-    var $packageSelect = $('#select-gc-package');
-    if(!$packageSelect[0]) return;
+  $scope.prevGCPackage = function() {
+    var index = $scope.selectedGCPackageIndex == 0 ? $scope.packages.length - 1 : $scope.selectedGCPackageIndex - 1;
+    $scope.selectGCPackage(index);
+  }
 
-    var selectize = $packageSelect[0].selectize;
-    if(selectize) selectize.destroy();
-
-    $packageSelect.selectize({
-      create: false,
-      labelField: 'credits',
-      valueField: 'value',
-      render: {
-        option: function(item, escape) {
-          return item.credits ? '<div class="pad--half-ends">' + escape(item.name) + '</div>' : '';
-        }
-      }
-    });
-
-    angular.forEach(data, function(item) {
-      $packageSelect[0].selectize.addOption({name: item.name, credits: item.credits, value: JSON.stringify(item)});
-    });
+  $scope.nextGCPackage = function() {
+    var index = $scope.selectedGCPackageIndex == $scope.packages.length - 1 ? 0 : $scope.selectedGCPackageIndex + 1;
+    $scope.selectGCPackage(index);
   }
 
 
-  $scope.selectGCPackage = function(){
+  $scope.selectGCPackage = function(index) {
+    $scope.selectedGCPackageIndex = index;
+    $scope.selectedGCPackage = $scope.packages[index];
 
-    var jsonPackage = JSON.parse($scope.gcPackage);
-    $('input#item_name').val(jsonPackage.name);
-    $('input#item_number').val(jsonPackage._id);
-    $('input#amount').val(jsonPackage.fee);
-    $scope.gcAmount = jsonPackage.fee;
-    $scope.gcValidity = jsonPackage.expiration;
-    $scope.gcPackageFirstTimer = jsonPackage.first_timer;
+    $('input#item_name').val($scope.selectedGCPackage.name);
+    $('input#item_number').val($scope.selectedGCPackage._id);
+    $('input#amount').val($scope.selectedGCPackage.fee);
+    $scope.gcAmount = $scope.selectedGCPackage.fee;
+    $scope.gcValidity = $scope.selectedGCPackage.expiration;
+    $scope.gcPackageFirstTimer = $scope.selectedGCPackage.first_timer;
   }
 
   $scope.emailTo = 'sender';
@@ -942,7 +947,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
     });
   }
 
-  $scope.setSchedule = function (schedule, date) {
+  $scope.setSchedule = function (schedule, date, branch) {
 
     var parts = schedule.date.split(/[^0-9]/);
     var date =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
@@ -1027,7 +1032,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
             } else {
               SharedService.set('selectedSched', sched);
               SharedService.set('backToInstructors', true);
-              $location.path('/class');
+              $location.path('/class/' + branch.toLowerCase());
             }
           });
         }
@@ -1234,7 +1239,19 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService, $timeout) {
+ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
+
+  WS.onmessage = function(evt) {
+    try {
+      var schedata = JSON.parse(evt.data);
+      $scope.$apply(function () {
+        $scope.schedules = schedata;
+        $scope.loadingSchedules = false;
+      });
+    } catch (e) {
+      console.log(evt.data);
+    }
+  };
 
   $timeout(function() {
     var scheduleRow = angular.element('.schedule .row').not('.unavailable');
@@ -1318,7 +1335,9 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     });
   }
 
-  $scope.setSchedule = function (schedule, date) {
+  $scope.setSchedule = function (schedule, date, branch) {
+
+    $scope.branch = branch;
 
     if (!$scope.chkSched(date, schedule)) {
 
@@ -1329,6 +1348,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
       if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
         $.Alert('Not enough credits.');
+        return;
       }
 
       var today = new Date();
@@ -1363,6 +1383,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       var sched = {};
       sched.date = date;
       sched.schedule = schedule;
+      sched.branch = branch;
 
       var bfilter = {};
       bfilter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
@@ -1398,7 +1419,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
               });
             } else {
               SharedService.set('selectedSched', sched);
-              $location.path('/class');
+              $location.path('/class/' + sched.schedule.branch.name.toLowerCase());
             }
           });
         }
@@ -1473,12 +1494,28 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     $scope.nmonM = months[n_mon.getMonth()];
     $scope.nmonDate = n_mon;
 
-    $scope.schedules = ScheduleService.query({ date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate() });
+    var branchId = $scope.branches[0]._id;
+    $scope.branchTitle = $scope.branches[0].name;
+    if ($routeParams.branch) {
+      branchId = $routeParams.branch;
+      for(var i in $scope.branches) {
+        if ($scope.branches[i]._id == branchId) {
+          $scope.branchTitle = $scope.branches[i].name;
+          break;
+        }
+      }
+    }
+
+    // $scope.schedules = ScheduleService.query({ date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate(), branch: branchId });
+    // $scope.loadingSchedules = true;
+    // $scope.schedules.$promise.then(function (data) {
+    //   $scope.schedules = data;
+    //   $scope.loadingSchedules = false;
+    // });
     $scope.loadingSchedules = true;
-    $scope.schedules.$promise.then(function (data) {
-      $scope.schedules = data;
-      $scope.loadingSchedules = false;
-    });
+    WS.send(JSON.stringify({
+      date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate(), branch: branchId
+    }));
 
   }
 
@@ -1499,7 +1536,24 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     return false;
   }
 
-  $scope.getWeek(new Date());
+  BranchService.query().$promise.then(function (branches) {
+    $scope.branches = branches;
+    $scope.getWeek(new Date());
+    $scope.checkBranch();
+  });
+
+  $scope.checkBranch = function() {
+    var selectedBranch = $routeParams.branch;
+    var isActiveBranch = false;
+    angular.forEach($scope.branches, function(branch) {
+      if(selectedBranch == branch._id) isActiveBranch = true;
+    });
+
+    if(!selectedBranch || !isActiveBranch) {
+      $location.path('/schedule/' + $scope.branches[0]._id);
+    }
+  }
+
   $scope.nextWeek = function () {
     var now = new Date();
     var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, now.getDate());
@@ -1511,6 +1565,8 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     var pWeek = new Date($scope.monDate);
     pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 6);
 
+    console.log('$scope.schedules',$scope.schedules);
+
     var nowParts = $scope.schedules.now.split(/[^0-9]/);
     var now = new Date(nowParts[0], nowParts[1]-1, nowParts[2],  nowParts[3],  nowParts[4], nowParts[5]);
 
@@ -1520,7 +1576,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   }
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService) {
+ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService, $routeParams) {
 
   $timeout(function() {
     angular.element('html, body').scrollTop(0);
@@ -1589,7 +1645,6 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
     SettingService.getBlockedBikes(function (bikes) {
       $scope.blockedBikes = bikes;
     });
-
   }
 
   $scope.checkSeat = function (num) {
@@ -1741,6 +1796,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
       });
     });
   }
+
 });
 
 ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) {
