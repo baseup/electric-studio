@@ -933,8 +933,8 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
         $.Alert('exporting users ' + response.data, true);
       } else if (response.file) {
         $interval.cancel(timeInval);
-        window.location = response.file;
-      }
+        window.location = response.file;  
+      } 
     });
 
     // get export status
@@ -946,12 +946,12 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
         } else if (response.file) {
           $interval.cancel(timeInval);
           $.Alert('Successfully exported accounts');
-          window.location = response.file;
-        }
+          window.location = response.file;  
+        } 
       });
     }, 3000)
 
-
+    
     // window.location = '/admin/export/download-user-accounts?email=' + emailFilter + '&past_month=' + past_month
   }
 
@@ -1479,7 +1479,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       $scope.classTypesByName[ct.name] = ct;
     });
   });
-
+   
   var calendar = angular.element('.calendar');
   calendar.fullCalendar({
     defaultView: 'agendaWeek',
@@ -2176,7 +2176,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, $timeout, Instruct
       if (!$scope.newInstructor.gender)
         $scope.newInstructor.gender = 'male';
 
-
+      
 
       var addSuccess = function (data) {
         $scope.picInstructor = data;
@@ -2271,21 +2271,21 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, $timeout, Instruct
         delete ins.albums.$$hashKey;
     }
     $scope.updateInstructor.albums = ins.albums;
-
+    
     if (ins.birthdate) {
       $scope.updateInstructor.birthdate = ins.birthdate.replace(' 00:00:00', '');
     } else {
       $scope.updateInstructor.birthdate = '';
     }
-
+    
     $timeout(function () {
       $('#ins-album-update')[0].selectize.setValue(null);
       $.getJSON('https://itunes.apple.com/lookup?id=' + ins.albums.join(',') + '&attribute=albumTerm&entity=album&callback=?', function(data) {
-        $('#ins-album-update')[0].selectize.addOption(data.results);
+        $('#ins-album-update')[0].selectize.addOption(data.results);  
         $timeout(function () {
           $('#ins-album-update')[0].selectize.setValue(ins.albums);
         }, 500);
-      });
+      });      
     });
   }
 
