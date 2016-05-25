@@ -208,7 +208,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       var scheduleRow = angular.element('.schedule .row').not('.unavailable');
       var scrollableView = scheduleRow.length ? scheduleRow.offset().top : 0;
       angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-    }, 100);    
+    }, 100);
   }
 
   scrollToUnavailable();

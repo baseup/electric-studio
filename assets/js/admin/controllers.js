@@ -1485,8 +1485,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
     defaultView: 'agendaWeek',
     allDaySlot: false,
     allDay: false,
-    minTime: '05:00:00',
-    maxTime: '23:00:00',
     events: function (start, end, timezone, callback) {
       var events = [];
       ScheduleService.query({ start: start.unix(), end: end.unix(), branch: $scope.selectedBranchId }, function (scheds) {
