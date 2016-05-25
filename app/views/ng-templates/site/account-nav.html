@@ -2,28 +2,17 @@
   <h3 class="h lightGray">My Classes</h3>
   <div class="sidebar-links">
     <a href="#/reserved" class="link basic">Reservations</a>
-    <a href="#/history" class="link basic">History</a> 
-    <a href="#/account" class="link basic">My Account</a> 
+    <a href="#/history" class="link basic">History</a>
   </div>
   <h3 class="h">My Account</h3>
   <div class="sidebar-links">
     <a href="#/account" class="link basic">Personal Info</a>
-    <!-- <a href="#/account#billing" class="link basic">Billing</a><br> -->
-    <a href="#/account#packages" class="link basic">Packages</a>
-    <a href="#" class="link basic">Redeem Gift Card</a>
-    <!-- <a href="#/rewards" class="link basic">Rewards</a> -->
+    <a href="#/redeem-gc" class="link basic">Redeem Gift Card</a>
   </div>
-  <h3 ng-show="loginUser" class="h">Referral</h3>
-  <p ng-show="loginUser">
-    <span class="sidebar-links">
-      Points: {{ loginUser.referral_points }}<br>
-      Link: <input type="text" value="{{ hostUrl }}/?ref={{ loginUser._id }}#/#signup">
-    </span>
-  </p>
 
   <div>
   <br>
     <a class="btn btn-white" ng-click="logout()">Sign Out</a>
   </div>
-  
+
 </div>
