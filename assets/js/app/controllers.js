@@ -1274,6 +1274,33 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 
 ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
 
+  // Get the list of available branches
+  BranchService.query().$promise.then(function (branches) {
+    $scope.branches = branches;
+    if($scope.isValidBranch(branches, $routeParams.branch)) {
+      $scope.getWeek(new Date());
+    } else {
+      $location.path('/schedule');
+    }
+  });
+
+  /**
+   * @function: `isValidBranch` - checks if the schedule url is a valid branch id
+   * @param: branches [Array], selectedBranch [String]
+   * @return: [Boolean]
+   */
+  $scope.isValidBranch = function(branches, selectedBranch) {
+    if(!selectedBranch || !branches.length) return false;
+    var isValid = false;
+
+    angular.forEach(branches, function(branch) {
+      if(selectedBranch === branch._id) isValid = true;
+    });
+
+    return isValid;
+  };
+
+
   WS.onmessage = function(evt) {
     try {
       var schedata = JSON.parse(evt.data);
@@ -1561,24 +1588,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       }
     }
     return false;
-  }
-
-  BranchService.query().$promise.then(function (branches) {
-    $scope.branches = branches;
-    $scope.getWeek(new Date());
-    $scope.checkBranch();
-  });
-
-  $scope.checkBranch = function() {
-    var selectedBranch = $routeParams.branch;
-    var isActiveBranch = false;
-    angular.forEach($scope.branches, function(branch) {
-      if(selectedBranch == branch._id) isActiveBranch = true;
-    });
-
-    if(!selectedBranch || !isActiveBranch) {
-      $location.path('/schedule/' + $scope.branches[0]._id);
-    }
   }
 
   $scope.nextWeek = function () {

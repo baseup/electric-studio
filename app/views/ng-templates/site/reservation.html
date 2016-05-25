@@ -7,7 +7,7 @@
   <div class="content bg-lightGray account-page sidebar-layout" ng-controller="ReservedCtrl">
 
     <div ng-include="'/site/account-nav'"></div>
-    
+
     <div class="wrapper">
 
       <div class="main">
@@ -19,7 +19,8 @@
 
         <section class="col-2">
           <div class="block" ng-repeat="res in reservations">
-            <h4 class="h small primary space--off pad--half-bottom">{{ res.date | formatDate }}</h4>
+            <h3 class="h primary space--off pad--half-bottom"><small>{{ res.date | formatDate }}</small></h3>
+            <span class="color--orange font--bold">{{ res.schedule.branch.name }}</span><br>
             <span>{{ res.schedule.start | formatTime }}</span><br>
             <span>Class: {{ res.schedule.type }}</span><br>
             <span>Instructor: {{ res.schedule.instructor.admin.first_name | capitalize }}</span><br>

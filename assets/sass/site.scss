@@ -454,7 +454,7 @@ body {
       bottom: 0;
       width: 500%;
     }
-  }  
+  }
 
   .credits {
     display: none;
@@ -2250,6 +2250,33 @@ body {
     font-size: 380px;
   }
 
+}
+
+
+.branch-select-page {
+  padding-top: 80px;
+  padding-bottom: 80px;
+
+  @include breakpoint(md) {
+    padding-top: 120px!important;
+    padding-bottom: 120px!important;
+  }
+}
+
+.branch-select {
+  display: block;
+  text-align: center;
+  font-family: 'Tungsten-Medium';
+  font-size: 80px;
+  color: $color-watermark;
+
+  @include breakpoint(md) {
+    font-size: 160px;
+  }
+
+  &:hover, &:active {
+    color: darken($color-watermark, 15%);
+  }
 }
 
 
