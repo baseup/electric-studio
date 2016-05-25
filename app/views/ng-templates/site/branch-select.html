@@ -1,0 +1,5 @@
+<div class="content schedule branch-select-page" ng-controller="ScheduleCtrl">
+  <div class="wrapper">
+    <a class="branch-select" ng-repeat="branch in branches" ng-href="#/schedule/{{ branch._id }}">{{ branch.name }}</a>
+  </div>
+</div>

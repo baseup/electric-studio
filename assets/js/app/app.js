@@ -66,6 +66,10 @@ app.config(function ($routeProvider, $httpProvider) {
       templateUrl: '/site/rewards',
       controller: 'SiteCtrl'
     },
+    '/schedule': {
+      templateUrl: '/site/branch-select',
+      controller: 'SiteCtrl'
+    },
     '/schedule/:branch?': {
       templateUrl: '/site/schedule',
       controller: 'SiteCtrl'
