@@ -1277,8 +1277,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   // Get the list of available branches
   BranchService.query().$promise.then(function (branches) {
     $scope.branches = branches;
+
     if($scope.isValidBranch(branches, $routeParams.branch)) {
-      $scope.getWeek(new Date());
+      var selectedSched = SharedService.get('selectedSched')
+      var date = selectedSched && 'date' in selectedSched ? new Date(selectedSched.date) : new Date();
+      $scope.getWeek(date);
     } else {
       $location.path('/schedule');
     }
@@ -1615,17 +1618,19 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
 ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService, $routeParams) {
 
+  var sched = SharedService.get('selectedSched');
+
+  if (!sched) $location.path('/schedule');
+
   $timeout(function() {
     angular.element('html, body').scrollTop(0);
   });
 
-  $scope.backButtonPath = SharedService.get('backToInstructors') ? '#/instructors' : '#/schedule';
+  $scope.backButtonPath = SharedService.get('backToInstructors') ? '#/instructors' : '#/schedule/' + sched.schedule.branch._id;
   SharedService.clear('backToInstructors');
 
-  var sched = SharedService.get('selectedSched');
-  if (!sched) {
-    $location.path('/schedule')
-  } else {
+
+  if (sched) {
 
     var seats = [];
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
