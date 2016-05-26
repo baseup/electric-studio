@@ -1272,19 +1272,13 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 });
 
 
-ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, ScheduleSocketService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
 
-  WS.onmessage = function(evt) {
-    try {
-      var schedata = JSON.parse(evt.data);
-      $scope.$apply(function () {
-        $scope.schedules = schedata;
-        $scope.loadingSchedules = false;
-      });
-    } catch (e) {
-      console.log(evt.data);
-    }
-  };
+  $scope.schedules = {};
+  ScheduleSocketService.onLoadSchedule(function(schedules) {
+    $scope.schedules = schedules;
+    $scope.loadingSchedules = false;
+  });
 
   $scope.resched = SharedService.get('resched');
 
@@ -1533,17 +1527,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       }
     }
 
-    // $scope.schedules = ScheduleService.query({ date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate(), branch: branchId });
-    // $scope.loadingSchedules = true;
-    // $scope.schedules.$promise.then(function (data) {
-    //   $scope.schedules = data;
-    //   $scope.loadingSchedules = false;
-    // });
     $scope.loadingSchedules = true;
-    WS.send(JSON.stringify({
-      date: mon.getFullYear() + '-' + (mon.getMonth()+1) + '-' + mon.getDate(), branch: branchId
-    }));
-
+    ScheduleSocketService.loadWeek({
+      date: mon.getFullYear() + '-' + (mon.getMonth() + 1) + '-' + mon.getDate(),
+      branch: branchId
+    });
   }
 
   $scope.isFull = function (sched) {
@@ -1591,8 +1579,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   $scope.prevWeek = function () {
     var pWeek = new Date($scope.monDate);
     pWeek.setDate(pWeek.getDate() - pWeek.getDay() - 6);
-
-    console.log('$scope.schedules',$scope.schedules);
 
     var nowParts = $scope.schedules.now.split(/[^0-9]/);
     var now = new Date(nowParts[0], nowParts[1]-1, nowParts[2],  nowParts[3],  nowParts[4], nowParts[5]);

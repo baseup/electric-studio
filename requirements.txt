@@ -7,3 +7,4 @@ python-dateutil==2.4.1
 pytz
 pyyaml==3.11
 redis==2.10.3
+tornado-redis==2.4.18
