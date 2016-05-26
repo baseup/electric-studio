@@ -320,7 +320,7 @@ body {
 }
 
 // Remove classes link on desktop
-.nav-item-schedule a {
+.nav-item-schedule > a {
   @include breakpoint(md) {
     pointer-events: none;
     cursor: default;
