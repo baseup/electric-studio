@@ -2804,7 +2804,7 @@ body {
       &.center {
         margin: auto;
         margin-bottom: 40px;
-        width: 117px;
+        width: 124px;
 
         @media (min-width: 768px) {
           width: 230px;
@@ -2815,7 +2815,7 @@ body {
         }
 
         @include breakpoint(lg) {
-          width: 430px;
+          width: 420px;
         }
       }
     } // back
@@ -2884,7 +2884,32 @@ body {
   // 13-seat rows
   &.seats-13 {
 
+    .formation.back {
+      margin-top: 50px;
+
+      @include breakpoint(md) {
+        margin-top: 80px;
+      }
+    }
+
     .front {
+      margin-top: 50px;
+
+      &.instructor {
+        margin-left: auto!important;
+        margin-right: auto!important;
+        margin-top: -170px;
+        margin-bottom: 80px;
+
+        @include breakpoint(sm) {
+          margin-top: -200px;
+          margin-bottom: 60px;
+        }
+
+        @include breakpoint(md) {
+          margin-top: -260px;
+        }
+      }
 
       &:nth-child(3) {
         text-align: right;
@@ -2970,7 +2995,45 @@ body {
         }
       }
 
+      .center {
+        span:last-child {
+          margin-left: 0!important;
+        }
+      }
+
       .left {
+        width: 25%;
+
+        @include breakpoint(sm) {
+          margin-left: 10%;
+        }
+
+        span {
+          float: right;
+          margin-right: 0;
+          margin-left: 6.3333333px;
+
+          @media (min-width: 768px) {
+            margin-left: 16.6666667px;
+          }
+
+          @include breakpoint(md) {
+            margin-left: 21.75px;
+          }
+
+          @include breakpoint(lg) {
+            margin-left: 42px;
+          }
+        }
+      } // .back.left
+
+      .right {
+        width: 25%;
+
+        @include breakpoint(sm) {
+          margin-right: 10%;
+        }
+
         span {
           float: left;
           margin-left: 0;
@@ -2988,121 +3051,17 @@ body {
             margin-right: 42px;
           }
         }
-      } // .back.left
+      }
+
+      .right, .left {
+        span:nth-child(n+4) {
+          margin-top: 40px;
+        }
+      }
     }
 
   } // 13
 
-  &.seats-13 {
-
-    .front {
-
-      &:nth-child(3) {
-        text-align: right;
-
-        & span {
-          float: right;
-          margin-right: 0;
-          margin-left: 6.3333333px;
-
-          @media (min-width: 768px) {
-            margin-left: 16.6666667px;
-          }
-
-          @include breakpoint(md) {
-            margin-left: 21.75px;
-          }
-
-          @include breakpoint(lg) {
-            margin-left: 42px;
-          }
-
-          &:nth-child(4n) {
-            margin-left: 0;
-          }
-
-          &:nth-child(n+5) {
-            margin-top: 40px;
-          }
-        }
-      }
-
-      span {
-        margin-left: 0;
-        margin-right: 6.3333333px;
-
-        @media (min-width: 768px) {
-          margin-right: 16.6666667px;
-        }
-
-        @include breakpoint(md) {
-          margin-right: 21.75px;
-        }
-
-        @include breakpoint(lg) {
-          margin-right: 42px;
-        }
-
-        &:nth-child(4n) {
-          margin-right: 0;
-        }
-
-        &:nth-child(n+5) {
-          margin-top: 40px;
-        }
-      }
-    } // front
-
-    .back {
-
-      span {
-        float: right;
-        margin-right: 0;
-        margin-left: 6.3333333px;
-
-        @media (min-width: 768px) {
-          margin-left: 16.6666667px;
-        }
-
-        @include breakpoint(md) {
-          margin-left: 21.75px;
-        }
-
-        @include breakpoint(lg) {
-          margin-left: 42px;
-        }
-
-        &:nth-child(13n) {
-          margin-left: 0;
-        }
-
-        &:nth-child(n+14) {
-          margin-top: 40px;
-        }
-      }
-
-      .left {
-        span {
-          float: left;
-          margin-left: 0;
-          margin-right: 6.3333333px;
-
-          @media (min-width: 768px) {
-            margin-right: 16.6666667px;
-          }
-
-          @include breakpoint(md) {
-            margin-right: 21.75px;
-          }
-
-          @include breakpoint(lg) {
-            margin-right: 42px;
-          }
-        }
-      } // .back.left
-    }
-
-  } // .seats-13
 
   &.seats-14 {
 
