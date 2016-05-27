@@ -8,3 +8,4 @@ pytz
 pyyaml==3.11
 redis==2.10.3
 tornado-redis==2.4.18
+ws4py==0.3.4
