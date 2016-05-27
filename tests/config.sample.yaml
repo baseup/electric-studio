@@ -1,0 +1,2 @@
+base_url: http://localhost:8002
+websocket_base_url: ws://localhost:8002/ws
