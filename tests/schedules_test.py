@@ -1,8 +1,15 @@
 from tornado.testing import AsyncTestCase
 from ws4py.client.tornadoclient import TornadoWebSocketClient
+from datetime import date, timedelta
+from tornado.escape import json_decode
 
 import os
+import sys
 import yaml
+
+sys.path.append(os.path.abspath('.'))
+from app.models.admins import Branch
+from scripts.helpers.db import connect_db
 
 
 class SchedulesClient(TornadoWebSocketClient):
@@ -41,7 +48,7 @@ class SchedulesClient(TornadoWebSocketClient):
         self.close()
 
         if self._callback:
-            self._callback(message)
+            self._callback(message.data)
 
     def send_message(self, message, callback):
         self._message = message
@@ -58,17 +65,39 @@ class WebsocketTest(AsyncTestCase):
             config = yaml.load(stream)
             self.websocket_base_url = config['websocket_base_url']
 
+        connect_db(self.io_loop)
+
+        Branch.objects.limit(1).find_all(callback=self.stop)
+        branch = self.wait()
+
+        mon_date = (date.today() - timedelta(days=date.today().weekday())) \
+            .strftime('%Y-%-m-%-d')
+
         client = SchedulesClient(
             '{}/{}'.format(
                 self.websocket_base_url,
                 'schedules?subscribe-broadcast&echo'),
             self.io_loop)
         client.send_message(
-            '{date: "2016-5-23", branch: "5743d1906c7a152a32d5d88f"}',
+            '{{"date": "{}", "branch": "{}"}}'.format(mon_date, branch[0]._id),
             self.stop)
 
         response = self.wait()
 
-        if response.data:
-            print('got %s' % str(response.data))
-            self.assertTrue(True)
+        json = json_decode(response)
+
+        self.assertIn('mon', json)
+        self.assertIn('tue', json)
+        self.assertIn('wed', json)
+        self.assertIn('thu', json)
+        self.assertIn('fri', json)
+        self.assertIn('sat', json)
+        self.assertIn('sun', json)
+        self.assertIn('nmon', json)
+        self.assertIn('now', json)
+        self.assertIn('counts', json)
+        self.assertIn('date', json)
+        self.assertIn('releases', json)
+
+        # Month and Day should not be zero-padded
+        self.assertEqual(json['date'], mon_date)
