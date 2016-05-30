@@ -86,17 +86,14 @@
       </div>
 
       <div class="formation">
-        <div class="front wide seats instructor">
+        <div class="front wide seats instructor" ng-class="{'has-sub-instructor': subInstructor}">
           <div class="image">
-            <!-- <img data-src="haha" src="{{ instructor.image ? '/assets/' + instructor.image : 'http://placehold.it/350x150' }}"> -->
-
-            <!-- dummy image -->
-            <img src="http://placehold.it/350x350" alt="">
+            <img src="{{ instructor.image ? '/assets/' + instructor.image : 'http://placehold.it/350x150' }}">
           </div>
           <div ng-if="subInstructor" class="image">
             <img src="{{ subInstructor.image ? '/assets/' + subInstructor.image : 'http://placehold.it/350x150' }}">
           </div>
-          <h3 class="h large face-secondary gray">
+          <h3 class="h large face-secondary gray name">
             {{ instructor.admin.first_name }} {{ subInstructor ? ' &amp; ' + subInstructor.admin.first_name : ''}}
           </h3>
         </div>
@@ -112,11 +109,13 @@
         <a ng-if="forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Join the WaitList</a>
       </div>
 
-      <ul class="legend">
-        <li class="free">Free Bikes</li>
-        <li class="reserved">Reserved Bikes</li>
-        <li class="selection">Your Selection</li>
-      </ul>
+      <div class="legend-wrapper">
+        <ul class="legend">
+          <li class="free">Free Bikes</li>
+          <li class="reserved">Reserved Bikes</li>
+          <li class="selection">Your Selection</li>
+        </ul>
+      </div>
     </div>
 
   </div>
