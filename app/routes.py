@@ -1,4 +1,6 @@
 from hurricane.web import RouteProvider
+from .settings import WEBSOCKET_URL
+
 routes = RouteProvider()
 
 routes.when('admin.index', 'auth.admin')
@@ -128,6 +130,10 @@ routes.prefix('/api', [
     ('post', '/buy', 'pos.buy'),
     ('post', '/buy_product', 'pos.buy_product'),
     ('get', '/request_token', 'pos.request_token')
+])
+
+routes.prefix(WEBSOCKET_URL, [
+    ('websocket', '/schedules', 'ws.schedules')
 ])
 
 routes.subdomain('api.electric-studio.dev', [

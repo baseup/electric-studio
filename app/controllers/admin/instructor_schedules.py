@@ -1,8 +1,10 @@
+from app.controllers.api.schedules import query
 from app.models.schedules import InstructorSchedule, BookedSchedule
 from datetime import datetime, timedelta
 from dateutil import parser
 from bson.objectid import ObjectId
 from motorengine import Q
+from hurricane.helpers import to_json
 
 import tornado.escape
 
@@ -42,7 +44,7 @@ def find(self):
         spec_scheds = yield InstructorSchedule.objects.filter(date=start_date_filter).filter(branch_filter).find_all()
         for sched in spec_scheds:
             events.append({
-                'title': sched.type + ' with ' + sched.instructor.admin.first_name + 
+                'title': sched.type + ' with ' + sched.instructor.admin.first_name +
                         (' and ' + sched.sub_instructor.admin.first_name if sched.sub_instructor else ''),
                 'start': start_date_string + sched.start.strftime(' %H:%M:%S'),
                 'end': start_date_string + sched.end.strftime(' %H:%M:%S'),
@@ -83,6 +85,14 @@ def create(self):
     if 'branch' in data:
         new_sched.branch = ObjectId(data['branch'])
     yield new_sched.save()
+    yield new_sched.load_references()
+
+    date = (new_sched.date - timedelta(days=new_sched.date.weekday())).strftime('%Y-%-m-%-d')
+    schedules = yield query(self, date, None, new_sched.branch._id)
+    schedules['date'] = date
+
+    self.publish_message(to_json(schedules), facility='schedules', broadcast=True)
+
     self.render_json(new_sched)
 
 def find_one(self, id):
@@ -94,6 +104,14 @@ def destroy(self, id):
     sched = yield InstructorSchedule.objects.get(id)
     if sched:
         sched.delete()
+
+    date = (sched.date - timedelta(days=sched.date.weekday())).strftime('%Y-%-m-%-d')
+
+    schedules = yield query(self, date, None, sched.branch._id)
+    schedules['date'] = date
+
+    self.publish_message(to_json(schedules), facility='schedules', broadcast=True)
+
     self.finish()
 
 def update(self, id):
@@ -118,4 +136,12 @@ def update(self, id):
         sched.sub_instructor = ObjectId(data['sub_instructor'])
 
     yield sched.save()
+
+    date = (sched.date - timedelta(days=sched.date.weekday())).strftime('%Y-%-m-%-d')
+
+    schedules = yield query(self, date, None, sched.branch._id)
+    schedules['date'] = date
+
+    self.publish_message(to_json(schedules), facility='schedules', broadcast=True)
+
     self.render_json(sched)

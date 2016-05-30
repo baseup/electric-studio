@@ -8,16 +8,11 @@ from motorengine import Q
 import tornado
 import re
 
-def find(self):
+@tornado.gen.coroutine
+def query(self, date, ins, branch):
     gmt8 = GMT8()
 
-    date = self.get_query_argument('date')
-    ins = self.get_query_argument('ins')
-    branch = self.get_query_argument('branch')
-    if not date:
-        date = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
-    else:
-        date = datetime.strptime(date, '%Y-%m-%d')
+    date = datetime.strptime(datetime.now().strftime('%Y-%m-%d') if not date else date, '%Y-%m-%d')
 
     counts = {}
     sched_releases = {}
@@ -30,7 +25,7 @@ def find(self):
     updateWeek = week_release['date'] + timedelta(days=-week_release['date'].weekday() + 6)
     updateWeek = updateWeek.replace(tzinfo=gmt8)
 
-    days = { 'mon' : 0, 'tue': 1, 'wed': 2, 'thu': 3, 'fri': 4, 'sat': 5, 'sun': 6 }
+    days = {'mon' : 0, 'tue': 1, 'wed': 2, 'thu': 3, 'fri': 4, 'sat': 5, 'sun': 6}
 
     rtime = week_release['time'].split(':')
 
@@ -49,7 +44,7 @@ def find(self):
         branch_filter = Q(branch=ObjectId(branch)) | Q(branch__exists=False)
 
     scheds = {}
-    week_days = ['mon','tue','wed','thu','fri','sat','sun','nmon']
+    week_days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'nmon']
     for day in week_days:
 
         sched_query = InstructorSchedule.objects.filter(date=date)
@@ -88,7 +83,16 @@ def find(self):
     scheds['releases'] = sched_releases
     scheds['now'] = str(now)
 
-    self.render_json(scheds)
+    return scheds
+
+def find(self):
+    date = self.get_query_argument('date')
+    ins = self.get_query_argument('ins')
+    branch = self.get_query_argument('branch')
+
+    schedules = yield self.query(date, ins, branch)
+
+    self.render_json(schedules)
 
 def find_one(self, id):
     sched = yield InstructorSchedule.objects.get(id)

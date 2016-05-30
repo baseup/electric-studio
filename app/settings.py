@@ -96,11 +96,16 @@ COOKIE_SECRET = 'elstudio!@#$%123'
 ENABLE_LOGS = True
 # LOG_PATH = 'logs'
 
-# redis confirguration
+# Redis
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
+REDIS_DB = 0
+REDIS_PASSWORD = None
 
-# MotorEngine Configuration
+# Websocket
+WEBSOCKET_URL = '/ws'
+
+# MotorEngine
 DATABASE_LIMIT = 1000
 DATABASE = {
     'default': {
