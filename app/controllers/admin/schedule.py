@@ -57,6 +57,10 @@ def find(self):
 
         if schedules:
             ins_sched = schedules[0]
+
+            if ins_sched.branch is None:
+                ins_sched.branch = branch
+
             if time:
                 time = datetime.strptime(time, '%I:%M %p')
                 ins_sched = yield InstructorSchedule.objects.get(date=date, start=time)
