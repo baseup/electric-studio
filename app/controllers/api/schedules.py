@@ -5,6 +5,7 @@ from app.models.admins import Setting
 from app.helper import GMT8
 from bson.objectid import ObjectId
 from motorengine import Q
+from app.settings import DEFAULT_BRANCH_ID
 import tornado
 import re
 
@@ -40,7 +41,7 @@ def query(self, date, ins, branch):
     next_release = release_date + timedelta(weeks=1);
 
     branch_filter = Q(branch=ObjectId(branch))
-    if branch == '558272c288b5c73163343c45':
+    if branch == DEFAULT_BRANCH_ID:
         branch_filter = Q(branch=ObjectId(branch)) | Q(branch__exists=False)
 
     scheds = {}

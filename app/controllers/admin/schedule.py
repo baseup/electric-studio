@@ -1,12 +1,13 @@
 from app.models.schedules import *
 from app.models.packages import *
-from app.models.admins import Setting
+from app.models.admins import Setting, Branch
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 from motorengine import DESCENDING, ASCENDING
 from app.helper import send_email, send_email_cancel, send_email_booking, send_email_move
 from app.helper import Lock
 from app.helper import GMT8
+from app.settings import DEFAULT_BRANCH_ID
 import tornado.escape
 
 def find(self):
@@ -43,14 +44,23 @@ def find(self):
     else:
         schedules = yield InstructorSchedule.objects.filter(date=date).order_by('start', direction=ASCENDING).find_all()
         list_scheds = []
+
+        branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
+
         for s in schedules:
+            branch_name = branch.name if s.branch is None else s.branch.name
+
             list_scheds.append({
                 'id': str(s._id),
-                'text': s.start.strftime('%I:%M %p') + ' - ' + s.end.strftime('%I:%M %p') + ' - ' + s.branch.name
+                'text': s.start.strftime('%I:%M %p') + ' - ' + s.end.strftime('%I:%M %p') + ' - ' + branch_name
             })
 
         if schedules:
             ins_sched = schedules[0]
+
+            if ins_sched.branch is None:
+                ins_sched.branch = branch
+
             if time:
                 time = datetime.strptime(time, '%I:%M %p')
                 ins_sched = yield InstructorSchedule.objects.get(date=date, start=time)
@@ -190,25 +200,25 @@ def create(self):
 
     user = (yield User.objects.get(user._id)).serialize()
     if sched_status == 'booked':
-        content = str(self.render_string('emails/booking', 
-                                         date=ins_sched.date.strftime('%A, %B %d, %Y'), 
-                                         type=ins_sched.type, 
-                                         user=user, 
-                                         instructor=ins_sched.instructor, 
-                                         time=ins_sched.start.strftime('%I:%M %p'), 
+        content = str(self.render_string('emails/booking',
+                                         date=ins_sched.date.strftime('%A, %B %d, %Y'),
+                                         type=ins_sched.type,
+                                         user=user,
+                                         instructor=ins_sched.instructor,
+                                         time=ins_sched.start.strftime('%I:%M %p'),
                                          seat_number=str(sched.seat_number)), 'UTF-8')
         yield self.io.async_task(send_email_booking, user=user, content=content)
     elif sched_status == 'waitlisted':
-        content = str(self.render_string('emails/waitlist', 
-                                         date=ins_sched.date.strftime('%A, %B %d, %Y'), 
-                                         type=ins_sched.type, user=user, 
-                                         instructor=ins_sched.instructor, 
+        content = str(self.render_string('emails/waitlist',
+                                         date=ins_sched.date.strftime('%A, %B %d, %Y'),
+                                         type=ins_sched.type, user=user,
+                                         instructor=ins_sched.instructor,
                                          time=ins_sched.start.strftime('%I:%M %p')), 'UTF-8')
         yield self.io.async_task(send_email, user=user, content=content, subject='Waitlisted')
 
     self.render_json(sched)
 
-    if lock_key and Lock.is_locked(lock_key): 
+    if lock_key and Lock.is_locked(lock_key):
         Lock.unlock(lock_key)
 
 def update(self, id):
@@ -256,30 +266,30 @@ def update(self, id):
 
         user = (yield User.objects.get(booked_schedule.user_id._id)).serialize()
         if 'waitlist' in data:
-            content = str(self.render_string('emails/booking', 
-                          date=booked_schedule.date.strftime('%A, %B %d, %Y'), 
-                          user=user, 
+            content = str(self.render_string('emails/booking',
+                          date=booked_schedule.date.strftime('%A, %B %d, %Y'),
+                          user=user,
                           type=sched.type,
-                          seat_number=str(booked_schedule.seat_number), 
-                          instructor=sched.instructor, 
+                          seat_number=str(booked_schedule.seat_number),
+                          instructor=sched.instructor,
                           time=sched.start.strftime('%I:%M %p')), 'UTF-8')
             yield self.io.async_task(send_email, user=user, content=content, subject='Waitlist moved to class')
         else:
             yield self.io.async_task(send_email_move,
-                content=str(self.render_string('emails/moved', 
-                            user=user, 
+                content=str(self.render_string('emails/moved',
+                            user=user,
                             type=sched.type,
-                            instructor=sched.instructor, 
-                            date=booked_schedule.date.strftime('%A, %B %d, %Y'), 
-                            seat_number=booked_schedule.seat_number, 
+                            instructor=sched.instructor,
+                            date=booked_schedule.date.strftime('%A, %B %d, %Y'),
+                            seat_number=booked_schedule.seat_number,
                             time=sched.start.strftime('%I:%M %p')), 'UTF-8'),
                 user=user
             )
 
-        if lock_key and Lock.is_locked(lock_key): 
+        if lock_key and Lock.is_locked(lock_key):
             Lock.unlock(lock_key)
 
-    else: 
+    else:
         special_date = datetime.strptime(data['date'], '%Y-%m-%d')
         time = datetime.strptime(data['time'], '%I:%M %p')
         ins_sched = yield InstructorSchedule.objects.get(date=special_date, start=time)
@@ -345,12 +355,12 @@ def destroy(self, id):
 
         if not missed:
             if ref_status == 'waitlisted':
-                content = str(self.render_string('emails/waitlist_removed', 
-                                                  date=booked_schedule.date.strftime('%A, %B %d, %Y'), 
-                                                  user=user.to_dict(), 
+                content = str(self.render_string('emails/waitlist_removed',
+                                                  date=booked_schedule.date.strftime('%A, %B %d, %Y'),
+                                                  user=user.to_dict(),
                                                   type=booked_schedule.schedule.type,
-                                                  seat_number=booked_schedule.seat_number, 
-                                                  instructor=booked_schedule.schedule.instructor, 
+                                                  seat_number=booked_schedule.seat_number,
+                                                  instructor=booked_schedule.schedule.instructor,
                                                   time=booked_schedule.schedule.start.strftime('%I:%M %p')), 'UTF-8')
                 yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Removed from Waitlist')
             else:
@@ -358,12 +368,12 @@ def destroy(self, id):
                     send_email_cancel,
                     user=user.to_dict(),
                     content=str(self.render_string(
-                                    'emails/cancel', 
-                                    instructor=booked_schedule.schedule.instructor, 
+                                    'emails/cancel',
+                                    instructor=booked_schedule.schedule.instructor,
                                     user=user.to_dict(),
-                                    type=booked_schedule.schedule.type, 
-                                    date=booked_schedule.date.strftime('%A, %B %d, %Y'), 
-                                    seat_number=booked_schedule.seat_number, 
+                                    type=booked_schedule.schedule.type,
+                                    date=booked_schedule.date.strftime('%A, %B %d, %Y'),
+                                    seat_number=booked_schedule.seat_number,
                                     time=booked_schedule.schedule.start.strftime('%I:%M %p')
                                 ), 'UTF-8'))
 
@@ -388,7 +398,7 @@ def destroy(self, id):
                         wait_upack = yield UserPackage.objects.get(ObjectId(wait.user_package[0]))
                         wait_upack.remaining_credits += restore_credits
                         yield wait_upack.save()
-                    else: 
+                    else:
                         wait_upack1 = yield UserPackage.objects.get(ObjectId(wait.user_package[0]))
                         wait_upack2 = yield UserPackage.objects.get(ObjectId(wait.user_package[1]))
                         wait_upack1.remaining_credits += 1
@@ -400,12 +410,12 @@ def destroy(self, id):
                 user.credits += restore_credits
                 yield user.save()
                 yield wait.save()
-                content = str(self.render_string('emails/waitlist_removed', 
-                                              date=wait.date.strftime('%A, %B %d, %Y'), 
-                                              user=user.to_dict(), 
+                content = str(self.render_string('emails/waitlist_removed',
+                                              date=wait.date.strftime('%A, %B %d, %Y'),
+                                              user=user.to_dict(),
                                               type=wait.schedule.type,
-                                              seat_number=wait.seat_number, 
-                                              instructor=wait.schedule.instructor, 
+                                              seat_number=wait.seat_number,
+                                              instructor=wait.schedule.instructor,
                                               time=wait.schedule.start.strftime('%I:%M %p')), 'UTF-8')
                 yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Removed from Waitlist')
         self.finish()
