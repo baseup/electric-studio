@@ -3,6 +3,7 @@ import unittest
 
 TEST_MODULES = [
     'schedules_test',
+    'schedule_branch_test',
 ]
 
 

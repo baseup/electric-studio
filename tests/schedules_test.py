@@ -1,7 +1,8 @@
-from tornado.testing import AsyncTestCase
+from tornado.testing import AsyncTestCase, AsyncHTTPClient
 from ws4py.client.tornadoclient import TornadoWebSocketClient
 from datetime import date, timedelta
 from tornado.escape import json_decode
+from tornado import ioloop
 
 import os
 import sys
@@ -57,6 +58,9 @@ class SchedulesClient(TornadoWebSocketClient):
 
 
 class WebsocketTest(AsyncTestCase):
+
+    def get_new_ioloop(self):
+        return ioloop.IOLoop.instance()
 
     def test_websocket_fetch(self):
         dir = os.path.dirname(os.path.realpath(__file__))
