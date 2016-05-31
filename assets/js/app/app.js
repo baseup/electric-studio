@@ -205,3 +205,64 @@ app.factory('Instagram', function($http) {
     }
   }
 });
+
+app.directive('notificationBar', function($timeout, $rootScope, $window) {
+  return {
+    restrict: 'AE',
+    scope: {
+      message: '=',
+      duration: '='
+    },
+    link: function(scope, element) {
+
+      var timer;
+      var messageContainer = angular.element('<div class="message"></div>');
+      var closeBtn = angular.element('<div class="close-btn">x</div>');
+
+      closeBtn.on('click', function() {
+        element.removeClass('show');
+        element.addClass('hide');
+        $timeout.cancel( timer );
+      });
+
+      element.append(closeBtn);
+      element.append(messageContainer);
+      element.addClass('notification-bar');
+
+      $rootScope.$on('notify', function(event, data) {
+        if(!data.message) return;
+
+        messageContainer.html(data.message);
+        element.addClass('show');
+        element.removeClass('hide');
+
+        $timeout.cancel( timer );
+
+        if(data.duration === false) {
+          element.removeClass('show');
+          element.addClass('hide');
+          $timeout.cancel( timer );
+        }
+
+        if(data.duration && typeof data.duration === 'number') {
+          timer = $timeout(function() {
+            element.removeClass('show');
+            element.addClass('hide');
+          }, data.duration);
+        }
+      });
+
+      scope.$on('destroy', function() {
+        $timeout.cancel( timer );
+      });
+
+      angular.element($window).on("scroll", function() {
+        if($window.innerWidth >= 980 && $window.scrollY > angular.element('.main-header').height()) {
+          element.addClass('fixed');
+        } else {
+          element.removeClass('fixed');
+        }
+      });
+    }
+  }
+});

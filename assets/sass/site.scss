@@ -3634,6 +3634,92 @@ body {
 }
 
 
+/** Notification Bar */
+.notification-bar {
+  -webkit-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  display: none;
+  background: #BAAFD5;
+  color: #fff;
+  font-size: 14px;
+  padding: 15px 0;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+
+  @include breakpoint(md) {
+    padding: 24px 0;
+    position: absolute;
+    top: auto;
+    font-size: 16px;
+  }
+
+  &.show {
+    -webkit-animation-name: fadeInDown;
+    animation-name: fadeInDown;
+    display: block;
+  }
+
+  &.hide {
+    display: none;
+  }
+
+  &.fixed {
+    position: fixed;
+    top: 0;
+  }
+
+  .message {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .close-btn {
+    width: 24px;
+    height: 24px;
+    color: transparent;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 20px;
+    margin: auto;
+    display: block;
+    cursor: pointer;
+
+    &:before, &:after {
+      content: '';
+      display: block;
+      height: 33px;
+      border-width: 1px;
+      border-style: solid;
+      border-color: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+    }
+
+    &:before {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    &:after {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    &:hover {
+      &:before, &:after {
+        border-width: 2px;
+      }
+    }
+  }
+}
+
+
 
 @-webkit-keyframes fadeInDown {
   0% {
