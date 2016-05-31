@@ -1365,11 +1365,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
         deductCredits = 2;
       }
 
-      if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
-        $scope.$emit('notify', { message: 'Not enough credits.', duration: 3000 });
-        return;
-      }
-
       var book = {};
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
       book.seats = [];
@@ -1405,11 +1400,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
       var deductCredits = 1;
       if (schedule.type == 'Electric Endurance') {
         deductCredits = 2;
-      }
-
-      if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
-        $scope.$emit('notify', { message: 'Not enough credits.', duration: 3000 });
-        return;
       }
 
       var today = new Date();
