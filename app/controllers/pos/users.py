@@ -10,24 +10,32 @@ import json
 
 def find(self):
     count = yield User.objects.count()
-    page = 0
-    users = []  
-    if self.get_argument('page'):
-        page = int(self.get_argument('page'))-1
-    users = yield User.objects.skip(page * DATABASE_LIMIT) \
-            .limit(DATABASE_LIMIT).find_all()
+    users = []
+    limit = DATABASE_LIMIT
 
-    for i, user in enumerate(users):
-        user = user.to_dict()
-        del user['password']
-        users[i] = user 
+    try:
+        page = int(self.get_argument('page', default=1))
+    except ValueError:
+        page = 1
+
+    if page < 1:
+        page = 0
+
+    if page > 0:
+        page = page - 1
+
+    skip = page * limit
+
+    if skip <= count:
+        users = yield User.objects.skip(skip) \
+            .limit(limit).find_all()
+
+        for i, user in enumerate(users):
+            user = user.to_dict()
+            del user['password']
+            users[i] = user
+
     self.render_json(users)
-    # self.render_json({
-    #     'users' : users,
-    #     'total_records' : count,
-    #     'page_number' : page + 1,
-    #     'request_limit' : DATABASE_LIMIT
-    # })
 
 def find_one(self, id):
     user = yield User.objects.get(id)
