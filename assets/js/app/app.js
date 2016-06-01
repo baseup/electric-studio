@@ -221,7 +221,6 @@ app.directive('notificationBar', function($timeout, $rootScope, $window) {
 
       closeBtn.on('click', function() {
         element.removeClass('show');
-        element.addClass('hide');
         $timeout.cancel( timer );
       });
 
@@ -234,30 +233,26 @@ app.directive('notificationBar', function($timeout, $rootScope, $window) {
 
         messageContainer.html(data.message);
         element.addClass('show');
-        element.removeClass('hide');
 
         $timeout.cancel( timer );
 
         if(data.duration === false) {
           element.removeClass('show');
-          element.addClass('hide');
           $timeout.cancel( timer );
         }
 
         if(data.duration && typeof data.duration === 'number') {
           timer = $timeout(function() {
             element.removeClass('show');
-            element.addClass('hide');
           }, data.duration);
         }
 
         if(data.links && data.links.length > 0) {
           angular.forEach(data.links, function(link) {
             var btn = angular.element('<a href="' + link.href + '">' + link.title + '</a>');
-            
+
             btn.on('click', function() {
               element.removeClass('show');
-              element.addClass('hide');
               $timeout.cancel( timer );
             });
 
