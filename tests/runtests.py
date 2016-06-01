@@ -4,6 +4,7 @@ import unittest
 TEST_MODULES = [
     'schedules_test',
     'schedule_branch_test',
+    'api_users_test',
 ]
 
 
