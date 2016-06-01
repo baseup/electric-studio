@@ -1275,6 +1275,12 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 
 ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, ScheduleSocketService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
 
+  $scope.schedules = {};
+  ScheduleSocketService.onLoadSchedule(function(schedules) {
+    $scope.schedules = schedules;
+    $scope.loadingSchedules = false;
+  });
+
   // Get the list of available branches
   BranchService.query().$promise.then(function (branches) {
     $scope.branches = branches;
@@ -1304,12 +1310,6 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     return isValid;
   };
 
-
-  $scope.schedules = {};
-  ScheduleSocketService.onLoadSchedule(function(schedules) {
-    $scope.schedules = schedules;
-    $scope.loadingSchedules = false;
-  });
 
   $scope.resched = SharedService.get('resched');
 
