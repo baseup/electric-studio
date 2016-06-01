@@ -3642,8 +3642,6 @@ body {
   animation-fill-mode: both;
   display: none;
   background: #BAAFD5;
-  color: #fff;
-  font-size: 14px;
   padding: 15px 0;
   position: fixed;
   top: 70px;
@@ -3652,10 +3650,9 @@ body {
   z-index: 99999;
 
   @include breakpoint(md) {
-    padding: 24px 0;
+    padding: 20px 0;
     position: absolute;
     top: auto;
-    font-size: 16px;
   }
 
   &.show {
@@ -3677,6 +3674,22 @@ body {
     max-width: 1300px;
     margin: 0 auto;
     padding: 0 20px;
+    color: #fff;
+    font-size: 14px;
+    text-transform: uppercase;
+
+    a {
+      border: 2px solid #fff;
+      color: #fff;
+      padding: 3px 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin: 0 6px;
+
+      &:hover {
+        box-shadow: 3px 3px 0 rgba(0,0,0,0.6);
+      }
+    }
   }
 
   .close-btn {

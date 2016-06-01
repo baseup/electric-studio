@@ -959,11 +959,6 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
         deductCredits = 2;
       }
 
-      if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
-        $scope.$emit('notify', { message: 'Not enough credits.', duration: 3000 });
-        return;
-      }
-
       var book = {};
       book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
       book.seats = [];
@@ -1002,10 +997,6 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
         deductCredits = 2;
       }
 
-      if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
-        $scope.$emit('notify', { message: 'Not enough credits.', duration: 3000 });
-        return;
-      }
 
       var today = new Date();
       var time = schedule.start.split(/[^0-9]/);
@@ -1712,7 +1703,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
         if ($scope.loginUser &&
             ((!seats.length && deductCredits > $scope.loginUser.credits) ||
              (seats.length * deductCredits) >= $scope.loginUser.credits)) {
-          $scope.$emit('notify', { message: 'Not enough credits', duration: 3000 });
+          $scope.$emit('notify', { message: 'Not enough credits', duration: 5000, links: [{ title: 'buy', href: '#/rates' }] });
           return;
         } else {
           angular.element(event.target).toggleClass('selected');
@@ -1762,7 +1753,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
       }
 
       if ($scope.loginUser && $scope.loginUser.credits < (seats.length * deductCredits)) {
-        $scope.$emit('notify', { message: 'Not enough credits, you only have ' + $scope.loginUser.credits, duration: 3000 });
+        $scope.$emit('notify', { message: 'Not enough credits, you only have ' + $scope.loginUser.credits, duration: 5000, links: [{ title: 'buy', href: '#/rates' }] });
         return;
       }
 

@@ -250,6 +250,20 @@ app.directive('notificationBar', function($timeout, $rootScope, $window) {
             element.addClass('hide');
           }, data.duration);
         }
+
+        if(data.links && data.links.length > 0) {
+          angular.forEach(data.links, function(link) {
+            var btn = angular.element('<a href="' + link.href + '">' + link.title + '</a>');
+            
+            btn.on('click', function() {
+              element.removeClass('show');
+              element.addClass('hide');
+              $timeout.cancel( timer );
+            });
+
+            messageContainer.append(btn);
+          });
+        }
       });
 
       scope.$on('destroy', function() {
