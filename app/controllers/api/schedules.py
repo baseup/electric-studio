@@ -1,7 +1,7 @@
 from motorengine import ASCENDING
 from datetime import datetime, timedelta
 from app.models.schedules import InstructorSchedule, BookedSchedule
-from app.models.admins import Setting
+from app.models.admins import Setting, Branch
 from app.helper import GMT8
 from bson.objectid import ObjectId
 from motorengine import Q
@@ -76,6 +76,12 @@ def query(self, date, ins, branch):
                     counts[str(s._id)] = { 'books': book_count, 'waitlist': waitlist_count }
 
         date += timedelta(days=1)
+
+        branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
+
+        for i, s in enumerate(sched):
+            if sched[i].branch is None:
+                sched[i].branch = branch
 
         scheds[day] = sched
 
