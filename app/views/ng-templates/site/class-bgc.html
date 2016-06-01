@@ -34,15 +34,15 @@
           <span ng-click="setSeatNumber(22, $event)" ng-class="{ unavailable: checkSeat(22),hidden: 22 > sched.seats }">22</span>
           <span ng-click="setSeatNumber(19, $event)" ng-class="{ unavailable: checkSeat(19),hidden: 19 > sched.seats }">19</span>
         </div>
-        <div class="front seats instructor">
-          <h3 class="h large face-secondary gray">
+        <div class="front seats instructor" ng-class="{'has-sub-instructor': subInstructor}">
+          <h3 class="h large face-secondary gray name">
             {{ instructor.admin.first_name }} {{ subInstructor ? ' &amp; ' + subInstructor.admin.first_name : ''}}
           </h3>
           <div class="image">
-            <img src="{{ instructor.image ? '/assets/' + instructor.image : 'http://placehold.it/350x150' }}">
+            <img ng-src="/assets/{{ instructor.image }}" ng-if="instructor.image">
           </div>
           <div ng-if="subInstructor" class="image">
-            <img src="{{ subInstructor.image ? '/assets/' + subInstructor.image : 'http://placehold.it/350x150' }}">
+            <img ng-src="/assets/{{ subInstructor.image }}" ng-if="subInstructor.image">
           </div>
         </div>
         <div class="front colums-2 right seats">
@@ -99,11 +99,13 @@
         <a ng-if="forWaitlist" ng-disabled="booking"  class="button large center" ng-click="bookSchedule()">Join the WaitList</a>
       </div>
 
-      <ul class="legend">
-        <li class="free">Free Bikes</li>
-        <li class="reserved">Reserved Bikes</li>
-        <li class="selection">Your Selection</li>
-      </ul>
+      <div class="legend-wrapper">
+        <ul class="legend">
+          <li class="free">Free Bikes</li>
+          <li class="reserved">Reserved Bikes</li>
+          <li class="selection">Your Selection</li>
+        </ul>
+      </div>
     </div>
 
   </div>

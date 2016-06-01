@@ -60,7 +60,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
       }
 
       var addFail = function (error) {
-        $.Alert(error.data);
+        $scope.$emit('notify', { message: error.data });
       }
 
       UserService.update({ userId: $scope.loginUser._id }, { agreed_terms: true }).$promise.then(addSuccess, addFail);
@@ -147,7 +147,7 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
         window.location = '/';
       },
       error: function (xhr, code, error) {
-        $.Alert(xhr.responseText);
+        $scope.$emit('notify', { message: xhr.responseText });
       }
     });
 
@@ -434,7 +434,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
     $scope.verificationLink = null;
     var sendEmailSuccess = function () {
       $scope.sendingEmail = false;
-      $.Alert('Please check your e-mail to verify your account and complete registration.');
+      $scope.$emit('notify', { message: 'Please check your e-mail to verify your account and complete registration.' });
     }
 
     var sendEmailFailed = function (error) {
@@ -462,7 +462,7 @@ ctrls.controller('LoginCtrl', function ($scope) {
       var password = $scope.login.password;
 
       if (!email || !password) {
-        $scope.signInError = 'Invalid Login Credentials.';
+        $scope.$emit('notify', { message: 'Invalid Login Credentials', duration: 2000 });
         return;
       }
 
@@ -485,7 +485,7 @@ ctrls.controller('LoginCtrl', function ($scope) {
             $scope.user.email = email;
             $scope.unverifiedLogin = true;
           }
-          $scope.signInError = xhr.responseText + '.';
+          $scope.$emit('notify', { message: xhr.responseText + '.', duration: 2000 });
           $scope.$apply();
         }
       });
@@ -502,12 +502,12 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
     if ($scope.pass && $scope.pass.password && $scope.pass.password.length > 0) {
 
       if ($scope.pass.password.length < 6) {
-        $.Alert('Password must be at least 6 characters.');
+        $scope.$emit('notify', { message: 'Password must be at least 6 characters.' });
         return;
       }
 
       if ($scope.pass.password != $scope.pass.confirm_password) {
-        $.Alert("Passwords did not match.");
+        $scope.$emit('notify', { message: 'Passwords did not match.' });
         return;
       }
 
@@ -515,16 +515,16 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
       account.reset_password = $scope.pass.password;
 
       var addSuccess = function () {
-        $.Alert('Successfully updated password')
+        $scope.$emit('notify', { message: 'Successfully updated password' });
       }
 
       var addFail = function (error) {
-        $.Alert(error.data);
+        $scope.$emit('notify', { message: error.data });
       }
 
       UserService.update({ userId: id }, account).$promise.then(addSuccess, addFail);
     } else {
-      $.Alert('Password is required.');
+      $scope.$emit('notify', { message: 'Password is required.' });
     }
   }
 
@@ -533,18 +533,18 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
       var user = {};
       user.email = $scope.forgotPassEmail;
       var sendEmailSuccess = function () {
-        $.Alert('Successfully sent email to reset password.');
+        $scope.$emit('notify', { message: 'Successfully sent email to reset password.' });
       }
 
       var sendEmailFailed = function (error) {
-        $.Alert(error.data);
+        $scope.$emit('notify', { message: error.data });
       }
 
       ForgotPasswordService.send_email(user)
                       .$promise.then(sendEmailSuccess, sendEmailFailed);
       $scope.forgotPassEmail = null;
     } else {
-      $.Alert('Email address is required.');
+      $scope.$emit('notify', { message: 'Email address is required.' });
     }
   }
 });
@@ -554,9 +554,9 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
   var qstring = $location.search();
   if (qstring.s) {
     if (qstring.s == 'success' && qstring.pname) {
-      $.Alert('Success! You have just purchased ' + qstring.pname + '.');
+      $scope.$emit('notify', { message: 'Success! You have just purchased ' + qstring.pname + '.' });
     } else if (qstring.s == 'exists') {
-      $.Alert('Transaction already exists.');
+      $scope.$emit('notify', { message: 'Transaction already exists.' });
     }
     $location.search({ s: null, pname: null });
   }
@@ -599,10 +599,10 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
           $scope.user = $scope.loginUser;
           $scope.isVerified = true;
         }
-        $.Alert('Successfully updated user information.')
+        $scope.$emit('notify', { message: 'Successfully updated user information.' });
       }
       var addFail = function (error) {
-        $.Alert(error.data);
+        $scope.$emit('notify', { message: error.data });
       }
 
       if ($scope.account.billing) {
@@ -617,25 +617,25 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
       if ($scope.pass && $scope.pass.current_password) {
 
         if ($scope.pass.password && $scope.pass.password.length < 6) {
-          $.Alert('Password must be at least 6 characters.');
+          $scope.$emit('notify', { message: 'Password must be at least 6 characters.', duration: 3000 });
           return;
         }
 
         if ($scope.pass.password != $scope.pass.confirm_password) {
-          $.Alert("Passwords did not match.");
+          $scope.$emit('notify', { message: 'Passwords did not match.', duration: 3000 });
           return;
         }
         var addSuccess = function () {
-          $.Alert('Successfully updated password.');
+          $scope.$emit('notify', { message: 'Successfully updated password.', duration: 3000 });
           $scope.pass = null;
         }
         var addFail = function (error) {
-          $.Alert(error.data);
+          $scope.$emit('notify', { message: error.data, duration: 3000 });
           $scope.pass = null;
         }
         UserService.update({ userId: $scope.loginUser._id }, $scope.pass).$promise.then(addSuccess, addFail);
       } else {
-        $.Alert('Please fill up the form')
+        $scope.$emit('notify', { message: 'Please fill up the form', duration: 3000 });
       }
 
     }
@@ -655,15 +655,15 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
             $scope.billing.card_expiration &&
             $scope.billing.csc) {
           var billingSuccess = function () {
-            $.Alert('Successfully updated billing information');
+            $scope.$emit('notify', { message: 'Successfully updated billing information', duration: 3000 });
           }
 
           var billingFail = function (error) {
-            $.Alert(error.data)
+            $scope.$emit('notify', { message: error.data, duration: 3000 });
           }
           UserService.update({ userId: $scope.loginUser._id }, { billing: $scope.billing }).$promise.then(billingSuccess, billingFail);
         } else {
-          $.Alert('Please complete billing info')
+          $scope.$emit('notify', { message: 'Please complete billing info', duration: 3000 });
         }
       }
     }
@@ -673,9 +673,11 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
       $.Confirm('Are you sure you want to delete your account?' , function () {
         $.Prompt('User Password', function (password) {
           UserService.delete({ userId: user._id, pass: password }, function () {
-            $.Alert('Account successfully deleted.');
+            $scope.$emit('notify', { message: 'Account successfully deleted.', duration: 3000 });
             $scope.logout();
-          }, function (error){ $.Alert(error.data); });
+          }, function (error){
+            $scope.$emit('notify', { message: error.data, duration: 3000 });
+          });
         }, true);
       });
     }
@@ -701,11 +703,11 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   var qstring = $location.search();
 
   if (qstring.s == 'error') {
-    $.Alert('Transaction failed');
+    $scope.$emit('notify', { message: 'Transaction failed.', duration: 3000 });
     $location.search('s', null);
   }else{
     if (qstring.msg){
-      $.Alert(qstring.msg);
+      $scope.$emit('notify', { message: qstring.msg, duration: 3000 });
       $location.search('s', null);
       $location.search('msg', null);
     }
@@ -734,7 +736,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   $scope.buyPackage = function (event, index) {
 
     if (!$scope.loginUser) {
-      $.Alert('Please sign up or log in to your Electric account.');
+      $scope.$emit('notify', { message: 'Please sign up or log in to your Electric account.', duration: 3000 });
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
@@ -746,12 +748,12 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
       $scope.reloadUser(user);
 
       if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
-        $.Alert('Your account is frozen. Please contact the studio for more details.');
+        $scope.$emit('notify', { message: 'Your account is frozen. Please contact the studio for more details.' });
         return;
       }
 
       if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
-        $.Alert('Account is not verified, Please check your email to verify account.');
+        $scope.$emit('notify', { message: 'Account is not verified, Please check your email to verify account.' });
         return;
       }
 
@@ -764,7 +766,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
   $scope.checkGCValue = function () {
 
     if(!$scope.gcPin.match(/^\d+$/)) {
-      $.Alert('Invalid pin!');
+      $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
       return;
     }
 
@@ -779,24 +781,24 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
         $scope.checkGCCredits = data.credits;
         $scope.checkGCValidity = data.validity;
       }, function (error) {
-        $.Alert(error.data);
+        $scope.$emit('notify', { message: error.data });
       });
     }else{
-      $.Alert('Oops. We need more details from you.');
+      $scope.$emit('notify', { message: 'Oops. We need more details from you.', duration: 3000 });
     }
   }
 
   $scope.redeemGC = function() {
 
     if (!$scope.loginUser) {
-      $.Alert('Please log in to your Electric Studio Account or create an account');
+      $scope.$emit('notify', { message: 'Please log in to your Electric Studio Account or create an account', duration: 3000 });
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
     }
 
     if(!$scope.gcPin.match(/^\d+$/)) {
-      $.Alert('Invalid pin!');
+      $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
       return;
     }
 
@@ -813,7 +815,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
       }
 
       var redeemFailed = function (error) {
-        $.Alert(error.data);
+        $scope.$emit('notify', { message: error.data, duration: 3000 });
       }
 
       var data = {}
@@ -823,7 +825,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
       GCRedeemService.redeem(data).$promise.then(redeemSuccess, redeemFailed);
 
     }else{
-      $.Alert('Oops. We need more details from you.');
+      $scope.$emit('notify', { message: 'Oops. We need more details from you.', duration: 3000 });
     }
   }
 
@@ -889,10 +891,10 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
             angular.element('#payForm').submit();
         });
       }else{
-        $.Alert('Please enter valid recipient email.');
+        $scope.$emit('notify', { message: 'Please enter valid recipient email.', duration: 3000 });
       }
     }else{
-      $.Alert('Oops. We need more details from you.');
+      $scope.$emit('notify', { message: 'Oops. We need more details from you.', duration: 3000 });
     }
 
   }
@@ -930,36 +932,31 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
   $scope.waitlistUser = function (sched) {
 
     if (!$scope.loginUser) {
-      $.Alert('Please sign up or log in to your Electric account.');
+      $scope.$emit('notify', { message: 'Please sign up or log in to your Electric account.', duration: 3000 });
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
     }
 
-    $.Alert('Setting schedule as waitlist ...')
+    $scope.$emit('notify', { message: 'Setting schedule as waitlist ...', duration: 3000 });
 
     UserService.get(function (user) {
 
       $scope.loginUser = user;
 
       if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
-        $.Alert('Your account is frozen. Please contact the studio for more details.');
+        $scope.$emit('notify', { message: 'Your account is frozen. Please contact the studio for more details.' });
         return;
       }
 
       if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
-        $.Alert('Account is not verified, Please check your email to verify account.');
+        $scope.$emit('notify', { message: 'Account is not verified, Please check your email to verify account.' });
         return;
       }
 
       var deductCredits = 1;
       if (sched.schedule.type == 'Electric Endurance') {
         deductCredits = 2;
-      }
-
-      if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
-        $.Alert('Not enough credits.');
-        return;
       }
 
       var book = {};
@@ -974,13 +971,13 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
           SharedService.clear('resched');
         }
 
-        $.Alert('You have been added to the waitlist');
+        $scope.$emit('notify', { message: 'You have been added to the waitlist', duration: 3000 });
         $scope.reloadUser();
         window.location = '/#/reserved'
         window.location.reload();
       }
       var waitlistFail = function (error) {
-        $.Alert(error.data)
+        $scope.$emit('notify', { message: error.data, duration: 3000 });
         $route.reload();
       }
 
@@ -1000,17 +997,13 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
         deductCredits = 2;
       }
 
-      if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
-        $.Alert('Not enough credits.');
-        return;
-      }
 
       var today = new Date();
       var time = schedule.start.split(/[^0-9]/);
       var chkDate = new Date(date);
       chkDate.setHours(time[3] - 1, time[4], 0);
       if (+today >= +chkDate) {
-        $.Alert('Online booking closes 1 hour before class starts. Please call the studio to book this class.')
+        $scope.$emit('notify', { message: 'Online booking closes 1 hour before class starts. Please call the studio to book this class.', duration: 3000 });
         return;
       }
 
@@ -1259,18 +1252,18 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
       var time = book.schedule.start.split(/[^0-9]/);
       var chkDate =  new Date(date[0], date[1]-1, date[2]-1, 17, 0, 0);
       if (book.status == 'booked' && +today >= +chkDate) {
-        $.Alert('This ride can no longer be cancelled. You can only cancel your booking until 5pm the day before your ride.')
+        $scope.$emit('notify', { message: 'This ride can no longer be cancelled. You can only cancel your booking until 5pm the day before your ride.' });
         return;
       }
       $.Confirm('Are you sure you want to cancel?', function () {
         var data = {};
         data.status = 'cancelled';
-        $.Alert('Canceling schedule ...', true);
+        $scope.$emit('notify', { message: 'Canceling schedule ...', duration: 3000 });
         var bookSuccess = function () {
           window.location.reload();
         }
         var bookFail = function (error) {
-          $.Alert(error.data)
+          $scope.$emit('notify', { message: error.data, duration: 3000 });
         }
 
         BookService.update({ bookId: book._id }, data).$promise.then(bookSuccess, bookFail);
@@ -1317,6 +1310,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     return isValid;
   };
 
+
   $scope.resched = SharedService.get('resched');
 
   $scope.blockedBikes = {};
@@ -1335,36 +1329,31 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   $scope.waitlistUser = function (sched) {
 
     if (!$scope.loginUser) {
-      $.Alert('Please sign up or log in to your Electric account.');
+      $scope.$emit('notify', { message: 'Please sign up or log in to your Electric account.', duration: 3000 });
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
     }
 
-    $.Alert('Setting schedule as waitlist ...')
+    $scope.$emit('notify', { message: 'Setting schedule as waitlist...', duration: 3000 });
 
     UserService.get(function (user) {
 
       $scope.loginUser = user;
 
       if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
-        $.Alert('Your account is frozen. Please contact the studio for more details.');
+        $scope.$emit('notify', { message: 'Your account is frozen. Please contact the studio for more details.', duration: 3000 });
         return;
       }
 
       if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
-        $.Alert('Account is not verified, Please check your email to verify account.');
+        $scope.$emit('notify', { message: 'Account is not verified, Please check your email to verify account.', duration: 3000 });
         return;
       }
 
       var deductCredits = 1;
       if (sched.schedule.type == 'Electric Endurance') {
         deductCredits = 2;
-      }
-
-      if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
-        $.Alert('Not enough credits.');
-        return;
       }
 
       var book = {};
@@ -1379,13 +1368,13 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
           SharedService.clear('resched');
         }
 
-        $.Alert('You have been added to the waitlist');
+        $scope.$emit('notify', { message: 'You have been added to the waitlist', duration: 3000 });
         $scope.reloadUser();
         window.location = '/#/reserved'
         window.location.reload();
       }
       var waitlistFail = function (error) {
-        $.Alert(error.data)
+        $scope.$emit('notify', { message: error.data, duration: 3000 });
         $route.reload();
       }
 
@@ -1404,17 +1393,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
         deductCredits = 2;
       }
 
-      if ($scope.loginUser && $scope.loginUser.credits <= (deductCredits - 1)) {
-        $.Alert('Not enough credits.');
-        return;
-      }
-
       var today = new Date();
       var time = schedule.start.split(/[^0-9]/);
       var chkDate = new Date(date);
       chkDate.setHours(time[3] - 1, time[4], 0);
       if (+today >= +chkDate) {
-        $.Alert('Online booking closes 1 hour before class starts. Please call the studio to book this class.')
+        $scope.$emit('notify', { message: 'Online booking closes 1 hour before class starts. Please call the studio to book this class.', duration: 3000 });
         return;
       }
 
@@ -1719,7 +1703,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
         if ($scope.loginUser &&
             ((!seats.length && deductCredits > $scope.loginUser.credits) ||
              (seats.length * deductCredits) >= $scope.loginUser.credits)) {
-          $.Alert('Not enough credits');
+          $scope.$emit('notify', { message: 'Not enough credits', duration: 5000, links: [{ title: 'buy', href: '#/rates' }] });
           return;
         } else {
           angular.element(event.target).toggleClass('selected');
@@ -1738,7 +1722,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
   $scope.bookSchedule = function () {
 
     if (!$scope.loginUser) {
-      $.Alert('Please sign up or log in to your Electric account.');
+      $scope.$emit('notify', { message: 'Please sign up or log in to your Electric account.', duration: 3000 });
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
       angular.element('.login-toggle').click();
       return;
@@ -1749,17 +1733,17 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
       $scope.loginUser = user;
 
       if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
-        $.Alert('Your account is frozen. Please contact the studio for more details.');
+        $scope.$emit('notify', { message: 'Your account is frozen. Please contact the studio for more details.', duration: 3000 });
         return;
       }
 
       if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
-        $.Alert('Account is not verified, Please check your email to verify account.');
+        $scope.$emit('notify', { message: 'Account is not verified, Please check your email to verify account.', duration: 3000 });
         return;
       }
 
       if (!$scope.forWaitlist && seats.length == 0) {
-        $.Alert('Please select your bike.');
+        $scope.$emit('notify', { message: 'Please select your bike.', duration: 3000 });
         return;
       }
 
@@ -1769,7 +1753,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
       }
 
       if ($scope.loginUser && $scope.loginUser.credits < (seats.length * deductCredits)) {
-        $.Alert('Not enough credits, you only have ' + $scope.loginUser.credits);
+        $scope.$emit('notify', { message: 'Not enough credits, you only have ' + $scope.loginUser.credits, duration: 5000, links: [{ title: 'buy', href: '#/rates' }] });
         return;
       }
 
@@ -1798,7 +1782,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
       }
 
       $.Confirm(cutOffMsg+confirm_message, function () {
-        $.Alert('Booking bike' + (seats.length > 1 ? 's' : '' ) + ' ...', true);
+        $scope.$emit('notify', { message: 'Booking bike' + (seats.length > 1 ? 's' : '' ) + ' ...', duration: 3000 });
         $scope.booking = true;
         var bookSuccess = function () {
 
@@ -1807,9 +1791,9 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
           }
 
           if ($scope.forWaitlist) {
-            $.Alert('You have been added to the waitlist');
+            $scope.$emit('notify', { message: 'You have been added to the waitlist', duration: 3000 });
           } else {
-            $.Alert('You have successfully booked a ride.');
+            $scope.$emit('notify', { message: 'You have successfully booked a ride.', duration: 3000 });
           }
           UserService.get(function (user) {
             $scope.reloadUser();
@@ -1818,7 +1802,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
           });
         }
         var bookFail = function (error) {
-          $.Alert(error.data);
+          $scope.$emit('notify', { message: error.data, duration: 3000 });
           $scope.reloadUser();
           $route.reload();
         }
