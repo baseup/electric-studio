@@ -3,7 +3,7 @@
     <div class="cf">
       <section ng-repeat-start="instructor in randomList | orderBy:'rank'" id="{{ instructor.admin.first_name }}" class="pad--off" ng-click="viewInstructor(instructor)">
         <div class="image">
-          <img ng-src="{{ instructor.image ? instructor.image : 'http://placehold.it/350x150' }}">
+          <img ng-src="{{ instructor.image }}" ng-if="instructor.image">
           <h2 class="name h--large"><span>{{ instructor.admin.first_name }}</span></h2>
         </div>
       </section>
@@ -19,7 +19,7 @@
       <span class="close-btn modal-close">x</span>
       <section class="cf">
         <div class="image space--bottom">
-          <img ng-src="{{ selectedInstructor.image ? selectedInstructor.image : 'http://placehold.it/350x150' }}">
+          <img ng-src="{{ selectedInstructor.image }}" ng-if="selectedInstructor.image">
         </div>
         <div class="details space--bottom">
           <h2 class="name h--large space--bottom"><span>{{ selectedInstructor.admin.first_name }}</span></h2>

@@ -88,10 +88,10 @@
       <div class="formation">
         <div class="front wide seats instructor" ng-class="{'has-sub-instructor': subInstructor}">
           <div class="image">
-            <img src="{{ instructor.image ? '/assets/' + instructor.image : 'http://placehold.it/350x150' }}">
+            <img src="/assets/{{ instructor.image }}" ng-if="instructor.image">
           </div>
           <div ng-if="subInstructor" class="image">
-            <img src="{{ subInstructor.image ? '/assets/' + subInstructor.image : 'http://placehold.it/350x150' }}">
+            <img src="/assets/{{ subInstructor.image }}" ng-if="subInstructor.image">
           </div>
           <h3 class="h large face-secondary gray name">
             {{ instructor.admin.first_name }} {{ subInstructor ? ' &amp; ' + subInstructor.admin.first_name : ''}}

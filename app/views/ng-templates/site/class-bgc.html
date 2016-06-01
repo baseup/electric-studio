@@ -39,10 +39,10 @@
             {{ instructor.admin.first_name }} {{ subInstructor ? ' &amp; ' + subInstructor.admin.first_name : ''}}
           </h3>
           <div class="image">
-            <img src="{{ instructor.image ? '/assets/' + instructor.image : 'http://placehold.it/350x150' }}">
+            <img ng-src="/assets/{{ instructor.image }}" ng-if="instructor.image">
           </div>
           <div ng-if="subInstructor" class="image">
-            <img src="{{ subInstructor.image ? '/assets/' + subInstructor.image : 'http://placehold.it/350x150' }}">
+            <img ng-src="/assets/{{ subInstructor.image }}" ng-if="subInstructor.image">
           </div>
         </div>
         <div class="front colums-2 right seats">
