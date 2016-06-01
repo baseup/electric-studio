@@ -1010,9 +1010,17 @@ body {
   letter-spacing: 2px;
   font-weight: normal;
 
+  @include breakpoint(sm) {
+    font-size: 150px;
+  }
+
   @include breakpoint(md) {
-    font-size: 250px;
+    font-size: 180px;
     letter-spacing: 5px;
+  }
+
+  @include breakpoint(lg) {
+    font-size: 250px;
   }
 }
 
