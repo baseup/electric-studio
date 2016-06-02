@@ -11,6 +11,7 @@ import re
 
 @tornado.gen.coroutine
 def query(self, date, ins, branch):
+    the_date = date
     gmt8 = GMT8()
 
     date = datetime.strptime(datetime.now().strftime('%Y-%m-%d') if not date else date, '%Y-%m-%d')
@@ -77,11 +78,11 @@ def query(self, date, ins, branch):
 
         date += timedelta(days=1)
 
-        branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
+        default_branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
 
         for i, s in enumerate(sched):
             if sched[i].branch is None:
-                sched[i].branch = branch
+                sched[i].branch = default_branch
 
         scheds[day] = sched
 
@@ -89,6 +90,8 @@ def query(self, date, ins, branch):
     scheds['counts'] = counts
     scheds['releases'] = sched_releases
     scheds['now'] = str(now)
+    scheds['date'] = the_date
+    scheds['branch_id'] = branch
 
     return scheds
 
