@@ -36,6 +36,16 @@ class APIUsersPaginationTest(AsyncTestCase):
         Branch.objects.limit(1).find_all(callback=self.stop)
         branch = self.wait()
 
+        request = HTTPRequest(
+            '{}/api/request_token'.format(self.base_url),
+            headers={'ES-Branch': str(branch[0]._id), 'ES-Password': branch[0].password})
+
+        client = AsyncHTTPClient(self.io_loop)
+        client.fetch(
+            request,
+            self.handle_request_token)
+        token = self.wait()
+
         password = bcrypt.encrypt('1234')
         users = []
 
@@ -55,7 +65,7 @@ class APIUsersPaginationTest(AsyncTestCase):
 
         request = HTTPRequest(
             '{}/api/users'.format(self.base_url),
-            headers={'ES-Token': branch[0].token})
+            headers={'ES-Token': token})
 
         client = AsyncHTTPClient(self.io_loop)
         client.fetch(
@@ -65,7 +75,7 @@ class APIUsersPaginationTest(AsyncTestCase):
 
         request = HTTPRequest(
             '{}/api/users?page=1'.format(self.base_url),
-            headers={'ES-Token': branch[0].token})
+            headers={'ES-Token': token})
 
         client = AsyncHTTPClient(self.io_loop)
         client.fetch(
@@ -77,6 +87,13 @@ class APIUsersPaginationTest(AsyncTestCase):
             .filter({'first_name': {'$regex': '^APIUsersPaginationTest'}}) \
             .delete(callback=self.stop)
         self.wait()
+
+    def handle_request_token(self, response):
+        json = json_decode(response.body.decode('utf-8'))
+
+        self.assertIn('token', json)
+        self.stop(json['token'])
+
 
     def handle_fetch(self, response):
         users = json_decode(response.body.decode('utf-8'))
