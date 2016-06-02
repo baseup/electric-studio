@@ -1276,6 +1276,9 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, ScheduleSocketService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
 
   $scope.schedules = {};
+
+  ScheduleSocketService.removeCallbacks();
+
   ScheduleSocketService.onLoadSchedule(function(schedules) {
     $scope.schedules = schedules;
     $scope.loadingSchedules = false;

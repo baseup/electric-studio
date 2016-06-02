@@ -89,7 +89,6 @@ def create(self):
 
     date = (new_sched.date - timedelta(days=new_sched.date.weekday())).strftime('%Y-%-m-%-d')
     schedules = yield query(self, date, None, new_sched.branch._id)
-    schedules['date'] = date
 
     self.publish_message(to_json(schedules), facility='schedules', broadcast=True)
 
@@ -108,7 +107,6 @@ def destroy(self, id):
     date = (sched.date - timedelta(days=sched.date.weekday())).strftime('%Y-%-m-%-d')
 
     schedules = yield query(self, date, None, sched.branch._id)
-    schedules['date'] = date
 
     self.publish_message(to_json(schedules), facility='schedules', broadcast=True)
 
@@ -140,7 +138,6 @@ def update(self, id):
     date = (sched.date - timedelta(days=sched.date.weekday())).strftime('%Y-%-m-%-d')
 
     schedules = yield query(self, date, None, sched.branch._id)
-    schedules['date'] = date
 
     self.publish_message(to_json(schedules), facility='schedules', broadcast=True)
 
