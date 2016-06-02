@@ -283,9 +283,9 @@ app.directive('notificationBar', function($timeout, $rootScope, $window) {
         if($window.innerWidth >= 980
           && angular.element('.header-form-container').hasClass('show')
           && element.hasClass('show')) {
-          angular.element('.header-form-container').css('margin-top', element.innerHeight());
+          angular.element('.header-form-container').addClass('notify');
         } else {
-          angular.element('.header-form-container').css('margin-top', 'auto');
+          angular.element('.header-form-container').removeClass('notify');
         }
       }
     }

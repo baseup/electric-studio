@@ -1142,7 +1142,19 @@ body {
   color: #fff;
   font-family: 'Brandon_Grotesque',sans-serif;
   font-weight: 600;
-  transition: margin 0.4s ease;
+  transition: top 0.4s ease;
+
+  .show-sub-nav & {
+    @include breakpoint(md) {
+      top: 128px;
+    }
+  }
+
+  &.notify {
+    @include breakpoint(md) {
+      top: 136px;
+    }
+  }
 
   .wrapper {
     padding-left: 0;
@@ -1155,7 +1167,7 @@ body {
   @include breakpoint(md) {
     text-align: left;
     position: absolute;
-    top: auto;
+    top: 82px;
     bottom: auto;
     z-index: 8;
 
