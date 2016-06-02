@@ -222,6 +222,7 @@ app.directive('notificationBar', function($timeout, $rootScope, $window) {
       closeBtn.on('click', function() {
         element.removeClass('show');
         $timeout.cancel( timer );
+        checkHeaderForm();
       });
 
       element.append(closeBtn);
@@ -239,11 +240,13 @@ app.directive('notificationBar', function($timeout, $rootScope, $window) {
         if(data.duration === false) {
           element.removeClass('show');
           $timeout.cancel( timer );
+          checkHeaderForm();
         }
 
         if(data.duration && typeof data.duration === 'number') {
           timer = $timeout(function() {
             element.removeClass('show');
+            checkHeaderForm();
           }, data.duration);
         }
 
@@ -254,11 +257,14 @@ app.directive('notificationBar', function($timeout, $rootScope, $window) {
             btn.on('click', function() {
               element.removeClass('show');
               $timeout.cancel( timer );
+              checkHeaderForm();
             });
 
             messageContainer.append(btn);
           });
         }
+
+        checkHeaderForm();
       });
 
       scope.$on('destroy', function() {
@@ -272,6 +278,16 @@ app.directive('notificationBar', function($timeout, $rootScope, $window) {
           element.removeClass('fixed');
         }
       });
+
+      function checkHeaderForm() {
+        if($window.innerWidth >= 980
+          && angular.element('.header-form-container').hasClass('show')
+          && element.hasClass('show')) {
+          angular.element('.header-form-container').css('margin-top', element.innerHeight());
+        } else {
+          angular.element('.header-form-container').css('margin-top', 'auto');
+        }
+      }
     }
   }
 });
