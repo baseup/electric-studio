@@ -29,7 +29,7 @@ class Instructor(Model):
     image = StringField()
     motto = StringField()
     albums = ListField(StringField(), default=[])
-    deactivated = BooleanField(required=False, default=False) 
+    deactivated = BooleanField(required=False, default=False)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
 
@@ -64,6 +64,7 @@ class Setting(Model):
 class Branch(Model):
     __collection__ = 'branches'
     name = StringField(required=True)
+    address = StringField(required=True)
     password = StringField(required=True)
     token = StringField(required=True)
     num_bikes = IntField(default=37)

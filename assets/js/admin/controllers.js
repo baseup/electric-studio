@@ -657,8 +657,11 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
       } else {
         return pac.trans_info.transaction;
       }
+    } else if (pac.trans_id) {
+      return pac.trans_id;
     }
-    return null;
+
+    return 'Err: Transaction ID';
   }
 
 
@@ -2490,8 +2493,11 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
       } else {
         return pac.trans_info.transaction;
       }
+    } else if (pac.pptx) {
+      return pac.pptx;
     }
-    return null;
+
+    return 'Err: Transaction ID';
   }
 
     $scope.prevPage = function (event) {
@@ -2683,8 +2689,11 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
       } else {
         return pac.trans_info.transaction;
       }
+    } else if (pac.trans_id) {
+      return pac.trans_id;
     }
-    return null;
+
+    return 'Err: Transaction ID';
   }
 
     $scope.prevPage = function (event) {
