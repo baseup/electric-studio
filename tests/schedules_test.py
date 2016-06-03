@@ -93,6 +93,7 @@ class WebsocketTest(AsyncTestCase):
         self.assertIn('now', json)
         self.assertIn('counts', json)
         self.assertIn('date', json)
+        self.assertIn('branch_id', json)
         self.assertIn('releases', json)
 
         # Month and Day should not be zero-padded
@@ -102,7 +103,14 @@ class WebsocketTest(AsyncTestCase):
             self.assertIn(day, json)
 
             for schedule in json[day]:
-                if 'branch' not in schedule or 'name' not in schedule['branch']:
+                if 'branch' in schedule:
+                    if 'name' not in schedule['branch']:
+                        self.fail('Missing branch info')
+                        break
+
+                    if str(branch[0]._id) != schedule['branch']['_id']:
+                        self.fail('Incorrect branch schedules')
+                        break
+                else:
                     self.fail('Missing branch info')
                     break
-

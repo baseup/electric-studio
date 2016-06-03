@@ -379,11 +379,11 @@ services.service('ScheduleSocketService', function(webSocket) {
       try {
         var data = $.parseJSON(message.data);
 
-        if (angular.isDefined(data.date)) {
-          collection[data.date] = data;
+        if (angular.isDefined(data.date) && angular.isDefined(data.branch_id)) {
+          collection[data.date + data.branch_id] = data;
 
-          if (set === data.date) {
-            notifyCallbacks(collection[data.date]);
+          if (set === (data.date + data.branch_id)) {
+            notifyCallbacks(collection[data.date + data.branch_id]);
           }
         }
       } catch (e) {
@@ -392,17 +392,25 @@ services.service('ScheduleSocketService', function(webSocket) {
     }
   });
 
+  this.removeCallbacks = function() {
+    for (var i = 0; i < callbacks.length; i++) {
+      delete callbacks[i];
+    }
+
+    callbacks = [];
+  };
+
   this.onLoadSchedule = function(callback) {
     callbacks.push(callback);
   };
 
   this.loadWeek = function(query) {
-    if (angular.isDefined(query.date)) {
-      if (angular.isDefined(collection[query.date])) {
-        return notifyCallbacks(collection[query.date]);
+    if (angular.isDefined(query.date) && angular.isDefined(query.branch)) {
+      if (angular.isDefined(collection[query.date + query.branch])) {
+        return notifyCallbacks(collection[query.date + query.branch]);
       }
 
-      set = query.date;
+      set = query.date + query.branch;
     }
 
     socket.send(JSON.stringify(query));

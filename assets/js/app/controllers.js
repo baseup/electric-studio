@@ -366,32 +366,31 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
   $scope.registered = false;
   $scope.signingUp = false;
   $scope.signUp = function () {
-    $scope.signupError = null;
 
     if (!$scope.terms) {
-      $scope.signupError = 'To continue, please read and agree on our Terms & Condition';
+      $scope.$emit('notify', { message: 'To continue, please read and agree on our Terms & Condition' });
       return;
     }
 
     if ($scope.user) {
       $scope.signingUp = true;
       if (!$scope.user.email || $scope.user.email.length == 0) {
-        $scope.signupError = 'Email Address is required';
+        $scope.$emit('notify', { message: 'Email Address is required' });
         $scope.signingUp = false;
         return;
       }
 
       if ($scope.user.password != $scope.user.confirm_password) {
-        $scope.signupError = "Password didn't match";
+        $scope.$emit('notify', { message: 'Password didn\'t match.' });
         if ($scope.user.password == '') {
-          $scope.signupError = "Password is required";
+          $scope.$emit('notify', { message: 'Password is required.' });
         }
         $scope.signingUp = false;
         return;
       }
 
       if ($scope.user.password && $scope.user.password.length < 6) {
-        $scope.signupError = 'Password must be at least 6 characters.';
+        $scope.$emit('notify', { message: 'Password must be at least 6 characters.' });
         $scope.signingUp = false;
         return;
       }
@@ -421,7 +420,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
         } else {
           errorMsg = errorMsg.charAt(0).toUpperCase() + errorMsg.slice(1);
         }
-        $scope.signupError = errorMsg;
+        $scope.$emit('notify', { message: errorMsg });
         $scope.signingUp = false;
       }
 
@@ -1276,6 +1275,9 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
 ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, ScheduleSocketService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
 
   $scope.schedules = {};
+
+  ScheduleSocketService.removeCallbacks();
+
   ScheduleSocketService.onLoadSchedule(function(schedules) {
     $scope.schedules = schedules;
     $scope.loadingSchedules = false;

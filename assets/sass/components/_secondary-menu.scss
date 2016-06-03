@@ -28,6 +28,15 @@
 		right: -100%;
 		z-index: -1;
 	}
+
+	&.active {
+		@include breakpoint(md) {
+			margin-top: 0px!important;
+	    visibility: visible!important;
+	    pointer-events: auto!important;
+	    opacity: 1!important;
+		}
+	}
 }
 
 .secondary-nav-list {

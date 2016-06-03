@@ -10,6 +10,5 @@ def on_message(self, message):
     branch = self.get_value('branch', message)
 
     schedules = yield query(self, date, ins, branch)
-    schedules['date'] = date
 
     self.publish_message(to_json(schedules), facility='schedules', broadcast=True)

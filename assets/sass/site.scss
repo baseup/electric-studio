@@ -1142,6 +1142,19 @@ body {
   color: #fff;
   font-family: 'Brandon_Grotesque',sans-serif;
   font-weight: 600;
+  transition: top 0.4s ease;
+
+  .show-sub-nav & {
+    @include breakpoint(md) {
+      top: 128px;
+    }
+  }
+
+  &.notify {
+    @include breakpoint(md) {
+      top: 136px;
+    }
+  }
 
   .wrapper {
     padding-left: 0;
@@ -1154,7 +1167,7 @@ body {
   @include breakpoint(md) {
     text-align: left;
     position: absolute;
-    top: auto;
+    top: 82px;
     bottom: auto;
     z-index: 8;
 
@@ -2846,12 +2859,22 @@ body {
           position: absolute;
 
           &:first-of-type {
-            left: 0;
+            right: 50%;
+            margin-right: -20px;
             z-index: 2;
+
+            @include breakpoint(md) {
+              margin-right: -30px;
+            }
           }
 
           &:last-of-type {
-            right: 0;
+            left: 50%;
+            margin-left: -20px;
+
+            @include breakpoint(md) {
+              margin-left: -30px;
+            }
           }
         }
       }
@@ -2918,34 +2941,25 @@ body {
 
       @include breakpoint(md) {
         margin-top: 0;
+        margin-bottom: 50px;
       }
     }
 
     .front {
-      margin-top: 50px;
+      margin-top: 0;
 
       &.instructor {
         margin-left: auto!important;
         margin-right: auto!important;
-        margin-top: -170px;
-        margin-bottom: 80px;
+        margin-bottom: -170px;
 
         @include breakpoint(sm) {
-          margin-top: -200px;
-          margin-bottom: 60px;
+          margin-bottom: -200px;
+          margin-top: 0;
         }
 
         @include breakpoint(md) {
-          margin-top: -240px;
-        }
-
-        &.has-sub-instructor {
-          .name {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-          }
+          margin-bottom: -220px;
         }
       }
 
@@ -3008,24 +3022,24 @@ body {
     .back {
 
       span {
-        float: right;
-        margin-right: 0;
-        margin-left: 6.3333333px;
+        float: left;
+        margin-left: 0;
+        margin-right: 6.3333333px;
 
         @media (min-width: 768px) {
-          margin-left: 16.6666667px;
+          margin-right: 16.6666667px;
         }
 
         @include breakpoint(md) {
-          margin-left: 21.75px;
+          margin-right: 21.75px;
         }
 
         @include breakpoint(lg) {
-          margin-left: 42px;
+          margin-right: 42px;
         }
 
         &:nth-child(13n) {
-          margin-left: 0;
+          margin-right: 0;
         }
 
         &:nth-child(n+14) {
@@ -3039,7 +3053,7 @@ body {
         }
 
         span:last-child {
-          margin-left: 0!important;
+          margin-right: 0!important;
         }
       }
 
@@ -3053,7 +3067,7 @@ body {
         width: 25%;
 
         @include breakpoint(sm) {
-          margin-left: 10%;
+          margin-left: 5%;
         }
 
         span {
@@ -3079,7 +3093,7 @@ body {
         width: 25%;
 
         @include breakpoint(sm) {
-          margin-right: 10%;
+          margin-right: 5%;
         }
 
         span {
