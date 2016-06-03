@@ -716,8 +716,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
       data.checkOnly = true;
 
       GCRedeemService.redeem(data).$promise.then(function (data) {
-        $scope.checkGCCredits = data.credits;
-        $scope.checkGCValidity = data.validity;
+        $scope.checkGCData = data;
       }, function (error) {
         $scope.$emit('notify', { message: error.data });
       });
