@@ -104,7 +104,7 @@ def send_email_verification(user, content):
     except mandrill.Error:
         raise
 
-def send_email_booking(user, content):
+def send_email_booking(user, content, branch=None):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
@@ -115,7 +115,7 @@ def send_email_booking(user, content):
             },
             'html':  content,
             'important': True,
-            'subject': 'Electric Studio - Booked',
+            'subject': 'Electric Studio - Booked' + (' - {}'.format(branch) if branch else ''),
             'to': [
                 {
                     'email': user['email'],
@@ -128,7 +128,7 @@ def send_email_booking(user, content):
     except mandrill.Error:
         raise
 
-def send_email_cancel(user, content):
+def send_email_cancel(user, content, branch=None):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
@@ -139,7 +139,7 @@ def send_email_cancel(user, content):
             },
             'html': content,
             'important': True,
-            'subject': 'Electric Studio - Cancelled',
+            'subject': 'Electric Studio - Cancelled' + (' - {}'.format(branch) if branch else ''),
             'to': [
                 {
                     'email': user['email'],
@@ -152,7 +152,7 @@ def send_email_cancel(user, content):
     except mandrill.Error:
         raise
 
-def send_email_move(user, content):
+def send_email_move(user, content, branch=None):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
@@ -163,7 +163,7 @@ def send_email_move(user, content):
             },
             'html': content,
             'important': True,
-            'subject': 'Electric Studio - Bike Moved',
+            'subject': 'Electric Studio - Bike Moved' + (' - {}'.format(branch) if branch else ''),
             'to': [
                 {
                     'email': user['email'],
@@ -176,7 +176,7 @@ def send_email_move(user, content):
     except mandrill.Error:
         raise
 
-def send_email(user, content, subject):
+def send_email(user, content, subject, branch=None):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
@@ -187,7 +187,7 @@ def send_email(user, content, subject):
             },
             'html': content,
             'important': True,
-            'subject': 'Electric Studio - ' + subject,
+            'subject': 'Electric Studio - ' + subject + (' - {}'.format(branch) if branch else ''),
             'to': [
                 {
                     'email': user['email'],
