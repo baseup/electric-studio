@@ -24,11 +24,17 @@
 
   <div class="sidebar dark">
     <h3 class="h">Balance</h3>
-    <div class="total">PHP {{ checkGCCredits || 0.00 }}</div>
+    <div class="total">
+      <span ng-if="checkGCData.credits">{{ checkGCData.credits }} {{ checkGCData.credits > 1 ? 'Rides' : 'Ride' }} <br> <small>{{ checkGCData.package_id.description }}</small></span>
+    </div>
 
     <button class="button" ng-click="checkGCValue()" type="button">Check Balance</button>
 
-    <p class="space--top">{{ checkGCValidity }}</p>
+    <div ng-if="checkGCData.validity">
+      <h4 class="h space--top space--off-bottom"><small>VALIDITY</small></h4>
+      <p>{{ checkGCData.validity }} DAYS</p>
+      <small ng-if="checkGCData.package_id.first_timer">Valid only for first-time riders. Package may be available once per rider</small>
+    </div>
   </div>
 
 </div>

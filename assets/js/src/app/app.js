@@ -196,8 +196,8 @@ app.factory('Instagram', function($http) {
   return {
     fetchRecent: function(callback) {
       var userID = '1505862477',
-          clientID = 'e6be793a6b2d4618a0efc919862a53f3',
-          endPoint = 'https://api.instagram.com/v1/users/' + userID + '/media/recent/?client_id='+ clientID +'&callback=JSON_CALLBACK';
+          token = '1505862477.1677ed0.25c54a82e464421d850bcb021c9311b8',
+          endPoint = 'https://api.instagram.com/v1/users/' + userID + '/media/recent/?access_token='+ token +'&callback=JSON_CALLBACK';
 
       $http.jsonp(endPoint).success(function(response) {
         callback(response.data);

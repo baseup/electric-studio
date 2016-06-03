@@ -4,19 +4,21 @@
   "description": "cycling website",
   "main": "server.py",
   "dependencies": {
+  },
+  "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-html2js": "^0.3.0",
     "grunt-contrib-sass": "*",
-    "grunt-contrib-watch": "*" 
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-watch": "*"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:Green-Lemon-Media-Devs/electric-studio.git"
+    "url": "git@github.com:baseup/electric-studio.git"
   },
-  "author": "Anthony De Leon <tontondeleon03@gmail.com> (http://anthony-deleon.com/)",
+  "author": "Green Lemon Media",
   "license": "ISC"
 }

@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="We are the first indoor cycling boutique in the Philippines offering a full-body fitness experience. Founded by an innovative team of fitness professionals set on revolutionizing the fitness culture, our rides are the ultimate sweat session - an energizing workout to challenge you physically and strengthen you mentally.">
+  <meta name="description" content="We are the first indoor cycling boutique in the Philippines offering a full-body fitness experience.">
   <meta property="og:title" content="Electric Studio - Indoor Cycling">
   <meta property="og:image" content="http://www.electricstudio.ph/assets/images/about-us.jpg">
-  <meta property="og:description" content="We are the first indoor cycling boutique in the Philippines offering a full-body fitness experience. Founded by an innovative team of fitness professionals set on revolutionizing the fitness culture, our rides are the ultimate sweat session - an energizing workout to challenge you physically and strengthen you mentally.">
+  <meta property="og:description" content="We are the first indoor cycling boutique in the Philippines offering a full-body fitness experience.">
 
   <link rel="shortcut icon" href="{{ static_url('images/icons/favicon.png') }}" type="image/x-icon">
   <link rel="apple-touch-icon-precomposed" sizes="120x120" href="{{ static_url('images/icons/apple-touch-icon-120x120-precomposed.png') }}">
@@ -18,27 +18,6 @@
 
   <link rel="stylesheet" href="{{ static_url('css/site.css') }}">
 
-  {% if loginUser %}
-  <!-- Facebook Conversion Code for Registrations - Sign Up 1 -->
-  <script>(function() {
-    var _fbq = window._fbq || (window._fbq = []);
-    if (!_fbq.loaded) {
-      var fbds = document.createElement('script');
-      fbds.async = true;
-      fbds.src = '//connect.facebook.net/en_US/fbds.js';
-      var s = document.getElementsByTagName('script')[0];
-      s.parentNode.insertBefore(fbds, s);
-      _fbq.loaded = true;
-    }
-    })();
-    window._fbq = window._fbq || [];
-    window._fbq.push(['track', '6034010245867', {'value':'0.00','currency':'PHP'}]);
-  </script>
-  <noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6034010245867&amp;cd[value]=0.00&amp;cd[currency]=PHP&amp;noscript=1" /></noscript>
-
-  {% end %}
-  <script type="text/javascript">
-  var port = '';if (window.location.port)port = ':' + window.location.port;(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-64306317-1', 'auto');ga('send', 'pageview');</script>
 </head>
 <body ng-controller="SiteCtrl" ng-class="{ 'show' : isNavOpen, 'book-nav-open':isBookNavOpen, 'show-sub-nav': activeMainNav('/(workouts|rates|first-ride)', true) }">
   <header class="main-header">
@@ -277,6 +256,31 @@
     </div>
   </div>
 
+
+  {% if loginUser %}
+  <!-- Facebook Conversion Code for Registrations - Sign Up 1 -->
+  <script>(function() {
+    var _fbq = window._fbq || (window._fbq = []);
+    if (!_fbq.loaded) {
+      var fbds = document.createElement('script');
+      fbds.async = true;
+      fbds.src = '//connect.facebook.net/en_US/fbds.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(fbds, s);
+      _fbq.loaded = true;
+    }
+    })();
+    window._fbq = window._fbq || [];
+    window._fbq.push(['track', '6034010245867', {'value':'0.00','currency':'PHP'}]);
+  </script>
+  <noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6034010245867&amp;cd[value]=0.00&amp;cd[currency]=PHP&amp;noscript=1" /></noscript>
+
+  {% end %}
+  
+  <script type="text/javascript">
+  var port = '';if (window.location.port)port = ':' + window.location.port;(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-64306317-1', 'auto');ga('send', 'pageview');
+  </script>
+
   <script src="{{ static_url('vendor/jquery/dist/jquery.min.js') }}"></script>
 
   <script src="{{ static_url('vendor/angular/angular.min.js') }}"></script>
@@ -295,10 +299,10 @@
   <script src="{{ static_url('vendor/pickadate/lib/picker.date.js') }}"></script>
   <script src="{{ static_url('vendor/selectize/dist/js/standalone/selectize.min.js') }}"></script>
 
-  <script src="{{ static_url('js/app/templates.js') }}"></script>
-  <script src="{{ static_url('js/app/services.js') }}"></script>
-  <script src="{{ static_url('js/app/controllers.js') }}"></script>
-  <script src="{{ static_url('js/app/app.js') }}"></script>
-  <script src="{{ static_url('js/script.js') }}"></script>
+  <script src="{{ static_url('js/dist/app/templates.js') }}"></script>
+  <script src="{{ static_url('js/dist/app/services.js') }}"></script>
+  <script src="{{ static_url('js/dist/app/controllers.js') }}"></script>
+  <script src="{{ static_url('js/dist/app/app.js') }}"></script>
+  <script src="{{ static_url('js/dist/script.js') }}"></script>
 </body>
 </html>
