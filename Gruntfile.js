@@ -17,15 +17,15 @@ module.exports = function (grunt) {
         },
         htmlmin: {
           collapseWhitespace: true
-        } 
+        }
       },
       site: {
         src: ['app/views/ng-templates/site/**/*.html'],
-        dest: 'assets/js/app/templates.js'
+        dest: 'assets/js/dist/app/templates.js'
       },
       admin: {
         src: ['app/views/ng-templates/admin/**/*.html'],
-        dest: 'assets/js/admin/templates.js'
+        dest: 'assets/js/dist/admin/templates.js'
       }
     },
 
@@ -46,6 +46,20 @@ module.exports = function (grunt) {
       }
     },
 
+    uglify: {
+      dist: {
+        options: {
+          mangle: false
+        },
+        files: [{
+          expand: true,
+          cwd: 'assets/js/src/',
+          src: '**/*.js',
+          dest: 'assets/js/dist'
+        }]
+      }
+    },
+
     watch: {
       scripts: {
         files: ['app/views/ng-templates/**/*.html'],
@@ -53,6 +67,10 @@ module.exports = function (grunt) {
         options: {
           spawn: false
         }
+      },
+      js: {
+        files: ['assets/js/src/**/*.js'],
+        tasks: ['uglify']
       },
       css: {
         files: ['assets/sass/**/*.scss', 'assets/sass/**/*.sass'],
@@ -65,8 +83,9 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks('grunt-html2js');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['html2js', 'sass', 'watch']);
+  grunt.registerTask('default', ['html2js', 'uglify', 'sass', 'watch']);
 }

@@ -4,9 +4,8 @@ bower_components
 assets/vendor
 assets/uploads
 assets/css
+assets/js/dist
 assets/sass/.sass-cache
-assets/js/app/templates.js
-assets/js/admin/templates.js
 *.pyc
 .tmp
 *.seed
