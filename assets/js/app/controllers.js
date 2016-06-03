@@ -160,62 +160,6 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
     }
   }
 
-  var aboutUs = angular.element('#aboutus-section');
-  var workouts = angular.element('#workouts-section');
-  var firstRide = angular.element('#firstride-section');
-  var faq = angular.element('#faq');
-  var packages_section = angular.element('#packages');
-
-  if (aboutUs.length) {
-    var scrollableView = aboutUs.offset().top;
-    angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-  }
-  if (workouts.length) {
-    var scrollableView = workouts.offset().top;
-    angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-  }
-
-  if (firstRide.length) {
-    // var scrollableView = firstRide.offset().top;
-    // angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-    var body = angular.element('body'),
-        backToTop = angular.element('.back-to-top');
-
-    backToTop.on('click',function () {
-      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
-    });
-
-    angular.element(window).on('scroll',function () {
-      if ( body.scrollTop() >= 1000 ) {
-        backToTop.fadeIn(100);
-        return;
-      }
-      backToTop.fadeOut(100);
-    });
-  }
-
-  if (packages_section.length && window.location.hash.indexOf('package') > 0) {
-    var scrollableView = packages_section.offset().top;
-    angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-  };
-
-  if (faq.length) {;
-    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
-  }
-
-  function scrollToUnavailable() {
-    $timeout(function () {
-      var scheduleRow = angular.element('.schedule .row').not('.unavailable');
-      var scrollableView = scheduleRow.length ? scheduleRow.offset().top : 0;
-      angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-    }, 100);
-  }
-
-  scrollToUnavailable();
-  angular.element('[href^="#/schedule/"]')
-    .off('click',scrollToUnavailable)
-    .on('click',scrollToUnavailable);
-
 });
 
 ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
@@ -686,11 +630,6 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $location, UserService, PackageService, GCRedeemService) {
 
   var qstring = $location.search();
-
-  if (angular.element('#rates-section').offset()) {
-    var scrollableView = angular.element('#rates-section').offset().top;
-    angular.element('html, body').animate({ scrollTop: scrollableView }, 'slow');
-  };
 
   if ($scope.loginUser) {
     $scope.senderEmail = $scope.loginUser.email;
