@@ -97,7 +97,7 @@ def find(self):
     ins = self.get_query_argument('ins')
     branch = self.get_query_argument('branch')
 
-    schedules = yield self.query(date, ins, branch)
+    schedules = yield query(self, date, ins, branch)
 
     self.render_json(schedules)
 
