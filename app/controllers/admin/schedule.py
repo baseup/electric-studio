@@ -199,6 +199,12 @@ def create(self):
     sched = yield sched.save()
 
     user = (yield User.objects.get(user._id)).serialize()
+
+    branch = ins_sched.branch
+
+    if ins_sched.branch is None:
+        branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
+
     if sched_status == 'booked':
         content = str(self.render_string('emails/booking',
                                          date=ins_sched.date.strftime('%A, %B %d, %Y'),
@@ -206,15 +212,17 @@ def create(self):
                                          user=user,
                                          instructor=ins_sched.instructor,
                                          time=ins_sched.start.strftime('%I:%M %p'),
-                                         seat_number=str(sched.seat_number)), 'UTF-8')
-        yield self.io.async_task(send_email_booking, user=user, content=content)
+                                         seat_number=str(sched.seat_number),
+                                         branch=branch.address), 'UTF-8')
+        yield self.io.async_task(send_email_booking, user=user, content=content, branch=branch.name)
     elif sched_status == 'waitlisted':
         content = str(self.render_string('emails/waitlist',
                                          date=ins_sched.date.strftime('%A, %B %d, %Y'),
                                          type=ins_sched.type, user=user,
                                          instructor=ins_sched.instructor,
-                                         time=ins_sched.start.strftime('%I:%M %p')), 'UTF-8')
-        yield self.io.async_task(send_email, user=user, content=content, subject='Waitlisted')
+                                         time=ins_sched.start.strftime('%I:%M %p'),
+                                         branch=branch.address), 'UTF-8')
+        yield self.io.async_task(send_email, user=user, content=content, subject='Waitlisted', branch=branch.name)
 
     self.render_json(sched)
 
@@ -265,6 +273,12 @@ def update(self, id):
         booked_schedule = yield booked_schedule.save()
 
         user = (yield User.objects.get(booked_schedule.user_id._id)).serialize()
+
+        branch = sched.branch
+
+        if sched.branch is None:
+            branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
+
         if 'waitlist' in data:
             content = str(self.render_string('emails/booking',
                           date=booked_schedule.date.strftime('%A, %B %d, %Y'),
@@ -272,8 +286,9 @@ def update(self, id):
                           type=sched.type,
                           seat_number=str(booked_schedule.seat_number),
                           instructor=sched.instructor,
-                          time=sched.start.strftime('%I:%M %p')), 'UTF-8')
-            yield self.io.async_task(send_email, user=user, content=content, subject='Waitlist moved to class')
+                          time=sched.start.strftime('%I:%M %p'),
+                          branch=branch.address), 'UTF-8')
+            yield self.io.async_task(send_email, user=user, content=content, subject='Waitlist moved to class', branch=branch.name)
         else:
             yield self.io.async_task(send_email_move,
                 content=str(self.render_string('emails/moved',
@@ -282,8 +297,10 @@ def update(self, id):
                             instructor=sched.instructor,
                             date=booked_schedule.date.strftime('%A, %B %d, %Y'),
                             seat_number=booked_schedule.seat_number,
-                            time=sched.start.strftime('%I:%M %p')), 'UTF-8'),
-                user=user
+                            time=sched.start.strftime('%I:%M %p'),
+                            branch=branch.address), 'UTF-8'),
+                user=user,
+                branch=branch.name
             )
 
         if lock_key and Lock.is_locked(lock_key):
@@ -353,6 +370,11 @@ def destroy(self, id):
 
         yield booked_schedule.save()
 
+        branch = booked_schedule.schedule.branch
+
+        if booked_schedule.schedule.branch is None:
+            branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
+
         if not missed:
             if ref_status == 'waitlisted':
                 content = str(self.render_string('emails/waitlist_removed',
@@ -361,8 +383,9 @@ def destroy(self, id):
                                                   type=booked_schedule.schedule.type,
                                                   seat_number=booked_schedule.seat_number,
                                                   instructor=booked_schedule.schedule.instructor,
-                                                  time=booked_schedule.schedule.start.strftime('%I:%M %p')), 'UTF-8')
-                yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Removed from Waitlist')
+                                                  time=booked_schedule.schedule.start.strftime('%I:%M %p'),
+                                                  branch=branch.address), 'UTF-8')
+                yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Removed from Waitlist', branch=branch.name)
             else:
                 yield self.io.async_task(
                     send_email_cancel,
@@ -374,8 +397,9 @@ def destroy(self, id):
                                     type=booked_schedule.schedule.type,
                                     date=booked_schedule.date.strftime('%A, %B %d, %Y'),
                                     seat_number=booked_schedule.seat_number,
-                                    time=booked_schedule.schedule.start.strftime('%I:%M %p')
-                                ), 'UTF-8'))
+                                    time=booked_schedule.schedule.start.strftime('%I:%M %p'),
+                                    branch=branch.address
+                                ), 'UTF-8'), branch=branch.name)
 
         self.render_json(booked_schedule)
     else:
@@ -410,12 +434,19 @@ def destroy(self, id):
                 user.credits += restore_credits
                 yield user.save()
                 yield wait.save()
+
+                branch = wait.schedule.branch
+
+                if wait.schedule.branch is None:
+                    branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
+
                 content = str(self.render_string('emails/waitlist_removed',
                                               date=wait.date.strftime('%A, %B %d, %Y'),
                                               user=user.to_dict(),
                                               type=wait.schedule.type,
                                               seat_number=wait.seat_number,
                                               instructor=wait.schedule.instructor,
-                                              time=wait.schedule.start.strftime('%I:%M %p')), 'UTF-8')
-                yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Removed from Waitlist')
+                                              time=wait.schedule.start.strftime('%I:%M %p'),
+                                              branch=branch.address), 'UTF-8')
+                yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Removed from Waitlist', branch=branch.name)
         self.finish()
