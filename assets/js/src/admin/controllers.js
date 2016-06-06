@@ -778,7 +778,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
   }
 
   $scope.moveBike = function () {
-    if ($scope.selectedBike && !isNaN($scope.selectedBike) && parseInt($scope.selectedBike) > 0 && parseInt($scope.selectedBike) < 38) {
+    if ($scope.selectedBike && !isNaN($scope.selectedBike) && parseInt($scope.selectedBike) > 0 && parseInt($scope.selectedBike) <= $scope.schedDetails.seats) {
       var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
       $.Confirm(confirm_msg, function () {
         $.Alert('Switching bike from ' + $scope.selectedBook.seat_number + ' to ' + $scope.selectedBike + ' ...', true);
@@ -1232,6 +1232,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         $scope.selectedBook = book;
         if (seats.available.length) {
           var selectize = angular.element('#switch-seat')[0].selectize;
+          selectize.clearOptions();
           selectize.settings.sortField = 'text';
           angular.forEach(seats.available, function (seat) {
             selectize.addOption({ value: seat, text: seat });
@@ -1248,7 +1249,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
 
   $scope.switchBike = function () {
-    if ($scope.selectedBike && !isNaN($scope.selectedBike) && parseInt($scope.selectedBike) > 0 && parseInt($scope.selectedBike) < 38) {
+    if ($scope.selectedBike && !isNaN($scope.selectedBike) && parseInt($scope.selectedBike) > 0 && parseInt($scope.selectedBike) <= $scope.schedDetails.seats) {
       var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
       $.Confirm(confirm_msg, function () {
         $.Alert('Switching bike from ' + $scope.selectedBook.seat_number + ' to ' + $scope.selectedBike + ' ...', true);
@@ -1270,6 +1271,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         $scope.selectedWaitList = wait;
         if (seats.available.length) {
           var selectize = angular.element('#select-seat')[0].selectize;
+          selectize.clearOptions();
           selectize.settings.sortField = 'text';
           angular.forEach(seats.available, function (seat) {
             selectize.addOption({ value: seat, text: seat });
@@ -1287,7 +1289,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   $scope.bookWaitList = function () {
 
-    if (!isNaN($scope.selectedWaitList.seat_number) && parseInt($scope.selectedWaitList.seat_number) > 0 && parseInt($scope.selectedWaitList.seat_number ) < 38) {
+    if (!isNaN($scope.selectedWaitList.seat_number) && parseInt($scope.selectedWaitList.seat_number) > 0 && parseInt($scope.selectedWaitList.seat_number ) <= $scope.schedDetails.seats) {
       $.Alert('Moving waitlist to bike ' + $scope.selectedWaitList.seat_number + ' ...', true);
       ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number, waitlist: true }, function () {
         $scope.reload();
