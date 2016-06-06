@@ -1,7 +1,7 @@
 from motorengine import DESCENDING, ASCENDING
 from motorengine.errors import InvalidDocumentError
 from app.models.schedules import BookedSchedule, InstructorSchedule
-from app.helper import send_email_booking, send_email_cancel, send_email_move, send_email
+from app.helper import send_email_booking, send_email_cancel, send_email_move, send_email, check_address
 from app.models.packages import UserPackage
 from app.models.users import User
 from app.models.admins import Branch
@@ -206,7 +206,7 @@ def create(self):
                                                                          instructor=sched.instructor,
                                                                          time=sched.start.strftime('%I:%M %p'),
                                                                          seat_number=str(book.seat_number),
-                                                                         branch=branch.address), 'UTF-8')
+                                                                         branch=check_address(branch)), 'UTF-8')
                                         yield self.io.async_task(send_email_booking, user=serialized_user, content=content, branch=branch.name)
                                     elif book_status == 'waitlisted':
                                         content = str(self.render_string('emails/waitlist',
@@ -215,7 +215,7 @@ def create(self):
                                                                          user=serialized_user,
                                                                          instructor=sched.instructor,
                                                                          time=sched.start.strftime('%I:%M %p'),
-                                                                         branch=branch.address), 'UTF-8')
+                                                                         branch=check_address(branch)), 'UTF-8')
                                         yield self.io.async_task(send_email, user=serialized_user, content=content, subject='Waitlisted', branch=branch.name)
                                     break
 
@@ -325,7 +325,7 @@ def update(self, id):
                                                       seat_number=book.seat_number,
                                                       instructor=book.schedule.instructor,
                                                       time=book.schedule.start.strftime('%I:%M %p'),
-                                                      branch=branch.address), 'UTF-8')
+                                                      branch=check_address(branch)), 'UTF-8')
                     yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Removed from Waitlist', branch=branch.name)
                 else:
                     yield self.io.async_task(
@@ -338,7 +338,7 @@ def update(self, id):
                                                        date=book.date.strftime('%A, %B %d, %Y'),
                                                        seat_number=book.seat_number,
                                                        time=book.schedule.start.strftime('%I:%M %p'),
-                                                       branch=branch.address), 'UTF-8'),
+                                                       branch=check_address(branch)), 'UTF-8'),
                         branch=branch.name
                     )
             elif 'sched_id' in data and str(ref_sched_id) != str(data['sched_id']):
@@ -358,7 +358,7 @@ def update(self, id):
                                                    date=book.date.strftime('%A, %B %d, %Y'),
                                                    seat_number=book.seat_number,
                                                    time=sched.start.strftime('%I:%M %p'),
-                                                   branch=branch.address), 'UTF-8'),
+                                                   branch=check_address(branch)), 'UTF-8'),
                     user=user.to_dict(),
                     branch=branch.name
                 )
