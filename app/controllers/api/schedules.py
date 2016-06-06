@@ -79,8 +79,8 @@ def query(self, date, ins, branch):
 
         date += timedelta(days=1)
 
-        if branch == DEFAULT_BRANCH_ID:
-            default_branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
+        if branch:
+            default_branch = yield Branch.objects.get(ObjectId(branch))
 
             for i, s in enumerate(sched):
                 if sched[i].branch is None:
