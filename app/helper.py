@@ -199,3 +199,15 @@ def send_email(user, content, subject, branch=None):
         mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
     except mandrill.Error:
         raise
+
+def check_address(branch):
+    address = {
+        'BGC': "2/F 8 Forbes Town Road, Fort BGC, Taguig 1201, Philippines",
+        'Salcedo': "G/F Two Central 107 Valero St. Salcedo Village, Makati"
+    }
+
+    if branch.address is None or branch.address == '':
+        if branch.name in address:
+            return address[branch.name]
+
+    return branch.address
