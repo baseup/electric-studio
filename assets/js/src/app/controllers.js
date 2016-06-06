@@ -70,7 +70,6 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
   $scope.activeMainNav = function (path, regexMatching) {
     if ( regexMatching ) {
       var regex = new RegExp(path);
-      console.log('regex',window.location.hash.match(regex) ? true : false);
       return window.location.hash.match(regex) ? true : false;
     }
     return window.location.hash.indexOf('#' + path) == 0;
