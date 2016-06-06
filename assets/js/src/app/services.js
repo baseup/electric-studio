@@ -359,7 +359,7 @@ services.provider('webSocket', function() {
 });
 
 
-services.service('ScheduleSocketService', function(webSocket) {
+services.service('ScheduleSocketService', function(webSocket, $filter) {
   var collection = {},
       callbacks = [],
       set = null,
@@ -380,10 +380,32 @@ services.service('ScheduleSocketService', function(webSocket) {
         var data = $.parseJSON(message.data);
 
         if (angular.isDefined(data.date) && angular.isDefined(data.branch_id)) {
-          collection[data.date + data.branch_id] = data;
+          var m = data.date.match(/(\d+)\-(\d+)\-(\d+)/),
+              date = new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3])),
+              key = data.date + data.branch_id,
+              prevKey = $filter('date')(date.setDate(date.getDate() - 7), 'yyyy-M-d') + data.branch_id,
+              nextKey = $filter('date')(date.setDate(date.getDate() + 14), 'yyyy-M-d') + data.branch_id;
 
-          if (set === (data.date + data.branch_id)) {
-            notifyCallbacks(collection[data.date + data.branch_id]);
+          collection[key] = data;
+
+          if (set === key) {
+            notifyCallbacks(collection[key]);
+          }
+
+          if (angular.isDefined(collection[prevKey])) {
+            collection[prevKey].nmon = data.mon;
+
+            if (set === prevKey) {
+              notifyCallbacks(collection[prevKey]);
+            }
+          }
+
+          if (angular.isDefined(collection[nextKey])) {
+            collection[nextKey].mon = data.nmon;
+
+            if (set === nextKey) {
+              notifyCallbacks(collection[nextKey]);
+            }
           }
         }
       } catch (e) {
@@ -404,13 +426,15 @@ services.service('ScheduleSocketService', function(webSocket) {
     callbacks.push(callback);
   };
 
-  this.loadWeek = function(query) {
+  this.loadWeek = function(query) {console.log(query);
     if (angular.isDefined(query.date) && angular.isDefined(query.branch)) {
-      if (angular.isDefined(collection[query.date + query.branch])) {
-        return notifyCallbacks(collection[query.date + query.branch]);
-      }
+      var key = query.date + query.branch;
 
-      set = query.date + query.branch;
+      set = key;
+
+      if (angular.isDefined(collection[key])) {
+        return notifyCallbacks(collection[key]);
+      }
     }
 
     socket.send(JSON.stringify(query));

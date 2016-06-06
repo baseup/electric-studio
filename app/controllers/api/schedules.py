@@ -11,6 +11,7 @@ import re
 
 @tornado.gen.coroutine
 def query(self, date, ins, branch):
+    branch = str(branch) if isinstance(branch, ObjectId) else branch
     the_date = date
     gmt8 = GMT8()
 
