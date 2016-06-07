@@ -1,6 +1,6 @@
 
 <div class="content bg-lightGray account-page sidebar-layout" ng-controller="HistoryCtrl">
-  
+
   <div ng-include="'/site/account-nav'"></div>
 
   <div class="wrapper">
@@ -31,6 +31,7 @@
             {{ book.date | formatDate }}
             <span ng-if="book.schedule">{{ book.schedule.start | formatTime }}</span>
           </h3>
+          <span><span class="label inline">Location:</span> {{ book.schedule.branch.name }}</span><br>
           <span><span class="label inline">Type:</span> {{ book.schedule.type || '(class info not available)' }}</span><br>
           <span><span class="label inline">Seat:</span> {{ book.seat_number }}</span><br>
           <span><span class="label inline">Instructor:</span> {{ book.schedule.instructor.admin.first_name || '(class info not available)' }}</span><br>
