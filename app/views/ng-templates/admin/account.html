@@ -82,8 +82,8 @@
                 <a href="" title="Schedules" ng-click="accountSchedules(user)"><i class="fa fa-book"></i></a>
               </li>
               <li ng-if="getAccess('accounts', 'freeze') && user.status != 'Deactivated'">
-                <a title="Froze Account" ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
-                <a title="Unfroze Account" ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
+                <a title="Freeze Account" ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
+                <a title="Unfreeze Account" ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
               </li>
               <li ng-if="getAccess('accounts', 'delete')">
                 <a title="Deactivate Account" ng-if="user.status != 'Deactivated'" class="pad--off-right" ng-click="deactivateAccount(user, $index)"><i class="fa fa-toggle-on"></i></a>
