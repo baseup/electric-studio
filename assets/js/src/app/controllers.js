@@ -1220,6 +1220,15 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   ScheduleSocketService.onLoadSchedule(function(schedules) {
     $scope.schedules = schedules;
     $scope.loadingSchedules = false;
+    var selectedSched = SharedService.get('selectedSched');
+    if(selectedSched) {
+      $timeout(function() {
+        var position = $('#' + selectedSched.schedule._id).offset();
+        $('html, body').scrollTop( position.top - 60 );
+
+        SharedService.clear('selectedSched');
+      });
+    }
   });
 
   // Get the list of available branches
