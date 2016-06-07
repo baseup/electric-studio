@@ -4,6 +4,23 @@
 @import url('//fonts.googleapis.com/css?family=Lato:400,700');
 @import "../vendor/fontawesome/css/font-awesome.min.css";
 
+@font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/Brandon_Regular.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/Brandon_light.otf') format('opentype');
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/Brandon_Bold.ttf') format('truetype');
+  font-weight: bold;
+}
 
 /**
  * Add the core framework
