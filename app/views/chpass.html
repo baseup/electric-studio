@@ -18,13 +18,16 @@
       <img src="/assets/images/electricstudio-logo.png" class="logo">
       <img src="/assets/images/electricstudio-nameplate.png" class="nameplate">
     </div>
+    <notification-bar></notification-bar>
     <br/><br/>
-    <div ng-controller="ForgotPasswordCtrl">
+    <div ng-controller="ForgotPasswordCtrl" class="pad">
     {% if user %}
       <h1 class="page-title h--medium">Reset Password ({{ user.email }})</h1> <br/><br/>
-      <input class="text-input" type="password" ng-model="pass.password" placeholder="New Password (min. 6 characters)"><br><br>
-      <input class="text-input" type="password" ng-model="pass.confirm_password" placeholder="Retype Password"><br><br>
-      <input type="submit" value="Reset"  ng-click="resetPassword('{{ user._id }}')" class="btn btn--medium btn--primary">
+      <form class="forgot-pass-form" ng-hide="forgotPasswordSuccess" ng-submit="resetPassword('{{ user._id }}', true)">
+        <input class="text-input" type="password" ng-model="pass.password" placeholder="New Password (min. 6 characters)"><br><br>
+        <input class="text-input" type="password" ng-model="pass.confirm_password" placeholder="Retype Password"><br><br>
+        <input type="submit" value="Reset" class="btn btn--medium btn--primary">
+      </form>
     {% else %}
       <h1 class="page-title h--small">Page Not Found</h1>
     {% end %}

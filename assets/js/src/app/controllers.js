@@ -458,7 +458,8 @@ ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, 
       account.reset_password = $scope.pass.password;
 
       var addSuccess = function () {
-        $scope.$emit('notify', { message: 'Successfully updated password' });
+        $scope.$emit('notify', { message: 'Password successfully changed' });
+        $scope.forgotPasswordSuccess = true;
       }
 
       var addFail = function (error) {
