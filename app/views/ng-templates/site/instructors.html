@@ -49,8 +49,10 @@
                 </span>
                 <span class="time">{{ sched.start | formatTime }}</span>
                 <span class="instructor">
-                  {{ sched.instructor._id != selectedInstructor._id ? sched.instructor.admin.first_name : '' }}
-                  {{ sched.sub_instructor ? 'with ' + sched.sub_instructor.admin.first_name : '' }}
+                  <small>
+                    {{ sched.instructor._id != selectedInstructor._id ? sched.instructor.admin.first_name : '' }}
+                    {{ sched.sub_instructor ? 'with ' + sched.sub_instructor.admin.first_name : '' }}
+                  </small>
                 </span>
                 <span class="schedtype">{{ sched.type }}</span>
                 <span class="branch">{{ sched.branch.name }}</span>
