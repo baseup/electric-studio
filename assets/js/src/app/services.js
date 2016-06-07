@@ -426,7 +426,7 @@ services.service('ScheduleSocketService', function(webSocket, $filter) {
     callbacks.push(callback);
   };
 
-  this.loadWeek = function(query) {console.log(query);
+  this.loadWeek = function(query) {
     if (angular.isDefined(query.date) && angular.isDefined(query.branch)) {
       var key = query.date + query.branch;
 
