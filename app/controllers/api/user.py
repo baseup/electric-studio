@@ -36,7 +36,7 @@ def create(self):
         self.write('Email address is already in use.')
     else:
         try:
-            user = User(first_name=data['first_name'], 
+            user = User(first_name=data['first_name'],
                         # middle_name=data['middle_name'],
                         last_name=data['last_name'],
                         email=data['email'].lower(),
@@ -46,7 +46,7 @@ def create(self):
 
             if 'phone_number' in data:
                 user.phone_number = data['phone_number']
-                
+
             user.agreed_terms = True
             user = yield user.save()
 
@@ -78,6 +78,22 @@ def update(self, id):
             user = yield user.save()
         elif 'agreed_terms' in data:
             user.agreed_terms = True
+
+            if 'first_name' in data:
+                user.first_name = data['first_name']
+            if 'last_name' in data:
+                user.last_name = data['last_name']
+            if 'birthdate' in data:
+                user.birthdate = datetime.strptime(data['birthdate'], '%Y-%m-%d')
+            if 'address' in data:
+                user.address = data['address']
+            if 'phone_number' in data:
+                user.phone_number = data['phone_number']
+            if 'contact_person' in data:
+                user.contact_person = data['contact_person']
+            if 'emergency_contact' in data:
+                user.emergency_contact = data['emergency_contact']
+
             user = yield user.save()
         else:
             user.first_name = data['first_name']
@@ -151,5 +167,5 @@ def destroy(self, id):
     else:
         self.set_status(400);
         self.write('Invalid User Password')
-        
+
     self.finish()
