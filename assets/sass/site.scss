@@ -222,6 +222,10 @@ body {
     line-height: 30px;
     display: inline-block;
     right: 54px;
+
+    @include breakpoint(md) {
+      display: none;
+    }
   }
 }
 
@@ -351,6 +355,7 @@ body {
   visibility: hidden;
   background-color: #fff;
   transition: all .3s ease;
+  text-align: center;
 
   .book-nav-open &  {
     opacity: 1;
@@ -360,6 +365,11 @@ body {
 
   @include breakpoint(md) {
     display: none !important;
+  }
+
+  .buy-rides {
+    border: 2px solid $brand-color-primary;
+    margin-top: 30px;
   }
 }
 
@@ -811,12 +821,14 @@ body {
     font-size: 14px;
   }
 
-  span{
+  > span {
     display: block;
     line-height: 1;
+    text-transform: uppercase;
+    color: inherit;
   }
 
-  div.dropdown-holder{
+  .dropdown-holder{
     position: absolute;
     display: none;
     left: -$base-spacing-unit;
@@ -869,7 +881,7 @@ body {
   }
 
   &:hover{
-    div.dropdown-holder{
+    .dropdown-holder{
       display: block;
     }
   }
