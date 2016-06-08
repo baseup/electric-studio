@@ -20,6 +20,12 @@
 }
 
 @font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/brandon_light-webfont.woff2') format('woff2'),
+       url('../fonts/brandon_light-webfont.woff') format('woff');
+}
+
+@font-face {
   font-family: 'Tungsten';
   src: url('../fonts/Tungsten-Light.otf') format('opentype');
   font-weight: 300;
