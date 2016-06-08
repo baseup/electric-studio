@@ -90,7 +90,7 @@
                   <i class="fa fa-caret-down"></i>
                 </a>
                 <div class="account-menu__credits-block">
-                  <span class="credits">{{ credits }}</span>
+                  {% if loginUser %} <span class="credits">{{ credits }}</span> {% end %}
                   <div class="brand-icon"></div>
                 </div>
               {% end %}
