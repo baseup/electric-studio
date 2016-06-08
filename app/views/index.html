@@ -26,7 +26,10 @@
         <a href="#/">
         <img src="{{ static_url('images/electricstudio-nameplate.png') }}" alt="Electric Studio Logo" class="nameplate">
         </a>
-        <img src="{{ static_url('images/electricstudio-logo.png') }}" class="logo">
+        <a href="#/account" class="account-link">
+          <span class="credits">{{ credits }}</span>
+          <img src="{{ static_url('images/electricstudio-logo.png') }}" class="logo">
+        </a>
       </h1>
 
       <div class="menu-wrapper" ng-class="{ show : isNavOpen, opaque:isNavOpen, transparent:!isNavOpen }">

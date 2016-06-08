@@ -214,6 +214,17 @@ body {
   }
 }
 
+.account-link {
+  .credits {
+    color: #fff;
+    position: absolute;
+    height: 30px;
+    line-height: 30px;
+    display: inline-block;
+    right: 54px;
+  }
+}
+
 .menu-wrapper {
   position: fixed;
   bottom: 0;
