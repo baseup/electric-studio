@@ -26,7 +26,7 @@ class Lock(object):
 
 class GMT8(tzinfo):
     def utcoffset(self, dt):
-        return timedelta(hours=8, minutes=2)
+        return timedelta(hours=7, minutes=57)
     def dst(self, dt):
         return timedelta(0)
     def tzname(self,dt):

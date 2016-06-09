@@ -790,7 +790,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
     $scope.gcPackageFirstTimer = $scope.selectedGCPackage.first_timer;
   }
 
-  $scope.emailTo = 'sender';
+  $scope.emailTo = 'receiver';
   $scope.buyGC = function () {
 
     var receiverEmail = null;

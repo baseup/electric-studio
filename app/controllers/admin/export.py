@@ -90,7 +90,7 @@ def download_gift_cards_report(self):
     if startDate:
         fromDate = datetime.strptime(startDate, '%Y-%m-%d')
     toDate = datetime.now() + timedelta(days=7)
-    if endDate: 
+    if endDate:
         toDate = datetime.strptime(endDate, '%Y-%m-%d')
 
     gift_certificates = yield GiftCertificate.objects.filter(create_at__gte=fromDate, create_at__lte=toDate, is_redeemed=isRedeemed) \
@@ -98,7 +98,7 @@ def download_gift_cards_report(self):
     # gift_certificates = create_at_gmt8(gift_certificates)
     filename = 'gift-cards-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
     with open(filename, 'w') as csvfile:
-        fieldnames = ['Date Generated', 'Transaction', 'Sender Email', 'Receiver Email', 'Code', 
+        fieldnames = ['Date Generated', 'Transaction', 'Sender Email', 'Receiver Email', 'Code',
                     'Pin', 'Package', 'Date Redeemed', 'ES Account']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
@@ -116,7 +116,7 @@ def download_gift_cards_report(self):
                 'Receiver Email': gc.receiver_email,
                 'Code': gc.code,
                 'Pin': gc.pin,
-                'Package': str(gc.credits) + " Rides",
+                'Package': gc.package_id.name,
                 'Date Redeemed': redeem_date,
                 'ES Account': redeemer_email
             })
@@ -148,7 +148,7 @@ def download_user_accounts(email, past_month, redis_db):
 
     filename = path + '/user-accounts-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
     with open(filename, 'w') as csvfile:
-        fieldnames = ['Full Name', 'Mobile Number', 'Email Address', 'Account Status', '# of Rides Bought', 
+        fieldnames = ['Full Name', 'Mobile Number', 'Email Address', 'Account Status', '# of Rides Bought',
                     '# of Rides Booked', '# of Active Rides', '# of Missed Class', 'Date Account Created', 'Date of Last Ride']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
@@ -209,7 +209,7 @@ def download_user_accounts_progress(self):
         file_export = redis_db.get('process_account_export_done')
         redis_db.delete('process_account_export_done')
         return self.render_json({ 'success': True, 'file': file_export.decode('utf-8') })
-    
+
     if redis_db.exists('process_account_export'):
         return self.render_json({ 'success': True, 'data': redis_db.get('process_account_export').decode('utf-8') })
     else:
@@ -221,7 +221,7 @@ def download_user_accounts_progress(self):
 
 
 def waitlist(self):
-    
+
     sched_id = self.get_query_argument('sched_id')
     if sched_id:
         scheds = yield BookedSchedule.objects.filter(schedule=ObjectId(sched_id), status='waitlisted') \

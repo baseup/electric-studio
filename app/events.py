@@ -66,7 +66,7 @@ def schedule_watcher():
 # A function that runs before your Tornado app run.
 # This gives you an opportunity to set up your data model, run jobs, or perform some special logic.
 def bootstrap(app):
-    p = PeriodicCallback(schedule_watcher, 5000)
+    p = PeriodicCallback(schedule_watcher, 60000)
     p.start()
     pass
 

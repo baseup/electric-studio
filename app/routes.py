@@ -68,14 +68,14 @@ routes.post('/upload/landing', 'upload.landing')
 routes.get('/sync_user_packages', 'home.sync_package')
 
 # to be remove
-routes.get('/add_default_sudopass', 'home.add_default_sudopass')
-routes.get('/add_regular_schedules', 'home.add_regular_schedule')
-routes.get('/test_waitlist', 'home.test_waitlist')
-routes.get('/remove_test_waitlist', 'home.remove_test_waitlist')
-routes.get('/package_migrate', 'home.package_migrate')
-routes.get('/schedule_migrate', 'home.schedule_migrate')
-routes.get('/add_branch', 'home.add_branch')
-routes.get('/add_access_types', 'home.add_access_types')
+#routes.get('/add_default_sudopass', 'home.add_default_sudopass')
+#routes.get('/add_regular_schedules', 'home.add_regular_schedule')
+#routes.get('/test_waitlist', 'home.test_waitlist')
+#routes.get('/remove_test_waitlist', 'home.remove_test_waitlist')
+#routes.get('/package_migrate', 'home.package_migrate')
+#routes.get('/schedule_migrate', 'home.schedule_migrate')
+#routes.get('/add_branch', 'home.add_branch')
+#routes.get('/add_access_types', 'home.add_access_types')
 routes.prefix('/admin', [
 
     ('get', '/?', 'admin.index'),
