@@ -193,14 +193,18 @@ services.factory('SettingService', function ($resource) {
 services.factory('SharedService', function(){
   var records = {};
   return {
-    set : function(key, value){
+    set: function(key, value){
       records[key] = value;
     },
-    get : function(key) {
-      return records[key];
+    get: function(key) {
+      if (angular.isDefined(records[key])) {
+        return records[key];
+      }
     },
-    clear : function(key) {
-      delete records[key];
+    clear: function(key) {
+      if (angular.isDefined(records[key])) {
+        delete records[key];
+      }
     }
   }
 });

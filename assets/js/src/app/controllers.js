@@ -1225,8 +1225,15 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     $scope.branches = branches;
 
     if($scope.isValidBranch(branches, $routeParams.branch)) {
-      var selectedSched = SharedService.get('selectedSched')
+      var selectedSched = SharedService.get('selectedSched');
+      var isNMon = !!SharedService.get('isNMon');
       var date = selectedSched && 'date' in selectedSched ? new Date(selectedSched.date) : new Date();
+
+      if (isNMon) {
+        date.setDate(date.getDate() - 7);
+      }
+      SharedService.clear('isNMon');
+
       $scope.getWeek(date);
     } else {
       $location.path('/schedule');
@@ -1321,7 +1328,11 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
     });
   }
 
-  $scope.setSchedule = function (schedule, date, branch) {
+  $scope.setSchedule = function (schedule, date, branch, nmon) {
+
+    if (nmon == null) {
+      nmon = false;
+    }
 
     $scope.branch = branch;
 
@@ -1400,6 +1411,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
               });
             } else {
               SharedService.set('selectedSched', sched);
+              SharedService.set('isNMon', !!nmon);
               $location.path('/class/' + sched.schedule.branch.name.toLowerCase());
             }
           });

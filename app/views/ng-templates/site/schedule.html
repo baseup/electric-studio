@@ -161,7 +161,7 @@
                 {{ monday.sub_instructor ? ' &amp; ' + monday.sub_instructor.admin.first_name : '' }}
               </span>
               <span class="schedtype">{{ monday.type }}</span>
-              <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, nmonDate, branch)">
+              <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, nmonDate, branch, true)">
                 {{ isFull(monday) ? 'waitlist' : 'reserve' }}
               </button>
             </a>
