@@ -5,7 +5,7 @@
       <div class="bp-md-one-fourth float--left space--bottom space--right">
         <input class="text-input" ng-keyup="searchAccount()" placeholder="Enter Name or Email" ng-model="searchText">
       </div>
-        
+
       <div class="float--right">
         <label class="label">Export Account List</label>
         <button ng-if="getAccess('accounts', 'export_data')" class="btn btn--small btn--tertiary float--right" ng-click="downloadUserAccounts()">Export</button>
@@ -32,7 +32,7 @@
     <div class="account-list grid">
 
       <div ng-repeat="user in users" class="grid__item bp-md-one-half bp-lg-one-third">
-          
+
         <div class="account__item box--bordered space--bottom cf" ng-class="{'box--white': user.status != 'Deactivated', 'box--grey': user.status == 'Deactivated'}">
           <div class="pad">
             <b class="h--small">{{ user.first_name }} {{ user.last_name }}</b>
@@ -63,7 +63,7 @@
                 <dt>Account is frozen due to</dt>
                 <dd class="frozen-message" disable-outside-scroll>{{ user.remarks }}</dd>
               </dl>
-              
+
             </div>
           </div>
 
@@ -82,8 +82,8 @@
                 <a href="" title="Schedules" ng-click="accountSchedules(user)"><i class="fa fa-book"></i></a>
               </li>
               <li ng-if="getAccess('accounts', 'freeze') && user.status != 'Deactivated'">
-                <a title="Froze Account" ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
-                <a title="Unfroze Account" ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
+                <a title="Freeze Account" ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
+                <a title="Unfreeze Account" ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
               </li>
               <li ng-if="getAccess('accounts', 'delete')">
                 <a title="Deactivate Account" ng-if="user.status != 'Deactivated'" class="pad--off-right" ng-click="deactivateAccount(user, $index)"><i class="fa fa-toggle-on"></i></a>
@@ -108,19 +108,19 @@
       <input ng-model="frozeReason" class="text-input">
       <button type="button" class="btn btn--primary btn--medium space--top modal-close" ng-click="freezeAccount()">Freeze Account</button>
     </div>
-  </div>  
+  </div>
   <div class="modal" data-modal="security-check" id="security-check-modal">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Security Check</h3>
-      
+
       <ul class="form-fields">
         <li>
           <span class="label">Password</span>
           <input ng-model="securityPass" type="password" class="text-input">
         </li>
       </ul>
-     
+
       <button type="button" id="btn-security" class="btn btn--primary btn--medium space--top modal-close">Confirm</button>
 
     </div>
@@ -130,7 +130,7 @@
     <div class="modal__box pad">
       <span id="close-add-account" class="close-btn modal-close">X</span>
       <h3 class="h medium gray">Add Account</h3>
-      
+
       <div class="float--left space--bottom">
         <span class="label">First Name</span>
         <input ng-model="newAccount.first_name" class="text-input">
@@ -210,7 +210,7 @@
     <div class="modal__box pad" style="max-width: 100%">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }} schedules</h3>
-      
+
       <div class="class-search pad cf">
         <div class="float--left space--right">
           <span class="label">From</span>
@@ -226,8 +226,8 @@
         </div>
         <div class="float--left space--left">
           <span class="label">Status</span>
-          <select size="" class="select" ng-change="changeStatus()" ng-model="statusFilter"> 
-            
+          <select size="" class="select" ng-change="changeStatus()" ng-model="statusFilter">
+
             <option value="--">All</option>
             <option value="booked">Booked</option>
             <option value="missed">Missed</option>
@@ -244,6 +244,7 @@
           <thead>
             <tr>
               <th>Schedule</th>
+              <th>Location</th>
               <th>Class Type</th>
               <th>Instructor</th>
               <th>Status</th>
@@ -256,6 +257,7 @@
           <tbody>
             <tr ng-repeat="sched in selectedAccount.books | search:'status':statusFilter">
               <td>{{ sched.date | formatDate }} {{ sched.schedule.start | formatTime }}</td>
+              <td>{{ sched.schedule.branch.name }}</td>
               <td>{{ sched.schedule.type }}</td>
               <td>{{ sched.schedule.instructor.admin.first_name }} {{ sched.schedule.instructor.admin.last_name }}</td>
               <td>{{ sched.status }}</td>
@@ -301,7 +303,7 @@
         <h4 class="h-small">{{ selectedBook.user_id.first_name }} {{ selectedBook.user_id.last_name }}</h4>
       </div>
 
-       <div class="cf">   
+       <div class="cf">
         <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
           <span class="label">Current Bike</span>
           <h4 class="h-small">{{ selectedBook.seat_number  }}</h4>
@@ -311,7 +313,7 @@
           <select class="select" id="switch-seat" ng-model="selectedBike">
             <option value="">Select Seat</option>
           </select>
-        </div>    
+        </div>
       </div>
 
       <button ng-if="getAccess('schedules', 'move_bike')" class="btn btn--primary btn--medium space--top modal-close" ng-click="moveBike()">Switch</button>
@@ -328,7 +330,7 @@
       <button type="button" class="btn btn--primary btn--medium space--top modal-close" ng-click="missedBooking()">MARK AS MISSED</button>
     </div>
   </div>
-  
+
   <!-- modal account summary -->
   <div class="modal" data-modal="account-summary" id="account-summary-modal">
     <div class="modal__box pad" style="max-width: 80%">
@@ -395,7 +397,7 @@
         </h4>
       </div>
 
-       <div class="cf">   
+       <div class="cf">
         <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
           <span class="label">Current Credits</span>
           <h4 class="h-small">{{ selectedUPack.remaining_credits }} / {{ selectedUPack.credit_count  }}</h4>
@@ -418,7 +420,7 @@
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Buy Package</h3>
-      
+
       <ul class="form-fields">
         <li>
           <span class="label">Rider</span>
@@ -472,7 +474,7 @@
         <input type="hidden" name="cancel_return" value="{{ redirectUrl }}/buy?success=False">
         <input type="hidden" name="cbt" value="Return to Electric Studio">
       </form>
-     
+
       <button type="button" ng-click="confirmBilling()" class="btn btn--primary btn--medium space--top modal-close">Buy</button>
 
     </div>
@@ -482,7 +484,7 @@
     <div class="modal__box pad" style="max-width: 100%">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Billing Information</h3>
-      
+
       <ul class="form-fields">
         <li>
           <span class="label">Rider</span>
@@ -575,7 +577,7 @@
         <input type="hidden" name="cancel_return" value="{{ redirectUrl }}?success=False">
         <input type="hidden" name="cbt" value="Return to Electric Studio">
       </form>
-     
+
       <button type="button" ng-click="buyPackage()" class="btn btn--primary btn--medium float--right space--top modal-close">Save and Continue</button>
 
     </div>
@@ -586,7 +588,7 @@
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Add Class</h3>
-      
+
       <ul class="form-fields">
         <li>
           <span class="label">Rider</span>
@@ -614,7 +616,7 @@
           <input type="checkbox" ng-model="newCredits.no_email" /> Do not send email notification
         </li>
       </ul>
-     
+
       <button type="button" ng-click="saveNewCredits()" class="btn btn--primary btn--medium space--top modal-close">Add</button>
 
     </div>

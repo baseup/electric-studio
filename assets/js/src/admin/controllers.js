@@ -778,7 +778,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
   }
 
   $scope.moveBike = function () {
-    if ($scope.selectedBike && !isNaN($scope.selectedBike) && parseInt($scope.selectedBike) > 0 && parseInt($scope.selectedBike) < 38) {
+    if ($scope.selectedBike && !isNaN($scope.selectedBike) && parseInt($scope.selectedBike) > 0 && parseInt($scope.selectedBike) <= $scope.schedDetails.seats) {
       var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
       $.Confirm(confirm_msg, function () {
         $.Alert('Switching bike from ' + $scope.selectedBook.seat_number + ' to ' + $scope.selectedBike + ' ...', true);
@@ -936,8 +936,8 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
         $.Alert('exporting users ' + response.data, true);
       } else if (response.file) {
         $interval.cancel(timeInval);
-        window.location = response.file;  
-      } 
+        window.location = response.file;
+      }
     });
 
     // get export status
@@ -949,12 +949,12 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
         } else if (response.file) {
           $interval.cancel(timeInval);
           $.Alert('Successfully exported accounts');
-          window.location = response.file;  
-        } 
+          window.location = response.file;
+        }
       });
     }, 3000)
 
-    
+
     // window.location = '/admin/export/download-user-accounts?email=' + emailFilter + '&past_month=' + past_month
   }
 
@@ -1232,6 +1232,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         $scope.selectedBook = book;
         if (seats.available.length) {
           var selectize = angular.element('#switch-seat')[0].selectize;
+          selectize.clearOptions();
           selectize.settings.sortField = 'text';
           angular.forEach(seats.available, function (seat) {
             selectize.addOption({ value: seat, text: seat });
@@ -1248,7 +1249,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
 
   $scope.switchBike = function () {
-    if ($scope.selectedBike && !isNaN($scope.selectedBike) && parseInt($scope.selectedBike) > 0 && parseInt($scope.selectedBike) < 38) {
+    if ($scope.selectedBike && !isNaN($scope.selectedBike) && parseInt($scope.selectedBike) > 0 && parseInt($scope.selectedBike) <= $scope.schedDetails.seats) {
       var confirm_msg = 'Are you sure to switch you bike (' + $scope.selectedBook.seat_number + ') to ' + $scope.selectedBike + '?';
       $.Confirm(confirm_msg, function () {
         $.Alert('Switching bike from ' + $scope.selectedBook.seat_number + ' to ' + $scope.selectedBike + ' ...', true);
@@ -1270,6 +1271,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
         $scope.selectedWaitList = wait;
         if (seats.available.length) {
           var selectize = angular.element('#select-seat')[0].selectize;
+          selectize.clearOptions();
           selectize.settings.sortField = 'text';
           angular.forEach(seats.available, function (seat) {
             selectize.addOption({ value: seat, text: seat });
@@ -1287,7 +1289,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
 
   $scope.bookWaitList = function () {
 
-    if (!isNaN($scope.selectedWaitList.seat_number) && parseInt($scope.selectedWaitList.seat_number) > 0 && parseInt($scope.selectedWaitList.seat_number ) < 38) {
+    if (!isNaN($scope.selectedWaitList.seat_number) && parseInt($scope.selectedWaitList.seat_number) > 0 && parseInt($scope.selectedWaitList.seat_number ) <= $scope.schedDetails.seats) {
       $.Alert('Moving waitlist to bike ' + $scope.selectedWaitList.seat_number + ' ...', true);
       ClassService.update({ scheduleId: $scope.selectedWaitList._id }, { move_to_seat : $scope.selectedWaitList.seat_number, waitlist: true }, function () {
         $scope.reload();
@@ -1390,7 +1392,9 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
       SettingService.getBlockedBikes(function (bikes) {
         $scope.blockedBikes = bikes;
       });
-      angular.element('#bike-map-modal').Modal();
+
+      var bikeMap = '#bike-map-' + $scope.schedDetails.branch.name.toLowerCase();
+      angular.element( bikeMap ).Modal();
     } else {
       $.Notify({ content: 'This schedule is completed' });
     }
@@ -1482,7 +1486,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $timeout, ScheduleService, In
       $scope.classTypesByName[ct.name] = ct;
     });
   });
-   
+
   var calendar = angular.element('.calendar');
   calendar.fullCalendar({
     defaultView: 'agendaWeek',
@@ -2179,7 +2183,7 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, $timeout, Instruct
       if (!$scope.newInstructor.gender)
         $scope.newInstructor.gender = 'male';
 
-      
+
 
       var addSuccess = function (data) {
         $scope.picInstructor = data;
@@ -2274,21 +2278,21 @@ ctrls.controller('InstructorCtrl', function ($scope, $upload, $timeout, Instruct
         delete ins.albums.$$hashKey;
     }
     $scope.updateInstructor.albums = ins.albums;
-    
+
     if (ins.birthdate) {
       $scope.updateInstructor.birthdate = ins.birthdate.replace(' 00:00:00', '');
     } else {
       $scope.updateInstructor.birthdate = '';
     }
-    
+
     $timeout(function () {
       $('#ins-album-update')[0].selectize.setValue(null);
       $.getJSON('https://itunes.apple.com/lookup?id=' + ins.albums.join(',') + '&attribute=albumTerm&entity=album&callback=?', function(data) {
-        $('#ins-album-update')[0].selectize.addOption(data.results);  
+        $('#ins-album-update')[0].selectize.addOption(data.results);
         $timeout(function () {
           $('#ins-album-update')[0].selectize.setValue(ins.albums);
         }, 500);
-      });      
+      });
     });
   }
 

@@ -4,6 +4,29 @@
 @import url('//fonts.googleapis.com/css?family=Lato:400,700');
 @import "../vendor/fontawesome/css/font-awesome.min.css";
 
+@font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/Brandon_Regular.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/Brandon_light.otf') format('opentype');
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/Brandon_Bold.ttf') format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/brandon_light-webfont.woff2') format('woff2'),
+       url('../fonts/brandon_light-webfont.woff') format('woff');
+}
 
 /**
  * Add the core framework
@@ -226,6 +249,7 @@ body {
         cursor: pointer;
         padding-left: 2px;
         line-height: 16px;
+        font-family: 'Lato', sans-serif;
 
         @media (min-width: 360px) {
           width: 20px;
@@ -304,6 +328,54 @@ body {
         width: 300px;
       }
 
+      &.has-sub-instructor {
+        width: 150px;
+        padding-top: 80px;
+
+        @include breakpoint(sm) {
+          width: 250px;
+          padding-top: 140px;
+        }
+
+        @include breakpoint(md) {
+          width: 320px;
+          padding-top: 150px;
+        }
+
+        .image {
+          position: absolute;
+          top: 0;
+
+          &.main {
+            right: 50%;
+            left: auto;
+            z-index: 2;
+            margin-right: -20px;
+            margin-left: 0;
+
+            @include breakpoint(sm) {
+              margin-right: -30px;
+            }
+          }
+
+          &.sub {
+            left: 50%;
+            right: auto;
+            z-index: 1;
+            margin-left: -20px;
+            margin-right: 0;
+
+            @include breakpoint(sm) {
+              margin-left: -30px;
+            }
+          }
+        }
+      }
+
+      .h {
+        font-family: 'Lato', sans-serif;
+      }
+
       .image{
         left: 50%;
         border-radius: 150px;
@@ -346,6 +418,38 @@ body {
     }
   }
 }
+
+
+#bike-map-salcedo {
+  .formation {
+    @include breakpoint(md) {
+      width: 850px;
+    }
+
+    .seats {
+      &.center {
+        @include breakpoint(md) {
+          max-width: 326px;
+        }
+      }
+    }
+
+    .front {
+      &:not(.instructor) {
+        width: 70px;
+
+        @include breakpoint(sm) {
+          width: 135px;
+        }
+
+        @include breakpoint(md) {
+          width: 200px;
+        }
+      }
+    }
+  }
+}
+
 
 .h {
   text-transform: uppercase;

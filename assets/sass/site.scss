@@ -20,6 +20,12 @@
 }
 
 @font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/brandon_light-webfont.woff2') format('woff2'),
+       url('../fonts/brandon_light-webfont.woff') format('woff');
+}
+
+@font-face {
   font-family: 'Tungsten';
   src: url('../fonts/Tungsten-Light.otf') format('opentype');
   font-weight: 300;
@@ -214,6 +220,21 @@ body {
   }
 }
 
+.account-link {
+  .credits {
+    color: #fff;
+    position: absolute;
+    height: 30px;
+    line-height: 30px;
+    display: inline-block;
+    right: 54px;
+
+    @include breakpoint(md) {
+      display: none;
+    }
+  }
+}
+
 .menu-wrapper {
   position: fixed;
   bottom: 0;
@@ -340,6 +361,7 @@ body {
   visibility: hidden;
   background-color: #fff;
   transition: all .3s ease;
+  text-align: center;
 
   .book-nav-open &  {
     opacity: 1;
@@ -349,6 +371,11 @@ body {
 
   @include breakpoint(md) {
     display: none !important;
+  }
+
+  .buy-rides {
+    border: 2px solid $brand-color-primary;
+    margin-top: 30px;
   }
 }
 
@@ -800,12 +827,14 @@ body {
     font-size: 14px;
   }
 
-  span{
+  > span {
     display: block;
     line-height: 1;
+    text-transform: uppercase;
+    color: inherit;
   }
 
-  div.dropdown-holder{
+  .dropdown-holder{
     position: absolute;
     display: none;
     left: -$base-spacing-unit;
@@ -858,7 +887,7 @@ body {
   }
 
   &:hover{
-    div.dropdown-holder{
+    .dropdown-holder{
       display: block;
     }
   }
@@ -1164,6 +1193,25 @@ body {
     }
   }
 
+  &.signup {
+    .signup-desktop-btn {
+      display: none;
+
+      @include breakpoint(lg) {
+        display: inline-block;
+      }
+    }
+
+    .signup-mobile-btn {
+      display: block;
+      margin: 10px auto;
+
+      @include breakpoint(lg) {
+        display: none;
+      }
+    }
+  }
+
   @include breakpoint(md) {
     text-align: left;
     position: absolute;
@@ -1235,11 +1283,15 @@ body {
   .input-box {
     margin-bottom: 10px;
     background: none;
+    border: 0;
     border-bottom: 2px solid #fff;
+    border-radius: 0;
     padding: 0;
     color: #fff;
     -webkit-text-fill-color: #fff!important;
     font-family: 'Brandon_Grotesque';
+    display: block;
+    margin: 0 auto 10px auto;
 
     &:-webkit-autofill {
       -webkit-box-shadow: 0 0 0px 1000px $brand-color-secondary inset;
@@ -1265,9 +1317,11 @@ body {
     padding: 0 20px;
     min-width: auto;
     font-size: 14px;
+    margin-top: 10px;
 
     @include breakpoint(md) {
       float: left;
+      margin-top: 0;
     }
   }
 
@@ -1338,10 +1392,12 @@ body {
 
     &:before {
       transform: translate(-50%,-50%) rotate(45deg);
+      -webkit-transform: translate(-50%,-50%) rotate(45deg);
     }
 
     &:after {
       transform: translate(-50%,-50%) rotate(-45deg);
+      -webkit-transform: translate(-50%,-50%) rotate(-45deg);
     }
   }
 
@@ -1367,9 +1423,8 @@ body {
     width: 15px;
     height: 15px;
     border: 1px solid white;
-    float: left;
     margin-right: 10px;
-    margin-bottom: 2.5em;
+    margin-bottom: 0;
     position: relative;
   }
 
@@ -2389,14 +2444,14 @@ body {
     }
 
     button {
-      position: absolute;
-      top: 50%;
-      right: 10px;
+      font-size: 0.8em;
       margin: auto;
-      -webkit-transform: translate(0, -50%);
-      transform: translate(0, -50%);
 
       @include breakpoint(md) {
+        font-size: 0.9em;
+        position: absolute;
+        top: 50%;
+        right: 10px;
         visibility: hidden;
         right: auto;
         left: 50%;
@@ -2962,14 +3017,16 @@ body {
       &.instructor {
         margin-left: auto!important;
         margin-right: auto!important;
-        margin-bottom: -200px;
+        margin-bottom: -160px;
+        min-height: 150px;
 
         @include breakpoint(sm) {
           margin-top: 0;
+          margin-bottom: -220px;
         }
 
         @include breakpoint(md) {
-          margin-bottom: -220px;
+          min-height: 250px;
         }
       }
 
@@ -3747,10 +3804,12 @@ body {
 
     &:before {
       transform: translate(-50%, -50%) rotate(45deg);
+      -webkit-transform: translate(-50%, -50%) rotate(45deg);
     }
 
     &:after {
       transform: translate(-50%, -50%) rotate(-45deg);
+      -webkit-transform: translate(-50%, -50%) rotate(-45deg);
     }
 
     &:hover {
