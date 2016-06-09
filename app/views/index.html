@@ -27,7 +27,9 @@
         <img src="{{ static_url('images/electricstudio-nameplate.png') }}" alt="Electric Studio Logo" class="nameplate">
         </a>
         <a href="#/account" class="account-link">
-          <span class="credits">{{ credits }}</span>
+          {% if loginUser %}
+            <span class="credits">{{ credits }}</span>
+          {% end %}
           <img src="{{ static_url('images/electricstudio-logo.png') }}" class="logo">
         </a>
       </h1>
