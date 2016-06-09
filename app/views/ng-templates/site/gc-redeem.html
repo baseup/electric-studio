@@ -33,7 +33,8 @@
     <div ng-if="checkGCData.validity">
       <h4 class="h space--top space--off-bottom"><small>VALIDITY</small></h4>
       <p>{{ checkGCData.validity }} DAYS</p>
-      <small ng-if="checkGCData.package_id.first_timer">Valid only for first-time riders. Package may be available once per rider</small>
+      <small ng-if="checkGCData.package_id.first_timer"><b>Valid only for new riders.</b> First Timer Package may only be availed once per rider</small>
+      <small class="small-space--top">Physical gift cards are available in the studio.</small>
     </div>
   </div>
 
