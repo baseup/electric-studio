@@ -23,36 +23,36 @@
             <input class="input" placeholder="Email Address" ng-model="account.email">
             <input class="input" placeholder="Mobile Number" ng-model="account.phone_number">
             <input class="input" placeholder="Address Line 1" ng-model="account.address">
-            <input class="input" placeholder="Address Line 2" ng-model="account.address">
+            <input class="input" placeholder="Address Line 2" ng-model="account.address2">
             <div class="input-group">
               <label for="input-bday">Birthday</label>
               <input class="input datepicker" placeholder="yyyy-mm-dd" ng-model="account.birthdate" id="input-bday">
             </div>
-          </div>          
+          </div>
         </section>
         <section>
             <h5 class="h small">Emergency Contact</h5>
             <div class="col-3">
               <input class="input" placeholder="Contact Full Name" ng-model="account.contact_person">
-              <input class="input" placeholder="Contact Number" ng-model="account.emergency_contact">  
-              <a class="button pads primary" ng-click="updateAccount()" >Save</a> 
-            </div>            
+              <input class="input" placeholder="Contact Number" ng-model="account.emergency_contact">
+              <a class="button pads primary" ng-click="updateAccount()" >Save</a>
+            </div>
         </section>
-        
+
         <section>
           <h5 class="h medium gray">Change Password</h5>
-          <div class="col-3"> 
+          <div class="col-3">
             <div>
               <input class="input" type="password" ng-model="pass.current_password" placeholder="Current Password">
               <input class="input" type="password" ng-model="pass.password" placeholder="New Password (min. 6 character)">
             </div>
-            <!-- dummy --> <input type="text" class="transparent input"> 
+            <!-- dummy --> <input type="text" class="transparent input">
             <input class="input" type="password" ng-model="pass.confirm_password" placeholder="Retype New Password">
-            <!-- dummy --> <input type="text" class="transparent input"> 
-            <a class="button pads primary" ng-click="changePassword()">Update</a> 
+            <!-- dummy --> <input type="text" class="transparent input">
+            <a class="button pads primary" ng-click="changePassword()">Update</a>
           </div>
         </section>
-        
+
         <section class="hidden" id="billing">
           <h5 class="h medium gray">Billing</h5>
           <div class="col-2">
@@ -72,9 +72,9 @@
           </select>
           <input class="input" ng-model="billing.card_expiration" placeholder="Expiration date (MM/YY)" >
           <input class="input" type="password" ng-model="billing.csc" placeholder="CSC" >
-          <a class="button pads primary" ng-click="updateBilling()">Save Billing Info</a> 
+          <a class="button pads primary" ng-click="updateBilling()">Save Billing Info</a>
         </section>
-        
+
         <section id="packages">
           <h5 class="h medium gray">Packages</h5>
           <div class="grid">
@@ -92,7 +92,7 @@
                   <br/>
                   <span>
                     <br/>
-                    
+
                     {{ trans.package_name || '&nbsp;' }}
                   </span>
                 </div>
@@ -102,7 +102,7 @@
           <a href="#/rates" class="button pads primary">Buy</a>
         </section>
         <a class="float--right button pads primary" ng-click="deactivateAccount()">Delete Account</a>
-      </div>     
-      
+      </div>
+
     </div>
   </div>

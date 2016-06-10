@@ -3,7 +3,7 @@ PORT = 8002
 
 # If True, the server process will restart when any source files change, as described in Debug mode and automatic reloading.
 # This option is new in Tornado 3.2; previously this functionality was controlled by the debug setting
-AUTORELOAD = False
+# AUTORELOAD = False
 
 # Shorthand for several debug mode settings, described in Debug mode and automatic reloading.
 # Setting debug=True is equivalent to autoreload=True, compiled_template_cache=False, static_hash_cache=False, serve_traceback=True.
