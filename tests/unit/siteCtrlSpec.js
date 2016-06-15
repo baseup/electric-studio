@@ -123,7 +123,7 @@ describe('SiteCtrl', function() {
     it('should log out user successfully', function() {
       scope.logout();
 
-      $httpBackend.expectGET('/api/user/logout').respond(200);
+      $httpBackend.expectGET('/user/logout').respond(200);
       $httpBackend.flush();
     });
 
@@ -131,7 +131,7 @@ describe('SiteCtrl', function() {
     it('should fail to log out user', function() {
       scope.logout();
 
-      $httpBackend.expectGET('/api/user/logout').respond(404);
+      $httpBackend.expectGET('/user/logout').respond(404);
       $httpBackend.flush();
     });
 

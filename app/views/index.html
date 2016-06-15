@@ -55,7 +55,7 @@
           <li class="on-desktop"><a ng-class="{ active : activeMainNav('/whats-new') }" href="#/whats-new">What's New</a></li>
         </ul>
 
-        <div class="book-menu">
+        <div class="book-menu" ng-class="{ 'show' : showBookMenu }">
           <!-- lets ride menu -->
           <div class="lets-ride-menu bgLightGray" ng-class="{'lets-ride-submenu-open':isLetsRideOpen}">
             <div class="lets-ride-toggle" ng-click="isLetsRideOpen=!isLetsRideOpen">
@@ -83,8 +83,8 @@
           <div class="account-menu">
             <div class="account-menu__options">
               {% if not loginUser %}
-                <a class="login-toggle">Login</a> /
-                <a class="signup-toggle">Sign up</a>
+                <a class="login-toggle" ng-click="toggleLogin()">Login</a> /
+                <a class="signup-toggle" ng-click="toggleSignup()">Sign up</a>
                 <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
               {% else %}
                 <a href="javascript:void(0)" class="user-loggedin">
@@ -136,7 +136,7 @@
 
   </header>
 
-  <div class="header-form-container login" ng-controller="LoginCtrl">
+  <div class="header-form-container login" ng-controller="LoginCtrl" ng-class="{ 'show' : showLoginForm }">
     <div class="wrapper">
       <p class="notify" ng-show="signInError" ng-click="signInError = null"><span class="inner-wrapper">{{! signInError }}</span></p>
       <h2 class="h medium light">Log In</h2>
@@ -154,11 +154,11 @@
         <button class="button btn-unverified" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
       </div>
 
-      <span class="close-btn">&times;</span>
+      <span class="close-btn" ng-click="closeHeaderForms()">&times;</span>
     </div>
   </div>
 
-  <div class="header-form-container signup" ng-controller="SignUpCtrl">
+  <div class="header-form-container signup" ng-controller="SignUpCtrl" ng-class="{ 'show' : showSignupForm }">
     <div class="wrapper" ng-show="!registered">
       <p class="notify" ng-show="signupError" ng-click="signupError = null"><span class="inner-wrapper">{{! signupError }}</span></p>
       <h2 class="h medium light">Sign Up</h2>
@@ -184,7 +184,7 @@
         </div>
 
       </form>
-      <span class="close-btn">&times;</span>
+      <span class="close-btn" ng-click="closeHeaderForms()">&times;</span>
     </div>
     <div class="wrapper" ng-show="registered">
       <p class="notify">

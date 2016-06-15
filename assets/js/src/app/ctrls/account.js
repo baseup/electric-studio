@@ -12,6 +12,19 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
     $location.search({ s: null, pname: null });
   }
 
+  angular.element('.datepicker').pickadate({
+    labelMonthNext: 'Go to the next month',
+    labelMonthPrev: 'Go to the previous month',
+    labelMonthSelect: 'Pick a month from the dropdown',
+    labelYearSelect: 'Pick a year from the dropdown',
+    selectMonths: true,
+    selectYears: 50,
+    format: 'yyyy-mm-dd',
+    formatSubmit: 'yyyy-mm-dd',
+    today: false,
+    max: true
+  });
+
   if (!$scope.loginUser) {
     $location.path('/');
     angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
