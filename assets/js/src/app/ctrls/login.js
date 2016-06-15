@@ -1,6 +1,6 @@
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('LoginCtrl', function ($scope) {
+ctrls.controller('LoginCtrl', function ($scope, $http, $window) {
 
   $scope.forgotPass = function () {
     angular.element('#forgot-password-modal').Modal();
@@ -8,6 +8,7 @@ ctrls.controller('LoginCtrl', function ($scope) {
 
   $scope.signIn = function () {
     $scope.unverifiedLogin = false;
+
     if ($scope.login) {
 
       var email = $scope.login.email;
@@ -18,31 +19,28 @@ ctrls.controller('LoginCtrl', function ($scope) {
         return;
       }
 
-      $.ajax({
+      $http({
         url: '/user/login',
         method: 'POST',
-        data: {
-          password: password,
-          email: email
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
         },
-        success: function (response) {
-          if (response.success && response.user) {
-            window.localStorage.setItem('login-user', response.user);
-            window.location = '/';
-          }
-        },
-        error: function (xhr, code, error) {
-          if (xhr.responseText.indexOf('User email is not verified') > -1) {
-            $scope.user = {};
-            $scope.user.email = email;
-            $scope.unverifiedLogin = true;
-          }
-          $scope.$emit('notify', { message: xhr.responseText + '.', duration: 2000 });
-          $scope.$apply();
+        data: $.param({ password: password, email: email })
+      }).then(function (response) {
+        if (response.data.success && response.data.user) {
+          $window.localStorage.setItem('login-user', response.data.user);
+          $window.location = '/';
         }
+      }, function (response) {
+        if (response.data.indexOf('User email is not verified') > -1) {
+          $scope.user = {};
+          $scope.user.email = email;
+          $scope.unverifiedLogin = true;
+        }
+        $scope.$emit('notify', { message: response.data + '.', duration: 2000 });
       });
     }
 
-  }
+  };
 
 });

@@ -29,6 +29,7 @@ module.exports = function(config) {
 
       // angular controllers
       'assets/js/src/app/ctrls/base.js',
+      'assets/js/src/app/ctrls/login.js',
       // test specs
       'tests/unit/**/*Spec.js',
       // html tempalates
