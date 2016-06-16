@@ -1,51 +1,40 @@
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $location, UserService, PackageService, GCRedeemService) {
+ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $window, AuthService, UserService, PackageService, GCRedeemService) {
 
+  // Check for paypal return messages on the url
   var qstring = $location.search();
 
-  if ($scope.loginUser) {
-    $scope.senderEmail = $scope.loginUser.email;
-  }
-
-  $scope.ipn_notification_url = '';
-  $scope.return_url = '';
-  $scope.cancel_return_url = '';
-  var qstring = $location.search();
-
-  if (qstring.s == 'error') {
+  if (qstring.s === 'error') {
     $scope.$emit('notify', { message: 'Transaction failed.', duration: 3000 });
     $location.search('s', null);
-  }else{
-    if (qstring.msg){
-      $scope.$emit('notify', { message: qstring.msg, duration: 3000 });
-      $location.search('s', null);
-      $location.search('msg', null);
-    }
+  } else if (qstring.msg) {
+    $scope.$emit('notify', { message: qstring.msg, duration: 3000 });
+    $location.search('s', null);
+    $location.search('msg', null);
   }
 
-  var isGCPage = ($location.url() == '/gift-cards');
 
-  var query_params = {};
-  if (isGCPage) query_params = { gc: true };
-
+  // Get the list of packages
+  var query_params = $location.url() === '/gift-cards' ? { gc: true } : {};
   $scope.loadingPackages = true;
-  $scope.packages = PackageService.query(query_params);
-  $scope.packages.$promise.then(function (data) {
+
+  PackageService.query(query_params).$promise.then(function (data) {
     $scope.packages = data;
     $scope.loadingPackages = false;
 
     $scope.selectGCPackage(0);
   });
 
-  var port = '';
-  if (window.location.port)
-    port = ':' + window.location.port;
+  // Set the redirect url for Paypal response
+  var port = $window.location.port ? ':' + $window.location.port : '';
+  $scope.redirectUrl = $window.location.protocol + '//' + $window.location.hostname + port;
 
-  $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port;
-
-  $scope.buyPackage = function (event, index) {
-
+  /**
+   * @function: purchase a ride package via paypal
+   * @param: packageId
+   */
+  $scope.buyPackage = function (packageId) {
     if (!$scope.loginUser) {
       $scope.$emit('notify', { message: 'Please sign up or log in to your Electric account.', duration: 3000 });
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
@@ -53,37 +42,34 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
       return;
     }
 
-    UserService.get(function (user) {
+    if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
+      $scope.$emit('notify', { message: 'Your account is frozen. Please contact the studio for more details.' });
+      return;
+    }
 
-      $scope.loginUser =  user;
-      $scope.reloadUser(user);
+    if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
+      $scope.$emit('notify', { message: 'Account is not verified, Please check your email to verify account.' });
+      return;
+    }
 
-      if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
-        $scope.$emit('notify', { message: 'Your account is frozen. Please contact the studio for more details.' });
-        return;
-      }
-
-      if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
-        $scope.$emit('notify', { message: 'Account is not verified, Please check your email to verify account.' });
-        return;
-      }
-
-      $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
-        angular.element('#payForm-' + index).submit();
-      });
+    $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
+      angular.element('#payForm-' + packageId).submit();
     });
-  }
+  };
 
+
+  /**
+   * @function: Checks the given gift card value
+   */
   $scope.checkGCValue = function () {
-
+    // ensure that the pin is all number
     if(!$scope.gcPin.match(/^\d+$/)) {
       $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
       return;
     }
 
     if ($scope.gcPin && $scope.gcCode) {
-
-      var data = {}
+      var data = {};
       data.code = $scope.gcCode;
       data.pin = $scope.gcPin;
       data.checkOnly = true;
@@ -93,11 +79,15 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
       }, function (error) {
         $scope.$emit('notify', { message: error.data });
       });
-    }else{
+    } else {
       $scope.$emit('notify', { message: 'Oops. We need more details from you.', duration: 3000 });
     }
-  }
+  };
 
+
+  /**
+   * @function: Redeem gift card to user account
+   */
   $scope.redeemGC = function() {
 
     if (!$scope.loginUser) {
@@ -115,40 +105,38 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
     if ($scope.gcPin && $scope.gcCode) {
 
       var redeemSuccess = function () {
-
         UserService.get(function (user) {
           $scope.loginUser =  user;
           $scope.reloadUser(user);
         });
-        window.location = "/#/account#package"
-        window.location.reload()
+        $window.location = "/#/account#package"
       }
 
       var redeemFailed = function (error) {
         $scope.$emit('notify', { message: error.data, duration: 3000 });
       }
 
-      var data = {}
+      var data = {};
       data.code = $scope.gcCode;
       data.pin = $scope.gcPin;
 
       GCRedeemService.redeem(data).$promise.then(redeemSuccess, redeemFailed);
 
-    }else{
+    } else {
       $scope.$emit('notify', { message: 'Oops. We need more details from you.', duration: 3000 });
     }
-  }
+  };
 
 
   $scope.prevGCPackage = function() {
     var index = $scope.selectedGCPackageIndex == 0 ? $scope.packages.length - 1 : $scope.selectedGCPackageIndex - 1;
     $scope.selectGCPackage(index);
-  }
+  };
 
   $scope.nextGCPackage = function() {
     var index = $scope.selectedGCPackageIndex == $scope.packages.length - 1 ? 0 : $scope.selectedGCPackageIndex + 1;
     $scope.selectGCPackage(index);
-  }
+  };
 
 
   $scope.selectGCPackage = function(index) {
@@ -161,23 +149,30 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
     $scope.gcAmount = $scope.selectedGCPackage.fee;
     $scope.gcValidity = $scope.selectedGCPackage.expiration;
     $scope.gcPackageFirstTimer = $scope.selectedGCPackage.first_timer;
+  };
+
+
+
+  if ($scope.loginUser) {
+    $scope.senderEmail = $scope.loginUser.email;
   }
 
   $scope.emailTo = 'receiver';
-  $scope.buyGC = function () {
+
+  $scope.buyGC = function() {
 
     var receiverEmail = null;
-    if($scope.emailTo =='sender'){
+    if($scope.emailTo === 'sender') {
       receiverEmail = $scope.senderEmail;
       $scope.senderIsReceiver = true;
-    }else{
+    } else {
       $scope.senderIsReceiver = false;
       receiverEmail = $scope.receiverEmail;
     }
 
     if ($scope.selectedGCPackage && $scope.gcReceiver && $scope.gcSender) {
       if(receiverEmail) {
-          // Do other validations like email validations
+
         $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
 
             if ($scope.gcMessage == undefined){
@@ -200,13 +195,12 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
 
             angular.element('#payForm').submit();
         });
-      }else{
+      } else {
         $scope.$emit('notify', { message: 'Please enter valid recipient email.', duration: 3000 });
       }
-    }else{
+    } else {
       $scope.$emit('notify', { message: 'Oops. We need more details from you.', duration: 3000 });
     }
-
-  }
+  };
 
 });

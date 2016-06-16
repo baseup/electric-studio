@@ -31,6 +31,7 @@ module.exports = function(config) {
       'assets/js/src/app/ctrls/base.js',
       'assets/js/src/app/ctrls/login.js',
       'assets/js/src/app/ctrls/signup.js',
+      'assets/js/src/app/ctrls/rates.js',
       // test specs
       'tests/unit/**/*Spec.js',
       // html tempalates

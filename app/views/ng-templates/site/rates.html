@@ -17,7 +17,7 @@
         <p class="description">{{ package.description }}</p>
         <p class="price"><i>PHP</i> {{ package.fee | currency:'' }}</p>
         <p>Expires in {{ package.expiration }} days</p>
-        <form id="payForm-{{ $index }}" action="https://www.paypal.com/ph/cgi-bin/webscr" method="post">
+        <form id="payForm-{{ package._id }}" action="https://www.paypal.com/ph/cgi-bin/webscr" method="post">
           <input type="hidden" name="cmd" value="_xclick">
           <input type="hidden" name="no_note" value = "0">
           <input type="hidden" name="bn" value="PP-BuyNowBF">
@@ -33,7 +33,7 @@
           <input type="hidden" name="cancel_return" value="{{ redirectUrl }}/buy?success=False">
           <input type="hidden" name="cbt" value="Return to Electric Studio">
 
-          <input ng-if="!package.special_package" class="button primary small" ng-click="buyPackage($event, $index)" value = "Buy" class = "button" type = "button">
+          <input ng-if="!package.special_package" class="button primary small" ng-click="buyPackage(package._id)" value = "Buy" class = "button" type = "button">
           <i ng-if="package.special_package">Call studio directly</i>
         </form>
       </section>
