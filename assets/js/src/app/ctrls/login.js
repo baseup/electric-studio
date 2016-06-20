@@ -1,6 +1,6 @@
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('LoginCtrl', function ($scope, $http, $window) {
+ctrls.controller('LoginCtrl', function ($scope, $http, $window, Amplitude) {
 
   $scope.forgotPass = function () {
     angular.element('#forgot-password-modal').Modal();
@@ -28,6 +28,8 @@ ctrls.controller('LoginCtrl', function ($scope, $http, $window) {
         data: $.param({ password: password, email: email })
       }).then(function (response) {
         if (response.data.success && response.data.user) {
+          Amplitude.setUserId($scope.login.email);
+
           $window.localStorage.setItem('login-user', response.data.user);
           $window.location = '/';
         }

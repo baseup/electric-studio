@@ -1,6 +1,8 @@
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('SiteCtrl', function ($scope, $window, $timeout, $http, AuthService, UserService) {
+ctrls.controller('SiteCtrl', function ($scope, $window, $timeout, $http, AuthService, UserService, Amplitude) {
+  
+  Amplitude.init();
 
   $scope.loginUser = AuthService.getCurrentUser();
   $scope.reloadUser = function (user) {
@@ -10,6 +12,8 @@ ctrls.controller('SiteCtrl', function ($scope, $window, $timeout, $http, AuthSer
       } else {
         $scope.loginUser = user;
       }
+
+      Amplitude.setUserId($scope.loginUser.email);
     });
   };
 
@@ -98,6 +102,8 @@ ctrls.controller('SiteCtrl', function ($scope, $window, $timeout, $http, AuthSer
       url: '/user/logout',
       method: 'GET',
     }).then(function (response) {
+      Amplitude.logOutUser();
+
       $window.localStorage.removeItem('login-user');
       $window.location = '/';
     }, function (xhr, code, error) {

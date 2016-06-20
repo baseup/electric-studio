@@ -40,6 +40,8 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
       $scope.registered = true;
       $scope.sendEmailConfirmation($scope.user);
       $scope.signingUp = false;
+
+      Amplitude.logEvent('USER_SIGNUP', { user: $scope.user.email });
     };
 
     var registerFail = function (error) {

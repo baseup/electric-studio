@@ -463,6 +463,11 @@ services.service('Amplitude', function($amplitude, $rootScope, $location, amplit
     $amplitude.getInstance().setUserId(userId);
   }
 
+  function logOutUser() {
+    setUserId(null);
+    $amplitude.getInstance().regenerateDeviceId();
+  }
+
   function identify(identify) {
     $amplitude.getInstance().identify(identify);
   }
@@ -472,6 +477,7 @@ services.service('Amplitude', function($amplitude, $rootScope, $location, amplit
     logEvent: logEvent,
     setUserId: setUserId,
     Identify: $amplitude.Identify,
-    identify: identify
+    identify: identify,
+    logOutUser: logOutUser
   };
 });
