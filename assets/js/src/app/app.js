@@ -3,6 +3,7 @@
 var app = angular.module('elstudio', [
   'ngRoute',
   'ngSanitize',
+  'angular-amplitude',
   'elstudio.services',
   'elstudio.templates',
   'elstudio.controllers.site'
@@ -291,3 +292,5 @@ app.directive('notificationBar', function($timeout, $rootScope, $window) {
     }
   }
 });
+
+app.constant('amplitudeApiKey', '1a77c91810aa9471a646387c8ba8e6ba');

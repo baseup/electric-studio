@@ -444,3 +444,34 @@ services.service('ScheduleSocketService', function(webSocket, $filter) {
     socket.send(JSON.stringify(query));
   };
 });
+
+
+services.service('Amplitude', function($amplitude, $rootScope, $location, amplitudeApiKey) {
+  function init() {
+    $amplitude.getInstance().init(amplitudeApiKey);
+
+    $rootScope.$on('$locationChangeStart', function(evt, next, current) {
+      logEvent('VISITED_PAGE', { page: next });
+    });
+  }
+
+  function logEvent(eventName, params) {
+    $amplitude.getInstance().logEvent(eventName, params);
+  }
+
+  function setUserId(userId) {
+    $amplitude.getInstance().setUserId(userId);
+  }
+
+  function identify(identify) {
+    $amplitude.getInstance().identify(identify);
+  }
+
+  return {
+    init: init,
+    logEvent: logEvent,
+    setUserId: setUserId,
+    Identify: $amplitude.Identify,
+    identify: identify
+  };
+});
