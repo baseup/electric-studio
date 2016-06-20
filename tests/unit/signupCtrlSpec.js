@@ -1,4 +1,4 @@
-describe('SiteCtrl', function() {
+describe('SignUpCtrl', function() {
 
   beforeEach(module('ngSanitize'));
   beforeEach(module('elstudio.services'));

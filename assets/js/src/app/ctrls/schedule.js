@@ -1,6 +1,6 @@
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, ScheduleSocketService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, $window, ScheduleService, ScheduleSocketService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
 
   $scope.schedules = {};
 
@@ -116,8 +116,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
         $scope.$emit('notify', { message: 'You have been added to the waitlist', duration: 3000 });
         $scope.reloadUser();
-        window.location = '/#/reserved'
-        window.location.reload();
+        $window.location = '/#/reserved';
       }
       var waitlistFail = function (error) {
         $scope.$emit('notify', { message: error.data, duration: 3000 });
@@ -152,25 +151,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
         return;
       }
 
-      // if ($scope.weekRelease) {
-      //   if (today < $scope.weekRelease.date) {
-      //     var d = $scope.weekRelease;
-      //     var strDate = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() + ' ' +
-      //                   d.getHours() + ':' + d.getMinutes() +':' +d.getSeconds();
-      //     var tryDate = week_days[$scope.weekRelease.getDay()] + ' ' + $filter('formatTime')(strDate);
-      //     $.Alert('Booking is not yet available, Please try again on ' + tryDate);
-      //     return;
-      //   }
-      // }
-
-      var cutOffchkDate = new Date(date);
+      date = new Date(date);
+      var cutOffchkDate = date;
       cutOffchkDate.setDate(date.getDate() - 1);
       cutOffchkDate.setHours(17, 0, 0);
 
       var cutOffMsg = '';
-      // if (+today >= +cutOffchkDate) {
-      //   cutOffMsg = 'You can no longer cancel this ride once waitlisted. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.<br><br>';
-      // }
 
       var sched = {};
       sched.date = date;
@@ -221,12 +207,8 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   }
 
   $scope.chkSched = function (date, sched) {
-
-    if (!$scope.schedules.releases[sched._id])
-      return true;
-
-    return false;
-  }
+    return !$scope.schedules.releases[sched._id] ? true : false;
+  };
 
   $scope.getWeek = function (date) {
 

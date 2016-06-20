@@ -1,7 +1,7 @@
 var packages = [{"_id": "55879aa288b5c704e5df6804", "description": "First Timer Package", "fee": "1500.00", "special_package": false, "credits": 5, "name": "First Timer Package", "first_timer": true, "expiration": 30}];
 var user = {"_id": "56d69caed19ab70f464aa60c", "status": "Active", "first_name": "John", "email": "john@electricstudio.ph", "agreed_terms": true};
 
-describe('SiteCtrl', function() {
+describe('RatesCtrl', function() {
 
   beforeEach(module('ngSanitize'));
   beforeEach(module('elstudio.services'));
@@ -219,7 +219,7 @@ describe('SiteCtrl', function() {
       scope.emailTo = 'sender';
       scope.buyGC();
     });
-    
+
   });
 
 });

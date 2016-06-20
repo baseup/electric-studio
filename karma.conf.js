@@ -32,6 +32,7 @@ module.exports = function(config) {
       'assets/js/src/app/ctrls/login.js',
       'assets/js/src/app/ctrls/signup.js',
       'assets/js/src/app/ctrls/rates.js',
+      'assets/js/src/app/ctrls/schedule.js',
       // test specs
       'tests/unit/**/*Spec.js',
       // html tempalates
