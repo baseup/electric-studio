@@ -1,6 +1,6 @@
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $window, AuthService, UserService, PackageService, GCRedeemService) {
+ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $window, AuthService, UserService, PackageService, GCRedeemService, Amplitude) {
 
   // Check for paypal return messages on the url
   var qstring = $location.search();
@@ -34,7 +34,7 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
    * @function: purchase a ride package via paypal
    * @param: packageId
    */
-  $scope.buyPackage = function (packageId) {
+  $scope.buyPackage = function (package) {
     if (!$scope.loginUser) {
       $scope.$emit('notify', { message: 'Please sign up or log in to your Electric account.', duration: 3000 });
       angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
@@ -53,7 +53,11 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
     }
 
     $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
-      angular.element('#payForm-' + packageId).submit();
+      var revenue = new Amplitude.Revenue().setProductId( package.name ).setPrice( parseFloat(package.fee) ).setQuantity(1);
+      Amplitude.logRevenue(revenue);
+      Amplitude.logEvent('BUY_PACKAGE', { packageName: package.name });
+
+      angular.element('#payForm-' + package._id).submit();
     });
   };
 
@@ -109,6 +113,9 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
           $scope.loginUser =  user;
           $scope.reloadUser(user);
         });
+
+        Amplitude.logEvent('REDEEM_GIFTCARD', { gcCode: $scope.gcCode });
+
         $window.location = "/#/account#package"
       }
 
@@ -174,26 +181,29 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
       if(receiverEmail) {
 
         $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
+          if ($scope.gcMessage == undefined){
+            $scope.gcMessage = ""
+          }else{
+            var msG = "&message=" + $scope.gcMessage;
+            $scope.gcMessage = msG;
+          }
 
-            if ($scope.gcMessage == undefined){
-              $scope.gcMessage = ""
-            }else{
-              var msG = "&message=" + $scope.gcMessage;
-              $scope.gcMessage = msG;
-            }
+          var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + $scope.selectedGCPackage._id +
+                                      "&success=True&email=" + receiverEmail + $scope.gcMessage +
+                                      "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail;
+          var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + $scope.selectedGCPackage._id + "&success=True&email=" + receiverEmail +
+                        $scope.gcMessage + "&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail;
+          var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False";
 
-            var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + $scope.selectedGCPackage._id +
-                                        "&success=True&email=" + receiverEmail + $scope.gcMessage +
-                                        "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail;
-            var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + $scope.selectedGCPackage._id + "&success=True&email=" + receiverEmail +
-                          $scope.gcMessage + "&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail;
-            var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False";
+          $('input#ipn_notification_url').val(ipn_notification_url);
+          $('input#return').val(return_url);
+          $('input#cancel_return').val(cancel_return);
 
-            $('input#ipn_notification_url').val(ipn_notification_url);
-            $('input#return').val(return_url);
-            $('input#cancel_return').val(cancel_return);
+          var revenue = new Amplitude.Revenue().setProductId( $scope.selectedGCPackage.name ).setPrice( parseFloat($scope.selectedGCPackage.fee) ).setQuantity(1);
+          Amplitude.logRevenue(revenue);
+          Amplitude.logEvent('BUY_GIFTCARD', { packageName: $scope.selectedGCPackage.name });
 
-            angular.element('#payForm').submit();
+          angular.element('#payForm').submit();
         });
       } else {
         $scope.$emit('notify', { message: 'Please enter valid recipient email.', duration: 3000 });

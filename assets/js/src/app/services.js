@@ -472,12 +472,18 @@ services.service('Amplitude', function($amplitude, $rootScope, $location, amplit
     $amplitude.getInstance().identify(identify);
   }
 
+  function logRevenue(revenue) {
+    $amplitude.getInstance().logRevenueV2(revenue);
+  }
+
   return {
     init: init,
     logEvent: logEvent,
     setUserId: setUserId,
     Identify: $amplitude.Identify,
     identify: identify,
-    logOutUser: logOutUser
+    logOutUser: logOutUser,
+    Revenue: $amplitude.Revenue,
+    logRevenue: logRevenue
   };
 });

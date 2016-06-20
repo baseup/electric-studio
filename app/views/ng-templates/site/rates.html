@@ -33,7 +33,7 @@
           <input type="hidden" name="cancel_return" value="{{ redirectUrl }}/buy?success=False">
           <input type="hidden" name="cbt" value="Return to Electric Studio">
 
-          <input ng-if="!package.special_package" class="button primary small" ng-click="buyPackage(package._id)" value = "Buy" class = "button" type = "button">
+          <input ng-if="!package.special_package" class="button primary small" ng-click="buyPackage(package)" value = "Buy" class = "button" type = "button">
           <i ng-if="package.special_package">Call studio directly</i>
         </form>
       </section>
