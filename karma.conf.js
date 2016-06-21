@@ -23,6 +23,7 @@ module.exports = function(config) {
       'assets/vendor/angular-sanitize/angular-sanitize.min.js',
       'assets/vendor/angular-websocket/dist/angular-websocket.js',
       'assets/js/src/script.js',
+      'assets/js/src/angular-amplitude.js',
       // core angular modules
       'assets/js/src/app/services.js',
       'tests/unit/controller.js',
@@ -45,6 +46,12 @@ module.exports = function(config) {
     ],
 
 
+    // test results reporter to use
+    // possible values: 'dots', 'progress'
+    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
+    reporters: ['progress', 'coverage', 'dots', 'junit'],
+
+
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
@@ -63,6 +70,11 @@ module.exports = function(config) {
       dir: 'tests/coverage/'
     },
 
+    junitReporter: {
+      outputFile: 'tests/coverage/test-results.xml',
+      useBrowserName: false
+    },
+
 
     ngHtml2JsPreprocessor: {
       // If your build process changes the path to your templates,
@@ -73,15 +85,6 @@ module.exports = function(config) {
       // the name of the Angular module to create
       moduleName: "base.templates"
     },
-
-
-    // test results reporter to use
-    // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress', 'coverage'],
-
-
-
 
 
     // web server port
@@ -103,7 +106,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
     client: {
       captureConsole: true
@@ -112,6 +115,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: true
   })
 }
