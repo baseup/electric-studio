@@ -31,7 +31,7 @@ ctrls.controller('LoginCtrl', function ($scope, $http, $window, Amplitude) {
           Amplitude.setUserId($scope.login.email);
 
           $window.localStorage.setItem('login-user', response.data.user);
-          $window.location = '/';
+          $window.location.reload();
         }
       }, function (response) {
         if (response.data.indexOf('User email is not verified') > -1) {

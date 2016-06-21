@@ -1,6 +1,6 @@
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService) {
+ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService, Amplitude) {
 
   $scope.registered = false;
   $scope.signingUp = false;

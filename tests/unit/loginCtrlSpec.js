@@ -12,7 +12,9 @@ describe('SiteCtrl', function() {
     $httpBackend = _$httpBackend_;
 
     var mockWindow = {
-      location: '',
+      location: {
+        reload: function() {}
+      },
       localStorage: {
         setItem: function() {}
       }
@@ -31,7 +33,7 @@ describe('SiteCtrl', function() {
   it('should show the forgot password modal', function() {
     scope.forgotPass();
   });
-  
+
 
   it('should check if for empty user input', function() {
     scope.login = {

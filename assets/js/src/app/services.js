@@ -1,7 +1,7 @@
 'use strict';
 
 var loginUser = window.localStorage.getItem('login-user');
-var services = angular.module('elstudio.services', ['ngResource', 'ngWebSocket']);
+var services = angular.module('elstudio.services', ['ngResource', 'ngWebSocket', 'angular-amplitude']);
 
 services.factory('SliderService', function ($resource) {
   return $resource('/admin/slider/:sliderId', {}, {
@@ -446,8 +446,10 @@ services.service('ScheduleSocketService', function(webSocket, $filter) {
 });
 
 
-services.service('Amplitude', function($amplitude, $rootScope, $location, amplitudeApiKey) {
+services.service('Amplitude', function($amplitude, $rootScope, $location) {
   function init() {
+    var amplitudeApiKey = '1a77c91810aa9471a646387c8ba8e6ba';
+    
     $amplitude.getInstance().init(amplitudeApiKey);
 
     $rootScope.$on('$locationChangeStart', function(evt, next, current) {
