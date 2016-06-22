@@ -4,6 +4,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, $
 
   $scope.schedules = {};
 
+  ScheduleSocketService.init();
   ScheduleSocketService.removeCallbacks();
 
   ScheduleSocketService.onLoadSchedule(function(schedules) {

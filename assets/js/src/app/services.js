@@ -378,45 +378,47 @@ services.service('ScheduleSocketService', function(webSocket, $filter) {
     }
   }
 
-  socket.onMessage(function(message) {
-    if (message.data !== webSocket.HEARTBEAT) {
-      try {
-        var data = $.parseJSON(message.data);
+  this.init = function() {
+    socket.onMessage(function(message) {
+      if (message.data !== webSocket.HEARTBEAT) {
+        try {
+          var data = $.parseJSON(message.data);
 
-        if (angular.isDefined(data.date) && angular.isDefined(data.branch_id)) {
-          var m = data.date.match(/(\d+)\-(\d+)\-(\d+)/),
-              date = new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3])),
-              key = data.date + data.branch_id,
-              prevKey = $filter('date')(date.setDate(date.getDate() - 7), 'yyyy-M-d') + data.branch_id,
-              nextKey = $filter('date')(date.setDate(date.getDate() + 14), 'yyyy-M-d') + data.branch_id;
+          if (angular.isDefined(data.date) && angular.isDefined(data.branch_id)) {
+            var m = data.date.match(/(\d+)\-(\d+)\-(\d+)/),
+                date = new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3])),
+                key = data.date + data.branch_id,
+                prevKey = $filter('date')(date.setDate(date.getDate() - 7), 'yyyy-M-d') + data.branch_id,
+                nextKey = $filter('date')(date.setDate(date.getDate() + 14), 'yyyy-M-d') + data.branch_id;
 
-          collection[key] = data;
+            collection[key] = data;
 
-          if (set === key) {
-            notifyCallbacks(collection[key]);
-          }
+            if (set === key) {
+              notifyCallbacks(collection[key]);
+            }
 
-          if (angular.isDefined(collection[prevKey])) {
-            collection[prevKey].nmon = data.mon;
+            if (angular.isDefined(collection[prevKey])) {
+              collection[prevKey].nmon = data.mon;
 
-            if (set === prevKey) {
-              notifyCallbacks(collection[prevKey]);
+              if (set === prevKey) {
+                notifyCallbacks(collection[prevKey]);
+              }
+            }
+
+            if (angular.isDefined(collection[nextKey])) {
+              collection[nextKey].mon = data.nmon;
+
+              if (set === nextKey) {
+                notifyCallbacks(collection[nextKey]);
+              }
             }
           }
-
-          if (angular.isDefined(collection[nextKey])) {
-            collection[nextKey].mon = data.nmon;
-
-            if (set === nextKey) {
-              notifyCallbacks(collection[nextKey]);
-            }
-          }
+        } catch (e) {
+          window.console && console.error(e);
         }
-      } catch (e) {
-        window.console && console.error(e);
       }
-    }
-  });
+    });
+  };
 
   this.removeCallbacks = function() {
     for (var i = 0; i < callbacks.length; i++) {
@@ -449,7 +451,7 @@ services.service('ScheduleSocketService', function(webSocket, $filter) {
 services.service('Amplitude', function($amplitude, $rootScope, $location) {
   function init() {
     var amplitudeApiKey = '1a77c91810aa9471a646387c8ba8e6ba';
-    
+
     $amplitude.getInstance().init(amplitudeApiKey);
 
     $rootScope.$on('$locationChangeStart', function(evt, next, current) {

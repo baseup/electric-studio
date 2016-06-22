@@ -38,6 +38,7 @@ describe('ScheduleCtrl', function() {
     timeout = function(cb) { cb(); };
 
     var scheduleSocketService = {
+      init: function() {},
       removeCallbacks: function() {},
       onLoadSchedule: function(cb) { cb(schedules); },
       loadWeek: function() {}

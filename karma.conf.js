@@ -56,7 +56,8 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'base/templates/**/*.html': ['ng-html2js'],
-      'assets/js/src/app/ctrls/**.js': ['coverage']
+      'assets/js/src/app/ctrls/**.js': ['coverage'],
+      'assets/js/src/app/services.js': ['coverage']
     },
 
     // coverageReporter: {
