@@ -109,8 +109,9 @@
           </div>
 
           <div class="book-buy">
-            <span class="book-ride-btn">
-              <span ng-click="isBookNavOpen = true">Buy/Book Rides</span>
+            <div class="book-buy-overlay" ng-click="isBookNavOpen = true"></div>
+            <div class="book-ride-btn">
+              <span>Buy/Book Rides</span>
               <div class="dropdown-holder">
                 <ul class="dropdown">
                   {% for branch in branches %}
@@ -119,7 +120,7 @@
                   <li class="special"><a href="#/rates-and-packages">Buy Rides</a></li>
                 </ul>
               </div>
-            </span>
+            </div>
           </div>
         </div>
 
