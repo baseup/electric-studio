@@ -448,10 +448,8 @@ services.service('ScheduleSocketService', function(webSocket, $filter) {
 });
 
 
-services.service('Amplitude', function($amplitude, $rootScope, $location) {
+services.service('Amplitude', function($amplitude, $rootScope, $location, amplitudeApiKey) {
   function init() {
-    var amplitudeApiKey = '1a77c91810aa9471a646387c8ba8e6ba';
-
     $amplitude.getInstance().init(amplitudeApiKey);
 
     $rootScope.$on('$locationChangeStart', function(evt, next, current) {

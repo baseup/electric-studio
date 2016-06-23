@@ -119,6 +119,9 @@ app.config(function ($routeProvider, $httpProvider, webSocketProvider) {
     redirectTo: '/notfound'
   });
 });
+
+app.constant('amplitudeApiKey', '1a77c91810aa9471a646387c8ba8e6ba');
+
 var compareTo =
 
 app.directive("compareTo", function() {

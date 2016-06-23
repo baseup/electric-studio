@@ -1,7 +1,9 @@
 describe('SignUpCtrl', function() {
 
   beforeEach(module('ngSanitize'));
-  beforeEach(module('elstudio.services'));
+  beforeEach(module('elstudio.services', function($provide) {
+    $provide.value('amplitudeApiKey', '1a77c91810aa9471a646387c8ba8e6ba');
+  }));
   beforeEach(module('elstudio.controllers.site'));
 
   var scope, ctrl, $httpBackend;

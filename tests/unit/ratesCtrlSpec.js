@@ -4,7 +4,9 @@ var user = {"_id": "56d69caed19ab70f464aa60c", "status": "Active", "first_name":
 describe('RatesCtrl', function() {
 
   beforeEach(module('ngSanitize'));
-  beforeEach(module('elstudio.services'));
+  beforeEach(module('elstudio.services', function($provide) {
+    $provide.value('amplitudeApiKey', '1a77c91810aa9471a646387c8ba8e6ba');
+  }));
   beforeEach(module('elstudio.controllers.site'));
 
   var scope, ctrl, $httpBackend, location;
