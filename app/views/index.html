@@ -26,7 +26,7 @@
         <a href="#/">
         <img src="{{ static_url('images/electricstudio-nameplate.png') }}" alt="Electric Studio Logo" class="nameplate">
         </a>
-        <a href="#/account" class="account-link">
+        <a href="#/account" class="account-link" ng-click=" isNavOpen = false; isLetsRideOpen = false; isBookNavOpen = false ">
           {% if loginUser %}
             <span class="credits">{{ credits }}</span>
           {% end %}
@@ -87,9 +87,9 @@
                 <a class="signup-toggle" ng-click="toggleSignup()">Sign up</a>
                 <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
               {% else %}
-                <a href="javascript:void(0)" class="user-loggedin">
+                <a ng-click="showAccountDropdown = !showAccountDropdown" class="user-loggedin">
                   Hi <strong>{{ loginUser }}</strong>!
-                  <i class="fa fa-caret-down"></i>
+                  <i class="fa" ng-class=" showAccountDropdown ? 'fa-caret-up' : 'fa-caret-down' "></i>
                 </a>
                 <div class="account-menu__credits-block">
                   {% if loginUser %} <span class="credits">{{ credits }}</span> {% end %}
@@ -98,10 +98,10 @@
               {% end %}
             </div>
             {% if loginUser %}
-            <div class="account-menu__list">
+            <div class="account-menu__list" ng-show="showAccountDropdown">
               <div class="account-menu__holder">
-                <a href="#/account">My Account</a>
-                <a href="#/reserved">My Classes</a>
+                <a href="#/account" ng-click="showAccountDropdown = false">My Account</a>
+                <a href="#/reserved" ng-click="showAccountDropdown = false">My Classes</a>
                 <a href="javascript:void(0)" ng-click="logout()" >Sign Out</a>
               </div>
             </div>

@@ -550,22 +550,8 @@ body {
   position: absolute;
   top: 0;
 
-  .account-menu__list.active {
-    display: block;
-  }
-
   @include breakpoint(md) {
     width: 100%;
-
-    .account-menu__list.active {
-      display: none;
-    }
-
-    &:hover {
-      .account-menu__list {
-        display: block;
-      }
-    }
   }
 
 
@@ -588,6 +574,10 @@ body {
 
       &.user-loggedin {
         text-transform: none;
+
+        &:hover {
+          color: $brand-color-primary;
+        }
 
         strong {
           text-transform: uppercase;
@@ -631,8 +621,8 @@ body {
     top: auto;
     left: -$base-spacing-unit;
     right: -20px;
-    padding-top: 47px;
-    display: none;
+    padding-top: 10px;
+    display: block;
 
     @include breakpoint(md) {
       width: 240px;
