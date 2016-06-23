@@ -46,6 +46,16 @@ module.exports = function (grunt) {
       }
     },
 
+    concat: {
+      appCtrls: {
+        options: {
+          banner: "var ctrls = angular.module('elstudio.controllers.site', ['elstudio.services']);"
+        },
+        src: ['assets/js/src/app/ctrls/**/*.js'],
+        dest: 'assets/js/src/app/controllers.js'
+      }
+    },
+
     uglify: {
       dist: {
         options: {
@@ -54,7 +64,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'assets/js/src/',
-          src: '**/*.js',
+          src: ['**/*.js', '!**/ctrls/*.js'],
           dest: 'assets/js/dist'
         }]
       }
@@ -70,7 +80,7 @@ module.exports = function (grunt) {
       },
       js: {
         files: ['assets/js/src/**/*.js'],
-        tasks: ['uglify']
+        tasks: ['concat', 'uglify']
       },
       css: {
         files: ['assets/sass/**/*.scss', 'assets/sass/**/*.sass'],
@@ -83,9 +93,10 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks('grunt-html2js');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['html2js', 'uglify', 'sass', 'watch']);
+  grunt.registerTask('default', ['html2js', 'concat', 'uglify', 'sass', 'watch']);
 }

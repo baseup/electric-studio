@@ -5,7 +5,9 @@ assets/vendor
 assets/uploads
 assets/css
 assets/js/dist
+assets/js/src/app/controllers.js
 assets/sass/.sass-cache
+tests/coverage
 *.pyc
 .tmp
 *.seed
