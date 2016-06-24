@@ -135,16 +135,21 @@ def download_gift_cards_report(self):
 
 @gen.coroutine
 def download_user_accounts(email, past_month, redis_db):
+    all_accounts = yield User.objects.count()
+
     date_range = None
     if past_month:
         date_range = datetime.now() - relativedelta(months=+int(past_month))
     query = User.objects.order_by('last_name', direction=ASCENDING)
     if date_range:
         query.filter(create_at__gte=date_range)
-    accounts = yield query.find_all()
+    accounts = yield query.limit(all_accounts).find_all()
 
     path = 'assets/downloads'
     os.makedirs(path, exist_ok=True)
+
+    all_bookings = yield BookedSchedule.objects.count()
+    all_transactions = yield UserPackage.objects.count()
 
     filename = path + '/user-accounts-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
     with open(filename, 'w') as csvfile:
@@ -156,8 +161,8 @@ def download_user_accounts(email, past_month, redis_db):
         alen = len(accounts)
         for a in accounts:
             redis_db.set('process_account_export', 'account %s (%d of %d)' % (str(a.email), count, alen))
-            bookings = yield BookedSchedule.objects.filter(user_id=a._id).find_all()
-            transactions = yield UserPackage.objects.filter(user_id=a._id).find_all()
+            bookings = yield BookedSchedule.objects.filter(user_id=a._id).limit(all_bookings).find_all()
+            transactions = yield UserPackage.objects.filter(user_id=a._id).limit(all_transactions).find_all()
             total_rides_bought, total_rides_missed, total_rides_booked  = 0, 0, 0
             date_last_ride = ''
             for transaction in transactions:
