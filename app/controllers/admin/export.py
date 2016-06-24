@@ -16,9 +16,11 @@ import csv
 def download_bookings(self):
     sched_id = self.get_query_argument('sched_id')
     if sched_id:
+        all_bookings = yield BookedSchedule.objects.count()
+
         sched = yield InstructorSchedule.objects.get(self.get_argument('sched_id'))
         query = BookedSchedule.objects.order_by('seat_number', direction=ASCENDING)
-        bookings = yield query.filter(schedule=sched._id, status='booked').find_all()
+        bookings = yield query.filter(schedule=sched._id, status='booked').limit(all_bookings).find_all()
 
         if len(bookings) == 0:
             return self.redirect('/admin/#/classes')
@@ -48,7 +50,7 @@ def download_bookings(self):
 
             writer.writeheader()
 
-            for i in range(1, 38):
+            for i in range(1, sched.seats + 1):
                 if i in bikeMap:
                     book_counts = (yield BookedSchedule.objects.filter(status='completed', user_id=bikeMap[i].user_id, date__lte=bikeMap[i].date).limit(1).find_all())
                     writer.writerow({
