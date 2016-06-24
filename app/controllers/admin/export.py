@@ -164,15 +164,16 @@ def download_user_accounts(email, past_month, redis_db):
                 total_rides_bought += transaction.credit_count
             if len(bookings) > 0:
                 for book in bookings:
-                    if book.status == 'completed':
-                        if date_last_ride == '':
-                            date_last_ride = book.schedule.date
-                        if date_last_ride < book.schedule.date:
-                            date_last_ride = book.schedule.date
-                    if book.status == 'missed':
-                        total_rides_missed+=1
-                    if book.status == 'booked':
-                        total_rides_booked+=1
+                    if book.schedule is not None:
+                        if book.status == 'completed':
+                            if date_last_ride == '':
+                                date_last_ride = book.schedule.date
+                            if date_last_ride < book.schedule.date:
+                                date_last_ride = book.schedule.date
+                        if book.status == 'missed':
+                            total_rides_missed+=1
+                        if book.status == 'booked':
+                            total_rides_booked+=1
 
             if date_last_ride != '':
                 date_last_ride.strftime('%Y-%m-%d')
