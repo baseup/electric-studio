@@ -217,7 +217,7 @@ def download_user_accounts_progress(self):
         past_month = self.get_query_argument('past_month')
         download_user_accounts(email, past_month, redis_db)
 
-    return self.render_json({ 'success': True, 'data':'initilize ...' })
+    return self.render_json({ 'success': True, 'data':'initialize ...' })
 
 
 def waitlist(self):
