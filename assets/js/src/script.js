@@ -243,7 +243,3 @@
   }
 
 })(jQuery);
-
-$('.account-menu').click( function () {
-  $('.account-menu__list').toggleClass('active');
-});

@@ -1,7 +1,7 @@
 var ctrls = angular.module('elstudio.controllers.site');
 
 ctrls.controller('SiteCtrl', function ($scope, $window, $timeout, $http, AuthService, UserService, Amplitude) {
-  
+
   Amplitude.init();
 
   $scope.loginUser = AuthService.getCurrentUser();

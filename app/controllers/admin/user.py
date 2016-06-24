@@ -34,7 +34,7 @@ def find(self):
             skip_val = int(str_skip)
         if get_all_flag is None:
             query.skip(skip_val).limit(15)
-        
+
     users = yield query.find_all()
 
     self.render_json(users)
@@ -52,7 +52,7 @@ def find_one(self, id):
         if start_date:
             from_date = datetime.strptime(start_date, '%Y-%m-%d')
         to_date = now + timedelta(days=7)
-        if end_date: 
+        if end_date:
             to_date = datetime.strptime(end_date, '%Y-%m-%d')
 
         books = yield BookedSchedule.objects.filter(user_id=user._id, date__gte=from_date, date__lte=to_date) \
@@ -68,7 +68,7 @@ def find_one(self, id):
         if ((pages - (page * 10)) > 0):
             packages = yield UserPackage.objects.filter(user_id=user._id).order_by('expire_date') \
                     .skip(page * 10).limit(10).find_all()
-        
+
         packages = create_at_gmt8(packages)
         json_user['packages'] = to_json_serializable(packages)
 
@@ -89,7 +89,7 @@ def create(self):
         self.write('Email address is already in use.')
     else:
         try:
-            user = User(first_name=data['first_name'], 
+            user = User(first_name=data['first_name'],
                         # middle_name=data['middle_name'],
                         last_name=data['last_name'],
                         email=data['email'].lower(),
@@ -138,7 +138,7 @@ def update(self, id):
                         yield upack.save()
                     else:
                         upack1 = yield UserPackage.objects.get(ObjectId(sched.user_package[0]))
-                        upack2 = yield UserPackage.objects.get(ObjectId(sched.user_package[1])) 
+                        upack2 = yield UserPackage.objects.get(ObjectId(sched.user_package[1]))
                         upack1.remaining_credits += 1
                         upack2.remaining_credits += 1
                         yield upack1.save()
@@ -161,12 +161,12 @@ def update(self, id):
                         yield upack.save()
                     else:
                         upack1 = yield UserPackage.objects.get(ObjectId(sched.user_package[0]))
-                        upack2 = yield UserPackage.objects.get(ObjectId(sched.user_package[1])) 
+                        upack2 = yield UserPackage.objects.get(ObjectId(sched.user_package[1]))
                         upack1.remaining_credits += 1
                         upack2.remaining_credits += 1
                         yield upack1.save()
                         yield upack2.save()
-                    
+
                 user.credits += deduct_credits
                 sched = yield sched.save()
             user = yield user.save()
@@ -192,9 +192,9 @@ def update(self, id):
             user.first_name = data['first_name']
             # user.middle_name = data['middle_name']
             user.last_name = data['last_name']
-            
+
             if data['birthdate'] != None:
-                user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+                user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d') if data['birthdate'] else None
             if data['address'] != None:
                 user.address = data['address']
             if data['phone_number'] != None:
@@ -236,5 +236,3 @@ def destroy(self, id):
     # user.status = 'Deleted'
     # user = yield user.save()
     self.finish()
-
-
