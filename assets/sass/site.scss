@@ -940,8 +940,8 @@ body {
   cursor: pointer;
   z-index: 9;
 
-  &:hover {
-    color: $color-text;
+  &:hover, &:active, &:focus {
+    color: #fff;
   }
 
   @include breakpoint(md) {
