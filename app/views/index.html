@@ -87,7 +87,7 @@
                 <a class="signup-toggle" ng-click="toggleSignup()">Sign up</a>
                 <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
               {% else %}
-                <a ng-click="showAccountDropdown = !showAccountDropdown" class="user-loggedin">
+                <a ng-click="toggleAccountDropdown()" class="user-loggedin">
                   Hi <strong>{{ loginUser }}</strong>!
                   <i class="fa" ng-class=" showAccountDropdown ? 'fa-caret-up' : 'fa-caret-down' "></i>
                 </a>
