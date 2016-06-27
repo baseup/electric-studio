@@ -170,11 +170,20 @@ body {
 .brand {
   margin: 0;
   overflow: hidden;
-  text-align: center;
+
+  @include breakpoint(md) {
+    vertical-align: bottom;
+    float: left;
+    margin-left: 20px;
+  }
 
   .nameplate, .logo {
-    display: inline-block;
+    display: none;
     height: 30px;
+
+    @include breakpoint(md) {
+      display: inline-block;
+    }
   }
 
   .nameplate {
@@ -184,6 +193,20 @@ body {
       height: 40px;
       vertical-align: bottom;
       margin-bottom: 0;
+    }
+  }
+
+  .brand-name-mobile {
+    color: #fff;
+    text-transform: uppercase;
+    font-family: 'Tungsten', sans-serif;
+    font-weight: 400;
+    letter-spacing: 1px;
+    font-size: 26px;
+    padding-left: 40px;
+
+    @include breakpoint(md) {
+      display: none;
     }
   }
 
@@ -213,34 +236,15 @@ body {
     }
   }
 
-  @include breakpoint(md) {
-    vertical-align: bottom;
-    float: left;
-    margin-left: 20px;
-  }
 }
 
-.account-link {
-  .credits {
-    color: #fff;
-    position: absolute;
-    height: 30px;
-    line-height: 30px;
-    display: inline-block;
-    right: 54px;
-
-    @include breakpoint(md) {
-      display: none;
-    }
-  }
-}
 
 .menu-wrapper {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  top: 70px;
+  top: 63px;
   background: #fff;
   padding: $base-spacing-unit;
   transition: all .3s ease;
@@ -789,6 +793,7 @@ body {
   right: 0;
   background: $brand-color-primary;
   padding: $base-spacing-unit;
+  display: none;
 
   @include breakpoint(md) {
     position: relative;
@@ -797,6 +802,7 @@ body {
     top: 28px;
     padding-right: 80px;
     line-height: 1.2;
+    display: block;
   }
 }
 
@@ -807,6 +813,31 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
+
+  @include breakpoint(md) {
+    display: none;
+  }
+}
+
+.book-buy-mobile {
+  display: inline-block;
+  color: #fff;
+  border: 2px solid #fff;
+  text-transform: uppercase;
+  font-weight: 600;
+  height: 26px;
+  line-height: 22px;
+  padding: 0 10px;
+  letter-spacing: 1px;
+  font-size: 14px;
+  position: absolute;
+  right: 15px;
+  top: 18px;
+  box-sizing: border-box;
+
+  &:hover, &:active, &:focus {
+    color: #fff;
+  }
 
   @include breakpoint(md) {
     display: none;
@@ -936,7 +967,7 @@ body {
   position: absolute;
   top: $base-spacing-unit;
   left: $base-spacing-unit;
-  font-size: 30px;
+  font-size: 26px;
   cursor: pointer;
   z-index: 9;
 
@@ -956,10 +987,31 @@ body {
   .close-btn {
     position: absolute;
     top: 0;
-    left: 0;
+    left: -5px;
     font-weight: lighter;
-    font-size: 60px;
-    line-height: .6;
+    font-size: 56px;
+    line-height: .56;
+  }
+
+  .credits {
+    color: $color-text;
+    position: absolute;
+    height: 25px;
+    width: 25px;
+    line-height: 25px;
+    text-align: center;
+    border-radius: 50%;
+    display: inline-block;
+    left: 10px;
+    top: -10px;
+    font-size: 12px;
+    background: #fff;
+    z-index: 10;
+    font-weight: 600;
+
+    @include breakpoint(md) {
+      display: none;
+    }
   }
 }
 
@@ -1168,7 +1220,7 @@ body {
   -webkit-animation-fill-mode: both;
   animation-fill-mode: both;
   position: fixed;
-  top: 30px + ($base-spacing-unit * 2);
+  top: 63px;
   bottom: 0;
   left: 0;
   right: 0;

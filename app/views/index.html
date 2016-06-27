@@ -24,13 +24,8 @@
     <div class="wrapper">
       <h1 class="brand">
         <a href="#/">
-        <img src="{{ static_url('images/electricstudio-nameplate.png') }}" alt="Electric Studio Logo" class="nameplate">
-        </a>
-        <a href="#/account" class="account-link" ng-click=" isNavOpen = false; isLetsRideOpen = false; isBookNavOpen = false ">
-          {% if loginUser %}
-            <span class="credits">{{ credits }}</span>
-          {% end %}
-          <img src="{{ static_url('images/electricstudio-logo.png') }}" class="logo">
+          <img src="{{ static_url('images/electricstudio-nameplate.png') }}" alt="Electric Studio Logo" class="nameplate">
+          <span class="brand-name-mobile">Electric Studio</span>
         </a>
       </h1>
 
@@ -124,14 +119,17 @@
           </div>
         </div>
 
-
-
       </div>
 
       <a class="menu-toggle" ng-click=" isNavOpen = !isNavOpen; isLetsRideOpen = false; isBookNavOpen = false ">
+        {% if loginUser %}
+          <span class="credits">{{ credits }}</span>
+        {% end %}
         <i class="fa fa-bars" ng-class="{ opaque : !isNavOpen, transparent:isNavOpen }"></i>
         <span class="close-btn" ng-class="{ opaque : isNavOpen, transparent:!isNavOpen }">&times;</span>
       </a>
+
+      <a class="book-buy-mobile" ng-click="isBookNavOpen = true; isNavOpen = true">Find/Book</a>
 
     </div>
 
