@@ -84,7 +84,10 @@ def update(self, id):
             if 'last_name' in data:
                 user.last_name = data['last_name']
             if 'birthdate' in data:
-                user.birthdate = datetime.strptime(data['birthdate'], '%Y-%m-%d')
+                try:
+                    user.birthdate = datetime.strptime(data['birthdate'], '%Y-%m-%d')
+                except:
+                    pass
             if 'address' in data:
                 user.address = data['address']
             if 'address2' in data:
@@ -103,7 +106,10 @@ def update(self, id):
             user.last_name = data['last_name']
 
             if data['birthdate'] != None:
-                user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+                try:
+                    user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+                except:
+                    pass
             if data['address'] != None:
                 user.address = data['address']
             if data['address2'] != None:
