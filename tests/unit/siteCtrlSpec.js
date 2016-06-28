@@ -5,7 +5,7 @@ describe('SiteCtrl', function() {
   beforeEach(module('elstudio.services', function($provide) {
     $provide.value('amplitudeApiKey', '1a77c91810aa9471a646387c8ba8e6ba');
   }));
-  
+
   beforeEach(module('elstudio.controllers.site'));
 
 
@@ -188,10 +188,23 @@ describe('SiteCtrl', function() {
       scope.showSignup();
     });
 
+
+    it('should show the login form', function() {
+      scope.toggleLogin();
+    });
+
+
+    it('should toggle hide the account menu dropdown', function() {
+      scope.showAccountDropdown = true;
+      scope.toggleAccountDropdown();
+    });
+
+
+    it('should toggle show the account menu dropdown', function() {
+      scope.showAccountDropdown = false;
+      scope.toggleAccountDropdown();
+    });
+
   });
-
-
-
-
 
 });

@@ -1,6 +1,6 @@
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('SiteCtrl', function ($scope, $window, $timeout, $http, AuthService, UserService, Amplitude) {
+ctrls.controller('SiteCtrl', function ($scope, $window, $document, $timeout, $http, AuthService, UserService, Amplitude) {
 
   Amplitude.init();
 
@@ -95,6 +95,25 @@ ctrls.controller('SiteCtrl', function ($scope, $window, $timeout, $http, AuthSer
     $scope.isBookNavOpen = false;
     $scope.isNavOpen = false;
   });
+
+
+  $scope.toggleAccountDropdown = function() {
+    if($scope.showAccountDropdown) {
+      $scope.showAccountDropdown = false;
+      $document.off('click.accountMenu');
+    } else {
+      $scope.showAccountDropdown = true;
+
+      $document.on('click.accountMenu', function(e) {
+        if( $(e.target).closest('.account-menu').length === 0 ) {
+          $scope.$apply(function() {
+            $scope.showAccountDropdown = false;
+            $document.off('click.accountMenu');
+          });
+        }
+      });
+    }
+  };
 
 
   $scope.logout = function () {

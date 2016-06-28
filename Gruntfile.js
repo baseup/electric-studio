@@ -99,4 +99,5 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('default', ['html2js', 'concat', 'uglify', 'sass', 'watch']);
+  grunt.registerTask('build', ['html2js', 'concat', 'uglify', 'sass']);
 }

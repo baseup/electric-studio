@@ -24,13 +24,7 @@
     <div class="wrapper">
       <h1 class="brand">
         <a href="#/">
-        <img src="{{ static_url('images/electricstudio-nameplate.png') }}" alt="Electric Studio Logo" class="nameplate">
-        </a>
-        <a href="#/account" class="account-link" ng-click=" isNavOpen = false; isLetsRideOpen = false; isBookNavOpen = false ">
-          {% if loginUser %}
-            <span class="credits">{{ credits }}</span>
-          {% end %}
-          <img src="{{ static_url('images/electricstudio-logo.png') }}" class="logo">
+          <img src="{{ static_url('images/electricstudio-nameplate.png') }}" alt="Electric Studio Logo" class="nameplate">
         </a>
       </h1>
 
@@ -87,7 +81,7 @@
                 <a class="signup-toggle" ng-click="toggleSignup()">Sign up</a>
                 <script type="text/javascript"> window.localStorage.removeItem('login-user'); </script>
               {% else %}
-                <a ng-click="showAccountDropdown = !showAccountDropdown" class="user-loggedin">
+                <a ng-click="toggleAccountDropdown()" class="user-loggedin">
                   Hi <strong>{{ loginUser }}</strong>!
                   <i class="fa" ng-class=" showAccountDropdown ? 'fa-caret-up' : 'fa-caret-down' "></i>
                 </a>
@@ -124,14 +118,17 @@
           </div>
         </div>
 
-
-
       </div>
 
       <a class="menu-toggle" ng-click=" isNavOpen = !isNavOpen; isLetsRideOpen = false; isBookNavOpen = false ">
+        {% if loginUser %}
+          <span class="credits">{{ credits }}</span>
+        {% end %}
         <i class="fa fa-bars" ng-class="{ opaque : !isNavOpen, transparent:isNavOpen }"></i>
         <span class="close-btn" ng-class="{ opaque : isNavOpen, transparent:!isNavOpen }">&times;</span>
       </a>
+
+      <a class="book-buy-mobile" ng-click="isBookNavOpen = true; isNavOpen = true">Find/Book</a>
 
     </div>
 
