@@ -178,8 +178,7 @@ body {
   }
 
   .nameplate, .logo {
-    display: none;
-    height: 30px;
+    height: 26px;
 
     @include breakpoint(md) {
       display: inline-block;
@@ -187,12 +186,14 @@ body {
   }
 
   .nameplate {
+    margin-left: 43px;
 
     @include breakpoint(md) {
       height: auto;
       height: 40px;
       vertical-align: bottom;
       margin-bottom: 0;
+      margin-left: 0;
     }
   }
 
