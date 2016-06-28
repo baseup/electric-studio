@@ -193,9 +193,12 @@ def update(self, id):
             # user.middle_name = data['middle_name']
             user.last_name = data['last_name']
 
-            if data['birthdate'] != None:
-                user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d') if data['birthdate'] else None
-            if data['address'] != None:
+            if data.get('birthdate'):
+                try:
+                    user.birthdate = datetime.strptime(data['birthdate'],'%Y-%m-%d')
+                except:
+                    pass
+            if data.get('address'):
                 user.address = data['address']
             if data['phone_number'] != None:
                 user.phone_number = data['phone_number']
@@ -203,7 +206,7 @@ def update(self, id):
                 user.contact_person = data['contact_person']
             if data['emergency_contact'] != None:
                 user.emergency_contact = data['emergency_contact']
-            if data['notes'] != None:
+            if data.get('notes'):
                 user.notes = data['notes']
 
             user = yield user.save()
