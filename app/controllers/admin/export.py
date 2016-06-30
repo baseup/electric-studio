@@ -16,9 +16,11 @@ import csv
 def download_bookings(self):
     sched_id = self.get_query_argument('sched_id')
     if sched_id:
+        all_bookings = yield BookedSchedule.objects.count()
+
         sched = yield InstructorSchedule.objects.get(self.get_argument('sched_id'))
         query = BookedSchedule.objects.order_by('seat_number', direction=ASCENDING)
-        bookings = yield query.filter(schedule=sched._id, status='booked').find_all()
+        bookings = yield query.filter(schedule=sched._id, status='booked').limit(all_bookings).find_all()
 
         if len(bookings) == 0:
             return self.redirect('/admin/#/classes')
@@ -48,7 +50,7 @@ def download_bookings(self):
 
             writer.writeheader()
 
-            for i in range(1, 38):
+            for i in range(1, sched.seats + 1):
                 if i in bikeMap:
                     book_counts = (yield BookedSchedule.objects.filter(status='completed', user_id=bikeMap[i].user_id, date__lte=bikeMap[i].date).limit(1).find_all())
                     writer.writerow({
@@ -135,16 +137,21 @@ def download_gift_cards_report(self):
 
 @gen.coroutine
 def download_user_accounts(email, past_month, redis_db):
+    all_accounts = yield User.objects.count()
+
     date_range = None
     if past_month:
         date_range = datetime.now() - relativedelta(months=+int(past_month))
     query = User.objects.order_by('last_name', direction=ASCENDING)
     if date_range:
         query.filter(create_at__gte=date_range)
-    accounts = yield query.find_all()
+    accounts = yield query.limit(all_accounts).find_all()
 
     path = 'assets/downloads'
     os.makedirs(path, exist_ok=True)
+
+    all_bookings = yield BookedSchedule.objects.count()
+    all_transactions = yield UserPackage.objects.count()
 
     filename = path + '/user-accounts-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
     with open(filename, 'w') as csvfile:
@@ -156,23 +163,24 @@ def download_user_accounts(email, past_month, redis_db):
         alen = len(accounts)
         for a in accounts:
             redis_db.set('process_account_export', 'account %s (%d of %d)' % (str(a.email), count, alen))
-            bookings = yield BookedSchedule.objects.filter(user_id=a._id).find_all()
-            transactions = yield UserPackage.objects.filter(user_id=a._id).find_all()
+            bookings = yield BookedSchedule.objects.filter(user_id=a._id).limit(all_bookings).find_all()
+            transactions = yield UserPackage.objects.filter(user_id=a._id).limit(all_transactions).find_all()
             total_rides_bought, total_rides_missed, total_rides_booked  = 0, 0, 0
             date_last_ride = ''
             for transaction in transactions:
                 total_rides_bought += transaction.credit_count
             if len(bookings) > 0:
                 for book in bookings:
-                    if book.status == 'completed':
-                        if date_last_ride == '':
-                            date_last_ride = book.schedule.date
-                        if date_last_ride < book.schedule.date:
-                            date_last_ride = book.schedule.date
-                    if book.status == 'missed':
-                        total_rides_missed+=1
-                    if book.status == 'booked':
-                        total_rides_booked+=1
+                    if book.schedule is not None:
+                        if book.status == 'completed':
+                            if date_last_ride == '':
+                                date_last_ride = book.schedule.date
+                            if date_last_ride < book.schedule.date:
+                                date_last_ride = book.schedule.date
+                        if book.status == 'missed':
+                            total_rides_missed+=1
+                        if book.status == 'booked':
+                            total_rides_booked+=1
 
             if date_last_ride != '':
                 date_last_ride.strftime('%Y-%m-%d')
@@ -217,7 +225,7 @@ def download_user_accounts_progress(self):
         past_month = self.get_query_argument('past_month')
         download_user_accounts(email, past_month, redis_db)
 
-    return self.render_json({ 'success': True, 'data':'initilize ...' })
+    return self.render_json({ 'success': True, 'data':'initialize ...' })
 
 
 def waitlist(self):

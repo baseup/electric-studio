@@ -11,4 +11,4 @@ def on_message(self, message):
 
     schedules = yield query(self, date, ins, branch)
 
-    self.publish_message(to_json(schedules), facility='schedules', broadcast=True)
+    self.write_message(to_json(schedules))
