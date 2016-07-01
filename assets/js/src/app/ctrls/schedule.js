@@ -153,7 +153,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, $
       }
 
       date = new Date(date);
-      var cutOffchkDate = date;
+      var cutOffchkDate = angular.copy(date);
       cutOffchkDate.setDate(date.getDate() - 1);
       cutOffchkDate.setHours(17, 0, 0);
 
