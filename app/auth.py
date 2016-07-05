@@ -48,6 +48,7 @@ def create_token(branch_id, password):
 
                 yield branch.save()
                 success = True
+                status = 200
             else:
                 message ='Err: Invalid Password.'
         else:
