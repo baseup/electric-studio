@@ -1,0 +1,10 @@
+{
+  "existingUser": {
+    "email": "mark@baseup.co",
+    "password": "baseup",
+    "confirm_password": "baseup",
+    "first_name": "Mark",
+    "last_name": "S",
+    "phone_number": "09999999999"
+  }
+}
