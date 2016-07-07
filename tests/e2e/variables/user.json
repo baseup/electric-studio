@@ -5,6 +5,22 @@
     "confirm_password": "baseup",
     "first_name": "Mark",
     "last_name": "S",
-    "phone_number": "09999999999"
+    "phone_number": "09999999999",
+    "address": "Forbes Town Road",
+    "address2": "Fort BGC, Taguig 1201",
+    "emergency_contact": "0917-321-4905",
+    "contact_person": "Mark"
+  },
+  "newUser": {
+    "email": "esrider001@gmail.com",
+    "password": "esrider",
+    "confirm_password": "esrider",
+    "first_name": "John",
+    "last_name": "Doe",
+    "phone_number": "09999999999",
+    "address": "Forbes Town Road",
+    "address2": "Fort BGC, Taguig 1201",
+    "emergency_contact": "0917-321-4905",
+    "contact_person": "Someone"
   }
 }
