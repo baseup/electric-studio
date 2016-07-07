@@ -18,6 +18,7 @@ var IndexPageObject = function() {
   this.signupSubmitBtn  = this.signupForm.element(by.css('[type="submit"]'));
 
   this.user             = element(by.css('.user-loggedin'));
+  this.logoutBtn        = element(by.css('.account-menu__list [ng-click="logout()"]'));
   this.notificationBar  = element(by.css('.notification-bar.show'));
 
   this.forgotPassToggle = this.loginForm.element(by.css('[ng-click="forgotPass()"]'));

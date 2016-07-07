@@ -8,7 +8,7 @@ assets/js/dist
 assets/js/src/app/controllers.js
 assets/sass/.sass-cache
 tests/coverage
-tests/screenshots
+tests/e2e/reports
 *.pyc
 .tmp
 *.seed
