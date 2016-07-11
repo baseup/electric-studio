@@ -184,16 +184,12 @@
       </form>
       <span class="close-btn" ng-click="closeHeaderForms()">&times;</span>
     </div>
-    <div class="wrapper" ng-show="registered">
-      <p class="notify">
-        <span class="inner-wrapper">
-          <span class="icon icon--info"></span>
-          YOU’RE ALL SIGNED UP! PLEASE CHECK YOUR E-MAIL TO VERIFY YOUR ACCOUNT AND COMPLETE REGISTRATION.
-        </span>
-        <button class="btn center btn--quinary" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</button>
+    <div class="signup-notify" ng-show="registered">
+      <div class="wrapper">
+        <p>Check your email to activate your account. Don't forget your All Mail, Promotions or Spam folder! If that doesn't work, call 833-6051 and we'll be happy to verify your account for you.</p>
+        <button class="btn center btn--quinary" ng-click="sendEmailConfirmation(user, true)">Resend Email Confirmation</button>
         <span class="close-btn">X</span>
-        <!-- <h2 class="h medium light">Check your Email!</h2><br/><br/><br/> -->
-      </p>
+      </div>
     </div>
   </div>
 
