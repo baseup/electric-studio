@@ -11,7 +11,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
   $scope.signUp = function () {
 
     if (!$scope.terms) {
-      $scope.$emit('notify', { message: 'To continue, please read and agree on our Terms & Condition' });
+      $scope.$emit('notify', { message: 'To continue, please read and agree to our Terms & Conditions' });
       return;
     }
 

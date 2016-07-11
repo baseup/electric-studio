@@ -1,90 +1,16 @@
-'use strict';
+var ctrls = angular.module('elstudio.controllers.site', ['elstudio.services']);var ctrls = angular.module('elstudio.controllers.site');
 
-// transfer this on a better place once figured out where
-var branchTitles = {
-  'bgc' : 'BGC',
-  'salcedo' : 'SALCEDO'
-};
+ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthService, UserPackageService) {
 
-var ctrls = angular.module('elstudio.controllers.site', [
-  'elstudio.services'
-]);
-
-ctrls.controller('NotFoundCtrl', function ($scope) {
-
-});
-
-
-ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserService, $routeParams) {
-
-  $scope.isNavOpen = false;
-  $scope.isBookNavOpen = false;
-
-  $scope.loginUser = AuthService.getCurrentUser();
-  $scope.reloadUser = function (user) {
-    UserService.get(function (user) {
-      if ($scope.loginUser) {
-        angular.extend($scope.loginUser, user);
-      } else {
-        $scope.loginUser = user;
-      }
-    });
-  }
-
-
-  if (!$scope.loginUser && window.localStorage.getItem('login-user')) {
-    $scope.reloadUser();
-  }
-
-  $scope.isVerified = false;
-  if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
-    $scope.user = $scope.loginUser;
-    $scope.isVerified = true;
-  }
-
-  $scope.isFrozen = false;
-  if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
-    $scope.isFrozen = true;
-  }
-
-  $scope.selectedSched = null;
-
-  if (!$scope.loginUser) {
-    if (window.location.hash.indexOf('#signup') >= 0) {
-      angular.element('.signup-toggle').click();
+  var qstring = $location.search();
+  if (qstring.s) {
+    if (qstring.s == 'success' && qstring.pname) {
+      $scope.$emit('notify', { message: 'Success! You have just purchased ' + qstring.pname + '.' });
+    } else if (qstring.s == 'exists') {
+      $scope.$emit('notify', { message: 'Transaction already exists.' });
     }
-  } else if (!$scope.loginUser.agreed_terms) {
-    $.Confirm('I have read and agree to these <a href="/#/terms">Terms and Conditions</a> ?' , function () {
-      var addSuccess = function () {
-        $scope.reloadUser();
-      }
-
-      var addFail = function (error) {
-        $scope.$emit('notify', { message: error.data });
-      }
-
-      UserService.update({ userId: $scope.loginUser._id }, { agreed_terms: true }).$promise.then(addSuccess, addFail);
-    });
+    $location.search({ s: null, pname: null });
   }
-
-  $scope.activeMainNav = function (path, regexMatching) {
-    if ( regexMatching ) {
-      var regex = new RegExp(path);
-      return window.location.hash.match(regex) ? true : false;
-    }
-    return window.location.hash.indexOf('#' + path) == 0;
-  }
-
-  var login = angular.element('.header-form-container.login'),
-      signup = angular.element('.header-form-container.signup'),
-      book = angular.element('.book-menu'),
-      loginToggle = angular.element('.login-toggle'),
-      signupToggle = angular.element('.signup-toggle'),
-      bookToggle = angular.element('.book-toggle'),
-      menuToggle = angular.element('.menu-toggle'),
-      menuWrapper = angular.element('.menu-wrapper'),
-      body = angular.element('body');
-
 
   angular.element('.datepicker').pickadate({
     labelMonthNext: 'Go to the next month',
@@ -98,411 +24,6 @@ ctrls.controller('SiteCtrl', function ($scope, $timeout, AuthService, UserServic
     today: false,
     max: true
   });
-
-  angular.element('.fit-text span').fitText(2);
-
-  angular.element('.close-btn').click(function () {
-    var headerForm = angular.element(this).closest(login.add(signup));
-
-    headerForm.removeClass('show');
-  });
-
-  loginToggle.off('click').on('click', function () {
-    login.toggleClass('show');
-    signup.add(book).removeClass('show');
-  });
-
-  signupToggle.off('click').on('click', function () {
-    signup.toggleClass('show');
-    login.add(book).removeClass('show');
-    $scope.registered = true; // test
-    console.log('registered',$scope.registered);
-  });
-
-  // Close the menus on click of anchors
-  menuWrapper.find('a[href]').on('click',function () {
-    $scope.isLetsRideOpen = false;
-    $scope.isBookNavOpen = false;
-    $scope.isNavOpen = false;
-  });
-
-  $(window).resize(function () {
-    var winH = angular.element(this).height(),
-        headerH = angular.element('.main-header').outerHeight(),
-        footerH = angular.element('.main-footer').height();
-
-    if (angular.element(this).width() >= 980) {
-      angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
-    }
-  }).trigger('resize');
-
-  $scope.logout = function () {
-
-    $.ajax({
-      url: '/user/logout',
-      method: 'GET',
-      success: function (response) {
-        window.localStorage.removeItem('login-user');
-        window.location = '/';
-      },
-      error: function (xhr, code, error) {
-        $scope.$emit('notify', { message: xhr.responseText });
-      }
-    });
-
-  }
-
-  $scope.showSignup = function () {
-    if (!$scope.loginUser) {
-      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
-      angular.element('.signup-toggle').click();
-    }
-  }
-
-});
-
-ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
-  $scope.sliders = SliderService.query();
-  $scope.sliders.$promise.then(function (data) {
-    $scope.sliders = data;
-
-    $timeout(function () {
-
-      var glideObj = angular.element('.slider-container').glide({
-        autoplay: 3000,
-        hoverpause: false,
-        arrows: false
-      }).data('api_glide');
-
-      var win = angular.element(window);
-      var winH = win.height(),
-        headerH = angular.element('.main-header').outerHeight(),
-        footerH = angular.element('.main-footer').height();
-
-      //preload images
-      $timeout(function () {
-        var maxTries = 60;
-        var intervals = [];
-        var counter = 0;
-
-        angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
-          var img = angular.element(value);
-          var src = img.attr('src');
-
-          if(src) {
-            intervals.push({
-              fn : '',
-              tries : 0
-            });
-
-            var thsObj = intervals[counter];
-
-            thsObj.fn = setInterval(function () {
-              if (thsObj.tries > maxTries) {
-                clearInterval(thsObj.fn);
-              }
-              if (img[0].complete) {
-                img.hide();
-                clearInterval(thsObj.fn);
-              }
-
-              thsObj.tries++;
-            }, 50)
-            counter++;
-          }
-        });
-      }, 800);
-
-      if (win.width() >= 980) {
-        angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
-      }
-
-      if (!angular.element('.slider > li').css('width')) {
-        // if (glideObj) {
-          glideObj.reinit();
-        // }
-      }
-
-      win.resize(function() {
-        angular.element('.slide').each(function(index, value) {
-          var image = win.width() >= 768
-            ? $(this).find('.preloaded-img.desktop').attr('src')
-            : $(this).find('.preloaded-img.mobile').attr('src');
-
-          if(image) $(this).css('background-image', "url('" + image + "')").removeClass('loading');
-        });
-      });
-
-      win.trigger('resize');
-    }, 400);
-
-  });
-});
-
-ctrls.controller('LandingPageCtrl', function ($scope, $timeout, LandingPageService) {
-  $scope.landingPages = LandingService.query();
-  $scope.landingPages.$promise.then(function (data) {
-    $scope.landingPages = data;
-    $timeout(function () {
-
-      var glideObj = angular.element('.slider-container').glide({
-        autoplay: 3000,
-        hoverpause: false,
-        arrows: false
-      }).data('api_glide');
-
-      var win = angular.element(window);
-      var winH = win.height(),
-        headerH = angular.element('.main-header').outerHeight(),
-        footerH = angular.element('.main-footer').height();
-
-      //preload images
-      $timeout(function () {
-        var maxTries = 60;
-        var intervals = [];
-        var counter = 0;
-
-        angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
-          var img = angular.element(value);
-          var src = img.attr('src');
-
-          intervals.push({
-            fn : '',
-            tries : 0
-          });
-
-          var thsObj = intervals[counter];
-
-          thsObj.fn = setInterval(function () {
-            if (thsObj.tries > maxTries) {
-              clearInterval(thsObj.fn);
-            }
-            if (img[0].complete) {
-              img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
-              img.remove();
-              clearInterval(thsObj.fn);
-            }
-
-            thsObj.tries++;
-          }, 50)
-          counter++;;
-        });
-      }, 800);
-
-      if (win.width() >= 980) {
-        angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
-      }
-
-      if (!angular.element('.slider > li').css('width')) {
-        // if (glideObj) {
-          glideObj.reinit();
-        // }
-      }
-
-      win.trigger('resize');
-    }, 400);
-  });
-});
-
-ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService) {
-
-  $scope.registered = false;
-  $scope.signingUp = false;
-  $scope.signUp = function () {
-
-    if (!$scope.terms) {
-      $scope.$emit('notify', { message: 'To continue, please read and agree on our Terms & Condition' });
-      return;
-    }
-
-    if ($scope.user) {
-      $scope.signingUp = true;
-      if (!$scope.user.email || $scope.user.email.length == 0) {
-        $scope.$emit('notify', { message: 'Email Address is required' });
-        $scope.signingUp = false;
-        return;
-      }
-
-      if ($scope.user.password != $scope.user.confirm_password) {
-        $scope.$emit('notify', { message: 'Password didn\'t match.' });
-        if ($scope.user.password == '') {
-          $scope.$emit('notify', { message: 'Password is required.' });
-        }
-        $scope.signingUp = false;
-        return;
-      }
-
-      if ($scope.user.password && $scope.user.password.length < 6) {
-        $scope.$emit('notify', { message: 'Password must be at least 6 characters.' });
-        $scope.signingUp = false;
-        return;
-      }
-
-      var registerSuccess = function () {
-        $scope.registered = true;
-        $scope.sendEmailConfirmation($scope.user);
-        $scope.signingUp = false;
-      }
-
-      var registerFail = function (error) {
-        $scope.registered = false;
-
-        var errorMsg = error.data
-        errorMsg = errorMsg.replace(/'/g, '')
-        errorMsg = errorMsg.replace('Field ', '')
-
-        var errorMsgArr = errorMsg.split('_');
-        if (errorMsgArr.length === 2) {
-          errorMsg = '';
-          for (var i in errorMsgArr){
-            errorMsg += errorMsgArr[i].charAt(0).toUpperCase() + errorMsgArr[i].slice(1) + ' ';
-          }
-          if (errorMsg.indexOf('required') === -1){
-            errorMsg = errorMsg + 'is required';
-          }
-        } else {
-          errorMsg = errorMsg.charAt(0).toUpperCase() + errorMsg.slice(1);
-        }
-        $scope.$emit('notify', { message: errorMsg });
-        $scope.signingUp = false;
-      }
-
-      UserService.create($scope.user).$promise.then(registerSuccess, registerFail);
-    }
-  }
-
-  $scope.sendEmailConfirmation = function (user) {
-    $scope.sendingEmail = true;
-    $scope.verificationLink = null;
-    var sendEmailSuccess = function () {
-      $scope.sendingEmail = false;
-      $scope.$emit('notify', { message: 'Please check your e-mail to verify your account and complete registration.' });
-    }
-
-    var sendEmailFailed = function (error) {
-      $scope.sendingEmail = false;
-      $scope.verificationLink = error.data
-    }
-
-    EmailVerifyService.email_verify(user)
-                      .$promise.then(sendEmailSuccess, sendEmailFailed);
-  }
-
-});
-
-ctrls.controller('LoginCtrl', function ($scope) {
-
-  $scope.forgotPass = function () {
-    angular.element('#forgot-password-modal').Modal();
-  }
-
-  $scope.signIn = function () {
-    $scope.unverifiedLogin = false;
-    if ($scope.login) {
-
-      var email = $scope.login.email;
-      var password = $scope.login.password;
-
-      if (!email || !password) {
-        $scope.$emit('notify', { message: 'Invalid Login Credentials', duration: 2000 });
-        return;
-      }
-
-      $.ajax({
-        url: '/user/login',
-        method: 'POST',
-        data: {
-          password: password,
-          email: email
-        },
-        success: function (response) {
-          if (response.success && response.user) {
-            window.localStorage.setItem('login-user', response.user);
-            window.location = '/';
-          }
-        },
-        error: function (xhr, code, error) {
-          if (xhr.responseText.indexOf('User email is not verified') > -1) {
-            $scope.user = {};
-            $scope.user.email = email;
-            $scope.unverifiedLogin = true;
-          }
-          $scope.$emit('notify', { message: xhr.responseText + '.', duration: 2000 });
-          $scope.$apply();
-        }
-      });
-    }
-
-  }
-
-});
-
-ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, UserService) {
-
-  $scope.resetPassword = function (id) {
-
-    if ($scope.pass && $scope.pass.password && $scope.pass.password.length > 0) {
-
-      if ($scope.pass.password.length < 6) {
-        $scope.$emit('notify', { message: 'Password must be at least 6 characters.' });
-        return;
-      }
-
-      if ($scope.pass.password != $scope.pass.confirm_password) {
-        $scope.$emit('notify', { message: 'Passwords did not match.' });
-        return;
-      }
-
-      var account = {}
-      account.reset_password = $scope.pass.password;
-
-      var addSuccess = function () {
-        $scope.$emit('notify', { message: 'Password successfully changed' });
-        $scope.forgotPasswordSuccess = true;
-      }
-
-      var addFail = function (error) {
-        $scope.$emit('notify', { message: error.data });
-      }
-
-      UserService.update({ userId: id }, account).$promise.then(addSuccess, addFail);
-    } else {
-      $scope.$emit('notify', { message: 'Password is required.' });
-    }
-  }
-
-  $scope.sendForgotPassEmail = function () {
-    if ($scope.forgotPassEmail && $scope.forgotPassEmail.length > 0) {
-      var user = {};
-      user.email = $scope.forgotPassEmail;
-      var sendEmailSuccess = function () {
-        $scope.$emit('notify', { message: 'Successfully sent email to reset password.' });
-      }
-
-      var sendEmailFailed = function (error) {
-        $scope.$emit('notify', { message: error.data });
-      }
-
-      ForgotPasswordService.send_email(user)
-                      .$promise.then(sendEmailSuccess, sendEmailFailed);
-      $scope.forgotPassEmail = null;
-    } else {
-      $scope.$emit('notify', { message: 'Email address is required.' });
-    }
-  }
-});
-
-ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthService, UserPackageService) {
-
-  var qstring = $location.search();
-  if (qstring.s) {
-    if (qstring.s == 'success' && qstring.pname) {
-      $scope.$emit('notify', { message: 'Success! You have just purchased ' + qstring.pname + '.' });
-    } else if (qstring.s == 'exists') {
-      $scope.$emit('notify', { message: 'Transaction already exists.' });
-    }
-    $location.search({ s: null, pname: null });
-  }
 
   if (!$scope.loginUser) {
     $location.path('/');
@@ -627,51 +148,276 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
   }
 });
 
-ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $location, UserService, PackageService, GCRedeemService) {
+var ctrls = angular.module('elstudio.controllers.site');
 
-  var qstring = $location.search();
+ctrls.controller('SiteCtrl', function ($scope, $window, $document, $timeout, $http, AuthService, UserService, Amplitude) {
 
-  if ($scope.loginUser) {
-    $scope.senderEmail = $scope.loginUser.email;
+  Amplitude.init();
+
+  $scope.loginUser = AuthService.getCurrentUser();
+  $scope.reloadUser = function (user) {
+    UserService.get(function (user) {
+      if ($scope.loginUser) {
+        angular.extend($scope.loginUser, user);
+      } else {
+        $scope.loginUser = user;
+      }
+
+      Amplitude.setUserId($scope.loginUser.email);
+    });
+  };
+
+
+  if (!$scope.loginUser && $window.localStorage.getItem('login-user')) {
+    $scope.reloadUser();
   }
 
-  $scope.ipn_notification_url = '';
-  $scope.return_url = '';
-  $scope.cancel_return_url = '';
-  var qstring = $location.search();
+  $scope.isVerified = false;
+  if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
+    $scope.user = $scope.loginUser;
+    $scope.isVerified = true;
+  }
 
-  if (qstring.s == 'error') {
-    $scope.$emit('notify', { message: 'Transaction failed.', duration: 3000 });
-    $location.search('s', null);
-  }else{
-    if (qstring.msg){
-      $scope.$emit('notify', { message: qstring.msg, duration: 3000 });
-      $location.search('s', null);
-      $location.search('msg', null);
+  $scope.isFrozen = false;
+  if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
+    $scope.isFrozen = true;
+  }
+
+  $scope.selectedSched = null;
+
+  // show signup form if user is not logged in and hash has `#signup`
+  if (!$scope.loginUser && $window.location.hash.indexOf('#signup') >= 0) {
+    angular.element('.signup-toggle').click();
+  }
+
+  // show terms and conditions popup
+  if ($scope.loginUser && !$scope.loginUser.agreed_terms) {
+    $.Confirm('I have read and agree to these <a href="/#/terms">Terms and Conditions</a> ?' , $scope.onAgreeTerms);
+  }
+
+  $scope.onAgreeTerms = function() {
+    var updateSuccess = $scope.reloadUser;
+
+    var updateFail = function (error) {
+      $scope.$emit('notify', { message: error.data });
+    };
+
+    UserService.update({ userId: $scope.loginUser._id }, { agreed_terms: true }).$promise.then( updateSuccess, updateFail );
+  };
+
+
+  $scope.activeMainNav = function (path, regexMatching) {
+    if ( regexMatching ) {
+      var regex = new RegExp(path);
+      return $window.location.hash.match(regex) ? true : false;
+    }
+    return $window.location.hash.indexOf('#' + path) == 0;
+  };
+
+
+  $scope.showLoginForm = false;
+  $scope.showSignupForm = false;
+  $scope.showBookMenu = false;
+
+  $scope.closeHeaderForms = function() {
+    $scope.showLoginForm = false;
+    $scope.showSignupForm = false;
+  };
+
+  $scope.toggleLogin = function() {
+    $scope.showLoginForm = !$scope.showLoginForm;
+    $scope.showSignupForm = false;
+    $scope.showBookMenu = false;
+  };
+
+  $scope.toggleSignup = function() {
+    $scope.showSignupForm = !$scope.showSignupForm;
+    $scope.showLoginForm = false;
+    $scope.showBookMenu = false;
+  };
+
+
+  $scope.isNavOpen = false;
+  $scope.isBookNavOpen = false;
+  // Close the menus on click of anchors
+  angular.element('.menu-wrapper').find('a[href]').on('click',function () {
+    $scope.isLetsRideOpen = false;
+    $scope.isBookNavOpen = false;
+    $scope.isNavOpen = false;
+  });
+
+
+  $scope.toggleAccountDropdown = function() {
+    if($scope.showAccountDropdown) {
+      $scope.showAccountDropdown = false;
+      $document.off('click.accountMenu');
+    } else {
+      $scope.showAccountDropdown = true;
+
+      $document.on('click.accountMenu', function(e) {
+        if( $(e.target).closest('.account-menu').length === 0 ) {
+          $scope.$apply(function() {
+            $scope.showAccountDropdown = false;
+            $document.off('click.accountMenu');
+          });
+        }
+      });
+    }
+  };
+
+
+  $scope.logout = function () {
+    $http({
+      url: '/user/logout',
+      method: 'GET',
+    }).then(function (response) {
+      Amplitude.logOutUser();
+
+      $window.localStorage.removeItem('login-user');
+      $window.location = '/';
+    }, function (xhr, code, error) {
+      $scope.$emit('notify', { message: xhr.responseText });
+    });
+  };
+
+  $scope.showSignup = function () {
+    if (!$scope.loginUser) {
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+      $scope.toggleSignup();
+    }
+  };
+
+});
+
+var ctrls = angular.module('elstudio.controllers.site');
+
+ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService, $routeParams) {
+
+  var sched = SharedService.get('selectedSched');
+
+  if (!sched) $location.path('/schedule');
+
+  $timeout(function() {
+    angular.element('html, body').scrollTop(0);
+  });
+
+  $scope.backButtonPath = SharedService.get('backToInstructors') ? '#/instructors' : '#/schedule/' + sched.schedule.branch._id;
+  SharedService.clear('backToInstructors');
+
+
+  if (sched) {
+
+    var seats = [];
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+    $scope.resched = SharedService.get('resched');
+
+    $scope.cancelResched = function () {
+      SharedService.clear('resched');
+      $location.path('/reserved');
+    }
+
+    ScheduleService.get({ scheduleId: sched.schedule._id }, function (schedule) {
+      sched.schedule = schedule;
+      $scope.timeSched = sched.schedule.start;
+      $scope.instructor = sched.schedule.instructor;
+      if (sched.schedule.sub_instructor) {
+        $scope.subInstructor = sched.schedule.sub_instructor;
+      }
+    });
+
+    $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() ;
+    $scope.daySched = days[sched.date.getDay()];
+    $scope.timeSched = sched.schedule.start;
+    $scope.sched = sched.schedule;
+    $scope.instructor = sched.schedule.instructor;
+    if (sched.schedule.sub_instructor) {
+      $scope.subInstructor = sched.schedule.sub_instructor;
+    }
+
+    var book_filter = {};
+    book_filter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+    book_filter.sched_id = sched.schedule._id;
+
+    $scope.forWaitlist = false;
+    $scope.reserved = BookService.query(book_filter);
+    $scope.reserved.$promise.then(function (data) {
+      $scope.reserved = data;
+      if ($scope.reserved.length >= sched.schedule.seats) {
+        $scope.forWaitlist = true;
+      }
+    });
+
+    book_filter.waitlist = true
+    $scope.waitlist = BookService.query(book_filter);
+    $scope.waitlist.$promise.then(function (waitlistData) {
+      $scope.waitlist = waitlistData;
+      if ($scope.waitlist.length > 0) {
+        $scope.forWaitlist = true;
+      }
+    });
+
+    $scope.blockedBikes = {};
+    SettingService.getBlockedBikes(function (bikes) {
+      $scope.blockedBikes = bikes;
+    });
+  }
+
+  $scope.checkSeat = function (num) {
+    if ($scope.forWaitlist) {
+      return true;
+    }
+
+    if ($scope.blockedBikes && $scope.blockedBikes[num]) {
+      return true;
+    }
+
+    for (var r in $scope.reserved) {
+      if ($scope.reserved[r].seat_number == num ||
+          num > sched.schedule.seats) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  $scope.setSeatNumber = function (number, event) {
+
+    var seat_index = -1;
+    for (var i = 0; i < seats.length; i++) {
+      if (seats[i] === number) {
+        seat_index = i;
+      }
+    }
+    if (!$scope.checkSeat(number)) {
+      if (seat_index == -1) {
+
+        var deductCredits = 1;
+        if (sched.schedule.type == 'Electric Endurance') {
+          deductCredits = 2;
+        }
+
+        if ($scope.loginUser &&
+            ((!seats.length && deductCredits > $scope.loginUser.credits) ||
+             (seats.length * deductCredits) >= $scope.loginUser.credits)) {
+          $scope.$emit('notify', { message: 'Not enough credits', duration: 5000, links: [{ title: 'buy', href: '#/rates' }] });
+          return;
+        } else {
+          angular.element(event.target).toggleClass('selected');
+          seats.push(number);
+        }
+      } else {
+        angular.element(event.target).toggleClass('selected');
+        seats.splice(seat_index, 1);
+      }
+    } else {
+      event.preventDefault();
     }
   }
 
-  var isGCPage = ($location.url() == '/gift-cards');
-
-  var query_params = {};
-  if (isGCPage) query_params = { gc: true };
-
-  $scope.loadingPackages = true;
-  $scope.packages = PackageService.query(query_params);
-  $scope.packages.$promise.then(function (data) {
-    $scope.packages = data;
-    $scope.loadingPackages = false;
-
-    $scope.selectGCPackage(0);
-  });
-
-  var port = '';
-  if (window.location.port)
-    port = ':' + window.location.port;
-
-  $scope.redirectUrl = window.location.protocol + '//' + window.location.hostname + port;
-
-  $scope.buyPackage = function (event, index) {
+  $scope.booking = false;
+  $scope.bookSchedule = function () {
 
     if (!$scope.loginUser) {
       $scope.$emit('notify', { message: 'Please sign up or log in to your Electric account.', duration: 3000 });
@@ -682,163 +428,218 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $route,$timeout, $locatio
 
     UserService.get(function (user) {
 
-      $scope.loginUser =  user;
-      $scope.reloadUser(user);
+      $scope.loginUser = user;
 
       if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
-        $scope.$emit('notify', { message: 'Your account is frozen. Please contact the studio for more details.' });
+        $scope.$emit('notify', { message: 'Your account is frozen. Please contact the studio for more details.', duration: 3000 });
         return;
       }
 
       if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
-        $scope.$emit('notify', { message: 'Account is not verified, Please check your email to verify account.' });
+        $scope.$emit('notify', { message: 'Account is not verified, Please check your email to verify account.', duration: 3000 });
         return;
       }
 
-      $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
-        angular.element('#payForm-' + index).submit();
+      if (!$scope.forWaitlist && seats.length == 0) {
+        $scope.$emit('notify', { message: 'Please select your bike.', duration: 3000 });
+        return;
+      }
+
+      var deductCredits = 1;
+      if (sched.schedule.type == 'Electric Endurance') {
+        deductCredits = 2;
+      }
+
+      if ($scope.loginUser && $scope.loginUser.credits < (seats.length * deductCredits)) {
+        $scope.$emit('notify', { message: 'Not enough credits, you only have ' + $scope.loginUser.credits, duration: 5000, links: [{ title: 'buy', href: '#/rates' }] });
+        return;
+      }
+
+      var today = new Date();
+
+      var cutOffchkDate = new Date(sched.date);
+      cutOffchkDate.setDate(sched.date.getDate() - 1);
+      cutOffchkDate.setHours(17, 0, 0);
+
+      var book = {};
+      book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+      book.seats = seats;
+      book.sched_id = sched.schedule._id;
+      var str_seats = seats.sort(function(a, b){return a-b}) + '';
+      str_seats = str_seats.replace(/,/g, ', ');
+      var confirm_message = 'You are about to book bike'+ (seats.length > 1 ? 's' : '') + ' # ' + str_seats +
+                            ' for ' + $scope.daySched + ', ' + $scope.dateSched + '.';
+      var cutOffMsg = '';
+      if (+today >= +cutOffchkDate) {
+        cutOffMsg = 'You can no longer cancel this ride once a booking is made. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.<br/><br/>'
+      }
+
+      if ($scope.forWaitlist) {
+        confirm_message = "You're about to join the waitlist for this schedule " + $scope.daySched + ', ' + $scope.dateSched;
+        book.status = 'waitlisted';
+      }
+
+      $.Confirm(cutOffMsg+confirm_message, function () {
+        $scope.$emit('notify', { message: 'Booking bike' + (seats.length > 1 ? 's' : '' ) + ' ...', duration: 3000 });
+        $scope.booking = true;
+        var bookSuccess = function () {
+
+          if ($scope.resched) {
+            SharedService.clear('resched');
+          }
+
+          if ($scope.forWaitlist) {
+            $scope.$emit('notify', { message: 'You have been added to the waitlist', duration: 3000 });
+          } else {
+            $scope.$emit('notify', { message: 'You have successfully booked a ride.', duration: 3000 });
+          }
+          UserService.get(function (user) {
+            $scope.reloadUser();
+            window.location = '/#/reserved'
+            window.location.reload();
+          });
+        }
+        var bookFail = function (error) {
+          $scope.$emit('notify', { message: error.data, duration: 3000 });
+          $scope.reloadUser();
+          $route.reload();
+        }
+
+        if ($scope.resched == undefined) {
+          BookService.book(book).$promise.then(bookSuccess, bookFail);
+        } else {
+          BookService.update({ bookId: $scope.resched._id }, book).$promise.then(bookSuccess, bookFail);
+        }
       });
     });
   }
 
-  $scope.checkGCValue = function () {
+});
 
-    if(!$scope.gcPin.match(/^\d+$/)) {
-      $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
-      return;
-    }
+var ctrls = angular.module('elstudio.controllers.site');
 
-    if ($scope.gcPin && $scope.gcCode) {
+ctrls.controller('ForgotPasswordCtrl', function ($scope, ForgotPasswordService, UserService) {
 
-      var data = {}
-      data.code = $scope.gcCode;
-      data.pin = $scope.gcPin;
-      data.checkOnly = true;
+  $scope.resetPassword = function (id) {
 
-      GCRedeemService.redeem(data).$promise.then(function (data) {
-        $scope.checkGCData = data;
-      }, function (error) {
+    if ($scope.pass && $scope.pass.password && $scope.pass.password.length > 0) {
+
+      if ($scope.pass.password.length < 6) {
+        $scope.$emit('notify', { message: 'Password must be at least 6 characters.' });
+        return;
+      }
+
+      if ($scope.pass.password != $scope.pass.confirm_password) {
+        $scope.$emit('notify', { message: 'Passwords did not match.' });
+        return;
+      }
+
+      var account = {}
+      account.reset_password = $scope.pass.password;
+
+      var addSuccess = function () {
+        $scope.$emit('notify', { message: 'Password successfully changed' });
+        $scope.forgotPasswordSuccess = true;
+      }
+
+      var addFail = function (error) {
         $scope.$emit('notify', { message: error.data });
-      });
-    }else{
-      $scope.$emit('notify', { message: 'Oops. We need more details from you.', duration: 3000 });
+      }
+
+      UserService.update({ userId: id }, account).$promise.then(addSuccess, addFail);
+    } else {
+      $scope.$emit('notify', { message: 'Password is required.' });
     }
   }
 
-  $scope.redeemGC = function() {
+  $scope.sendForgotPassEmail = function () {
+    if ($scope.forgotPassEmail && $scope.forgotPassEmail.length > 0) {
+      var user = {};
+      user.email = $scope.forgotPassEmail;
+      var sendEmailSuccess = function () {
+        $scope.$emit('notify', { message: 'Successfully sent email to reset password.' });
+      }
 
-    if (!$scope.loginUser) {
-      $scope.$emit('notify', { message: 'Please log in to your Electric Studio Account or create an account', duration: 3000 });
-      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
-      angular.element('.login-toggle').click();
-      return;
+      var sendEmailFailed = function (error) {
+        $scope.$emit('notify', { message: error.data });
+      }
+
+      ForgotPasswordService.send_email(user)
+                      .$promise.then(sendEmailSuccess, sendEmailFailed);
+      $scope.forgotPassEmail = null;
+    } else {
+      $scope.$emit('notify', { message: 'Email address is required.' });
     }
+  }
+});
 
-    if(!$scope.gcPin.match(/^\d+$/)) {
-      $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
-      return;
-    }
+var ctrls = angular.module('elstudio.controllers.site');
 
-    if ($scope.gcPin && $scope.gcCode) {
+ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) {
+  if (!$scope.loginUser) {
+    $location.path('/');
+    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+    angular.element('.login-toggle').click();
+  } else {
 
-      var redeemSuccess = function () {
+    $('#history-tabs').Tab();
 
-        UserService.get(function (user) {
-          $scope.loginUser =  user;
-          $scope.reloadUser(user);
+    $scope.currentScheds = 0;
+    $scope.currentTrans = 0;
+
+    $scope.histories = HistoryService.query();
+    $scope.histories.$promise.then(function (data) {
+      $scope.histories = data;
+    });
+
+    $scope.prevScheds = function (event) {
+      if ($scope.currentScheds > 0) {
+        $scope.currentScheds -= 1;
+        $scope.histories = HistoryService.query({ schedPage : $scope.currentScheds });
+        $scope.histories.$promise.then(function (data) {
+          $scope.histories = data;
         });
-        window.location = "/#/account#package"
-        window.location.reload()
       }
-
-      var redeemFailed = function (error) {
-        $scope.$emit('notify', { message: error.data, duration: 3000 });
-      }
-
-      var data = {}
-      data.code = $scope.gcCode;
-      data.pin = $scope.gcPin;
-
-      GCRedeemService.redeem(data).$promise.then(redeemSuccess, redeemFailed);
-
-    }else{
-      $scope.$emit('notify', { message: 'Oops. We need more details from you.', duration: 3000 });
-    }
-  }
-
-
-  $scope.prevGCPackage = function() {
-    var index = $scope.selectedGCPackageIndex == 0 ? $scope.packages.length - 1 : $scope.selectedGCPackageIndex - 1;
-    $scope.selectGCPackage(index);
-  }
-
-  $scope.nextGCPackage = function() {
-    var index = $scope.selectedGCPackageIndex == $scope.packages.length - 1 ? 0 : $scope.selectedGCPackageIndex + 1;
-    $scope.selectGCPackage(index);
-  }
-
-
-  $scope.selectGCPackage = function(index) {
-    $scope.selectedGCPackageIndex = index;
-    $scope.selectedGCPackage = $scope.packages[index];
-
-    $('input#item_name').val($scope.selectedGCPackage.name);
-    $('input#item_number').val($scope.selectedGCPackage._id);
-    $('input#amount').val($scope.selectedGCPackage.fee);
-    $scope.gcAmount = $scope.selectedGCPackage.fee;
-    $scope.gcValidity = $scope.selectedGCPackage.expiration;
-    $scope.gcPackageFirstTimer = $scope.selectedGCPackage.first_timer;
-  }
-
-  $scope.emailTo = 'receiver';
-  $scope.buyGC = function () {
-
-    var receiverEmail = null;
-    if($scope.emailTo =='sender'){
-      receiverEmail = $scope.senderEmail;
-      $scope.senderIsReceiver = true;
-    }else{
-      $scope.senderIsReceiver = false;
-      receiverEmail = $scope.receiverEmail;
+      event.preventDefault();
     }
 
-    if ($scope.selectedGCPackage && $scope.gcReceiver && $scope.gcSender) {
-      if(receiverEmail) {
-          // Do other validations like email validations
-        $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
-
-            if ($scope.gcMessage == undefined){
-              $scope.gcMessage = ""
-            }else{
-              var msG = "&message=" + $scope.gcMessage;
-              $scope.gcMessage = msG;
-            }
-
-            var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + $scope.selectedGCPackage._id +
-                                        "&success=True&email=" + receiverEmail + $scope.gcMessage +
-                                        "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail;
-            var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + $scope.selectedGCPackage._id + "&success=True&email=" + receiverEmail +
-                          $scope.gcMessage + "&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail;
-            var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False";
-
-            $('input#ipn_notification_url').val(ipn_notification_url);
-            $('input#return').val(return_url);
-            $('input#cancel_return').val(cancel_return);
-
-            angular.element('#payForm').submit();
+    $scope.nextScheds = function (event) {
+      if ($scope.currentScheds < parseInt($scope.histories.schedsTotal)) {
+        $scope.currentScheds += 1;
+        $scope.histories = HistoryService.query({ schedPage : $scope.currentScheds });
+        $scope.histories.$promise.then(function (data) {
+          $scope.histories = data;
         });
-      }else{
-        $scope.$emit('notify', { message: 'Please enter valid recipient email.', duration: 3000 });
       }
-    }else{
-      $scope.$emit('notify', { message: 'Oops. We need more details from you.', duration: 3000 });
+      event.preventDefault();
     }
 
+    $scope.prevTrans = function (event) {
+      if ($scope.currentTrans > 0) {
+        $scope.currentTrans -= 1;
+        $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
+        $scope.histories.$promise.then(function (data) {
+          $scope.histories = data;
+        });
+      }
+      event.preventDefault();
+    }
+
+    $scope.nextTrans = function (event) {
+      if ($scope.currentTrans < parseInt($scope.histories.transTotal)) {
+        $scope.currentTrans += 1;
+        $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
+        $scope.histories.$promise.then(function (data) {
+          $scope.histories = data;
+        });
+      }
+      event.preventDefault();
+    }
   }
 
 });
 
-
+var ctrls = angular.module('elstudio.controllers.site');
 
 ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route, UserService, InstructorService, ScheduleService, SettingService, SharedService, BookService) {
 
@@ -1159,6 +960,346 @@ ctrls.controller('InstructorCtrl', function ($scope, $timeout, $location, $route
   });
 });
 
+var ctrls = angular.module('elstudio.controllers.site');
+
+ctrls.controller('LandingPageCtrl', function ($scope, $timeout, LandingPageService) {
+  $scope.landingPages = LandingService.query();
+  $scope.landingPages.$promise.then(function (data) {
+    $scope.landingPages = data;
+    $timeout(function () {
+
+      var glideObj = angular.element('.slider-container').glide({
+        autoplay: 3000,
+        hoverpause: false,
+        arrows: false
+      }).data('api_glide');
+
+      var win = angular.element(window);
+      var winH = win.height(),
+        headerH = angular.element('.main-header').outerHeight(),
+        footerH = angular.element('.main-footer').height();
+
+      //preload images
+      $timeout(function () {
+        var maxTries = 60;
+        var intervals = [];
+        var counter = 0;
+
+        angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
+          var img = angular.element(value);
+          var src = img.attr('src');
+
+          intervals.push({
+            fn : '',
+            tries : 0
+          });
+
+          var thsObj = intervals[counter];
+
+          thsObj.fn = setInterval(function () {
+            if (thsObj.tries > maxTries) {
+              clearInterval(thsObj.fn);
+            }
+            if (img[0].complete) {
+              img.parent().css({backgroundImage : 'url('+src+')'}).removeClass('loading');
+              img.remove();
+              clearInterval(thsObj.fn);
+            }
+
+            thsObj.tries++;
+          }, 50)
+          counter++;;
+        });
+      }, 800);
+
+      if (win.width() >= 980) {
+        angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
+      }
+
+      if (!angular.element('.slider > li').css('width')) {
+        // if (glideObj) {
+          glideObj.reinit();
+        // }
+      }
+
+      win.trigger('resize');
+    }, 400);
+  });
+});
+
+var ctrls = angular.module('elstudio.controllers.site');
+
+ctrls.controller('LoginCtrl', function ($scope, $http, $window, Amplitude) {
+
+  $scope.forgotPass = function () {
+    angular.element('#forgot-password-modal').Modal();
+  }
+
+  $scope.signIn = function () {
+    $scope.unverifiedLogin = false;
+
+    if ($scope.login) {
+
+      var email = $scope.login.email;
+      var password = $scope.login.password;
+
+      if (!email || !password) {
+        $scope.$emit('notify', { message: 'Invalid Login Credentials', duration: 2000 });
+        return;
+      }
+
+      $http({
+        url: '/user/login',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: $.param({ password: password, email: email })
+      }).then(function (response) {
+        if (response.data.success && response.data.user) {
+          Amplitude.setUserId($scope.login.email);
+
+          $window.localStorage.setItem('login-user', response.data.user);
+          $window.location.reload();
+        }
+      }, function (response) {
+        if (response.data.indexOf('User email is not verified') > -1) {
+          $scope.user = {};
+          $scope.user.email = email;
+          $scope.unverifiedLogin = true;
+        }
+        $scope.$emit('notify', { message: response.data + '.', duration: 2000 });
+      });
+    }
+
+  };
+
+});
+
+var ctrls = angular.module('elstudio.controllers.site');
+
+ctrls.controller('NotFoundCtrl', function ($scope) {
+
+});
+
+var ctrls = angular.module('elstudio.controllers.site');
+
+ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $window, AuthService, UserService, PackageService, GCRedeemService, Amplitude) {
+
+  // Check for paypal return messages on the url
+  var qstring = $location.search();
+
+  if (qstring.s === 'error') {
+    $scope.$emit('notify', { message: 'Transaction failed.', duration: 3000 });
+    $location.search('s', null);
+  } else if (qstring.msg) {
+    $scope.$emit('notify', { message: qstring.msg, duration: 3000 });
+    $location.search('s', null);
+    $location.search('msg', null);
+  }
+
+
+  // Get the list of packages
+  var query_params = $location.url() === '/gift-cards' ? { gc: true } : {};
+  $scope.loadingPackages = true;
+
+  PackageService.query(query_params).$promise.then(function (data) {
+    $scope.packages = data;
+    $scope.loadingPackages = false;
+
+    $scope.selectGCPackage(0);
+  });
+
+  // Set the redirect url for Paypal response
+  var port = $window.location.port ? ':' + $window.location.port : '';
+  $scope.redirectUrl = $window.location.protocol + '//' + $window.location.hostname + port;
+
+  /**
+   * @function: purchase a ride package via paypal
+   * @param: packageId
+   */
+  $scope.buyPackage = function (package) {
+    if (!$scope.loginUser) {
+      $scope.$emit('notify', { message: 'Please sign up or log in to your Electric account.', duration: 3000 });
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+      angular.element('.login-toggle').click();
+      return;
+    }
+
+    if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
+      $scope.$emit('notify', { message: 'Your account is frozen. Please contact the studio for more details.' });
+      return;
+    }
+
+    if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
+      $scope.$emit('notify', { message: 'Account is not verified, Please check your email to verify account.' });
+      return;
+    }
+
+    $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
+      var revenue = new Amplitude.Revenue().setProductId( package.name ).setPrice( parseFloat(package.fee) ).setQuantity(1);
+      Amplitude.logRevenue(revenue);
+      Amplitude.logEvent('BUY_PACKAGE', { packageName: package.name });
+
+      angular.element('#payForm-' + package._id).submit();
+    });
+  };
+
+
+  /**
+   * @function: Checks the given gift card value
+   */
+  $scope.checkGCValue = function () {
+    // ensure that the pin is all number
+    if(!$scope.gcPin.match(/^\d+$/)) {
+      $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
+      return;
+    }
+
+    if ($scope.gcPin && $scope.gcCode) {
+      var data = {};
+      data.code = $scope.gcCode;
+      data.pin = $scope.gcPin;
+      data.checkOnly = true;
+
+      GCRedeemService.redeem(data).$promise.then(function (data) {
+        $scope.checkGCData = data;
+      }, function (error) {
+        $scope.$emit('notify', { message: error.data });
+      });
+    } else {
+      $scope.$emit('notify', { message: 'Oops. We need more details from you.', duration: 3000 });
+    }
+  };
+
+
+  /**
+   * @function: Redeem gift card to user account
+   */
+  $scope.redeemGC = function() {
+
+    if (!$scope.loginUser) {
+      $scope.$emit('notify', { message: 'Please log in to your Electric Studio Account or create an account', duration: 3000 });
+      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+      angular.element('.login-toggle').click();
+      return;
+    }
+
+    if(!$scope.gcPin.match(/^\d+$/)) {
+      $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
+      return;
+    }
+
+    if ($scope.gcPin && $scope.gcCode) {
+
+      var redeemSuccess = function () {
+        UserService.get(function (user) {
+          $scope.loginUser =  user;
+          $scope.reloadUser(user);
+        });
+
+        Amplitude.logEvent('REDEEM_GIFTCARD', { gcCode: $scope.gcCode });
+
+        $window.location = "/#/account#package"
+      }
+
+      var redeemFailed = function (error) {
+        $scope.$emit('notify', { message: error.data, duration: 3000 });
+      }
+
+      var data = {};
+      data.code = $scope.gcCode;
+      data.pin = $scope.gcPin;
+
+      GCRedeemService.redeem(data).$promise.then(redeemSuccess, redeemFailed);
+
+    } else {
+      $scope.$emit('notify', { message: 'Oops. We need more details from you.', duration: 3000 });
+    }
+  };
+
+
+  $scope.prevGCPackage = function() {
+    var index = $scope.selectedGCPackageIndex == 0 ? $scope.packages.length - 1 : $scope.selectedGCPackageIndex - 1;
+    $scope.selectGCPackage(index);
+  };
+
+  $scope.nextGCPackage = function() {
+    var index = $scope.selectedGCPackageIndex == $scope.packages.length - 1 ? 0 : $scope.selectedGCPackageIndex + 1;
+    $scope.selectGCPackage(index);
+  };
+
+
+  $scope.selectGCPackage = function(index) {
+    $scope.selectedGCPackageIndex = index;
+    $scope.selectedGCPackage = $scope.packages[index];
+
+    $('input#item_name').val($scope.selectedGCPackage.name);
+    $('input#item_number').val($scope.selectedGCPackage._id);
+    $('input#amount').val($scope.selectedGCPackage.fee);
+    $scope.gcAmount = $scope.selectedGCPackage.fee;
+    $scope.gcValidity = $scope.selectedGCPackage.expiration;
+    $scope.gcPackageFirstTimer = $scope.selectedGCPackage.first_timer;
+  };
+
+
+
+  if ($scope.loginUser) {
+    $scope.senderEmail = $scope.loginUser.email;
+  }
+
+  $scope.emailTo = 'receiver';
+
+  $scope.buyGC = function() {
+
+    var receiverEmail = null;
+    if($scope.emailTo === 'sender') {
+      receiverEmail = $scope.senderEmail;
+      $scope.senderIsReceiver = true;
+    } else {
+      $scope.senderIsReceiver = false;
+      receiverEmail = $scope.receiverEmail;
+    }
+
+    if ($scope.selectedGCPackage && $scope.gcReceiver && $scope.gcSender) {
+      if(receiverEmail) {
+
+        $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
+          if ($scope.gcMessage == undefined){
+            $scope.gcMessage = ""
+          }else{
+            var msG = "&message=" + $scope.gcMessage;
+            $scope.gcMessage = msG;
+          }
+
+          var ipn_notification_url = $scope.redirectUrl + "/admin/ipn_gc?pid=" + $scope.selectedGCPackage._id +
+                                      "&success=True&email=" + receiverEmail + $scope.gcMessage +
+                                      "&senderIsReceiver="+ $scope.senderIsReceiver + "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail;
+          var return_url = $scope.redirectUrl + "/admin/buy_gc?pid=" + $scope.selectedGCPackage._id + "&success=True&email=" + receiverEmail +
+                        $scope.gcMessage + "&senderIsReceiver="+ $scope.senderIsReceiver+ "&sender_name="+$scope.gcSender + "&receiver_name=" + $scope.gcReceiver + "&sender_email=" + $scope.senderEmail;
+          var cancel_return_url = $scope.redirectUrl + "/admin/buy_gc?success=False";
+
+          $('input#ipn_notification_url').val(ipn_notification_url);
+          $('input#return').val(return_url);
+          $('input#cancel_return').val(cancel_return);
+
+          var revenue = new Amplitude.Revenue().setProductId( $scope.selectedGCPackage.name ).setPrice( parseFloat($scope.selectedGCPackage.fee) ).setQuantity(1);
+          Amplitude.logRevenue(revenue);
+          Amplitude.logEvent('BUY_GIFTCARD', { packageName: $scope.selectedGCPackage.name });
+
+          angular.element('#payForm').submit();
+        });
+      } else {
+        $scope.$emit('notify', { message: 'Please enter valid recipient email.', duration: 3000 });
+      }
+    } else {
+      $scope.$emit('notify', { message: 'Oops. We need more details from you.', duration: 3000 });
+    }
+  };
+
+});
+
+var ctrls = angular.module('elstudio.controllers.site');
 
 ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, SharedService, UserService) {
 
@@ -1209,11 +1350,13 @@ ctrls.controller('ReservedCtrl', function ($scope, $location, BookService, Share
   }
 });
 
+var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, ScheduleService, ScheduleSocketService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
+ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, $window, ScheduleService, ScheduleSocketService, SharedService, BookService, UserService, SettingService, $timeout, $routeParams, BranchService) {
 
   $scope.schedules = {};
 
+  ScheduleSocketService.init();
   ScheduleSocketService.removeCallbacks();
 
   ScheduleSocketService.onLoadSchedule(function(schedules) {
@@ -1326,8 +1469,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
         $scope.$emit('notify', { message: 'You have been added to the waitlist', duration: 3000 });
         $scope.reloadUser();
-        window.location = '/#/reserved'
-        window.location.reload();
+        $window.location = '/#/reserved';
       }
       var waitlistFail = function (error) {
         $scope.$emit('notify', { message: error.data, duration: 3000 });
@@ -1362,25 +1504,12 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
         return;
       }
 
-      // if ($scope.weekRelease) {
-      //   if (today < $scope.weekRelease.date) {
-      //     var d = $scope.weekRelease;
-      //     var strDate = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() + ' ' +
-      //                   d.getHours() + ':' + d.getMinutes() +':' +d.getSeconds();
-      //     var tryDate = week_days[$scope.weekRelease.getDay()] + ' ' + $filter('formatTime')(strDate);
-      //     $.Alert('Booking is not yet available, Please try again on ' + tryDate);
-      //     return;
-      //   }
-      // }
-
-      var cutOffchkDate = new Date(date);
+      date = new Date(date);
+      var cutOffchkDate = date;
       cutOffchkDate.setDate(date.getDate() - 1);
       cutOffchkDate.setHours(17, 0, 0);
 
       var cutOffMsg = '';
-      // if (+today >= +cutOffchkDate) {
-      //   cutOffMsg = 'You can no longer cancel this ride once waitlisted. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.<br><br>';
-      // }
 
       var sched = {};
       sched.date = date;
@@ -1431,12 +1560,8 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
   }
 
   $scope.chkSched = function (date, sched) {
-
-    if (!$scope.schedules.releases[sched._id])
-      return true;
-
-    return false;
-  }
+    return !$scope.schedules.releases[sched._id] ? true : false;
+  };
 
   $scope.getWeek = function (date) {
 
@@ -1554,294 +1679,189 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, S
 
 });
 
-ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService, $routeParams) {
+var ctrls = angular.module('elstudio.controllers.site');
 
-  var sched = SharedService.get('selectedSched');
+ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService, Amplitude) {
 
-  if (!sched) $location.path('/schedule');
+  $scope.registered = false;
+  $scope.signingUp = false;
 
-  $timeout(function() {
-    angular.element('html, body').scrollTop(0);
-  });
+  /**
+   * @function: Validates user input then submits the registration
+   */
+  $scope.signUp = function () {
 
-  $scope.backButtonPath = SharedService.get('backToInstructors') ? '#/instructors' : '#/schedule/' + sched.schedule.branch._id;
-  SharedService.clear('backToInstructors');
-
-
-  if (sched) {
-
-    var seats = [];
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-
-    $scope.resched = SharedService.get('resched');
-
-    $scope.cancelResched = function () {
-      SharedService.clear('resched');
-      $location.path('/reserved');
-    }
-
-    ScheduleService.get({ scheduleId: sched.schedule._id }, function (schedule) {
-      sched.schedule = schedule;
-      $scope.timeSched = sched.schedule.start;
-      $scope.instructor = sched.schedule.instructor;
-      if (sched.schedule.sub_instructor) {
-        $scope.subInstructor = sched.schedule.sub_instructor;
-      }
-    });
-
-    $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() ;
-    $scope.daySched = days[sched.date.getDay()];
-    $scope.timeSched = sched.schedule.start;
-    $scope.sched = sched.schedule;
-    $scope.instructor = sched.schedule.instructor;
-    if (sched.schedule.sub_instructor) {
-      $scope.subInstructor = sched.schedule.sub_instructor;
-    }
-
-    var book_filter = {};
-    book_filter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
-    book_filter.sched_id = sched.schedule._id;
-
-    $scope.forWaitlist = false;
-    $scope.reserved = BookService.query(book_filter);
-    $scope.reserved.$promise.then(function (data) {
-      $scope.reserved = data;
-      if ($scope.reserved.length >= sched.schedule.seats) {
-        $scope.forWaitlist = true;
-      }
-    });
-
-    book_filter.waitlist = true
-    $scope.waitlist = BookService.query(book_filter);
-    $scope.waitlist.$promise.then(function (waitlistData) {
-      $scope.waitlist = waitlistData;
-      if ($scope.waitlist.length > 0) {
-        $scope.forWaitlist = true;
-      }
-    });
-
-    $scope.blockedBikes = {};
-    SettingService.getBlockedBikes(function (bikes) {
-      $scope.blockedBikes = bikes;
-    });
-  }
-
-  $scope.checkSeat = function (num) {
-    if ($scope.forWaitlist) {
-      return true;
-    }
-
-    if ($scope.blockedBikes && $scope.blockedBikes[num]) {
-      return true;
-    }
-
-    for (var r in $scope.reserved) {
-      if ($scope.reserved[r].seat_number == num ||
-          num > sched.schedule.seats) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  $scope.setSeatNumber = function (number, event) {
-
-    var seat_index = -1;
-    for (var i = 0; i < seats.length; i++) {
-      if (seats[i] === number) {
-        seat_index = i;
-      }
-    }
-    if (!$scope.checkSeat(number)) {
-      if (seat_index == -1) {
-
-        var deductCredits = 1;
-        if (sched.schedule.type == 'Electric Endurance') {
-          deductCredits = 2;
-        }
-
-        if ($scope.loginUser &&
-            ((!seats.length && deductCredits > $scope.loginUser.credits) ||
-             (seats.length * deductCredits) >= $scope.loginUser.credits)) {
-          $scope.$emit('notify', { message: 'Not enough credits', duration: 5000, links: [{ title: 'buy', href: '#/rates' }] });
-          return;
-        } else {
-          angular.element(event.target).toggleClass('selected');
-          seats.push(number);
-        }
-      } else {
-        angular.element(event.target).toggleClass('selected');
-        seats.splice(seat_index, 1);
-      }
-    } else {
-      event.preventDefault();
-    }
-  }
-
-  $scope.booking = false;
-  $scope.bookSchedule = function () {
-
-    if (!$scope.loginUser) {
-      $scope.$emit('notify', { message: 'Please sign up or log in to your Electric account.', duration: 3000 });
-      angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
-      angular.element('.login-toggle').click();
+    if (!$scope.terms) {
+      $scope.$emit('notify', { message: 'To continue, please read and agree to our Terms & Conditions' });
       return;
     }
 
-    UserService.get(function (user) {
+    if (!$scope.user.email || $scope.user.email.length === 0) {
+      $scope.$emit('notify', { message: 'Email Address is required' });
+      return;
+    }
 
-      $scope.loginUser = user;
+    if (!$scope.user.password) {
+      $scope.$emit('notify', { message: 'Password is required.' });
+      return;
+    }
 
-      if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
-        $scope.$emit('notify', { message: 'Your account is frozen. Please contact the studio for more details.', duration: 3000 });
-        return;
+    if ($scope.user.password && $scope.user.password.length < 6) {
+      $scope.$emit('notify', { message: 'Password must be at least 6 characters.' });
+      return;
+    }
+
+    if ($scope.user.password !== $scope.user.confirm_password) {
+      $scope.$emit('notify', { message: 'Password didn\'t match.' });
+      return;
+    }
+
+
+    var registerSuccess = function () {
+      $scope.registered = true;
+      $scope.sendEmailConfirmation($scope.user);
+      $scope.signingUp = false;
+
+      Amplitude.logEvent('USER_SIGNUP', { user: $scope.user.email });
+    };
+
+    var registerFail = function (error) {
+      $scope.registered = false;
+
+      var errorMsg = error.data
+      errorMsg = errorMsg.replace(/'/g, '')
+      errorMsg = errorMsg.replace('Field ', '')
+
+      var errorMsgArr = errorMsg.split('_');
+      if (errorMsgArr.length === 2) {
+        errorMsg = '';
+
+        for (var i in errorMsgArr) {
+          errorMsg += errorMsgArr[i].charAt(0).toUpperCase() + errorMsgArr[i].slice(1) + ' ';
+        }
+
+        if (errorMsg.indexOf('required') === -1) {
+          errorMsg = errorMsg + 'is required';
+        }
+      } else {
+        errorMsg = errorMsg.charAt(0).toUpperCase() + errorMsg.slice(1);
       }
 
-      if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
-        $scope.$emit('notify', { message: 'Account is not verified, Please check your email to verify account.', duration: 3000 });
-        return;
-      }
+      $scope.$emit('notify', { message: errorMsg });
+      $scope.signingUp = false;
+    };
 
-      if (!$scope.forWaitlist && seats.length == 0) {
-        $scope.$emit('notify', { message: 'Please select your bike.', duration: 3000 });
-        return;
-      }
+    $scope.signingUp = true;
 
-      var deductCredits = 1;
-      if (sched.schedule.type == 'Electric Endurance') {
-        deductCredits = 2;
-      }
+    UserService.create($scope.user).$promise.then( registerSuccess, registerFail );
 
-      if ($scope.loginUser && $scope.loginUser.credits < (seats.length * deductCredits)) {
-        $scope.$emit('notify', { message: 'Not enough credits, you only have ' + $scope.loginUser.credits, duration: 5000, links: [{ title: 'buy', href: '#/rates' }] });
-        return;
-      }
+  };
 
-      var today = new Date();
 
-      var cutOffchkDate = new Date(sched.date);
-      cutOffchkDate.setDate(sched.date.getDate() - 1);
-      cutOffchkDate.setHours(17, 0, 0);
+  /**
+   * @function: Sends the email verification link
+   * @param: user (user's id)
+   */
+  $scope.sendEmailConfirmation = function (user) {
+    $scope.sendingEmail = true;
+    $scope.verificationLink = null;
 
-      var book = {};
-      book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
-      book.seats = seats;
-      book.sched_id = sched.schedule._id;
-      var str_seats = seats.sort(function(a, b){return a-b}) + '';
-      str_seats = str_seats.replace(/,/g, ', ');
-      var confirm_message = 'You are about to book bike'+ (seats.length > 1 ? 's' : '') + ' # ' + str_seats +
-                            ' for ' + $scope.daySched + ', ' + $scope.dateSched + '.';
-      var cutOffMsg = '';
-      if (+today >= +cutOffchkDate) {
-        cutOffMsg = 'You can no longer cancel this ride once a booking is made. Read about our studio policies <a href="#/faq" class="modal-close">here</a>.<br/><br/>'
-      }
+    var sendEmailSuccess = function () {
+      $scope.sendingEmail = false;
+      $scope.$emit('notify', { message: 'Please check your e-mail to verify your account and complete registration.' });
+    };
 
-      if ($scope.forWaitlist) {
-        confirm_message = "You're about to join the waitlist for this schedule " + $scope.daySched + ', ' + $scope.dateSched;
-        book.status = 'waitlisted';
-      }
+    var sendEmailFailed = function (error) {
+      $scope.sendingEmail = false;
+      $scope.verificationLink = error.data
+    };
 
-      $.Confirm(cutOffMsg+confirm_message, function () {
-        $scope.$emit('notify', { message: 'Booking bike' + (seats.length > 1 ? 's' : '' ) + ' ...', duration: 3000 });
-        $scope.booking = true;
-        var bookSuccess = function () {
+    EmailVerifyService.email_verify(user).$promise.then( sendEmailSuccess, sendEmailFailed );
+  };
 
-          if ($scope.resched) {
-            SharedService.clear('resched');
+});
+
+var ctrls = angular.module('elstudio.controllers.site');
+
+ctrls.controller('SliderCtrl', function ($scope, $timeout, SliderService) {
+  $scope.sliders = SliderService.query();
+  $scope.sliders.$promise.then(function (data) {
+    $scope.sliders = data;
+
+    $timeout(function () {
+
+      var glideObj = angular.element('.slider-container').glide({
+        autoplay: 3000,
+        hoverpause: false,
+        arrows: false
+      }).data('api_glide');
+
+      var win = angular.element(window);
+      var winH = win.height(),
+        headerH = angular.element('.main-header').outerHeight(),
+        footerH = angular.element('.main-footer').height();
+
+      //preload images
+      $timeout(function () {
+        var maxTries = 60;
+        var intervals = [];
+        var counter = 0;
+
+        angular.forEach(angular.element('.slider .preloaded-img'), function (value, key) {
+          var img = angular.element(value);
+          var src = img.attr('src');
+
+          if(src) {
+            intervals.push({
+              fn : '',
+              tries : 0
+            });
+
+            var thsObj = intervals[counter];
+
+            thsObj.fn = setInterval(function () {
+              if (thsObj.tries > maxTries) {
+                clearInterval(thsObj.fn);
+              }
+              if (img[0].complete) {
+                img.hide();
+                clearInterval(thsObj.fn);
+              }
+
+              thsObj.tries++;
+            }, 50)
+            counter++;
           }
+        });
+      }, 800);
 
-          if ($scope.forWaitlist) {
-            $scope.$emit('notify', { message: 'You have been added to the waitlist', duration: 3000 });
-          } else {
-            $scope.$emit('notify', { message: 'You have successfully booked a ride.', duration: 3000 });
-          }
-          UserService.get(function (user) {
-            $scope.reloadUser();
-            window.location = '/#/reserved'
-            window.location.reload();
-          });
-        }
-        var bookFail = function (error) {
-          $scope.$emit('notify', { message: error.data, duration: 3000 });
-          $scope.reloadUser();
-          $route.reload();
-        }
+      if (win.width() >= 980) {
+        angular.element('.fitscreen').find('.slide, .content-wrap').height(winH - (headerH + footerH));
+      }
 
-        if ($scope.resched == undefined) {
-          BookService.book(book).$promise.then(bookSuccess, bookFail);
-        } else {
-          BookService.update({ bookId: $scope.resched._id }, book).$promise.then(bookSuccess, bookFail);
-        }
+      if (!angular.element('.slider > li').css('width')) {
+        // if (glideObj) {
+          glideObj.reinit();
+        // }
+      }
+
+      win.resize(function() {
+        angular.element('.slide').each(function(index, value) {
+          var image = win.width() >= 768
+            ? $(this).find('.preloaded-img.desktop').attr('src')
+            : $(this).find('.preloaded-img.mobile').attr('src');
+
+          if(image) $(this).css('background-image', "url('" + image + "')").removeClass('loading');
+        });
       });
-    });
-  }
 
+      win.trigger('resize');
+    }, 400);
+
+  });
 });
 
-ctrls.controller('HistoryCtrl', function ($scope, $routeParams, HistoryService) {
-  if (!$scope.loginUser) {
-    $location.path('/');
-    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
-    angular.element('.login-toggle').click();
-  } else {
-
-    $('#history-tabs').Tab();
-
-    $scope.currentScheds = 0;
-    $scope.currentTrans = 0;
-
-    $scope.histories = HistoryService.query();
-    $scope.histories.$promise.then(function (data) {
-      $scope.histories = data;
-    });
-
-    $scope.prevScheds = function (event) {
-      if ($scope.currentScheds > 0) {
-        $scope.currentScheds -= 1;
-        $scope.histories = HistoryService.query({ schedPage : $scope.currentScheds });
-        $scope.histories.$promise.then(function (data) {
-          $scope.histories = data;
-        });
-      }
-      event.preventDefault();
-    }
-
-    $scope.nextScheds = function (event) {
-      if ($scope.currentScheds < parseInt($scope.histories.schedsTotal)) {
-        $scope.currentScheds += 1;
-        $scope.histories = HistoryService.query({ schedPage : $scope.currentScheds });
-        $scope.histories.$promise.then(function (data) {
-          $scope.histories = data;
-        });
-      }
-      event.preventDefault();
-    }
-
-    $scope.prevTrans = function (event) {
-      if ($scope.currentTrans > 0) {
-        $scope.currentTrans -= 1;
-        $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
-        $scope.histories.$promise.then(function (data) {
-          $scope.histories = data;
-        });
-      }
-      event.preventDefault();
-    }
-
-    $scope.nextTrans = function (event) {
-      if ($scope.currentTrans < parseInt($scope.histories.transTotal)) {
-        $scope.currentTrans += 1;
-        $scope.histories = HistoryService.query({ transPage : $scope.currentTrans });
-        $scope.histories.$promise.then(function (data) {
-          $scope.histories = data;
-        });
-      }
-      event.preventDefault();
-    }
-  }
-
-});
+var ctrls = angular.module('elstudio.controllers.site');
 
 ctrls.controller('WhatsnewCtrl', function ($scope, Instagram) {
 
