@@ -15,7 +15,7 @@ ctrls.controller('LoginCtrl', function ($scope, $http, $window, Amplitude) {
       var password = $scope.login.password;
 
       if (!email || !password) {
-        $scope.$emit('notify', { message: 'Invalid Login Credentials', duration: 2000 });
+        $scope.$emit('notify', { message: 'Invalid Login Credentials' });
         return;
       }
 
@@ -39,7 +39,7 @@ ctrls.controller('LoginCtrl', function ($scope, $http, $window, Amplitude) {
           $scope.user.email = email;
           $scope.unverifiedLogin = true;
         }
-        $scope.$emit('notify', { message: response.data + '.', duration: 2000 });
+        $scope.$emit('notify', { message: response.data + '.' });
       });
     }
 
