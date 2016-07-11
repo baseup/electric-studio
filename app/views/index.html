@@ -188,7 +188,7 @@
       <div class="wrapper">
         <p>Check your email to activate your account. Don't forget your All Mail, Promotions or Spam folder! If that doesn't work, call 833-6051 and we'll be happy to verify your account for you.</p>
         <button class="btn center btn--quinary" ng-click="sendEmailConfirmation(user, true)">Resend Email Confirmation</button>
-        <span class="close-btn">X</span>
+        <span class="close-btn" ng-click="registered = false; closeHeaderForms();"></span>
       </div>
     </div>
   </div>
