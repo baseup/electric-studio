@@ -1383,7 +1383,7 @@ body {
     }
   }
 
-  .notify {
+  .signup-notify {
     color: #fff;
     background: $brand-color-quinary;
     position: absolute;
@@ -1391,10 +1391,10 @@ body {
     left: 0;
     right: 0;
     font-size: 12px;
-    padding: $base-spacing-unit;
-    padding-right: 40px;
+    padding: $base-spacing-unit 0;
     text-align: left;
     z-index: 2;
+    text-transform: uppercase;
 
     @include breakpoint(md) {
       margin-bottom: 20px;
@@ -1403,7 +1403,7 @@ body {
       font-size: 14px;
     }
 
-    .inner-wrapper {
+    .wrapper {
       display: block;
       margin: 0 auto;
       max-width: 1080px;
