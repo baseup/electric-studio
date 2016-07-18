@@ -11,7 +11,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
   $scope.signUp = function () {
 
     if (!$scope.terms) {
-      $scope.$emit('notify', { message: 'To continue, please read and agree on our Terms & Condition' });
+      $scope.$emit('notify', { message: 'To continue, please read and agree to our Terms & Conditions' });
       return;
     }
 
@@ -81,13 +81,13 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
    * @function: Sends the email verification link
    * @param: user (user's id)
    */
-  $scope.sendEmailConfirmation = function (user) {
+  $scope.sendEmailConfirmation = function (user, resend) {
     $scope.sendingEmail = true;
     $scope.verificationLink = null;
 
     var sendEmailSuccess = function () {
       $scope.sendingEmail = false;
-      $scope.$emit('notify', { message: 'Please check your e-mail to verify your account and complete registration.' });
+      if(resend) $scope.$emit('notify', { message: 'Email confirmation sent!', duration: 4000 });
     };
 
     var sendEmailFailed = function (error) {

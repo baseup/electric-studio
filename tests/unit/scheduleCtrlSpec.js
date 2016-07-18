@@ -80,7 +80,7 @@ describe('ScheduleCtrl', function() {
 
   it('should book user successfully', function() {
     this.init();
-    scope.setSchedule( schedules.wed[0], 'Mon Jun 22 2017 00:00:00 GMT+0800 (PHT)', branches[0] );
+    scope.setSchedule( schedules.wed[0], 'Mon Jun 21 2017 00:00:00 GMT+0800 (PHT)', branches[0] );
 
     $httpBackend.expectGET('/api/book?date=2017-6-21&sched_id=57675bbbd19ab7027d41b333&waitlist=true').respond(200, []);
     $httpBackend.expectGET('/api/book?date=2017-6-21&sched_id=57675bbbd19ab7027d41b333').respond(200, []);
@@ -90,7 +90,7 @@ describe('ScheduleCtrl', function() {
 
   it('should book user on the waitlist', function() {
     this.init();
-    scope.setSchedule( schedules.wed[0], 'Mon Jun 22 2017 00:00:00 GMT+0800 (PHT)', branches[0] );
+    scope.setSchedule( schedules.wed[0], 'Mon Jun 21 2017 00:00:00 GMT+0800 (PHT)', branches[0] );
 
     $httpBackend.expectGET('/api/book?date=2017-6-21&sched_id=57675bbbd19ab7027d41b333&waitlist=true').respond(200, [1]);
     $httpBackend.flush();

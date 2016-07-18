@@ -1505,7 +1505,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, $
       }
 
       date = new Date(date);
-      var cutOffchkDate = angular.copy(date);
+      var cutOffchkDate = date;
       cutOffchkDate.setDate(date.getDate() - 1);
       cutOffchkDate.setHours(17, 0, 0);
 
@@ -1692,7 +1692,7 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
   $scope.signUp = function () {
 
     if (!$scope.terms) {
-      $scope.$emit('notify', { message: 'To continue, please read and agree on our Terms & Condition' });
+      $scope.$emit('notify', { message: 'To continue, please read and agree to our Terms & Conditions' });
       return;
     }
 
