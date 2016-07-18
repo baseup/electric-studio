@@ -27,3 +27,4 @@ hurricane
 *.yaml
 !*.sample.yaml
 esenv
+*.log.*
