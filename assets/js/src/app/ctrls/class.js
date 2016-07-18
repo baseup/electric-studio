@@ -83,8 +83,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
     }
 
     for (var r in $scope.reserved) {
-      if ($scope.reserved[r].seat_number == num ||
-          num > sched.schedule.seats) {
+      if ($scope.reserved[r].seat_number == num) {
         return true;
       }
     }
