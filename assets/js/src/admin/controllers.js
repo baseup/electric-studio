@@ -389,7 +389,17 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
     $scope.selectedInfo = user;
 
     UserService.get({ userId : user._id }, function (userInfo) {
-      $scope.selectedInfo = userInfo;
+      var initialData = {
+        birthdate: '',
+        address: '',
+        contact_person: '',
+        emergency_contact: '',
+        notes: '',
+        phone_number: ''
+      };
+
+      $scope.selectedInfo = angular.extend(initialData, userInfo);
+
       if ($scope.selectedInfo.birthdate) {
         $scope.selectedInfo.birthdate = $scope.selectedInfo.birthdate.replace(' 00:00:00', '');
       }
