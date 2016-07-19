@@ -1020,11 +1020,11 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   $scope.reloadDate();
 
   $scope.getBlockedSeats = function () {
-    if ($scope.schedDetails) {
-      var seats = $scope.schedDetails.seats;
+    if ($scope.schedDetails && $scope.schedDetails.branch) {
+      var seats = $scope.schedDetails.branch.num_bikes;
       for (var k in $scope.blockedBikes) {
         var key = parseInt(k)
-        if (key && key <= $scope.schedDetails.seats) {
+        if (key && key <= $scope.schedDetails.branch.num_bikes) {
           seats -= 1;
         }
       }
@@ -1193,30 +1193,39 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
 
   $scope.bookRide = function () {
-    if ($scope.newBook.sched_id) {
-      if (!$scope.isCompleted($scope.schedDetails)) {
-        ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
-          if (seats.available.length) {
-            angular.element('#select-bike-number')[0].selectize.clearOptions();
-            var selectbike = angular.element('#select-bike-number')[0].selectize;
-            selectbike.settings.sortField = 'text';
-            angular.forEach(seats.available, function (seat) {
-              selectbike.addOption({ value: seat, text: seat });
-            });
-            $scope.selectedRider = {};
-            angular.element('#select-user-id')[0].selectize.setValue('');
-            angular.element('#book-ride-modal').Modal();
-
-          } else {
-            $.Alert('No available seats');
-          }
-        });
-      } else {
-        $.Notify({ content: 'Not allow to modify, This schedule is completed' });
-      }
-    } else {
+    if(!$scope.newBook.sched_id) {
       $.Alert('Please select schedule date and time');
+      return;
     }
+
+    if($scope.isCompleted($scope.schedDetails)) {
+      $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+      return;
+    }
+
+    if($scope.books.length === $scope.schedDetails.branch.num_bikes) {
+      $.Alert('No available seats');
+      return;
+    }
+
+    var unavailableBikes = [];
+    angular.forEach($scope.books, function(booking) {
+      unavailableBikes.push( booking.seat_number );
+    });
+
+    angular.element('#select-bike-number')[0].selectize.clearOptions();
+    var selectbike = angular.element('#select-bike-number')[0].selectize;
+    selectbike.settings.sortField = 'text';
+
+    for(var i = 1; i <= $scope.schedDetails.branch.num_bikes; i++) {
+      if(unavailableBikes.indexOf(i) >= 0) continue;
+
+      selectbike.addOption({ value: i, text: i });
+    }
+
+    $scope.selectedRider = {};
+    angular.element('#select-user-id')[0].selectize.setValue('');
+    angular.element('#book-ride-modal').Modal();
   }
 
   $scope.addWaitlistModal = function () {
@@ -1237,25 +1246,34 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   }
 
   $scope.switchBikeModal = function (book) {
-    if (!$scope.isCompleted($scope.schedDetails)) {
-      ClassService.query({ date: $scope.newBook.date, sched_id: $scope.newBook.sched_id, seats: true }, function (seats) {
-        $scope.selectedBook = book;
-        if (seats.available.length) {
-          var selectize = angular.element('#switch-seat')[0].selectize;
-          selectize.clearOptions();
-          selectize.settings.sortField = 'text';
-          angular.forEach(seats.available, function (seat) {
-            selectize.addOption({ value: seat, text: seat });
-          });
-
-          angular.element('#switch-bike-modal').Modal();
-        } else {
-          $.Notify({ content: 'No seats available to switch' });
-        }
-      });
-    } else {
+    if($scope.isCompleted($scope.schedDetails)) {
       $.Notify({ content: 'Not allow to modify, This schedule is completed' });
+      return;
     }
+
+    if($scope.books.length === $scope.schedDetails.branch.num_bikes) {
+      $.Notify({ content: 'No seats available to switch' });
+      return;
+    }
+
+    $scope.selectedBook = book;
+
+    var unavailableBikes = [];
+    angular.forEach($scope.books, function(booking) {
+      unavailableBikes.push( booking.seat_number );
+    });
+
+    var selectize = angular.element('#switch-seat')[0].selectize;
+    selectize.clearOptions();
+    selectize.settings.sortField = 'text';
+
+    for(var i = 1; i <= $scope.schedDetails.branch.num_bikes; i++) {
+      if(unavailableBikes.indexOf(i) >= 0) continue;
+
+      selectize.addOption({ value: i, text: i });
+    }
+
+    angular.element('#switch-bike-modal').Modal();
   }
 
   $scope.switchBike = function () {
@@ -1382,8 +1400,7 @@ ctrls.controller('ClassCtrl', function ($scope, $timeout, ClassService, UserServ
   $scope.checkSeat = function (seat) {
     if ($scope.schedDetails && $scope.books) {
       for (var b in $scope.books) {
-        if ($scope.books[b].seat_number == seat ||
-            seat > $scope.schedDetails.seats) {
+        if ($scope.books[b].seat_number == seat) {
           return true;
         }
       }
