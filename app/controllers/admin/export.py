@@ -50,7 +50,7 @@ def download_bookings(self):
 
             writer.writeheader()
 
-            for i in range(1, sched.seats + 1):
+            for i in range(1, sched.branch.num_bikes + 1):
                 if i in bikeMap:
                     book_counts = (yield BookedSchedule.objects.filter(status='completed', user_id=bikeMap[i].user_id, date__lte=bikeMap[i].date).limit(1).find_all())
                     writer.writerow({
