@@ -622,6 +622,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
   $scope.accountSummary = function (user) {
     $scope.currentPage = 0;
     $scope.selectedAccount = user;
+    $scope.disable_exp = false;
     UserService.get({ userId: user._id }, function (summary) {
       $scope.selectedAccount = summary;
     });
@@ -753,7 +754,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
 
   $scope.extendPackageExpiry = function (userpackage) {
     $.Prompt('Extend expiration by how many days ?', function (days) {
-      if (parseInt(days)) {
+      if (parseInt(days) && parseInt(days) > 0) {
         $.Alert('Extending expiration ...', true);
         TransactionService.update({ transactionId: userpackage._id}, { extend: parseInt(days) }, function () {
           UserService.get({ userId: userpackage.user_id._id }, function (summary) {
