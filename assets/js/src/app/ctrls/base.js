@@ -42,7 +42,7 @@ ctrls.controller('SiteCtrl', function ($scope, $window, $document, $timeout, $ht
 
   // show terms and conditions popup
   if ($scope.loginUser && !$scope.loginUser.agreed_terms) {
-    $.Confirm('I have read and agree to these <a href="/#/terms">Terms and Conditions</a> ?' , $scope.onAgreeTerms);
+    $.Confirm('I have read and agree to the updated <a href="/#/terms">Terms and Conditions</a> ?' , $scope.onAgreeTerms);
   }
 
   $scope.onAgreeTerms = function() {
