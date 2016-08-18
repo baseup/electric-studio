@@ -234,3 +234,26 @@ app.filter('search', function($filter){
     });
   }
 })
+
+.filter("dateRangeFilter", function() {
+  function parseDate(input) {
+    return Date.parse(input); 
+  }
+  return function(items, from, to, key) {
+        var df = parseDate(from);
+        var dt = parseDate(to);
+        var flagNone = false;
+        var result = [];        
+        for (var i=0; i<items.length; i++){
+            var date_bet = parseDate(items[i][key]);
+            if (date_bet > df && dt > date_bet)  {
+              result.push(items[i]);
+            } else if(isNaN(df)&&isNaN(dt)) {
+              /* Show All Data */
+              result.push(items[i]);
+            }
+        }
+        return result;
+  };
+})
+

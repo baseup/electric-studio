@@ -7,6 +7,7 @@ from bson.objectid import ObjectId
 from tornado import gen
 from app.settings import REDIS_HOST, REDIS_PORT
 from dateutil.relativedelta import relativedelta
+from app.helper import create_at_gmt8
 
 import os
 import redis
@@ -265,4 +266,74 @@ def waitlist(self):
             self.write('No waitlisted schedule found')
     else:
         self.write('Invalid Schedule')
+    self.finish()
+
+def download_transactions_report(self):
+    startDate = self.get_query_argument('fromDate')
+    endDate = self.get_query_argument('toDate')
+
+    if (startDate and startDate.strip()) and (endDate and endDate.strip()):
+        try:
+            fromDate = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
+            if startDate:
+                fromDate = datetime.strptime(startDate, '%Y-%m-%d')
+                toDate = datetime.now() + timedelta(days=7)
+            if endDate:
+                toDate = datetime.strptime(endDate, '%Y-%m-%d')
+        except:
+            return self.render_json({ 'error': True})
+
+        transactions = yield UserPackage.objects.filter(create_at__gte=fromDate,create_at__lte=toDate).order_by('create_at', direction=DESCENDING) \
+                        .find_all()
+        transactions = create_at_gmt8(transactions)
+    else:
+        transactions = yield UserPackage.objects.order_by('create_at', direction=DESCENDING).find_all()
+        transactions = create_at_gmt8(transactions)
+    
+    filename = 'transaction-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'
+    with open(filename, 'w') as csvfile:
+        fieldnames = ['trans_id', 'user_id', 'branch_id', 'package_id', 
+                     'package_name', 'package_fee', 'package_ft',
+                     'payment_method', 'credit_count', 'expiration', 'expire_date',
+                     'remaining_credits', 'status', 'notes', 'is_free', 'trans_info', 
+                     'create_at', 'update_at']
+
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        writer.writeheader()
+
+        for transaction in transactions:
+            writer.writerow({
+                        'trans_id': transaction._id,
+                        'user_id': transaction.user_id._id,
+                        'branch_id': transaction.branch_id._id if transaction.branch_id is not None else '---', # No Branch ID for GC
+                        'package_id': transaction.package_id._id,
+                        'package_name': transaction.package_name,
+                        'package_fee': transaction.package_fee,
+                        'package_ft': transaction.package_ft,
+                        'payment_method': transaction.payment_method,
+                        'credit_count': transaction.credit_count,
+                        'expiration': transaction.expiration,
+                        'expire_date': transaction.expire_date,
+                        'remaining_credits': transaction.remaining_credits,
+                        'status': transaction.status,
+                        'notes': transaction.notes,
+                        'is_free': transaction.is_free,
+                        'trans_info': transaction.trans_info,
+                        'create_at': transaction.create_at,
+                        'update_at': transaction.update_at
+                        })
+    
+    self.set_header('Content-Type', 'application/octet-stream')
+    self.set_header('Content-Disposition', 'attachment; filename=' + filename)
+
+
+    buf_size = 4096
+    with open(filename, 'r') as f:
+        while True:
+            data = f.read(buf_size)
+            if not data:
+                break
+            self.write(data)
+
     self.finish()

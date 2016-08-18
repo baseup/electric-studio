@@ -250,7 +250,7 @@ ctrls.controller('PackageCtrl', function ($scope, PackageService) {
   }
 });
 
-ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location, UserService, PackageService, TransactionService, ClassService, SecurityService, EmailVerifyService) {
+ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location, UserService, PackageService, TransactionService, ClassService, SecurityService, EmailVerifyService, BranchService) {
 
   var qstring = $location.search();
   if (qstring.s) {
@@ -273,6 +273,20 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
     $scope.users = users;
   });
 
+  var selectBranch = angular.element('#select-branch')[0].selectize;
+  BranchService.query({},function(branches) {
+    $scope.branches = branches;
+    angular.forEach(branches, function(branch) {
+      selectBranch.addOption({value: branch._id, text: branch.name});
+    });
+  });
+
+  var selectPayment = angular.element('#select-payment-method')[0].selectize;
+  var methods = ['Cash', 'Card', 'Paypal', 'Free'];
+  angular.forEach(methods, function(value, key) {
+    selectPayment.addOption({ value: value, text: value});
+  });
+
   var select = angular.element('#select-add-package')[0].selectize;
   var selectBuy = angular.element('#select-buy-package')[0].selectize;
   PackageService.query(function (packages) {
@@ -280,20 +294,6 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
     angular.forEach(packages, function (pack) {
       select.addOption({ value: pack._id, text: pack.name  || pack.credits + ' Ride' + (pack.credits > 1 ? 's' : '' ) });
       selectBuy.addOption({ value: pack._id, text: pack.name  || pack.credits + ' Ride' + (pack.credits > 1 ? 's' : '' )});
-    
-         // angular.forEach(summary.packages, function (pack_val, pack_key) {
-            //   $scope.checkExpirationDate(pack_val);
-            //     // var tmp_date = new Date(pack_val.create_at);
-            //     // tmp_date = new Date(tmp_date.setDate(tmp_date.getDate() + pack_val.expiration)).setHours(0,0,0,0);
-            //     // var cur_date = new Date().setHours(0,0,0,0);
-            //     // if (tmp_date < cur_date) {
-            //     //   pack_val.is_expired = true;
-            //     // } else if (tmp_date == cur_date) {
-            //     //   pack_val.is_expired = 'expired';
-            //     // } else {
-            //     //   pack_val.is_expired = false;
-            //     // }
-            // });
     });
   });
 
@@ -633,25 +633,10 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
   //   }
   // }
 
-  $scope.checkExpirationDate = function (pack_val) {
-     var tmp_date = new Date(pack_val.create_at);
-    tmp_date = new Date(tmp_date.setDate(tmp_date.getDate() + pack_val.expiration)).setHours(0,0,0,0);
-    var cur_date = new Date().setHours(0,0,0,0);
-    if (tmp_date < cur_date) {
-      pack_val.is_expired = true;
-    } else if (tmp_date == cur_date) {
-      pack_val.is_expired = 'expired';
-    } else {
-      pack_val.is_expired = false;
-    }
-
-
-    return pack_val;
-  }
-
   $scope.accountSummary = function (user) {
     $scope.currentPage = 0;
     $scope.selectedAccount = user;
+    $scope.disable_exp = false;
     UserService.get({ userId: user._id }, function (summary) {
       $scope.selectedAccount = summary;
     });
@@ -902,6 +887,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
 
   $scope.saveNewCredits = function () {
     $scope.saving = true;
+
     TransactionService.save($scope.newCredits, function (credits) {
       $scope.saving = false;
       $scope.newCredits = {};
@@ -941,7 +927,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
 
   $scope.unFrozeAccount = function (user) {
     var name = user.first_name + ' ' + user.last_name;
-    $.Confirm('Are you sure you want to unfreeze ' + name + ' account ?', function () {
+    $.Confirm('Are you sure on unfrozing ' + name + ' account ?', function () {
 
       var unFrozeSuccess = function () {
         $.Alert('Successfully unfreeze account ' + name)
@@ -2714,10 +2700,12 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
 
 });
 
-ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, PackageService) {
+ctrls.controller('TransactionsCtrl', function ($scope, $http, TransactionService, PackageService) {
 
   $scope.currentPage = 0;
   $scope.hasNext = true;
+  $scope.filterDateTo = '';
+  $scope.filterDateFrom = '';
   $scope.transactions = TransactionService.query();
   $scope.transactions.$promise.then(function (data) {
     $scope.transactions = data;
@@ -2730,6 +2718,20 @@ ctrls.controller('TransactionsCtrl', function ($scope, TransactionService, Packa
       if (pack) select.addOption({ value: pack._id, text: pack.name });
     });
   });
+
+  $scope.exportTrans = function() {
+    if($scope.filterDateFrom !== '' && $scope.filterDateTo !== '') {
+      $.Confirm('Are you sure to export filtered transaction(s) list?', function () {
+        location.href = '/admin/export/download-transactions-report?toDate=' + 
+        ($scope.filterDateTo != "undefined" ? $scope.filterDateTo : '') + 
+        '&fromDate=' + ($scope.filterDateFrom != "undefined" ? $scope.filterDateFrom : '');
+      });
+    } else {
+      $.Confirm('Are you sure to export all transaction(s) list?', function () {
+        location.href = '/admin/export/download-transactions-report';
+      });
+    }
+  }
 
   $scope.getTransId = function (pac) {
     if (pac.trans_info) {

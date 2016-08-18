@@ -1,4 +1,5 @@
 from motorengine import *
+from .admins import Branch
 from .users import User
 from app.helper import mongo_to_dict
 from hurricane.db import Model
@@ -24,9 +25,11 @@ class UserPackage(Model):
     __lazy__ = False
     user_id = ReferenceField(reference_document_type=User)
     package_id = ReferenceField(reference_document_type=Package, required=False)
+    branch_id = ReferenceField(reference_document_type=Branch)
     package_name = StringField(required=False)
     package_fee = DecimalField(required=False, default='0.00')
     package_ft = BooleanField(required=False, default=False)
+    payment_method = StringField()
     credit_count = IntField(required=True)
     expiration = IntField(required=True)
     expire_date = DateTimeField(required=False)

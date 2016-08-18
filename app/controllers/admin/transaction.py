@@ -1,4 +1,5 @@
 from motorengine import DESCENDING
+from app.models.admins import Branch
 from app.models.packages import UserPackage, Package
 from app.models.schedules import BookedSchedule
 from app.models.users import User
@@ -34,6 +35,7 @@ def create(self):
     data = tornado.escape.json_decode(self.request.body)
     trans = UserPackage()
     user = yield User.objects.get(data['user_id'])
+    branch = yield Branch.objects.get(data['branch_id'])
 
     if 'package_id' in data and data['package_id'] != '':
         package = yield Package.objects.get(data['package_id'])
@@ -59,8 +61,10 @@ def create(self):
     if 'notes' in data:
         trans.notes = data['notes']
 
+    trans.payment_method = data['payment_method']
     trans.is_free = True
     trans.user_id = user._id
+    trans.branch_id = branch._id
     trans.trans_id = str(user._id) + datetime.now().strftime('%Y%m%d%H%M%S')
 
     try:

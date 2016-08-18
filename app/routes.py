@@ -107,7 +107,8 @@ routes.prefix('/admin', [
     ('get', '/export/download-bookings', 'admin.export.download_bookings'),
     ('get', '/export/waitlist', 'admin.export.waitlist'),
     ('get', '/export/download-user-accounts', 'admin.export.download_user_accounts_progress'),
-    ('get', '/export/download-gift-cards-report', 'admin.export.download_gift_cards_report')
+    ('get', '/export/download-gift-cards-report', 'admin.export.download_gift_cards_report'),
+    ('get', '/export/download-transactions-report', 'admin.export.download_transactions_report'),
 ])
 
 routes.prefix('/api', [

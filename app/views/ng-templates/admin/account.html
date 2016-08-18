@@ -355,7 +355,10 @@
             <th>Total Rides</th>
             <th>Rides Left</th>
             <th>Expiration Date</th>
+            <th>Branch</th>
             <th>Notes</th>
+            <th>Payment Method</th>
+            <th>Trans/Ref Code</th>
             <th>Purchase Date</th>
           </tr>
           <tr ng-repeat="pack in selectedAccount.packages | search:'trans_info.transaction,package_name':searchTrans">
@@ -367,14 +370,15 @@
               <a ng-if="getAccess('accounts', 'update_expiration')" ng-click="changeCredits(pack)"><i class="fa fa-edit"></i></a>
             </td>
             <td>
-              <span class="badge" ng-class="{'bg-danger': pack.status == 'Expired', 'bg-success': pack.status == 'Active'}">
               {{ pack.create_at | addDay:pack.expiration | formatDate }}
-              </span>
               <a ng-if="getAccess('accounts', 'update_expiration')" ng-click="extendPackageExpiry(pack)">
                 <i class="fa fa-plus-square"></i>
               </a>
             </td>
+            <td>{{pack.branch_id.name}}</td>
             <td>{{ pack.notes }}</td>
+            <td>{{ pack.payment_method }}</td>
+            <td>{{ pack.payment_method != 'Paypal' ? 'N/A' : '----' }}</td>
             <td>{{ pack.create_at | formatDate }}</td>
           </tr>
         </table>
@@ -597,6 +601,18 @@
           <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
         </li>
         <li>
+          <span class="label">Branch</span>
+          <select class="select" id="select-branch" ng-model="newCredits.branch_id">
+            <option value="">Select Branch</option>
+          </select>
+        </li>
+        <li>
+          <span class="label">Payment Method</span>
+          <select class="select" id="select-payment-method" ng-model="newCredits.payment_method">
+            <option value="">Select Payment</option>
+          </select>
+        </li>
+        <li>
           <span class="label">Select Class Package</span>
           <select class="select" id="select-add-package" ng-change="selectPackage(newCredits.package_id)" ng-model="newCredits.package_id">
             <option value="">Select Package</option>
@@ -612,7 +628,7 @@
         </li>
         <li>
           <span class="label">Notes</span>
-          <textarea class="text-input" cols="3" ng-model="newCredits.notes" placeholder="Indicate reason for free class"></textarea>
+          <textarea class="text-input" cols="3" ng-model="newCredits.notes" placeholder="Indicate reason for free class" ng-disabled="newCredits.payment_method != 'Free'"></textarea>
         </li>
         <li>
           <input type="checkbox" ng-model="newCredits.no_email" /> Do not send email notification
