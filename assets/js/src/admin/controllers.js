@@ -280,6 +280,20 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
     angular.forEach(packages, function (pack) {
       select.addOption({ value: pack._id, text: pack.name  || pack.credits + ' Ride' + (pack.credits > 1 ? 's' : '' ) });
       selectBuy.addOption({ value: pack._id, text: pack.name  || pack.credits + ' Ride' + (pack.credits > 1 ? 's' : '' )});
+    
+         // angular.forEach(summary.packages, function (pack_val, pack_key) {
+            //   $scope.checkExpirationDate(pack_val);
+            //     // var tmp_date = new Date(pack_val.create_at);
+            //     // tmp_date = new Date(tmp_date.setDate(tmp_date.getDate() + pack_val.expiration)).setHours(0,0,0,0);
+            //     // var cur_date = new Date().setHours(0,0,0,0);
+            //     // if (tmp_date < cur_date) {
+            //     //   pack_val.is_expired = true;
+            //     // } else if (tmp_date == cur_date) {
+            //     //   pack_val.is_expired = 'expired';
+            //     // } else {
+            //     //   pack_val.is_expired = false;
+            //     // }
+            // });
     });
   });
 
@@ -619,6 +633,22 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
   //   }
   // }
 
+  $scope.checkExpirationDate = function (pack_val) {
+     var tmp_date = new Date(pack_val.create_at);
+    tmp_date = new Date(tmp_date.setDate(tmp_date.getDate() + pack_val.expiration)).setHours(0,0,0,0);
+    var cur_date = new Date().setHours(0,0,0,0);
+    if (tmp_date < cur_date) {
+      pack_val.is_expired = true;
+    } else if (tmp_date == cur_date) {
+      pack_val.is_expired = 'expired';
+    } else {
+      pack_val.is_expired = false;
+    }
+
+
+    return pack_val;
+  }
+
   $scope.accountSummary = function (user) {
     $scope.currentPage = 0;
     $scope.selectedAccount = user;
@@ -753,7 +783,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
 
   $scope.extendPackageExpiry = function (userpackage) {
     $.Prompt('Extend expiration by how many days ?', function (days) {
-      if (parseInt(days)) {
+      if (parseInt(days) && parseInt(days) > 0) {
         $.Alert('Extending expiration ...', true);
         TransactionService.update({ transactionId: userpackage._id}, { extend: parseInt(days) }, function () {
           UserService.get({ userId: userpackage.user_id._id }, function (summary) {
@@ -911,7 +941,7 @@ ctrls.controller('AccountCtrl', function ($scope, $timeout, $interval, $location
 
   $scope.unFrozeAccount = function (user) {
     var name = user.first_name + ' ' + user.last_name;
-    $.Confirm('Are you sure on unfrozing ' + name + ' account ?', function () {
+    $.Confirm('Are you sure you want to unfreeze ' + name + ' account ?', function () {
 
       var unFrozeSuccess = function () {
         $.Alert('Successfully unfreeze account ' + name)

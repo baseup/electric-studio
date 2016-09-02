@@ -67,11 +67,12 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
    */
   $scope.checkGCValue = function () {
     // ensure that the pin is all number
-    if(!$scope.gcPin.match(/^\d+$/)) {
-      $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
-      return;
+    if($scope.gcPin) {
+      if(!$scope.gcPin.match(/^\d+$/)) {
+        $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
+        return;
+      }
     }
-
     if ($scope.gcPin && $scope.gcCode) {
       var data = {};
       data.code = $scope.gcCode;
@@ -101,22 +102,25 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
       return;
     }
 
-    if(!$scope.gcPin.match(/^\d+$/)) {
-      $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
-      return;
+    if($scope.gcPin) {
+      if(!$scope.gcPin.match(/^\d+$/)) {
+        $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
+        return;
+      }
     }
 
     if ($scope.gcPin && $scope.gcCode) {
 
       var redeemSuccess = function () {
         UserService.get(function (user) {
-          $scope.loginUser =  user;
+          $scope.loginUser = user;
           $scope.reloadUser(user);
         });
 
         Amplitude.logEvent('REDEEM_GIFTCARD', { gcCode: $scope.gcCode });
 
         $window.location = "/#/account#package"
+        $scope.$emit('notify', { message: 'Successfully. Redeemed Gift Certificate.', duration: 3000 });
       }
 
       var redeemFailed = function (error) {

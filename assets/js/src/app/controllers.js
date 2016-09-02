@@ -192,7 +192,7 @@ ctrls.controller('SiteCtrl', function ($scope, $window, $document, $timeout, $ht
 
   // show terms and conditions popup
   if ($scope.loginUser && !$scope.loginUser.agreed_terms) {
-    $.Confirm('I have read and agree to these <a href="/#/terms">Terms and Conditions</a> ?' , $scope.onAgreeTerms);
+    $.Confirm('I have read and agree to the updated <a href="/#/terms">Terms and Conditions</a> ?' , $scope.onAgreeTerms);
   }
 
   $scope.onAgreeTerms = function() {
@@ -374,8 +374,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
     }
 
     for (var r in $scope.reserved) {
-      if ($scope.reserved[r].seat_number == num ||
-          num > sched.schedule.seats) {
+      if ($scope.reserved[r].seat_number == num) {
         return true;
       }
     }
@@ -1044,7 +1043,7 @@ ctrls.controller('LoginCtrl', function ($scope, $http, $window, Amplitude) {
       var password = $scope.login.password;
 
       if (!email || !password) {
-        $scope.$emit('notify', { message: 'Invalid Login Credentials', duration: 2000 });
+        $scope.$emit('notify', { message: 'Invalid Login Credentials' });
         return;
       }
 
@@ -1068,7 +1067,7 @@ ctrls.controller('LoginCtrl', function ($scope, $http, $window, Amplitude) {
           $scope.user.email = email;
           $scope.unverifiedLogin = true;
         }
-        $scope.$emit('notify', { message: response.data + '.', duration: 2000 });
+        $scope.$emit('notify', { message: response.data + '.' });
       });
     }
 
@@ -1151,11 +1150,12 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
    */
   $scope.checkGCValue = function () {
     // ensure that the pin is all number
-    if(!$scope.gcPin.match(/^\d+$/)) {
-      $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
-      return;
+    if($scope.gcPin) {
+      if(!$scope.gcPin.match(/^\d+$/)) {
+        $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
+        return;
+      }
     }
-
     if ($scope.gcPin && $scope.gcCode) {
       var data = {};
       data.code = $scope.gcCode;
@@ -1185,22 +1185,25 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
       return;
     }
 
-    if(!$scope.gcPin.match(/^\d+$/)) {
-      $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
-      return;
+    if($scope.gcPin) {
+      if(!$scope.gcPin.match(/^\d+$/)) {
+        $scope.$emit('notify', { message: 'Invalid pin!', duration: 3000 });
+        return;
+      }
     }
 
     if ($scope.gcPin && $scope.gcCode) {
 
       var redeemSuccess = function () {
         UserService.get(function (user) {
-          $scope.loginUser =  user;
+          $scope.loginUser = user;
           $scope.reloadUser(user);
         });
 
         Amplitude.logEvent('REDEEM_GIFTCARD', { gcCode: $scope.gcCode });
 
         $window.location = "/#/account#package"
+        $scope.$emit('notify', { message: 'Successfully. Redeemed Gift Certificate.', duration: 3000 });
       }
 
       var redeemFailed = function (error) {
@@ -1505,7 +1508,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, $
       }
 
       date = new Date(date);
-      var cutOffchkDate = date;
+      var cutOffchkDate = angular.copy(date);
       cutOffchkDate.setDate(date.getDate() - 1);
       cutOffchkDate.setHours(17, 0, 0);
 
@@ -1762,13 +1765,13 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
    * @function: Sends the email verification link
    * @param: user (user's id)
    */
-  $scope.sendEmailConfirmation = function (user) {
+  $scope.sendEmailConfirmation = function (user, resend) {
     $scope.sendingEmail = true;
     $scope.verificationLink = null;
 
     var sendEmailSuccess = function () {
       $scope.sendingEmail = false;
-      $scope.$emit('notify', { message: 'Please check your e-mail to verify your account and complete registration.' });
+      if(resend) $scope.$emit('notify', { message: 'Email confirmation sent!', duration: 4000 });
     };
 
     var sendEmailFailed = function (error) {
