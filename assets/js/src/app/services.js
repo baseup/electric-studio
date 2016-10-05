@@ -1,7 +1,7 @@
 'use strict';
 
 var loginUser = window.localStorage.getItem('login-user');
-var services = angular.module('elstudio.services', ['ngResource', 'ngWebSocket', 'angular-amplitude']);
+var services = angular.module('elstudio.services', ['ngResource', 'ngWebSocket']);
 
 services.factory('SliderService', function ($resource) {
   return $resource('/admin/slider/:sliderId', {}, {
@@ -448,44 +448,75 @@ services.service('ScheduleSocketService', function(webSocket, $filter) {
 });
 
 
-services.service('Amplitude', function($amplitude, $rootScope, $location, amplitudeApiKey) {
-  function init() {
-    $amplitude.getInstance().init(amplitudeApiKey);
-
-    $rootScope.$on('$locationChangeStart', function(evt, next, current) {
-      logEvent('VISITED_PAGE', { page: next });
-    });
-  }
-
-  function logEvent(eventName, params) {
-    $amplitude.getInstance().logEvent(eventName, params);
-  }
-
-  function setUserId(userId) {
-    $amplitude.getInstance().setUserId(userId);
-  }
-
-  function logOutUser() {
-    setUserId(null);
-    $amplitude.getInstance().regenerateDeviceId();
-  }
-
-  function identify(identify) {
-    $amplitude.getInstance().identify(identify);
-  }
-
-  function logRevenue(revenue) {
-    $amplitude.getInstance().logRevenueV2(revenue);
-  }
-
-  return {
-    init: init,
-    logEvent: logEvent,
-    setUserId: setUserId,
-    Identify: $amplitude.Identify,
-    identify: identify,
-    logOutUser: logOutUser,
-    Revenue: $amplitude.Revenue,
-    logRevenue: logRevenue
+services.factory('BookingService', function($rootScope) {
+  var service = {
+    waitlist: waitlist
   };
+
+  return service;
+
+  /// Expose
+
+  function waitlist(user) {
+    if(!isUserLoggedIn(user)) return;
+
+  }
+
+  function isUserLoggedIn(user) {
+    if(user) return true;
+
+    $rootScope.$emit('notify', { message: 'Please sign up or log in to your Electric account.', duration: 3000 });
+    angular.element('html, body').animate({ scrollTop: 0 }, 'slow');
+    angular.element('.login-toggle').click();
+    return false;
+  }
+
+
+  //
+  // $scope.$emit('notify', { message: 'Setting schedule as waitlist ...', duration: 3000 });
+  //
+  // UserService.get(function (user) {
+  //
+  //   $scope.loginUser = user;
+  //
+  //   if ($scope.loginUser && $scope.loginUser.status == 'Frozen') {
+  //     $scope.$emit('notify', { message: 'Your account is frozen. Please contact the studio for more details.' });
+  //     return;
+  //   }
+  //
+  //   if ($scope.loginUser && $scope.loginUser.status == 'Unverified') {
+  //     $scope.$emit('notify', { message: 'Account is not verified, Please check your email to verify account.' });
+  //     return;
+  //   }
+  //
+  //   var deductCredits = 1;
+  //   if (sched.schedule.type == 'Electric Endurance') {
+  //     deductCredits = 2;
+  //   }
+  //
+  //   var book = {};
+  //   book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+  //   book.seats = [];
+  //   book.sched_id = sched.schedule._id;
+  //   book.status = 'waitlisted';
+  //
+  //   var waitlistSuccess = function () {
+  //
+  //     if ($scope.resched) {
+  //       SharedService.clear('resched');
+  //     }
+  //
+  //     $scope.$emit('notify', { message: 'You have been added to the waitlist', duration: 3000 });
+  //     $scope.reloadUser();
+  //     window.location = '/#/reserved'
+  //     window.location.reload();
+  //   }
+  //   var waitlistFail = function (error) {
+  //     $scope.$emit('notify', { message: error.data, duration: 3000 });
+  //     $route.reload();
+  //   }
+  //
+  //   BookService.book(book).$promise.then(waitlistSuccess, waitlistFail);
+  // });
+
 });
