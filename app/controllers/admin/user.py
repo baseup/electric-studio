@@ -7,7 +7,7 @@ from app.models.packages import UserPackage
 from app.models.schedules import BookedSchedule
 from hurricane.helpers import to_json, to_json_serializable
 from datetime import datetime, timedelta
-from app.helper import send_email
+from app.helper import send_email, send_email_template
 from app.helper import create_at_gmt8
 from motorengine import Q
 from bson.objectid import ObjectId
@@ -182,8 +182,8 @@ def update(self, id):
             host = self.request.protocol + '://' + self.request.host
             book_url = host + '/#/schedule'
             pack_url = host + '/#/rates-and-packages'
-            content = str(self.render_string('emails/welcome', user=user, pack_url=pack_url, book_url=book_url), 'UTF-8')
-            yield self.io.async_task(send_email, user=user, content=content, subject='Welcome to Team Electric')
+            context = { 'fname': user['first_name'], 'lname': user['last_name'], 'book_url': book_url, 'pack_url': pack_url }
+            yield self.io.async_task(send_email_template, template='welcome', user=user, context=context, subject='Welcome to Team Electric')
 
         elif 'billing' in data:
             user.billing = data['billing']

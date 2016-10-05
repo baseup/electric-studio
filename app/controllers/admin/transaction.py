@@ -2,7 +2,7 @@ from motorengine import DESCENDING
 from app.models.packages import UserPackage, Package
 from app.models.schedules import BookedSchedule
 from app.models.users import User
-from app.helper import send_email
+from app.helper import send_email, send_email_template
 from motorengine.errors import *
 from datetime import datetime, timedelta
 from app.helper import create_at_gmt8
@@ -49,7 +49,7 @@ def create(self):
             trans.credit_count = data['credit_count']
             trans.remaining_credits = data['credit_count']
         if 'expiration' in data:
-            trans.expiration = data['expiration'] 
+            trans.expiration = data['expiration']
 
     if not trans.expiration:
         trans.expiration = 30
@@ -75,8 +75,8 @@ def create(self):
         if send_email_flag:
             user = (yield User.objects.get(user._id)).serialize()
             site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
-            content = str(self.render_string('emails/freeclass', user=user, site=site_url, expiration=trans.expiration, credits=trans.credit_count), 'UTF-8')
-            yield self.io.async_task(send_email, user=user, content=content, subject='For You, On Us')
+            context = { 'credits': trans.credit_count, 'book_url': site_url, 'expiration': trans.expiration, 'fname': user['first_name'], 'lname': user['last_name'] }
+            yield self.io.async_task(send_email_template, template='freeclass', user=user, context=context, subject='For You, On Us')
 
     except InvalidDocumentError:
         self.set_status(400)
@@ -118,4 +118,3 @@ def update(self, id):
         self.write('Transaction not found')
 
     self.finish()
-

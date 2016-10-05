@@ -1,7 +1,7 @@
 from passlib.hash import bcrypt
 from app.models.users import User
 from app.models.packages import Package, UserPackage, GiftCertificate
-from app.helper import send_email_verification, send_email
+from app.helper import send_email_verification, send_email, send_email_template
 from app.models.schedules import InstructorSchedule, BookedSchedule
 from app.models.admins import Instructor, Admin, Setting, Branch, LandingPage
 from app.models.access import AccessType, Privilege
@@ -98,11 +98,11 @@ def user_migration(self):
                     transaction.package_ft = package.first_timer
                     transaction.credit_count = package.credits
                     transaction.remaining_credits = package.credits
-                    transaction.expiration = package.expiration   
+                    transaction.expiration = package.expiration
                     yield transaction.save()
         else:
             transactions = yield UserPackage.objects.filter(user_id=user._id, status__ne='Expired').find_all()
-            
+
             if len(transactions) > 0:
                 if d[6]:
                     outstanding_credit = int(d[6])
@@ -114,7 +114,7 @@ def user_migration(self):
                             else:
                                 transaction.remaining_credits = 0
                                 outstanding_credit = outstanding_credit - transaction.remaining_credits
-                            yield transaction.save() 
+                            yield transaction.save()
                     user.credits = int(d[6])
                 else:
                     user.credits = 0
@@ -130,7 +130,7 @@ def logout(self):
     self.clear_cookie('loginUserID')
     self.finish()
 
-def landing(self): 
+def landing(self):
     landing_pages = yield LandingPage.objects.find_all()
     return self.render('landing', landing_pages=landing_pages)
 
@@ -149,13 +149,13 @@ def verify(self):
                     host = self.request.protocol + '://' + self.request.host
                     book_url = host + '/#/schedule'
                     pack_url = host + '/#/rates-and-packages'
-                    content = str(self.render_string('emails/welcome', user=user, pack_url=pack_url, book_url=book_url), 'UTF-8')
-                    yield self.io.async_task(send_email, user=user, content=content, subject='Welcome to Team Electric')
+                    context = { 'fname': user['first_name'], 'lname': user['last_name'], 'book_url': book_url, 'pack_url': pack_url }
+                    yield self.io.async_task(send_email_template, template='welcome', user=user, context=context, subject='Welcome to Team Electric')
                     self.render('verify', success=True)
                 else:
                     self.render('verify', success=True, message='Account Already Verified')
             else:
-                self.render('verify', success=False, message='Invalid ticket for verication')   
+                self.render('verify', success=False, message='Invalid ticket for verication')
         else:
             self.render('verify', success=False, message='Ticket not found')
     else:
@@ -165,11 +165,8 @@ def verify(self):
             if user:
                 user = user.serialize()
                 url = self.request.protocol + '://' + self.request.host + '/verify?ticket=%s' % user['_id']
-                yield self.io.async_task(
-                    send_email_verification,
-                    user=user,
-                    content=str(self.render_string('emails/registration', user=user, url=url), 'UTF-8')
-                )
+                context = { 'fname': user['first_name'], 'lname': user['last_name'], 'verification_url': url }
+                yield self.io.async_task(send_email_template, template='registration', user=user, context=context, subject='Email Verification')
         self.finish()
 
 def forgot_password(self):
@@ -189,15 +186,10 @@ def forgot_password(self):
             if user:
                 encoded_id = base64.b64encode(str(user.password).encode('ascii'))
                 url = self.request.protocol + '://' + self.request.host + '/fpass?q=%s' % str(encoded_id, 'UTF-8')
-
                 user = user.serialize()
-                yield self.io.async_task(
-                send_email,
-                    user=user,
-                    content=str(self.render_string('emails/resetpass', user=user, url=url), 'UTF-8'),
-                    subject='Reset Password'
-                )
-            else: 
+                context = { 'fname': user['first_name'], 'lname': user['last_name'], 'reset_url': url }
+                yield self.io.async_task(send_email_template, template='resetpass', user=user, context=context, subject='Reset Password')
+            else:
                 self.set_status(400)
                 self.write('No user found for the specified email address')
         self.finish()
@@ -230,8 +222,8 @@ def redeem_gc(self):
                     user = yield User.objects.get(user_id)
                     if user.status != 'Frozen' and user.status != 'Unverified':
                         if gift_certificate.package_id.first_timer:
-                            ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
-            
+                            ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count())
+
                             if ft_package_count > 0:
                                 self.set_status(403)
                                 self.write('Sorry, you may only avail of the First Timer Package once.')
@@ -278,8 +270,8 @@ def redeem_gc(self):
                     self.finish()
         else:
             return self.render_json(gift_certificate);
-    
-        
+
+
     else:
         self.set_status(403)
         self.write('Incorrect card code or pin. Please try again.')
@@ -362,8 +354,8 @@ def buy(self):
                     'paypal_data' : pp_data
                 }
 
-                try: 
-                    if pid:           
+                try:
+                    if pid:
                         if user.status != 'Frozen' and user.status != 'Unverified':
                             transaction = UserPackage()
                             transaction.user_id = user._id
@@ -385,8 +377,8 @@ def buy(self):
                             user = (yield User.objects.get(user._id)).serialize()
                             site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
                             exp_date = transaction.create_at + timedelta(days=transaction.expiration)
-                            content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
-                            yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
+                            context = { 'package': pack_name, 'expire_date': exp_date.strftime('%B %d, %Y'), 'book_url': site_url, 'fname': user['first_name'], 'lname': user['last_name'] }
+                            yield self.io.async_task(send_email_template, template='buy', user=user, context=context, subject='Package Purchased')
 
                             self.redirect('/#/account?pname=' + pack_name + '&s=success#packages')
                         else:
@@ -419,7 +411,7 @@ def test_waitlist(self):
                 ins = yield Instructor.objects.limit(1).find_all()
                 if ins:
                     sched = InstructorSchedule(instructor=ins[0], type='regular', day='mon',
-                                               start=datetime.strptime('7:00 AM','%I:%M %p'), 
+                                               start=datetime.strptime('7:00 AM','%I:%M %p'),
                                                end=datetime.strptime('9:30 AM','%I:%M %p'))
                     sched = yield sched.save()
             else:
@@ -445,8 +437,8 @@ def test_waitlist(self):
             if isReserved:
                 continue
 
-            if user:            
-                book = BookedSchedule(user_id=user._id, 
+            if user:
+                book = BookedSchedule(user_id=user._id,
                                       date=date,
                                       schedule=sched._id,
                                       seat_number=x + 1,
@@ -473,7 +465,7 @@ def schedule_migrate(self):
     for sched in schedules:
         if type(sched.user_package) is not list:
             sched.user_package = [str(sched.user_package._id)]
-        else: 
+        else:
             upacks = []
             for upack in sched.user_package:
                 upacks.append(str(upack))
@@ -482,7 +474,7 @@ def schedule_migrate(self):
 
     self.redirect('/')
 
-def sync_package(self): 
+def sync_package(self):
 
     gmt8 = GMT8()
     users = yield User.objects.limit((yield User.objects.count())).find_all();
@@ -506,7 +498,7 @@ def sync_package(self):
             books = yield BookedSchedule.objects.filter(status__ne="cancelled", user_package=[str(upack._id)]).find_all();
             summary += '--[' + str(upack._id) + '] has ' + str(len(books)) + ' bookings made<br/>'
             if upack.remaining_credits > upack.credit_count:
-                summary += '--[' + str(upack._id) + '] updating (' + str(upack._id) + ') remaining credits from ' + str(upack.remaining_credits) + ' to ' + str(upack.credit_count - len(books)) + '<br/>'                                        
+                summary += '--[' + str(upack._id) + '] updating (' + str(upack._id) + ') remaining credits from ' + str(upack.remaining_credits) + ' to ' + str(upack.credit_count - len(books)) + '<br/>'
                 upack.remaining_credits = upack.credit_count - len(books);
 
             if upack.expire_date != upack.create_at + timedelta(days=upack.expiration):
@@ -549,7 +541,7 @@ def sync_package(self):
                 credits += upack.remaining_credits
 
         if user.credits != credits:
-            summary += '-- updating user credits from ' + str(user.credits) + ' to ' + str(credits) + '<br/>'                    
+            summary += '-- updating user credits from ' + str(user.credits) + ' to ' + str(credits) + '<br/>'
             user.credits = credits
             yield user.save()
 
@@ -588,7 +580,7 @@ def package_migrate(self):
         #         except:
         #             value = sys.exc_info()[1]
         #             print('Package Migrate Error (' + str(upack._id) + '): ' + str(value))
-        #     else:    
+        #     else:
         #         upack.trans_id = str(upack._id) + datetime.now().strftime('%Y%m%d%H%M%S')
 
         #     count += 1
@@ -605,7 +597,7 @@ def package_migrate(self):
 
     self.redirect('/')
 
-def add_default_sudopass(self): 
+def add_default_sudopass(self):
     setting = yield Setting.objects.get(key='security_password')
     if not setting:
         setting = Setting()
@@ -630,7 +622,7 @@ def add_regular_schedule(self):
     admin.email = 'admin@electricstudio.ph'
     admin.access_type = access._id
     yield admin.save()
-    
+
     scheds = yield InstructorSchedule.objects.find_all()
     for i, sched in enumerate(scheds):
         yield BookedSchedule.objects.filter(schedule=sched._id).delete()
@@ -672,7 +664,7 @@ def add_regular_schedule(self):
     yessa = Instructor(admin=adyessa._id, gender='female', image='images/instructors/instructor-yessa.jpg')
     yessa.motto = 'Look no further, want much more. The music matters, once you walk through my door. #ridewithyu'
     yessa = yield yessa.save()
-    migs = Instructor(admin=admigs._id, gender='male', image='images/instructors/instructor-migs.jpg') 
+    migs = Instructor(admin=admigs._id, gender='male', image='images/instructors/instructor-migs.jpg')
     migs.motto = "Clip in and find yourself letting everything go. My class will help you feel challenged and accomplished down to the very last energetic beat. We ride to improve and we'll do it all together."
     migs = yield migs.save()
     abel = Instructor(admin=adabel._id, gender='male', image='images/instructors/instructor-abel.jpg')
@@ -687,7 +679,7 @@ def add_regular_schedule(self):
     rache = Instructor(admin=adrache._id, gender='female', image='images/instructors/instructor-rachel.jpg')
     rache.motto = 'Look no further, want much more. The music matters, once you walk through my door. #ridewithyu'
     rache = yield rache.save()
-    raisa = Instructor(admin=adraisa._id, gender='male', image='images/instructors/instructor-raisa.jpg') 
+    raisa = Instructor(admin=adraisa._id, gender='male', image='images/instructors/instructor-raisa.jpg')
     raisa.motto = "Clip in and find yourself letting everything go. My class will help you feel challenged and accomplished down to the very last energetic beat. We ride to improve and we'll do it all together."
     raisa = yield raisa.save()
     trish = Instructor(admin=adtrish._id, gender='male', image='images/instructors/instructor-trish.jpg')
@@ -705,7 +697,7 @@ def add_regular_schedule(self):
     # for d, day in enumerate(days):
     #     for t, time in enumerate(times):
     #         schedule = InstructorSchedule(instructor=instruts[t], type='regular', day=day,
-    #                                       start=datetime.strptime(time,'%I:%M %p'), 
+    #                                       start=datetime.strptime(time,'%I:%M %p'),
     #                                       end=datetime.strptime(endtimes[t],'%I:%M %p'))
     #         schedule = yield schedule.save()
 
@@ -714,7 +706,7 @@ def add_regular_schedule(self):
 def add_branch(self):
 
     branch_count = (yield Branch.objects.count())
-    
+
     if branch_count < 2:
 
         curBranch = (yield Branch.objects.find_all())[0]
@@ -767,5 +759,3 @@ def add_access_types(self):
     yield adminAccessType.save()
 
     self.redirect('/add_regular_schedules')
-
-

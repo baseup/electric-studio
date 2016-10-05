@@ -104,30 +104,6 @@ def send_email_verification(user, content):
     except mandrill.Error:
         raise
 
-def send_email_booking(user, content, branch=None):
-    try:
-        mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
-        message = {
-            'from_email': EMAIL_SENDER,
-            'from_name': EMAIL_SENDER_NAME,
-            'headers': {
-                'Reply-To': EMAIL_SENDER
-            },
-            'html':  content,
-            'important': True,
-            'subject': 'Electric Studio - Booked' + (' - {}'.format(branch) if branch else ''),
-            'to': [
-                {
-                    'email': user['email'],
-                    'name': user['first_name'] + ' ' + user['last_name'],
-                    'type': 'to'
-                }
-            ]
-        }
-        mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
-    except mandrill.Error:
-        raise
-
 def send_email_cancel(user, content, branch=None):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
@@ -197,6 +173,34 @@ def send_email(user, content, subject, branch=None):
             ]
         }
         mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
+    except mandrill.Error:
+        raise
+
+def send_email_template(template, user, context, subject, branch=None):
+    try:
+        mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
+        message = {
+            'from_email': EMAIL_SENDER,
+            'from_name': EMAIL_SENDER_NAME,
+            'headers': {
+                'Reply-To': EMAIL_SENDER
+            },
+            'important': True,
+            'subject': 'Electric Studio - ' + subject + (' - {}'.format(branch) if branch else ''),
+            'to': [
+                {
+                    'email': user['email'],
+                    'name': user['first_name'] + ' ' + user['last_name'],
+                    'type': 'to'
+                }
+            ],
+            'global_merge_vars': []
+        }
+        for k, v in context.items():
+            message['global_merge_vars'].append(
+                {'name': k, 'content': v}
+            )
+        mandrill_client.messages.send_template(template, [], message)
     except mandrill.Error:
         raise
 

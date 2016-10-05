@@ -2,7 +2,7 @@ from app.models.admins import Admin
 from passlib.hash import bcrypt
 from app.models.packages import Package, UserPackage, GiftCertificate
 from app.models.users import User
-from app.helper import send_email_verification, send_email, code_generator
+from app.helper import send_email_verification, send_email, code_generator, send_email_template
 from bson.objectid import ObjectId
 from datetime import timedelta
 from app.models.access import AccessType
@@ -30,7 +30,7 @@ def privileges(self):
         for i, privilege in enumerate(access.privileges):
            privileges[privilege.module] = privilege.actions
         access.privileges = privileges
-    self.render_json(access.to_dict())   
+    self.render_json(access.to_dict())
 
 def login(self):
     if self.request.method == 'GET':
@@ -129,7 +129,7 @@ def buy(self):
                 pp_data = pp_data[7:]
                 pp_data = pp_data.replace("'",'')
                 pp_data = urllib.parse.unquote(pp_data)
-     
+
                 data = {
                     'transaction' : pp_tx,
                     'status' : pp_st,
@@ -163,8 +163,8 @@ def buy(self):
                             user = (yield User.objects.get(user._id)).serialize()
                             site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
                             exp_date = transaction.create_at + timedelta(days=transaction.expiration)
-                            content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
-                            yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
+                            context = { 'package': pack_name, 'expire_date': exp_date.strftime('%B %d, %Y'), 'book_url': site_url, 'fname': user['first_name'], 'lname': user['last_name'] }
+                            yield self.io.async_task(send_email_template, template='buy', user=user, context=context, subject='Package Purchased')
 
                             self.redirect('/admin/#/accounts?pname=' + pack_name + '&u=' + user['first_name'] + ' ' + user['last_name'] + '&s=success')
                         else:
@@ -280,7 +280,7 @@ def buy_gc(self):
                     gift_certificate.message = message
                 else:
                     gift_certificate.message = ' '
-                
+
 
                 gift_certificate = yield gift_certificate.save()
 
@@ -291,11 +291,17 @@ def buy_gc(self):
                 }
 
                 gc = gift_certificate.to_dict()
-                site_url = url = self.request.protocol + '://' + self.request.host + '/#/account'
-                subject = 'Electric Studio Gift Card from ' + self.get_argument('sender_name') 
-                content = str(self.render_string('emails/gc', gc=gc, site=site_url, package=package.name), 'UTF-8')
-                yield self.io.async_task(send_email, user=receiver, content=content, subject=subject)
-                
+                subject = 'Electric Studio Gift Card from ' + self.get_argument('sender_name')
+                context = { 'gc_receiver': gc['receiver_name'],
+                            'gc_sender': gc['sender_name'],
+                            'amount': gc['amount'],
+                            'credits': gc['credits'],
+                            'validity': gc['validity'],
+                            'message': gc['message'],
+                            'gc_code': gc['code'],
+                            'gc_pin': gc['pin'] }
+                yield self.io.async_task(send_email_template, template='gc', user=receiver, context=context, subject=subject)
+
                 if self.get_argument('sender_email'):
                     sender = {
                         'email' : self.get_argument('sender_email'),
@@ -305,20 +311,27 @@ def buy_gc(self):
 
                     gc = gift_certificate.to_dict()
                     site_url = url = self.request.protocol + '://' + self.request.host + '/#/account'
-                    subject = 'Electric Studio Gift Card sent to ' + self.get_argument('receiver_name') 
-                    content = str(self.render_string('emails/gc', gc=gc, site=site_url, package=package.name), 'UTF-8')
-                    yield self.io.async_task(send_email, user=sender, content=content, subject=subject)
+                    subject = 'Electric Studio Gift Card sent to ' + self.get_argument('receiver_name')
+                    context = { 'gc_receiver': gc['receiver_name'],
+                                'gc_sender': gc['sender_name'],
+                                'amount': gc['amount'],
+                                'credits': gc['credits'],
+                                'validity': gc['validity'],
+                                'message': gc['message'],
+                                'gc_code': gc['code'],
+                                'gc_pin': gc['pin'] }
+                    yield self.io.async_task(send_email_template, template='gc', user=sender, context=context, subject=subject)
 
 
                 if self.get_secure_cookie('admin') and isAdmin:
-                    self.redirect('/admin/#/gc-generation?s=success&msg=Success! Your Gift Card has been sent') 
+                    self.redirect('/admin/#/gc-generation?s=success&msg=Success! Your Gift Card has been sent')
                 else:
                     self.redirect('/#/gift-cards?s=success&msg=Success! Your Gift Card has been sent')
-                
+
             except:
                 value = sys.exc_info()[1]
                 self.set_status(403)
-            
+
                 if self.get_secure_cookie('admin') and isAdmin:
                     self.redirect('/admin/#/gc-generation?s=error&msg=' + str(value))
                     return
@@ -328,22 +341,22 @@ def buy_gc(self):
         else:
             error = pp_data.replace('\n',' : ')
             if self.get_secure_cookie('admin') and isAdmin:
-                self.redirect('/admin/#/gc-generation?s=success&msg=' + error)   
+                self.redirect('/admin/#/gc-generation?s=success&msg=' + error)
                 return
             else:
-                self.redirect('/#/gift-cards?s=success&msg=' + error) 
+                self.redirect('/#/gift-cards?s=success&msg=' + error)
                 return
     else:
         if self.get_secure_cookie('admin') and isAdmin:
-            self.redirect('/admin/#/gc-generation?s=success&msg=Cancelled') 
+            self.redirect('/admin/#/gc-generation?s=success&msg=Cancelled')
             return
         else:
-            self.redirect('/#/gift-cards?s=success&msg=Cancelled')      
-            return      
+            self.redirect('/#/gift-cards?s=success&msg=Cancelled')
+            return
 
 
 def redeem_gc(self):
-    
+
     if not self.get_secure_cookie('loginUserID'):
         self.set_status(403)
         self.write('Please sign up or log in to your Electric account.')
@@ -366,7 +379,7 @@ def redeem_gc(self):
             user = yield User.objects.get(user_id)
 
             if package.first_timer:
-                ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count()) 
+                ft_package_count = (yield UserPackage.objects.filter(user_id=ObjectId(user_id), package_ft=True).count())
                 if ft_package_count > 0:
                     self.set_status(403)
                     self.write('User ' + user.email + ' already have first timer package.')
@@ -377,7 +390,7 @@ def redeem_gc(self):
                     gift_certificate.redeemer_es_id = user._id
                     gift_certificate.redeem_date = datetime.now()
                     gift_certificate.is_redeemed = True
-                    
+
                     # save this into user transaction
                     transaction = UserPackage()
                     transaction.user_id = user._id
@@ -421,7 +434,7 @@ def ipn_gc(self):
     ipn_data = urllib.parse.parse_qs(data)
     for k in ipn_data.keys():
         ipn_data[k] = ipn_data[k][0]
-        if ipn_data[k]: 
+        if ipn_data[k]:
             ipn_data[k] = ipn_data[k].replace("'",'')
 
     tx = ipn_data['txn_id']
@@ -476,10 +489,17 @@ def ipn_gc(self):
                 }
 
                 gc = gift_certificate.to_dict()
-                site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
-                content = str(self.render_string('emails/gc', gc=gc, site=site_url, package=package.name), 'UTF-8')
-                yield self.io.async_task(send_email, user=receiver, content=content, subject='Gift Card')
-                
+
+                context = { 'gc_receiver': gc['receiver_name'],
+                            'gc_sender': gc['sender_name'],
+                            'amount': gc['amount'],
+                            'credits': gc['credits'],
+                            'validity': gc['validity'],
+                            'message': gc['message'],
+                            'gc_code': gc['code'],
+                            'gc_pin': gc['pin'] }
+                yield self.io.async_task(send_email_template, template='gc', user=receiver, context=context, subject='Gift Card')
+
                 # TODO: Needed email for sender that the gift card has been sent to the receiver via email
                 # This one need template/content as of now we havent
                 sender = {
@@ -499,7 +519,7 @@ def ipn_gc(self):
     if error:
         print('IPN Error: ' + error)
     self.finish()
-        
+
 
 def ipn(self):
 
@@ -507,7 +527,7 @@ def ipn(self):
     ipn_data = urllib.parse.parse_qs(data)
     for k in ipn_data.keys():
         ipn_data[k] = ipn_data[k][0]
-        if ipn_data[k]: 
+        if ipn_data[k]:
             ipn_data[k] = ipn_data[k].replace("'",'')
 
     tx = ipn_data['txn_id']
@@ -534,7 +554,7 @@ def ipn(self):
                     'paypal_data' : ipn_data
                 }
 
-                try: 
+                try:
                     if pid:
                         if user.status != 'Frozen' and user.status != 'Unverified':
                             transaction = UserPackage()
@@ -561,8 +581,8 @@ def ipn(self):
                             user = (yield User.objects.get(user._id)).serialize()
                             site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
                             exp_date = transaction.create_at + timedelta(days=transaction.expiration)
-                            content = str(self.render_string('emails/buy', user=user, site=site_url, package=pack_name, expire_date=exp_date.strftime('%B %d, %Y')), 'UTF-8')
-                            yield self.io.async_task(send_email, user=user, content=content, subject='Package Purchased')
+                            context = { 'package': pack_name, 'expire_date': exp_date.strftime('%B %d, %Y'), 'book_url': site_url, 'fname': user['first_name'], 'lname': user['last_name'] }
+                            yield self.io.async_task(send_email_template, template='buy', user=user, context=context, subject='Package Purchased')
 
                         else:
                             error = 'Invalid User Status'
@@ -580,5 +600,3 @@ def ipn(self):
         print('IPN Error: ' + error)
 
     self.finish()
-
-

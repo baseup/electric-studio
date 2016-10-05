@@ -1,7 +1,7 @@
 import sys
 from passlib.hash import bcrypt
 from motorengine.errors import InvalidDocumentError
-from app.helper import send_email_verification, send_email
+from app.helper import send_email_verification, send_email, send_email_template
 from app.models.users import User
 from app.models.schedules import BookedSchedule
 from app.models.packages import UserPackage
@@ -168,8 +168,8 @@ def destroy(self, id):
             host = self.request.protocol + '://' + self.request.host
             book_url = host + '/#/schedule'
             pack_url = host + '/#/rates-and-packages'
-            content = str(self.render_string('emails/deactivate', user=user, pack_url=pack_url, book_url=book_url), 'UTF-8')
-            yield self.io.async_task(send_email, user=user, content=content, subject='Account Deactivated')
+            context = { 'fname': user['first_name'], 'lname': user['last_name'] }
+            yield self.io.async_task(send_email_template, template='deactivate', user=user, context=context, subject='Account Deactivated')
 
         else:
             self.set_status(400);
