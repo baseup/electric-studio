@@ -128,7 +128,15 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, $
     });
   }
 
-  $scope.setSchedule = function (schedule, date, branch, nmon) {
+  $scope.setSchedule = function ($event, schedule, date, branch, nmon) {
+
+    var _e = $event;
+
+    if (_e.currentTarget.disabled) {
+      return;
+    }
+
+    _e.currentTarget.disabled = true;
 
     if (nmon == null) {
       nmon = false;

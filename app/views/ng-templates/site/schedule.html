@@ -27,7 +27,7 @@
                 {{ monday.sub_instructor ? ' &amp; ' + monday.sub_instructor.admin.first_name : '' }}
               </span>
               <span class="schedtype">{{ monday.type }}</span>
-              <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, monDate, branch)">
+              <button class="btn btn--small btn--primary" ng-click="setSchedule($event, monday, monDate, branch)">
                 {{ isFull(monday) ? 'waitlist' : 'reserve' }}
               </button>
             </a>
@@ -46,7 +46,7 @@
                 {{ tuesday.sub_instructor ? ' &amp; ' + tuesday.sub_instructor.admin.first_name : '' }}
               </span>
               <span class="schedtype">{{ tuesday.type }}</span>
-              <button class="btn btn--small btn--primary" ng-click="setSchedule(tuesday, tueDate, branch)">
+              <button class="btn btn--small btn--primary" ng-click="setSchedule($event, tuesday, tueDate, branch)">
                 {{ isFull(tuesday) ? 'waitlist' : 'reserve' }}
               </button>
             </a>
@@ -65,7 +65,7 @@
                 {{ wednesday.sub_instructor ? ' &amp; ' + wednesday.sub_instructor.admin.first_name : '' }}
               </span>
               <span class="schedtype">{{ wednesday.type }}</span>
-              <button class="btn btn--small btn--primary" ng-click="setSchedule(wednesday, wedDate, branch)">
+              <button class="btn btn--small btn--primary" ng-click="setSchedule($event, wednesday, wedDate, branch)">
                 {{ isFull(wednesday) ? 'waitlist' : 'reserve' }}
               </button>
             </a>
@@ -84,7 +84,7 @@
                 {{ thursday.sub_instructor ? ' &amp; ' + thursday.sub_instructor.admin.first_name : '' }}
               </span>
               <span class="schedtype">{{ thursday.type }}</span>
-              <button class="btn btn--small btn--primary" ng-click="setSchedule(thursday, thuDate, branch)">
+              <button class="btn btn--small btn--primary" ng-click="setSchedule($event, thursday, thuDate, branch)">
                 {{ isFull(thursday) ? 'waitlist' : 'reserve' }}
               </button>
             </a>
@@ -103,7 +103,7 @@
                 {{ friday.sub_instructor ? ' &amp; ' + friday.sub_instructor.admin.first_name : '' }}
               </span>
               <span class="schedtype">{{ friday.type }}</span>
-              <button class="btn btn--small btn--primary" ng-click="setSchedule(friday, friDate, branch)">
+              <button class="btn btn--small btn--primary" ng-click="setSchedule($event, friday, friDate, branch)">
                 {{ isFull(friday) ? 'waitlist' : 'reserve' }}
               </button>
             </a>
@@ -123,7 +123,7 @@
                 {{ saturday.sub_instructor ? ' &amp; ' + saturday.sub_instructor.admin.first_name : '' }}
               </span>
               <span class="schedtype">{{ saturday.type }}</span>
-              <button class="btn btn--small btn--primary" ng-click="setSchedule(saturday, satDate, branch)">
+              <button class="btn btn--small btn--primary" ng-click="setSchedule($event, saturday, satDate, branch)">
                 {{ isFull(saturday) ? 'waitlist' : 'reserve' }}
               </button>
             </a>
@@ -142,7 +142,7 @@
                 {{ sunday.sub_instructor ? ' &amp; ' + sunday.sub_instructor.admin.first_name : '' }}
               </span>
               <span class="schedtype">{{ sunday.type }}</span>
-              <button class="btn btn--small btn--primary" ng-click="setSchedule(sunday, sunDate, branch)">
+              <button class="btn btn--small btn--primary" ng-click="setSchedule($event, sunday, sunDate, branch)">
                 {{ isFull(sunday) ? 'waitlist' : 'reserve' }}
               </button>
             </a>
@@ -161,7 +161,7 @@
                 {{ monday.sub_instructor ? ' &amp; ' + monday.sub_instructor.admin.first_name : '' }}
               </span>
               <span class="schedtype">{{ monday.type }}</span>
-              <button class="btn btn--small btn--primary" ng-click="setSchedule(monday, nmonDate, branch, true)">
+              <button class="btn btn--small btn--primary" ng-click="setSchedule($event, monday, nmonDate, branch, true)">
                 {{ isFull(monday) ? 'waitlist' : 'reserve' }}
               </button>
             </a>
