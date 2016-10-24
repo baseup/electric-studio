@@ -1,7 +1,7 @@
 'use strict';
 
 var loginUser = window.localStorage.getItem('login-user');
-var services = angular.module('elstudio.services', ['ngResource', 'ngWebSocket', 'angular-amplitude']);
+var services = angular.module('elstudio.services', ['ngResource', 'ngWebSocket']);
 
 services.factory('SliderService', function ($resource) {
   return $resource('/admin/slider/:sliderId', {}, {
@@ -444,48 +444,5 @@ services.service('ScheduleSocketService', function(webSocket, $filter) {
     }
 
     socket.send(JSON.stringify(query));
-  };
-});
-
-
-services.service('Amplitude', function($amplitude, $rootScope, $location, amplitudeApiKey) {
-  function init() {
-    $amplitude.getInstance().init(amplitudeApiKey);
-
-    $rootScope.$on('$locationChangeStart', function(evt, next, current) {
-      logEvent('VISITED_PAGE', { page: next });
-    });
-  }
-
-  function logEvent(eventName, params) {
-    $amplitude.getInstance().logEvent(eventName, params);
-  }
-
-  function setUserId(userId) {
-    $amplitude.getInstance().setUserId(userId);
-  }
-
-  function logOutUser() {
-    setUserId(null);
-    $amplitude.getInstance().regenerateDeviceId();
-  }
-
-  function identify(identify) {
-    $amplitude.getInstance().identify(identify);
-  }
-
-  function logRevenue(revenue) {
-    $amplitude.getInstance().logRevenueV2(revenue);
-  }
-
-  return {
-    init: init,
-    logEvent: logEvent,
-    setUserId: setUserId,
-    Identify: $amplitude.Identify,
-    identify: identify,
-    logOutUser: logOutUser,
-    Revenue: $amplitude.Revenue,
-    logRevenue: logRevenue
   };
 });

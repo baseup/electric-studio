@@ -1,6 +1,6 @@
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $window, AuthService, UserService, PackageService, GCRedeemService, Amplitude) {
+ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $window, AuthService, UserService, PackageService, GCRedeemService) {
 
   // Check for paypal return messages on the url
   var qstring = $location.search();
@@ -53,10 +53,6 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
     }
 
     $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
-      var revenue = new Amplitude.Revenue().setProductId( package.name ).setPrice( parseFloat(package.fee) ).setQuantity(1);
-      Amplitude.logRevenue(revenue);
-      Amplitude.logEvent('BUY_PACKAGE', { packageName: package.name });
-
       angular.element('#payForm-' + package._id).submit();
     });
   };
@@ -116,8 +112,6 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
           $scope.loginUser = user;
           $scope.reloadUser(user);
         });
-
-        Amplitude.logEvent('REDEEM_GIFTCARD', { gcCode: $scope.gcCode });
 
         $window.location = "/#/account#package"
         $scope.$emit('notify', { message: 'Successfully. Redeemed Gift Certificate.', duration: 3000 });
@@ -202,10 +196,6 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
           $('input#ipn_notification_url').val(ipn_notification_url);
           $('input#return').val(return_url);
           $('input#cancel_return').val(cancel_return);
-
-          var revenue = new Amplitude.Revenue().setProductId( $scope.selectedGCPackage.name ).setPrice( parseFloat($scope.selectedGCPackage.fee) ).setQuantity(1);
-          Amplitude.logRevenue(revenue);
-          Amplitude.logEvent('BUY_GIFTCARD', { packageName: $scope.selectedGCPackage.name });
 
           angular.element('#payForm').submit();
         });

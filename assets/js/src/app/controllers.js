@@ -150,9 +150,7 @@ ctrls.controller('AccountCtrl', function ($scope, $location, UserService, AuthSe
 
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('SiteCtrl', function ($scope, $window, $document, $timeout, $http, AuthService, UserService, Amplitude) {
-
-  Amplitude.init();
+ctrls.controller('SiteCtrl', function ($scope, $window, $document, $timeout, $http, AuthService, UserService) {
 
   $scope.loginUser = AuthService.getCurrentUser();
   $scope.reloadUser = function (user) {
@@ -162,8 +160,6 @@ ctrls.controller('SiteCtrl', function ($scope, $window, $document, $timeout, $ht
       } else {
         $scope.loginUser = user;
       }
-
-      Amplitude.setUserId($scope.loginUser.email);
     });
   };
 
@@ -271,8 +267,6 @@ ctrls.controller('SiteCtrl', function ($scope, $window, $document, $timeout, $ht
       url: '/user/logout',
       method: 'GET',
     }).then(function (response) {
-      Amplitude.logOutUser();
-
       $window.localStorage.removeItem('login-user');
       $window.location = '/';
     }, function (xhr, code, error) {
@@ -1028,7 +1022,7 @@ ctrls.controller('LandingPageCtrl', function ($scope, $timeout, LandingPageServi
 
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('LoginCtrl', function ($scope, $http, $window, Amplitude) {
+ctrls.controller('LoginCtrl', function ($scope, $http, $window) {
 
   $scope.forgotPass = function () {
     angular.element('#forgot-password-modal').Modal();
@@ -1056,8 +1050,6 @@ ctrls.controller('LoginCtrl', function ($scope, $http, $window, Amplitude) {
         data: $.param({ password: password, email: email })
       }).then(function (response) {
         if (response.data.success && response.data.user) {
-          Amplitude.setUserId($scope.login.email);
-
           $window.localStorage.setItem('login-user', response.data.user);
           $window.location.reload();
         }
@@ -1083,7 +1075,7 @@ ctrls.controller('NotFoundCtrl', function ($scope) {
 
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $window, AuthService, UserService, PackageService, GCRedeemService, Amplitude) {
+ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $window, AuthService, UserService, PackageService, GCRedeemService) {
 
   // Check for paypal return messages on the url
   var qstring = $location.search();
@@ -1136,10 +1128,6 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
     }
 
     $.Confirm('Reminder: After payment is completed, kindly wait for PayPal to redirect back to www.electricstudio.ph', function () {
-      var revenue = new Amplitude.Revenue().setProductId( package.name ).setPrice( parseFloat(package.fee) ).setQuantity(1);
-      Amplitude.logRevenue(revenue);
-      Amplitude.logEvent('BUY_PACKAGE', { packageName: package.name });
-
       angular.element('#payForm-' + package._id).submit();
     });
   };
@@ -1199,8 +1187,6 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
           $scope.loginUser = user;
           $scope.reloadUser(user);
         });
-
-        Amplitude.logEvent('REDEEM_GIFTCARD', { gcCode: $scope.gcCode });
 
         $window.location = "/#/account#package"
         $scope.$emit('notify', { message: 'Successfully. Redeemed Gift Certificate.', duration: 3000 });
@@ -1285,10 +1271,6 @@ ctrls.controller('RatesCtrl', function ($scope, $http, $timeout, $location, $win
           $('input#ipn_notification_url').val(ipn_notification_url);
           $('input#return').val(return_url);
           $('input#cancel_return').val(cancel_return);
-
-          var revenue = new Amplitude.Revenue().setProductId( $scope.selectedGCPackage.name ).setPrice( parseFloat($scope.selectedGCPackage.fee) ).setQuantity(1);
-          Amplitude.logRevenue(revenue);
-          Amplitude.logEvent('BUY_GIFTCARD', { packageName: $scope.selectedGCPackage.name });
 
           angular.element('#payForm').submit();
         });
@@ -1692,7 +1674,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, $
 
 var ctrls = angular.module('elstudio.controllers.site');
 
-ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService, Amplitude) {
+ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService) {
 
   $scope.registered = false;
   $scope.signingUp = false;
@@ -1732,8 +1714,6 @@ ctrls.controller('SignUpCtrl', function ($scope, UserService, EmailVerifyService
       $scope.registered = true;
       $scope.sendEmailConfirmation($scope.user);
       $scope.signingUp = false;
-
-      Amplitude.logEvent('USER_SIGNUP', { user: $scope.user.email });
     };
 
     var registerFail = function (error) {
