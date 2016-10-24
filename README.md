@@ -32,6 +32,10 @@ You have to specify the python environment to make sure:
 
 ```$ grunt```
 
+## Run tests
+
+[Testing Guide](TESTING.md)
+
 ## Run server
 
 ```$ python3 server.py```
