@@ -1,4 +1,5 @@
-![Electric Studio Logo](https://instagram.fceb1-1.fna.fbcdn.net/t51.2885-19/s150x150/11917811_1676999189253635_584378407_a.jpg) [Electric Studio](https://electricstudio.ph)
+![Electric Studio Logo](https://instagram.fceb1-1.fna.fbcdn.net/t51.2885-19/s150x150/11917811_1676999189253635_584378407_a.jpg) 
+[Electric Studio](https://electricstudio.ph)
 ==================================
 
 
