@@ -1,0 +1,102 @@
+<div ng-controller="SettingCtrl">
+
+  <div class="grid content pad">
+    <div class="grid__item">
+      <div>
+        <div class="box__header align--middle cf pad">
+          <h4 class="label">Settings</h4> 
+        </div>
+        <div class="pad box--bordered box--white space--bottom">
+          <div>
+            
+            <h3 class="label">Schedule Week Release</h3>
+          </div>
+          <div class="bp-md-one-eight float--left space--right space--bottom">
+              <span class="label">Day</span>
+              <select class="select" id="week-release-day" ng-model="weekRelease.day">
+                <option value="">Select Day</option>
+                <option value="mon">Monday</option>
+                <option value="tue">Tuesday</option>
+                <option value="wed">Wednesday</option>
+                <option value="thu">Thursday</option>
+                <option value="fri">Friday</option>
+                <option value="sat">Saturday</option>
+                <option value="sun">Sunday</option>
+              </select>
+          </div>
+          <div class="bp-md-one-eight float--left space--bottom space--right">
+            <span class="label">Time</span>
+            <input type="time" class="text-input" id="week-release-time" ng-model="weekRelease.time" placeholder="Time">
+          </div> 
+          <div class="bp-md-one-eight float--left space--bottom space--right">
+            <span class="label">&nbsp;</span>
+            <button class="btn btn--small btn--primary" ng-click="setWeekRelease()">Set</button>
+          </div> 
+          <br/><br/><br/>
+        </div>
+
+        <div class="pad box--white box--bordered">
+          <h3 class="label">Blocked Bikes</h3>
+          <div ng-show="getAccess('settings', 'block_bike')"  class="float--right">
+            <div class="bp-md-one-eight float--left space--right space--bottom">
+              <select class="select" id="select-blocked-bikes" ng-model="newBlock.bike">
+                <option value="">Bike</option>
+              </select>
+            </div>
+
+
+            <div class="bp-md-one-third float--left space--bottom space--right">
+              <input class="text-input" ng-model="newBlock.reason" placeholder="Reason">
+            </div> 
+
+            <div class="bp-md-one-third float--left space--bottom">
+              <button class="btn btn--small btn--primary" ng-click="blockedBike()">Blocked</button>
+            </div>   
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Bike</th>
+                <th>Reason</th>
+                <th>&nbsp;</th>
+              </tr>
+            </thead>  
+            <tbody>
+              <tr ng-repeat="(bike, notes) in blockedBikes">
+                <td>{{ bike }}</td>
+                <td>{{ notes }}</td>
+                <td><button class="btn btn--small btn--primary" ng-click="unBlockedBike(bike)">Unblocked</button></td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="bike-sched" id="bike-sched-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Bike has schedules</h3>
+
+      <div style="height: 400px; overflow: scroll">
+        <table class="data-table account-summary-table">
+          <tr>
+            <th>Schedule</th>
+            <th>Name</th>
+            <th>Bike</th>
+          </tr>
+          <tr ng-repeat="book in bikeScheds">
+            <td>{{ book.date | formatDate }} {{ book.schedule.start | formatTime }}</td>
+            <td>{{ book.user_id.first_name }} {{ book.user_id.last_name }}</td>
+            <td>{{ book.seat_number }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,50 +1,108 @@
-
-  <div class="content bg-lightGray sidebar-layout">
+  <div ng-if="isFrozen" class="content">
     <div class="wrapper">
-      
+      <p class="brand-color">Your account is frozen. Please contact the studio for more details.</p>
+    </div>
+  </div>
+
+  <div class="content account-page sidebar-layout">
+
+    <div ng-include="'/site/account-nav'"></div>
+
+    <div class="wrapper">
+      <div ng-controller="SignUpCtrl" ng-show="isVerified">
+          <h2 class="h large">Please check your email for confirmation</h2>
+          <a class="button large pads primary" ng-click="sendEmailConfirmation(user)">Resend Email Confirmation</a>
+      </div>
       <div class="main" ng-controller="AccountCtrl">
-        <h2 class="h large">Your Account Info</h2>
+        <h1 class="h large">My Account</h1>
         <section>
-          <h3 class="h medium gray">Personal Info</h3>
-          <div class="col-2">
+          <h5 class="h medium gray">Personal Info</h5>
+          <div class="col-3">
             <input class="input" placeholder="First Name" ng-model="account.first_name">
             <input class="input" placeholder="Last Name" ng-model="account.last_name">
             <input class="input" placeholder="Email Address" ng-model="account.email">
             <input class="input" placeholder="Mobile Number" ng-model="account.phone_number">
-          </div>  
-          <h4 class="h small">Emergency Contact</h4>
-          <input class="input" placeholder="Contact Number" ng-model="account.emergency_contact">
-          <input class="input" placeholder="Contact Full Name" ng-model="account.contact_person"/>
-          <h4 class="h small">Birthday</h4>
-          <input class="input" placeholder="yyyy-mm-dd" ng-model="account.birthdate">
-        </section>
-        <a class="button small pads primary" ng-click="updateAccount()" >Save</a> 
-        <section>
-          <h3 class="h medium gray">Change Password</h3>
-          <input class="input" type="password" ng-model="pass.current_password" placeholder="Current Password">
-          <input class="input" type="password" ng-model="pass.password" placeholder="New Password">
-          <input class="input" type="password" ng-model="pass.confirm_password" placeholder="Retype New Password">
-          <a class="button small pads primary" ng-click="changePassword()">Update Password</a> 
-        </section>
-        <section id="billing">
-          <h3 class="h medium gray">Billing</h3>
-          <input class="input" placeholder="Full Name" >
-          <input class="input" placeholder="Email Address" >
-        </section>
-        
-        <section id="packages">
-          <h3 class="h medium gray">Packages</h3>
-          <div ng-repeat="trans in transactions">
-            <span class="h small block">{{ trans.package_id.name }}</span>
-            <span class="h small block">{{ trans.remaining_credits }} Classes Left</span>
-            <span class="h small block">Expires on {{ trans.create_at | addDay:trans.expiration | formatDate }}</span>
-            <hr>
+            <input class="input" placeholder="Address Line 1" ng-model="account.address">
+            <input class="input" placeholder="Address Line 2" ng-model="account.address2">
+            <div class="input-group">
+              <label for="input-bday">Birthday</label>
+              <input class="input datepicker" placeholder="yyyy-mm-dd" ng-model="account.birthdate" id="input-bday">
+            </div>
           </div>
-          <a href="#/rates" class="button small pads primary">Buy Package</a>
         </section>
-        
+        <section>
+            <h5 class="h small">Emergency Contact</h5>
+            <div class="col-3">
+              <input class="input" placeholder="Contact Full Name" ng-model="account.contact_person">
+              <input class="input" placeholder="Contact Number" ng-model="account.emergency_contact">
+              <a class="button pads primary" ng-click="updateAccount()" >Save</a>
+            </div>
+        </section>
+
+        <section>
+          <h5 class="h medium gray">Change Password</h5>
+          <div class="col-3">
+            <div>
+              <input class="input" type="password" ng-model="pass.current_password" placeholder="Current Password">
+              <input class="input" type="password" ng-model="pass.password" placeholder="New Password (min. 6 character)">
+            </div>
+            <!-- dummy --> <input type="text" class="transparent input">
+            <input class="input" type="password" ng-model="pass.confirm_password" placeholder="Retype New Password">
+            <!-- dummy --> <input type="text" class="transparent input">
+            <a class="button pads primary" ng-click="changePassword()">Update</a>
+          </div>
+        </section>
+
+        <section class="hidden" id="billing">
+          <h5 class="h medium gray">Billing</h5>
+          <div class="col-2">
+            <input class="input" ng-model="billing.first_name" placeholder="First Name" >
+            <input class="input" ng-model="billing.last_name" placeholder="Last Name" >
+            <input class="input" ng-model="billing.address" placeholder="Address" >
+            <input class="input" ng-model="billing.city" placeholder="City" >
+            <input class="input" ng-model="billing.province" placeholder="State / Province / Region" >
+            <input class="input" ng-model="billing.postalcode" placeholder="Postal Code" >
+            <input class="input" ng-model="billing.email" placeholder="Email" >
+          </div>
+          <h4 class="h small">Credit/Debit Card</h4>
+          <input class="input" ng-model="billing.card_number" placeholder="Card Number" >
+          Payment Type: <select class="select" ng-model="billing.card_type">
+            <option value="visa">VISA</option>
+            <option vaule="mastercard">Mastercard</option>
+          </select>
+          <input class="input" ng-model="billing.card_expiration" placeholder="Expiration date (MM/YY)" >
+          <input class="input" type="password" ng-model="billing.csc" placeholder="CSC" >
+          <a class="button pads primary" ng-click="updateBilling()">Save Billing Info</a>
+        </section>
+
+        <section id="packages">
+          <h5 class="h medium gray">Packages</h5>
+          <div class="grid">
+            <div ng-repeat="trans in transactions" class="grid__item bp-md-one-half bp-lg-one-third">
+              <div class="account__item box--bordered box--white space--bottom cf">
+                <div class="pad">
+                  <b class="h--small">
+                    {{ trans.credit_count }} Ride<span ng-if="trans.credit_count > 1">s</span>
+                  </b>
+                  <br/><br/>
+                  <span class="h small ">
+                    {{ trans.remaining_credits }} Ride<span ng-if="trans.remaining_credits > 1">s</span> Left
+                  </span>
+                  <br/><span class="h small ">Expires on {{ trans.create_at | addDay:trans.expiration | formatDate }}</span>
+                  <br/>
+                  <span>
+                    <br/>
+
+                    {{ trans.package_name || '&nbsp;' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a href="#/rates" class="button pads primary">Buy</a>
+        </section>
+        <a class="float--right button pads primary" ng-click="deactivateAccount()">Delete Account</a>
       </div>
-      
-      <div ng-include="'/site/account-nav'"></div>
+
     </div>
   </div>

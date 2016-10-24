@@ -17,15 +17,15 @@ module.exports = function (grunt) {
         },
         htmlmin: {
           collapseWhitespace: true
-        } 
+        }
       },
       site: {
         src: ['app/views/ng-templates/site/**/*.html'],
-        dest: 'assets/js/app/templates.js'
+        dest: 'assets/js/dist/app/templates.js'
       },
       admin: {
         src: ['app/views/ng-templates/admin/**/*.html'],
-        dest: 'assets/js/admin/templates.js'
+        dest: 'assets/js/dist/admin/templates.js'
       }
     },
 
@@ -46,6 +46,30 @@ module.exports = function (grunt) {
       }
     },
 
+    concat: {
+      appCtrls: {
+        options: {
+          banner: "var ctrls = angular.module('elstudio.controllers.site', ['elstudio.services']);"
+        },
+        src: ['assets/js/src/app/ctrls/**/*.js'],
+        dest: 'assets/js/src/app/controllers.js'
+      }
+    },
+
+    uglify: {
+      dist: {
+        options: {
+          mangle: false
+        },
+        files: [{
+          expand: true,
+          cwd: 'assets/js/src/',
+          src: ['**/*.js', '!**/ctrls/*.js'],
+          dest: 'assets/js/dist'
+        }]
+      }
+    },
+
     watch: {
       scripts: {
         files: ['app/views/ng-templates/**/*.html'],
@@ -53,6 +77,10 @@ module.exports = function (grunt) {
         options: {
           spawn: false
         }
+      },
+      js: {
+        files: ['assets/js/src/**/*.js'],
+        tasks: ['concat', 'uglify']
       },
       css: {
         files: ['assets/sass/**/*.scss', 'assets/sass/**/*.sass'],
@@ -65,8 +93,11 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks('grunt-html2js');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['html2js', 'sass']);
+  grunt.registerTask('default', ['html2js', 'concat', 'uglify', 'sass', 'watch']);
+  grunt.registerTask('build', ['html2js', 'concat', 'uglify', 'sass']);
 }

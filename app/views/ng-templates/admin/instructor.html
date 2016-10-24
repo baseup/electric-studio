@@ -2,17 +2,13 @@
     <div class="content-result pad">
       <div class="cf space--bottom">
         <span class="label inline">Instructors</span>
-        <button ng-click="showAddInstructor()" class="btn btn--small btn--secondary float--right" data-modal-toggle="add-instructor">Add Instructor</button>
+        <button ng-if="getAccess('instructors', 'create')" ng-click="showAddInstructor()" class="btn btn--small btn--secondary float--right" data-modal-toggle="add-instructor">Add Instructor</button>
       </div>
 
     <div ng-show="isUpdateInstructor">
       <div class="modal__box pad">
         <h3 class="h--medium brand-color space--bottom">Add Instructor</h3>
         <div class="cf">
-          <div class="space--bottom left space--right">
-            <span class="label">Username</span>
-            <input class="text-input" ng-model="updateInstructor.username">
-          </div>
           <div class="space--bottom left space--right">
             <span class="label">First Name</span>
             <input class="text-input" ng-model="updateInstructor.first_name">
@@ -40,26 +36,36 @@
             <span class="label">Contact Number</span>
             <input class="text-input" ng-model="updateInstructor.contact_number">
           </div>
+
+          <div class="space--bottom left">
+            <span class="label">Music</span>
+            <select class="select text-input text-input--full itunes-search" id="ins-album-update" ng-model="updateInstructor.albums"></select>
+          </div>
           <div class="space--bottom left space--right">
             <span class="label">Motto</span>
             <textarea class="text-input" ng-model="updateInstructor.motto"></textarea>
           </div>
         </div>
-        <button class="btn btn--medium btn--primary space--top" ng-click="setInstructor()">Update</button>
+        <button class="btn btn--medium btn--primary space--top" ng-if="getAccess('instructors', 'update')" ng-click="setInstructor()">Update</button>
         <button class="btn btn--medium btn--primary space--top" ng-click="cancelUpdateInstructor()">Cancel</button>
       </div>
     </div>
 
     <div class="account-list grid" ng-show="!isUpdateInstructor">
-
+      <div class="grid__item bp-md-one-whole bp-lg-one-whole">
+        <div  class="float--right">
+          <input type="checkbox" ng-model="filterDeactivated"/> show deactivated
+        </div>
+        <br/><br>
+      </div>
       <div class="grid__item bp-md-one-half bp-lg-one-third"
-           ng-repeat="instructor in instructors">
+           ng-repeat="instructor in instructors | filter:filterDeactivated">
         <div class="account__item box--bordered box--white space--bottom cf">
-          <div ng-show="!chkChangePic(instructor._id)" align="center" class="image" ng-click="changeInsPic(instructor)">
-            <img ng-if="instructor.image" width="200" height="200" ng-src="{{ instructor.image }}">
-            <img ng-if="!instructor.image" width="200" height="200" src="assets/images/pic-placeholder.png">
-          </div>  
-          <div class="pad" style="height: 203px;" ng-show="chkChangePic(instructor._id)">
+          <div ng-if="!chkChangePic(instructor._id) || !getAccess('instructors', 'update')" align="center" class="image" ng-click="changeInsPic(instructor)">
+            <img ng-if="instructor.image" height="200" ng-src="{{ instructor.image }}">
+            <img ng-if="!instructor.image"  height="200" src="assets/images/pic-placeholder.png">
+          </div>
+          <div class="pad" style="height: 203px;" ng-if="chkChangePic(instructor._id) && getAccess('instructors', 'update')">
             <input ng-show="!uploading" type="file" ng-file-select="uploadInsPic($files)" ng-model="inspic"/>
             <span ng-show="uploading">Uploading: {{ progress }}</span>
             <div class="account__options pad--sides pad--half-ends space--top cf">
@@ -87,31 +93,26 @@
 
           </div>
 
-          <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" ng-click="setToUpdate(instructor)" >Update</a>
-            <a href="" class="float--right link--secondary" ng-click="removeInstructor(instructor)">Remove</a>
+          <div class="account__options pad--sides pad--half-ends space--top cf" ng-hide="instructor.deactivated">
+            <a href="" class="float--left" ng-if="getAccess('instructors', 'update')" ng-click="setToUpdate(instructor)" >Update</a>
+            <a href="" class="float--right link--secondary" ng-if="getAccess('instructors', 'delete')" ng-click="removeInstructor(instructor)">Remove</a>
+          </div>
+          <div class="account__options pad--sides pad--half-ends space--top cf" ng-show="instructor.deactivated">
+          <a href="" class="float--right link--secondary" ng-if="getAccess('instructors', 'delete')" ng-click="activateInstructor(instructor)">Activate</a>
           </div>
 
         </div>
       </div>
 
     </div>
-  </div>  
+  </div>
 
   <!-- modal Add Instructor -->
   <div id="add-instructor-modal" class="modal" data-modal="add-instructor">
-    <div class="modal__box pad">
+    <div class="modal__box pad" style="max-width: 35%">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Add Instructor</h3>
       <div class="cf">
-        <div class="space--bottom float--left space--right">
-          <span class="label">Username</span>
-          <input class="text-input" ng-model="newInstructor.username">
-        </div>
-        <div class="space--bottom float--left space--right">
-          <span class="label">Password</span>
-          <input class="text-input" ng-model="newInstructor.password">
-        </div>
         <div class="space--bottom float--left space--right">
           <span class="label">First Name</span>
           <input class="text-input" ng-model="newInstructor.first_name">
@@ -124,25 +125,36 @@
           <span class="label">BirthDate</span>
           <input class="datepicker text-input" ng-model="newInstructor.birthdate">
         </div>
-        <div class="space--bottom float--left" >
+        <div class="space--bottom space--right float--left" >
           <span class="label">Gender</span>
           <select class="select text-input" ng-model="newInstructor.gender">
             <option value="male" selected="selected">Male</option>
             <option value="female">Female</option>
           </select>
         </div>
+
         <div class="space--bottom float--left space--right">
           <span class="label">Email Address</span>
           <input class="text-input" ng-model="newInstructor.email">
         </div>
-        <div class="space--bottom float--left space--right">
+        <div class="space--bottom float--left">
           <span class="label">Contact Number</span>
           <input class="text-input" ng-model="newInstructor.contact_number">
         </div>
-        <div class="space--bottom float--left space--right">
+        <div class="cf"></div>
+        <div class="space--bottom"> 
           <span class="label">Motto</span>
-          <textarea class="text-input" ng-model="newInstructor.motto"></textarea>
+          <textarea class="text-input text-input--full" ng-model="newInstructor.motto"></textarea>
         </div>
+        <div class="space--bottom">
+          <span class="label">Music</span>
+          <select class="select text-input text-input--full itunes-search" id="ins-add-albums" ng-model="newInstructor.albums"></select>
+        </div>
+        <div class="space--bottom float--left"><br/><br/>
+          <input ng-show="!uploading" type="file" ng-file-select="uploadInsPic($files)" ng-model="inspic"/>
+          <span ng-show="uploading">Uploading: {{ progress }}</span>
+        </div>
+
       </div>
       <button class="btn btn--medium btn--primary space--top modal-close" ng-click="addInstructor()">Add</button>
     </div>

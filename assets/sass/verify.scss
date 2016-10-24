@@ -1,7 +1,7 @@
 /**
  * Import typefaces, icons etc
  */
-@import url(http://fonts.googleapis.com/css?family=Lato:400,700);
+@import url('//fonts.googleapis.com/css?family=Lato:400,700');
 @import "../vendor/fontawesome/css/font-awesome.min.css";
 
 
@@ -21,11 +21,8 @@ body {
   text-align: center;
   height: 100%;
   width: 100%;
-  background: $brand-color-tertiary;
-
-  @include breakpoint(md) {
-    background: #fff;
-  }
+  background: #fff;
+  font-family: 'Lato', sans-serif;
 }
 
 .page-header {
@@ -33,19 +30,15 @@ body {
   text-align: center;
 
   .nameplate {
-    height: 60px;
+    height: 40px;
     display: block;
     margin: 0 auto;
-    margin-top: $base-spacing-unit;
-    
-    @include breakpoint(sm) {
-      display: inline-block;
-      margin: 0 0 0 $base-spacing-unit;
-    }
+    display: inline-block;
+    margin: 0 0 0 $base-spacing-unit;
   }
 
   .logo {
-    height: 60px;
+    height: 40px;
     -webkit-animation-duration: 2s;
     animation-duration: 2s;
     -webkit-animation-fill-mode: both;
@@ -60,11 +53,11 @@ body {
 .page-content {
   padding: 60px $base-spacing-unit;
   background: #fff;
-  
+
   h1 {
     line-height: 1.4em;
     margin: $base-spacing-unit 0;
-    
+
     @include breakpoint(sm) {
       margin-top: 100px;
     }
@@ -75,7 +68,7 @@ body {
   a {
     display: block;
     margin: $base-spacing-unit;
-    
+
     @include breakpoint(sm) {
       display: inline-block;
     }
@@ -85,7 +78,7 @@ body {
 
 .main-footer {
   background: $brand-color-tertiary;
-  
+
   @include breakpoint(sm) {
     position: absolute;
     bottom: 0;
@@ -101,39 +94,39 @@ body {
   text-align: center;
   color: #fff;
   text-transform: uppercase;
-  
+
   @include breakpoint(sm) {
     margin-bottom: 20px;
   }
-  
+
   @include breakpoint(md) {
     float: left;
     margin: 0;
   }
-  
+
   li {
     padding-bottom: 15px;
-    
+
     @include breakpoint(sm) {
       display: inline-block;
       margin: 0 15px;
     }
-    
+
     @include breakpoint(md) {
       padding: 0;
       margin: 0 30px 0 0;
     }
   }
-  
+
   a {
     text-decoration: none;
     color: inherit;
-    
+
     @include breakpoint(md) {
       height: 40px;
       line-height: 40px;
     }
-    
+
     &:hover {
       color: $color-text;
     }
@@ -145,16 +138,16 @@ body {
   padding: 0;
   margin: 0;
   text-align: center;
-  
+
   @include breakpoint(md) {
     float: right;
   }
-  
+
   li {
     display: inline-block;
     margin: 0 5px;
   }
-  
+
   a {
     display: block;
     height: 34px;
@@ -166,13 +159,13 @@ body {
     color: $brand-color-primary;
     font-size: 22px;
     text-decoration: none;
-    
+
     @include breakpoint(md) {
       height: 40px;
       width: 40px;
       line-height: 40px;
     }
-    
+
     i {
       margin-left: 2px;
     }
@@ -202,21 +195,109 @@ body {
  * Breakpoint trump! Ensure that media queries are compiled mobile-first
  */
 .cssc {
-  
+
   @include breakpoint(xs) {
     display: none;
   }
-  
+
   @include breakpoint(sm) {
     display: none;
   }
-  
+
   @include breakpoint(md) {
     display: none;
   }
-  
+
   @include breakpoint(lg) {
     display: none;
   }
-  
+
+}
+
+
+/** Notification Bar */
+.notification-bar {
+  -webkit-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  display: none;
+  background: #BAAFD5;
+  padding: 15px 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  position: relative;
+
+  @include breakpoint(md) {
+    padding: 20px 0;
+  }
+
+  &.show {
+    -webkit-animation-name: fadeInDown;
+    animation-name: fadeInDown;
+    display: block;
+  }
+
+  .message {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 60px 0 20px;
+    color: #fff;
+    font-size: 14px;
+    text-transform: uppercase;
+    text-align: left;
+
+    a {
+      border: 2px solid #fff;
+      color: #fff;
+      padding: 3px 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin: 0 6px;
+
+      &:hover {
+        box-shadow: 3px 3px 0 rgba(0,0,0,0.6);
+      }
+    }
+  }
+
+  .close-btn {
+    width: 24px;
+    height: 24px;
+    color: transparent;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 20px;
+    margin: auto;
+    display: block;
+    cursor: pointer;
+
+    &:before, &:after {
+      content: '';
+      display: block;
+      height: 33px;
+      border-width: 1px;
+      border-style: solid;
+      border-color: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+    }
+
+    &:before {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    &:after {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    &:hover {
+      &:before, &:after {
+        border-width: 2px;
+      }
+    }
+  }
 }

@@ -1,9 +1,32 @@
 /**
  * Import typefaces, icons etc
  */
-@import url(http://fonts.googleapis.com/css?family=Lato:400,700);
+@import url('//fonts.googleapis.com/css?family=Lato:400,700');
 @import "../vendor/fontawesome/css/font-awesome.min.css";
 
+@font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/Brandon_Regular.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/Brandon_light.otf') format('opentype');
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/Brandon_Bold.ttf') format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Brandon_Grotesque';
+  src: url('../fonts/brandon_light-webfont.woff2') format('woff2'),
+       url('../fonts/brandon_light-webfont.woff') format('woff');
+}
 
 /**
  * Add the core framework
@@ -17,30 +40,520 @@
 @import "components/base";
 @import "components/admin-header";
 @import "components/admin-sidebar";
-@import "components/admin-footer";  
+@import "components/admin-footer";
 @import "components/admin-content";
 @import "components/overrides";
 
-  
+
+body {
+  font-family: 'Lato';
+}
+
 /**
  * Ensure that media queries are compiled mobile-first
  */
 .cssc {
-  
+
   @include breakpoint(xs) {
     display: none;
   }
-  
+
   @include breakpoint(sm) {
     display: none;
   }
-  
+
   @include breakpoint(md) {
     display: none;
   }
-  
+
   @include breakpoint(lg) {
     display: none;
   }
-  
+
+}
+
+/* Class Seats */
+.seats {
+  font-family: 'Brandon_Grotesque';
+  display: block;
+
+  @include breakpoint(md) {
+    display: table;
+  }
+
+
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+
+  @include breakpoint(md) {
+  tr:nth-child(even) td {
+    text-align: right;
+  }
+  }
+
+  tr {
+    display: inline;
+    @include breakpoint(md) {
+      display: table-row;
+    }
+  }
+
+  td {
+    display: block;
+    float: left;
+
+    @include breakpoint(md) {
+      display: table-cell;
+      float: none;
+    }
+
+    width: 12.5%;
+    padding: 10px 0;
+
+    span {
+      display: inline-block;
+      height: 30px;
+      width: 30px;
+      text-align: center;
+      line-height: 30px;
+      background: #fff;
+      border-radius: 50%;
+      font-weight: bold;
+      font-size: 16px;
+      color: $brand-color-secondary;
+      cursor: pointer;
+
+      &:hover {
+        box-shadow: 0 0 0 5px $brand-color-primary;
+      }
+
+      @include breakpoint(md) {
+        height: 60px;
+        width: 60px;
+        line-height: 60px;
+        font-size: 20px;
+      }
+    }
+
+    &.unavailable {
+
+      span {
+        background: $brand-color-tertiary;
+        cursor: default;
+        box-shadow: none;
+      }
+    }
+
+    &.blocked {
+
+      span {
+        background: #a00;
+        cursor: default;
+        box-shadow: none;
+      }
+    }
+
+    &.selected {
+      span {
+        background: $brand-color-primary;
+        color: #fff;
+      }
+    }
+
+    &.hidden {
+      display: none;
+
+      @include breakpoint(md) {
+        display: table-cell;
+      }
+
+      span {
+        display: none;
+      }
+    }
+  }
+}
+
+.class-instructor {
+
+  @include breakpoint(md) {
+    margin: -128px 45px 0 0;
+  }
+
+  .image {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto;
+
+    @include breakpoint(md) {
+      height: 60px;
+      width: 60px;
+    }
+
+    img {
+      width: 100%;
+    }
+  }
+
+}
+
+.class {
+
+  .formation {
+    text-align: center;
+    margin: 0 -10px;
+
+    @media (min-width: 360px) {
+      width: 350px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 768px) {
+      width: 626px;
+    }
+
+    @include breakpoint(md) {
+      width: 920px;
+
+      &:first-child{
+        margin-top: 60px;
+      }
+    }
+
+    &:after {
+      content: '';
+      clear: both;
+      display: block;
+    }
+
+    .seats{
+      max-width: 100%;
+
+      span{
+        border: solid 1px transparent;
+        font-size: 11px;
+        height: 19px;
+        width: 19px;
+        background: #fff none repeat scroll 0 0;
+        border-radius: 50%;
+        color: #666;
+        cursor: pointer;
+        display: inline-block;
+        font-weight: bold;
+        text-align: center;
+        margin: 2px -1px;
+        transition: all 1000ms;
+        cursor: pointer;
+        padding-left: 2px;
+        line-height: 16px;
+        font-family: 'Lato', sans-serif;
+
+        @media (min-width: 360px) {
+          width: 20px;
+          height: 20px;
+        }
+
+        @media (min-width: 768px) {
+          width: 30px;
+          height: 30px;
+          line-height: 27px;
+          font-size: 12px;
+          margin: 5px;
+        }
+
+        @include breakpoint(md) {
+          border-width: 3px;
+          float: left;
+          margin: 8px 10px;
+          font-size: 14px;
+          line-height: 40px;
+          height: 45px;
+          width: 45px;
+        }
+
+        &:hover{
+          border-color: #ff8f1c;
+        }
+
+        &.unavailable {
+          background: $brand-color-tertiary;
+          cursor: default;
+        }
+
+        &.selected {
+          background: $brand-color-primary;
+          color: #fff;
+        }
+
+        &.hidden {
+          visibility: hidden;
+          cursor: default;
+        }
+      }
+    }
+
+    .front {
+      width: 58px;
+      display: inline-block;
+      position: relative;
+      vertical-align: middle;
+      margin-bottom: 10px;
+
+      @media (min-width: 768px) {
+        width: 120px;
+      }
+
+      @include breakpoint(md) {
+        width: 174px;
+        margin-bottom: 30px;
+      }
+    }
+
+    .back {
+      text-align: left;
+    }
+
+    .instructor{
+      text-align: center;
+      width: 100px;
+
+      @media (min-width: 768px) {
+        width: 150px;
+      }
+
+      @include breakpoint(md) {
+        width: 300px;
+      }
+
+      &.has-sub-instructor {
+        width: 150px;
+        padding-top: 80px;
+
+        @include breakpoint(sm) {
+          width: 250px;
+          padding-top: 140px;
+        }
+
+        @include breakpoint(md) {
+          width: 320px;
+          padding-top: 150px;
+        }
+
+        .image {
+          position: absolute;
+          top: 0;
+
+          &.main {
+            right: 50%;
+            left: auto;
+            z-index: 2;
+            margin-right: -20px;
+            margin-left: 0;
+
+            @include breakpoint(sm) {
+              margin-right: -30px;
+            }
+          }
+
+          &.sub {
+            left: 50%;
+            right: auto;
+            z-index: 1;
+            margin-left: -20px;
+            margin-right: 0;
+
+            @include breakpoint(sm) {
+              margin-left: -30px;
+            }
+          }
+        }
+      }
+
+      .h {
+        font-family: 'Lato', sans-serif;
+      }
+
+      .image{
+        left: 50%;
+        border-radius: 150px;
+        height: 80px;
+        overflow: hidden;
+        position: relative;
+        width: 80px;
+        margin-left: -40px;
+
+        @media (min-width: 768px) {
+          width: 140px;
+          height: 140px;
+          margin-left: -70px;
+        }
+
+        @include breakpoint(md) {
+          width: 150px;
+          height: 150px;
+          margin-left: -75px;
+        }
+
+        img{
+          left: 50%;
+          margin-left: -52px;
+          max-width: none;
+          position: absolute;
+          width: 100px;
+
+          @media (min-width: 768px) {
+            width: 140px;
+            margin-left: -70px;
+          }
+
+          @include breakpoint(md) {
+            width: 200px;
+            margin-left: -104px;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+#bike-map-salcedo {
+  .formation {
+    @include breakpoint(md) {
+      width: 850px;
+    }
+
+    .seats {
+      &.center {
+        @include breakpoint(md) {
+          max-width: 326px;
+        }
+      }
+    }
+
+    .front {
+      &:not(.instructor) {
+        width: 70px;
+
+        @include breakpoint(sm) {
+          width: 135px;
+        }
+
+        @include breakpoint(md) {
+          width: 200px;
+        }
+      }
+    }
+  }
+}
+
+
+.h {
+  text-transform: uppercase;
+  font-weight: bold;
+  margin: 20px 0;
+  font-family: 'Brandon_Grotesque';
+
+  &.large {
+    font-size: 2em;
+    font-family: 'Brandon_Grotesque';
+  }
+
+  &.medium {
+    font-size: 1.4em;
+  }
+
+  &.small {
+    font-size: 1em;
+  }
+
+  &.light {
+    color: #fff!important;
+  }
+
+  &.dark {
+    color: $color-text!important;
+  }
+
+  &.primary, &.color-primary {
+    color: $brand-color-primary!important;
+  }
+
+  &.gray {
+    color: $color-text-light!important;
+  }
+
+  &.center {
+    text-align: center;
+    display: block;
+  }
+
+  &.block {
+    display: block;
+  }
+
+  &.face-primary {
+    font-family: 'Brandon_Grotesque';
+  }
+
+  &.xl {
+    font-family: 'Tungsten', sans-serif;
+    font-weight: 300;
+    text-transform: uppercase;
+    color: $brand-color-primary;
+    letter-spacing: 0.2em;
+    font-size: 50px;
+
+    @include breakpoint(sm) {
+      font-size: 70px;
+    }
+  }
+}
+
+.bike-map-modal {
+  max-width: 80% !important;
+}
+
+.option-booking {
+  line-height: 30px !important;
+}
+
+.frozen-message {
+  height: 54px;
+  overflow-y: scroll;
+}
+
+.selectize-input  {
+  box-shadow: 0 0 1px #999 !important;
+  min-width: 200px;
+  display: inline-block;
+
+  &.items {
+    .item {
+      font-size: 13px;
+      line-height: normal;
+    }
+  }
+}
+
+.account-summary-table {
+  // span.badge {
+  //   font-weight: 900;
+  //   font-size: 0.9rem;
+  //   color: #fff;
+  //   border-radius: 2px;
+  //   min-width: 3rem;
+  //   padding: 3px 3px;
+  //   text-align: center;
+  // }
+
+  span.bg-danger {
+      color: #F44336;
+  } 
+  span.bg-success {
+    color: #26a69a;
+  }
 }

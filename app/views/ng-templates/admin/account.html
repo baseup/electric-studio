@@ -1,21 +1,39 @@
 <div ng-controller="AccountCtrl">
   <div class="content-filter pad cf border--bottom">
     <div class="content-filter__item space--right">
-      <span class="label">Search Account</span>
-      <input class="text-input" placeholder="Enter Name" ng-model="search.first_name">
+      <span class="label">Search  </span>
+      <div class="bp-md-one-fourth float--left space--bottom space--right">
+        <input class="text-input" ng-keyup="searchAccount()" placeholder="Enter Name or Email" ng-model="searchText">
+      </div>
+
+      <div class="float--right">
+        <label class="label">Export Account List</label>
+        <button ng-if="getAccess('accounts', 'export_data')" class="btn btn--small btn--tertiary float--right" ng-click="downloadUserAccounts()">Export</button>
+        <select class="select space--right float--right" ng-change="reload()" ng-model="dateFilter">
+          <option value="0">Ever since opening</option>
+          <option value="12">Past 12 months</option>
+          <option value="6">Past 6 months</option>
+          <option value="3">Past 3 months</option>
+          <option value="1">Past month</option>
+        </select>
+
+      </div>
+      <br><br><br>
+      <button ng-if="getAccess('accounts', 'create')" ng-click="showAddAccount()" class="btn btn--small btn--primary space--right" data-modal-toggle="add-account">Add Account</button>
+
     </div>
 
   </div>
 
 
   <div class="content-result pad">
-    <span class="label">Results</span>
+    <span class="label">Results ({{ users.length || 0 }})</span>
 
     <div class="account-list grid">
 
-      <div ng-repeat="user in users | filter:search" class="grid__item bp-md-one-half bp-lg-one-third">
-        <div class="account__item box--bordered box--white space--bottom cf">
+      <div ng-repeat="user in users" class="grid__item bp-md-one-half bp-lg-one-third">
 
+        <div class="account__item box--bordered space--bottom cf" ng-class="{'box--white': user.status != 'Deactivated', 'box--grey': user.status == 'Deactivated'}">
           <div class="pad">
             <b class="h--small">{{ user.first_name }} {{ user.last_name }}</b>
           </div>
@@ -23,81 +41,556 @@
           <div class="pad--sides">
             <div class="data-list">
 
-              <dl class="data--inline">
+              <dl class="data--inline" ng-if="user.status != 'Frozen'">
                 <dt><i class="fa fa-phone"></i></dt>
                 <dd>{{ user.phone_number }}</dd>
               </dl>
 
               <dl class="data--inline space--bottom">
                 <dt><i class="fa fa-envelope"></i></dt>
-                <dd class="inline space--bottom">{{ user.email }}</dd>
+                <dd ng-if="user.status != 'Unverified'" class="inline space--bottom"><span class="ellipsis">{{ user.email }}</span></dd>
+                <dd ng-if="user.status == 'Unverified'" class="inline space--bottom">Account is not <a href="" ng-click="verifyAccount(user)">verified</a>.</dd>
               </dl>
 
-              <dl>
-              <dt>Class Package</dt>
-              <dd class="">{{ user.credits }} Classes Left</dd>
+              <dl ng-if="user.status != 'Frozen'">
+                <dt>Class Package</dt>
+                <a  ng-if="getAccess('accounts', 'manual_buy') && user.status != 'Deactivated' && user.status != 'Unverified'" title="Buy Package" class="float--right" data-modal-toggle="buy-package" ng-click="buyPackageModal(user)">Buy</a>
+                <dd class="">{{ user.credits }} Classes Left</dd>
               <!-- <dd class=" space--bottom text-color-light">expires in 10 days <a href="" class="space--half-left">Extend</a></dd> -->
               </dl>
-            </div>
 
+              <dl ng-if="user.status == 'Frozen'">
+                <dt>Account is frozen due to</dt>
+                <dd class="frozen-message" disable-outside-scroll>{{ user.remarks }}</dd>
+              </dl>
+
+            </div>
           </div>
 
           <div class="account__options pad--sides pad--half-ends space--top cf">
-            <a href="" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">Add Class</a>
+            <a ng-if="getAccess('accounts', 'complimentary_class') && user.status != 'Deactivated' && user.status != 'Unverified'" title="Add Complementary Class" class="float--left" data-modal-toggle="add-package" ng-click="accountAddClass(user)">
+              <i class="fa fa-plus"></i> Class
+            </a>
             <ul class="nav float--right">
-              <li>
-                <a href="" ng-click="accountSummary(user)"><i class="fa fa-bars"></i></a>
+              <li ng-if="user.status != 'Deactivated'">
+                <a href="" title="Account Info" ng-click="accountInfo(user)"><i class="fa fa-info-circle"></i></a>
               </li>
-              <li>
-                <a href=""><i class="fa fa-ban"></i></a>
+              <li ng-if="user.status != 'Deactivated'">
+                <a href="" title="Package Summary" ng-click="accountSummary(user)"><i class="fa fa-bars"></i></a>
               </li>
-              <li>
-                <a href="" class="pad--off-right"><i class="fa fa-share"></i></a>
+              <li ng-if="user.status != 'Deactivated'">
+                <a href="" title="Schedules" ng-click="accountSchedules(user)"><i class="fa fa-book"></i></a>
+              </li>
+              <li ng-if="getAccess('accounts', 'freeze') && user.status != 'Deactivated'">
+                <a title="Freeze Account" ng-if="user.status != 'Frozen'" ng-click="frozeModal(user)"><i class="fa fa-empire"></i></a>
+                <a title="Unfreeze Account" ng-if="user.status == 'Frozen'" ng-click="unFrozeAccount(user)"><i class="fa fa-times-circle-o"></i></a>
+              </li>
+              <li ng-if="getAccess('accounts', 'delete')">
+                <a title="Deactivate Account" ng-if="user.status != 'Deactivated'" class="pad--off-right" ng-click="deactivateAccount(user, $index)"><i class="fa fa-toggle-on"></i></a>
+                <a title="Activate Account" ng-if="user.status == 'Deactivated'" class="pad--off-right" ng-click="activateAccount(user, $index)"><i class="fa fa-toggle-off"></i></a>
               </li>
             </ul>
           </div>
         </div>
       </div>
     </div>
+    <div class="center">
+      <i ng-show="loadingAccounts">loading accounts .. </i>
+      <button ng-show="users.length % 15 == 0 && !loadingAccounts" class="btn btn--small btn--primary" ng-click="loadMoreAccounts()">Load More</button>
+    </div>
   </div>
 
-  <!-- modal account summary -->
-  <div class="modal" data-modal="account-summary" id="account-summary-modal">
+  <div class="modal" data-modal="froze-account" id="froze-account-modal">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
-      <h3 class="h--medium brand-color space--bottom">Summary of Classes and Packages</h3>
+      <h3 class="h--medium brand-color space--bottom">Freeze: {{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h3>
+      <span class="label">Reason:</span>
+      <input ng-model="frozeReason" class="text-input">
+      <button type="button" class="btn btn--primary btn--medium space--top modal-close" ng-click="freezeAccount()">Freeze Account</button>
+    </div>
+  </div>
+  <div class="modal" data-modal="security-check" id="security-check-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Security Check</h3>
 
-      <div class="space--bottom pad--bottom">
-        <span class="label">Rider</span>
-        <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
+      <ul class="form-fields">
+        <li>
+          <span class="label">Password</span>
+          <input ng-model="securityPass" type="password" class="text-input">
+        </li>
+      </ul>
+
+      <button type="button" id="btn-security" class="btn btn--primary btn--medium space--top modal-close">Confirm</button>
+
+    </div>
+  </div>
+
+  <div class="modal" data-modal="add-account" id="add-account-modal">
+    <div class="modal__box pad">
+      <span id="close-add-account" class="close-btn modal-close">X</span>
+      <h3 class="h medium gray">Add Account</h3>
+
+      <div class="float--left space--bottom">
+        <span class="label">First Name</span>
+        <input ng-model="newAccount.first_name" class="text-input">
+      </div>
+      <div class="float--right space--bottom">
+        <span class="label">Last Name</span>
+        <input ng-model="newAccount.last_name" class="text-input">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Email</span>
+        <input ng-model="newAccount.email" class="text-input">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <input type="checkbox" ng-model="newAccount.no_email" /> Do not send email verification
+      </div>
+      <div class="float--left space--bottom">
+        <span class="label">Password</span>
+        <input type="password" ng-model="newAccount.password" class="text-input">
+      </div>
+      <div class="float--right space--bottom">
+        <span class="label">Confirm Password</span>
+        <input type="password" ng-model="newAccount.confirm_password" class="text-input">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Notes</span>
+        <textarea ng-model="newAccount.notes" class="text-input"></textarea>
+      </div>
+      <button ng-disabled="registeringAccount" type="button" ng-click="addAccount()" class="btn btn--primary btn--medium float--right space--top">Add</button>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="account-info" id="account-info-modal">
+    <div class="modal__box pad" >
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h medium gray">Personal Info</h3>
+      <div class="float--left space--bottom">
+        <span class="label">First Name</span>
+        <input ng-model="selectedInfo.first_name" class="text-input">
+      </div>
+      <div class="float--right space--bottom">
+        <span class="label">Last Name</span>
+        <input ng-model="selectedInfo.last_name" class="text-input">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Email</span>
+        <input ng-model="selectedInfo.email" disabled class="text-input">
+      </div>
+      <div class="bd float--right space--bottom">
+        <span class="label">Mobile Number</span>
+        <input ng-model="selectedInfo.phone_number" class="text-input">
+      </div>
+      <div class="float--left space--bottom">
+        <span class="label">Birthday</span>
+        <input ng-model="selectedInfo.birthdate" class="text-input birth-datepicker">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Address</span>
+        <input ng-model="selectedInfo.address" class="text-input">
+      </div>
+      <div class="float--left space--bottom">
+        <span class="label">Contact Person</span>
+        <input ng-model="selectedInfo.contact_person" class="text-input">
+      </div>
+      <div class="float--right space--bottom">
+        <span class="label">Contact Number</span>
+        <input ng-model="selectedInfo.emergency_contact" class="text-input">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Notes</span>
+        <textarea ng-model="selectedInfo.notes" class="text-input"></textarea>
+      </div>
+      <button type="button" ng-if="getAccess('accounts', 'update')" ng-click="updateAccountInfo()" class="btn btn--primary btn--medium float--right space--top modal-close">Save</button>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="account-schedules" id="account-schedules-modal">
+    <div class="modal__box pad" style="max-width: 100%">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }} schedules</h3>
+
+      <div class="class-search pad cf">
+        <div class="float--left space--right">
+          <span class="label">From</span>
+          <input class="text-input" id="input_from" ng-model='schedFilter.fromDate' placeholder="Today" />
+        </div>
+        <div class="float--left space--right">
+          <span class="label">To</span>
+          <input class="text-input" id="input_to" ng-model='schedFilter.toDate' placeholder="To" />
+        </div>
+        <div class="float--left space--left space--bottom">
+          <span class="label">&nbsp;</span>
+          <button type="button" class="btn btn--small btn--primary float--left" ng-click="filterSchedDate(selectedAccount)">Filter Date</button>
+        </div>
+        <div class="float--left space--left">
+          <span class="label">Status</span>
+          <select size="" class="select" ng-change="changeStatus()" ng-model="statusFilter">
+
+            <option value="--">All</option>
+            <option value="booked">Booked</option>
+            <option value="missed">Missed</option>
+            <option value="waitlisted">Waitlisted</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+
       </div>
 
-      <div class="space--bottom one-whole">
-
-        <table class="data-table account-summary-table">
-          <tr>
-            <th>Package Type</th>
-            <th>Classes Used</th>
-            <th>Classes Left</th>
-            <th>Expiration Date</th>
-          </tr>
-          <tr ng-repeat="pack in selectedAccount._packages">
-            <td>{{ pack.package_id.name }} </td>
-            <td>{{ pack.credit_count }}</td>
-            <td>{{ pack.remaining_credits }}</td>
-            <td>{{ pack.create_at }}</td>
-          </tr>
+      <div class="pad"  style="height: 400px; overflow: scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Schedule</th>
+              <th>Location</th>
+              <th>Class Type</th>
+              <th>Instructor</th>
+              <th>Status</th>
+              <th>Seat</th>
+              <th>Notes</th>
+              <th>Create Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sched in selectedAccount.books | search:'status':statusFilter">
+              <td>{{ sched.date | formatDate }} {{ sched.schedule.start | formatTime }}</td>
+              <td>{{ sched.schedule.branch.name }}</td>
+              <td>{{ sched.schedule.type }}</td>
+              <td>{{ sched.schedule.instructor.admin.first_name }} {{ sched.schedule.instructor.admin.last_name }}</td>
+              <td>{{ sched.status }}</td>
+              <td>{{ sched.seat_number }}</td>
+              <td>{{ sched.notes }}</td>
+              <td>{{ sched.create_at | formatDate }} {{ sched.create_at | formatTime }} </td>
+              <td ng-if="getAccess('schedules', 'move_bike')">
+                <button ng-if="sched.status == 'waitlisted'" class="btn btn--small btn--primary" ng-click="cancelWaitlist($index, sched)">
+                  Cancel
+                </button>
+                <ul class="nav" ng-if="sched.status == 'booked'">
+                  <li>
+                    <a title="Switch Bike" ng-click="moveBikeModal(sched)">
+                      <i class="fa fa-exchange"></i>
+                    </a>&nbsp;&nbsp;&nbsp;
+                  </li>
+                  <li>
+                    <a title="Mark as Missed" ng-click="missedModal(sched)">
+                      <i class="fa fa-clock-o"></i>
+                    </a>&nbsp;&nbsp;&nbsp;
+                  </li>
+                  <li>
+                    <a title="Cancel Book" ng-click="cancelBooking(sched)">
+                      <i class="fa fa-times"></i>
+                    </a>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
   </div>
+
+  <div id="switch-bike-modal" class="modal" data-modal="switch">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Switch Bike</h3>
+
+      <div class="user-select space--bottom">
+        <span class="label">Rider</span>
+        <h4 class="h-small">{{ selectedBook.user_id.first_name }} {{ selectedBook.user_id.last_name }}</h4>
+      </div>
+
+       <div class="cf">
+        <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
+          <span class="label">Current Bike</span>
+          <h4 class="h-small">{{ selectedBook.seat_number  }}</h4>
+        </div>
+        <div class="space--bottom bp-md-one-third float--left">
+          <span class="label">Switch to</span>
+          <select class="select" id="switch-seat" ng-model="selectedBike">
+            <option value="">Select Seat</option>
+          </select>
+        </div>
+      </div>
+
+      <button ng-if="getAccess('schedules', 'move_bike')" class="btn btn--primary btn--medium space--top modal-close" ng-click="moveBike()">Switch</button>
+    </div>
+  </div>
+<!-- missed class -->
+  <div class="modal" data-modal="missed-booking" id="missed-booking-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom"></h3>
+      <h3 class="h--medium brand-color space--bottom">Missed Ride: {{ selectedBook.user_id.first_name }} {{ selectedBook.user_id.last_name }}</h3>
+      <span class="label">Notes:</span>
+      <input ng-model="missedNotes" class="text-input">
+      <button type="button" class="btn btn--primary btn--medium space--top modal-close" ng-click="missedBooking()">MARK AS MISSED</button>
+    </div>
+  </div>
+
+  <!-- modal account summary -->
+  <div class="modal" data-modal="account-summary" id="account-summary-modal">
+    <div class="modal__box pad" style="max-width: 80%">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Rides and Packages</h3>
+
+      <div class="space--bottom pad--bottom">
+        <div class="bp-md-one-fourth float--right space--bottom space--right">
+          <span class="label">Search</span>
+          <input class="text-input" ng-model="searchTrans" placeholder="Enter Transaction">
+        </div>
+        <span class="label">Rider</span>
+        <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
+      </div>
+
+      <div style="height: 400px; overflow: scroll" class="space--bottom one-whole">
+
+        <table class="data-table account-summary-table">
+          <tr>
+            <th>Transaction Id</th>
+            <th>Package Type</th>
+            <th>Total Rides</th>
+            <th>Rides Left</th>
+            <th>Expiration Date</th>
+            <th>Notes</th>
+            <th>Purchase Date</th>
+          </tr>
+          <tr ng-repeat="pack in selectedAccount.packages | search:'trans_info.transaction,package_name':searchTrans">
+            <td>{{ getTransId(pack) }}</td>
+            <td>{{ pack.package_name || (pack.is_free ? 'Free' : pack.credit_count + ' Ride' + (pack.credit_count > 1 ? 's' : '')) }} </td>
+            <td>{{ pack.credit_count }}</td>
+            <td>
+              {{ pack.remaining_credits }}
+              <a ng-if="getAccess('accounts', 'update_expiration')" ng-click="changeCredits(pack)"><i class="fa fa-edit"></i></a>
+            </td>
+            <td>
+              <span class="badge" ng-class="{'bg-danger': pack.status == 'Expired', 'bg-success': pack.status == 'Active'}">
+              {{ pack.create_at | addDay:pack.expiration | formatDate }}
+              </span>
+              <a ng-if="getAccess('accounts', 'update_expiration')" ng-click="extendPackageExpiry(pack)">
+                <i class="fa fa-plus-square"></i>
+              </a>
+            </td>
+            <td>{{ pack.notes }}</td>
+            <td>{{ pack.create_at | formatDate }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <ul class="pagination-nav nav nav--block text--center">
+        <li><a ng-click="prevPage($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
+        <li><a ng-click="nextPage($event)">Next <i class="fa fa-angle-right"></i></a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="update-credits-modal" class="modal" data-modal="update-credits">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Change Credits</h3>
+
+      <div class="user-select space--bottom">
+        <span class="label">Package</span>
+        <h4 class="h-small">
+          {{ selectedUPack.package_name || (selectedUPack.is_free ? 'Free' : selectedUPack.credit_count + ' Ride' + (selectedUPack.credit_count > 1 ? 's' : '')) }}
+        </h4>
+      </div>
+
+       <div class="cf">
+        <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
+          <span class="label">Current Credits</span>
+          <h4 class="h-small">{{ selectedUPack.remaining_credits }} / {{ selectedUPack.credit_count  }}</h4>
+        </div>
+        <div class="space--bottom bp-md-one-third float--left">
+          <span class="label">Change to</span>
+          <select class="select" id="set-credits" ng-model="selectedCredits">
+            <option value="">Select Credits</option>
+          </select>
+        </div>
+      </div>
+
+      <button ng-if="getAccess('accounts', 'update_expiration')" class="btn btn--primary btn--medium space--top modal-close" ng-click="setCredits()">Change</button><br><br>
+
+      <span class="alert alert-info">Notice: You can only change credit up to remaining credits that is not used for booking </span>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="buy-package" id="buy-package-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Buy Package</h3>
+
+      <ul class="form-fields">
+        <li>
+          <span class="label">Rider</span>
+          <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
+        </li>
+        <li>
+          <span class="label">Select Class Package</span>
+          <select class="select" id="select-buy-package" ng-change="setPackage(newPackageId)" ng-model="newPackageId">
+            <option value="">Select Package</option>
+          </select>
+        </li>
+        <li>
+           <div class="account__item box--bordered box--white space--bottom cf">
+              <div class="pad">
+                <b class="h--small">{{ newPackage.name || newPackage.credits + ' Ride' + (newPackage.credits > 1 ? 's' : '' ) }}</b>
+                <br/><br/>
+                <span class="h small ">Price: {{ newPackage.fee }} Php</span><br>
+                <span class="h small ">No. of Rides: {{ newPackage.credits }} </span><br>
+                <span class="h small ">Expiration: {{ newPackage.expiration }} days</span><br>
+              </div>
+            </div>
+        </li>
+      </ul>
+
+      <form id="admin-pay-form" action="https://www.paypal.com/ph/cgi-bin/webscr" method="post">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="no_note" value = "0">
+        <input type="hidden" name="bn" value="PP-BuyNowBF">
+        <input type="hidden" name="rm" value="2">
+        <input type="hidden" name="custom" value="{{ selectedAccount._id }}">
+        <input type="hidden" name="business" value="electric@electricstudio.ph">
+        <input type="hidden" name="item_name" value="{{ newPackage.name  || newPackage.credits + ' Ride' + (newPackage.credits > 1 ? 's' : '') }}">
+        <input type="hidden" name="item_number" value="{{ newPackage._id }}">
+        <input type="hidden" name="amount" value="{{ newPackage.fee }}">
+
+       <!--  <input type="hidden" name="first_name" value="{{ selectedAccount.billing.first_name }}">
+        <input type="hidden" name="last_name" value="{{ selectedAccount.billing.first_name }}">
+        <input type="hidden" name="address1" value="{{ selectedAccount.billing.address }}">
+        <input type="hidden" name="landing_page" value="Billing" />
+        <input type="hidden" name="city" value="{{ selectedAccount.billing.city }}">
+        <input type="hidden" name="state" value="{{ selectedAccount.billing.province }}">
+        <input type="hidden" name="zip" value="{{ selectedAccount.billing.postalcode }}">
+        <input type="hidden" name="email" value="{{ selectedAccount.billing.email }}">
+        <input type="hidden" name="night_phone_a" value="{{ selectedAccount.billing.phone_a }}">
+        <input type="hidden" name="night_phone_b" value="{{ selectedAccount.billing.phone_b }}">
+        <input type="hidden" name="night_phone_c" value="{{ selectedAccount.billing.phone_c }}"> -->
+
+        <input type="hidden" name="currency_code" value="PHP">
+        <input type="hidden" name="ipn_notification_url" value="{{ redirectUrl }}/ipn?pid={{ newPackage._id }}&uid={{ selectedAccount._id }}&success=True">
+        <input type="hidden" name="return" value="{{ redirectUrl }}/buy?pid={{ newPackage._id }}&uid={{ selectedAccount._id }}&success=True">
+        <input type="hidden" name="cancel_return" value="{{ redirectUrl }}/buy?success=False">
+        <input type="hidden" name="cbt" value="Return to Electric Studio">
+      </form>
+
+      <button type="button" ng-click="confirmBilling()" class="btn btn--primary btn--medium space--top modal-close">Buy</button>
+
+    </div>
+  </div>
+<br/>
+  <!-- <div class="modal" data-modal="billing-preview" id="billing-preview-modal">
+    <div class="modal__box pad" style="max-width: 100%">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Billing Information</h3>
+
+      <ul class="form-fields">
+        <li>
+          <span class="label">Rider</span>
+          <h4 class="h-small">{{ selectedAccount.first_name }} {{ selectedAccount.last_name }}</h4>
+        </li>
+        <li>
+          <div class="bp-md-one-half float--left space--bottom">
+            <span class="label">First Name</span>
+            <input ng-model="selectedAccount.billing.first_name" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--right space--bottom">
+            <span class="label">Last Name</span>
+            <input ng-model="selectedAccount.billing.last_name" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--left space--bottom">
+            <span class="label">Address</span>
+            <input ng-model="selectedAccount.billing.address" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--right space--bottom">
+            <span class="label">City</span>
+            <input ng-model="selectedAccount.billing.city" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--left space--bottom">
+            <span class="label">State/Province</span>
+            <input ng-model="selectedAccount.billing.province" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--right space--bottom">
+            <span class="label">Postal</span>
+            <input ng-model="selectedAccount.billing.postalcode" class="text-input">
+          </div>
+          <div class="bp-md-one-twelfth space--right float--left space--bottom">
+            <span class="label">Telephone</span>
+            <input ng-model="selectedAccount.billing.phone_a" placeholder="123" class="text-input">
+          </div>
+          <div class="bp-md-one-twelfth space--right float--left space--bottom">
+            <span class="label">&nbsp;</span>
+            <input ng-model="selectedAccount.billing.phone_b" placeholder="1234" class="text-input">
+          </div>
+          <div class="bp-md-one-twelfth space--right float--left space--bottom">
+            <span class="label">&nbsp;</span>
+            <input ng-model="selectedAccount.billing.phone_c" placeholder="1234" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--right space--bottom">
+            <span class="label">Email</span>
+            <input ng-model="selectedAccount.billing.email" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--right space--bottom">
+            <span class="label">Card #</span>
+            <input ng-model="selectedAccount.billing.card_number" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--left space--bottom">
+            <span class="label">Payment Type</span>
+            <input ng-model="selectedAccount.billing.card_type" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--right space--bottom">
+            <span class="label">Expiration</span>
+            <input ng-model="selectedAccount.billing.card_expiration" placeholder="MM/YY" class="text-input">
+          </div>
+          <div class="bp-md-one-half float--left space--bottom">
+            <span class="label">CSC</span>
+            <input ng-model="selectedAccount.billing.csc" class="text-input">
+          </div>
+        </li>
+      </ul>
+
+      <form id="admin-pay-form" action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="no_note" value = "0">
+        <input type="hidden" name="bn" value="PP-BuyNowBF">
+        <input type="hidden" name="rm" value="2">
+        <input type="hidden" name="business" value="ogsmelvin05-facilitator@gmail.com">
+        <input type="hidden" name="item_name" value="{{ newPackage.name }}">
+        <input type="hidden" name="item_number" value="{{ newPackage._id }}">
+        <input type="hidden" name="amount" value="{{ newPackage.fee }}">
+
+        <input type="hidden" name="first_name" value="{{ selectedAccount.billing.first_name }}">
+        <input type="hidden" name="last_name" value="{{ selectedAccount.billing.first_name }}">
+        <input type="hidden" name="address1" value="{{ selectedAccount.billing.address }}">
+        <input type="hidden" name="landing_page" value="Billing" />
+        <input type="hidden" name="city" value="{{ selectedAccount.billing.city }}">
+        <input type="hidden" name="state" value="{{ selectedAccount.billing.province }}">
+        <input type="hidden" name="zip" value="{{ selectedAccount.billing.postalcode }}">
+        <input type="hidden" name="email" value="{{ selectedAccount.billing.email }}">
+        <input type="hidden" name="night_phone_a" value="{{ selectedAccount.billing.phone_a }}">
+        <input type="hidden" name="night_phone_b" value="{{ selectedAccount.billing.phone_b }}">
+        <input type="hidden" name="night_phone_c" value="{{ selectedAccount.billing.phone_c }}">
+
+        <input type="hidden" name="currency_code" value="PHP">
+        <input type="hidden" name="return" value="{{ redirectUrl }}?pid={{ newPackage._id }}&uid={{ selectedAccount._id }}&success=True">
+        <input type="hidden" name="cancel_return" value="{{ redirectUrl }}?success=False">
+        <input type="hidden" name="cbt" value="Return to Electric Studio">
+      </form>
+
+      <button type="button" ng-click="buyPackage()" class="btn btn--primary btn--medium float--right space--top modal-close">Save and Continue</button>
+
+    </div>
+  </div> -->
 
   <!-- modal Add Class -->
   <div class="modal" data-modal="add-class" id="add-class-modal">
     <div class="modal__box pad">
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Add Class</h3>
-      
+
       <ul class="form-fields">
         <li>
           <span class="label">Rider</span>
@@ -115,14 +608,17 @@
         </li>
         <li>
           <span class="label">Set Expiration</span>
-          <input ng-disabled="newCredits.package_id" ng-model="newCredits.expiration" class="text-input datepicker" placeholder="Defaults to 30 days">
+          <input ng-disabled="newCredits.package_id" ng-model="newCredits.expiration" class="text-input" placeholder="Defaults to 30 days">
         </li>
         <li>
           <span class="label">Notes</span>
           <textarea class="text-input" cols="3" ng-model="newCredits.notes" placeholder="Indicate reason for free class"></textarea>
         </li>
+        <li>
+          <input type="checkbox" ng-model="newCredits.no_email" /> Do not send email notification
+        </li>
       </ul>
-     
+
       <button type="button" ng-click="saveNewCredits()" class="btn btn--primary btn--medium space--top modal-close">Add</button>
 
     </div>

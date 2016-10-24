@@ -1,0 +1,255 @@
+diff --git a/app/controllers/home.py b/app/controllers/home.py
+index fcccbcb..ff3939c 100644
+--- a/app/controllers/home.py
++++ b/app/controllers/home.py
+@@ -10,6 +10,8 @@ from bson.objectid import ObjectId
+ from app.settings import PDT_TOKEN
+ from tornado.httpclient import HTTPRequest, AsyncHTTPClient
+ from app.helper import GMT8
++from tornado import gen
++from motorengine import DESCENDING, ASCENDING
+ 
+ import hashlib
+ import sys
+@@ -52,12 +54,11 @@ def login(self):
+         self.write('Account doesn\'t exist')
+     self.finish()
+ 
+-def user_migration(self):
++def user_migrate(self):
+     i = 0
+-    for line in open("user-accounts.csv"):
++    for line in open("/Users/GreenLemon/Downloads/user-accounts-v4.csv"):
+         d = line.split(",")
+         i+=1
+-        print(" i " + str(i) + " " + d[2])
+         user = yield User.objects.get(email=d[2])
+         if not user:
+             user = User()
+@@ -88,34 +89,123 @@ def user_migration(self):
+                     transaction.package_fee = package.fee
+                     transaction.package_ft = package.first_timer
+                     transaction.credit_count = package.credits
+-                    transaction.remaining_credits = package.credits
++                    transaction.remaining_credits = user.credits
+                     transaction.expiration = package.expiration   
+                     yield transaction.save()
+         else:
+-            transactions = yield UserPackage.objects.filter(user_id=user._id, status__ne='Expired').find_all()
+             
+-            if len(transactions) > 0:
+-                if d[6]:
+-                    outstanding_credit = int(d[6])
+-                    for transaction in enumerate(transactions):
+-                        if 'remaining_credits' in transaction:
+-                            print("arrived here")
+-                            if outstanding_credit <= transaction.remaining_credits:
+-                                transaction.remaining_credits = transaction.remaining_credits - outstanding_credit
+-                            else:
+-                                transaction.remaining_credits = 0
+-                                outstanding_credit = outstanding_credit - transaction.remaining_credits
+-                            yield transaction.save() 
++            if d[6]:
++                last_credits = int(d[6])
++                if last_credits > user.credits: 
++                    print(" i " + str(i) + " " + d[2])
++                    free_trans = UserPackage(user_id=user._id,
++                                             is_free=True,
++                                             credit_count=last_credits - user.credits,
++                                             remaining_credits=last_credits - user.credits)
++                    free_trans.expiration = 30
++                    free_trans.expire_date = datetime.now() + timedelta(days=int(free_trans.expiration))
++                    free_trans.trans_id = str(user._id) + datetime.now().strftime('%Y%m%d%H%M%S')
++                    yield free_trans.save()
+                     user.credits = int(d[6])
+-                else:
+-                    user.credits = 0
+             else:
+                 user.credits = 0
++            
+             yield user.save()
+         yield gen.sleep(0.005)
+     print("Total records " + str(i))
+     self.finish()
+ 
++def booking_script(self):
++    i = 0
++    book_count = 0
++    scheds = {}
++    summary = ''
++    for line in open("/Users/GreenLemon/Downloads/Craziness.csv"):
++        data = line.split(",")
++        if data[0] == 'Date':
++            continue
++
++
++        split_date = data[0].split('/')
++        date_str = '';
++        if int(split_date[0]) > 9:
++            date_str += split_date[0] + '/'
++        else:
++            date_str += '0' + split_date[0] +'/'
++        if int(split_date[1]) > 9:
++            date_str += split_date[1] + '/'
++        else:
++            date_str += '0' + split_date[1] +'/'
++        date_str += '20' + split_date[2]
++
++        time_str = '0' + data[2];
++        if data[2].index(':') > 1:
++            time_str = data[2]
++
++        date = datetime.strptime(date_str,"%m/%d/%Y")
++        time = datetime.strptime(time_str,"%I:%M %p")
++
++        date_time = date_str + ' ' + time_str
++        if date_time not in scheds:
++            sched = yield InstructorSchedule.objects.get(date=date,start=time)
++            if sched:
++                scheds[date_time] = sched
++            else:
++                sched = yield InstructorSchedule.objects.get(date=date,start=date.replace(hour=time.hour, minute=time.minute))
++                if sched:
++                    scheds[date_time] = sched
++                else:
++                    scheds[date_time] = None
++                    print(date_time + ' not exists' + data[4])
++
++        if scheds[date_str + ' ' + time_str]:
++            i+=1
++            email = data[1]
++            seat = data[3]
++            if email:
++                user = yield User.objects.get(email=email)
++                if user:
++
++                    user_packages = yield UserPackage.objects \
++                        .filter(user_id=user._id, remaining_credits__gt=0, status__ne='Expired') \
++                        .order_by('expire_date', ASCENDING) \
++                        .find_all()
++
++                    if not len(user_packages) or (user and not user.credits):
++                        summary += line + ', Failed insufficient credits ' + str(user.credits) + '<br>'
++                        continue
++
++                    user.credits -= 1
++
++                    user_packs = []
++                    user_packages[0].remaining_credits -= 1
++                    user_packs.append(str(user_packages[0]._id))
++
++                    book = BookedSchedule()
++                    book.date = date
++                    book.schedule = scheds[date_str + ' ' + time_str]._id
++                    book.user_package = user_packs
++                    book.user_id = user._id
++                    book.status = 'booked'
++                    book.seat_number = seat
++
++                    yield user.save()
++                    yield user_packages[0].save()
++                    yield book.save()
++
++                    summary += line + ', booked<br>'
++
++                    book_count+=1
++
++        
++
++    summary += '<br><br>'
++
++    summary += 'Total Booked: ' + str(book_count) + '<br>'
++    summary += 'Total Line Process: ' + str(i) + '<br>' 
++    self.write(summary)
++    self.finish()
++
+ 
+ def logout(self):
+     self.clear_cookie('loginUser')
+@@ -241,7 +331,7 @@ def buy(self):
+                 'at' : PDT_TOKEN,
+             })
+ 
+-            url = 'https://www.paypal.com/cgi-bin/webscr'
++            url = 'https://www.sandbox.paypal.com/cgi-bin/webscr'
+             pp_request = HTTPRequest(url=url, method='POST', body=post_body, validate_cert=False)
+             pp_response = yield AsyncHTTPClient().fetch(pp_request)
+             pp_data = pp_response.body.decode('UTF-8')
+@@ -296,7 +386,7 @@ def buy(self):
+                 except:
+                     value = sys.exc_info()[1]
+                     str_value = str(value)
+-                    if 'The index "caused" was violated ' in str_value:
++                    if 'The index ' in str_value and ' was violated ' in str_value:
+                         self.redirect('/#/account?pname=' + pack_name + '&s=success#packages')
+                     else:
+                         self.redirect('/#/rates?s=error')
+@@ -501,6 +591,68 @@ def package_migrate(self):
+     # self.write(summary)
+     # self.finish()
+ 
++    i = 0
++    for line in open("/Users/GreenLemon/Downloads/user-accounts-v3.csv"):
++        d = line.split(",")
++        i+=1
++        print(" i " + str(i) + " " + d[2])
++        user = yield User.objects.get(email=d[2])
++        if not user:
++            user = User()
++            fullname = d[0].split(" ")
++            s = len(fullname)
++            user.first_name = fullname[0]
++            user.last_name = fullname[s -1]
++            user.email = d[2]
++            if d[1]:
++                user.phone_number = d[1]
++            user.status = d[3]
++            if d[6]:
++                user.credits = int(d[6])
++            else:
++                user.credits = 0
++            user.password = bcrypt.encrypt("password")
++
++            user = yield user.save()
++
++            if d[4]:
++                if int(d[4]) > 0:
++                    package = Package.objects.get(first_timer=True)
++                    transaction = UserPackage(user_id=user._id)
++
++                    package = yield Package.objects.get(first_timer=True)
++                    transaction.package_id = package._id
++                    transaction.package_name = package.name
++                    transaction.package_fee = package.fee
++                    transaction.package_ft = package.first_timer
++                    transaction.credit_count = package.credits
++                    transaction.remaining_credits = package.credits
++                    transaction.expiration = package.expiration   
++                    yield transaction.save()
++        else:
++            transactions = yield UserPackage.objects.filter(user_id=user._id, status__ne='Expired').order_by('expire_date', ASCENDING).find_all()
++            
++            if len(transactions) > 0:
++                outstanding_credit = 0
++                if d[5] != '':
++                   outstanding_credit = int(d[5])
++                for transaction in enumerate(transactions):
++                    if 'remaining_credits' in transaction:
++                        if outstanding_credit <= transaction.remaining_credits:
++                            transaction.remaining_credits = transaction.remaining_credits - outstanding_credit
++                        else:
++                            transaction.remaining_credits = 0
++                            outstanding_credit = outstanding_credit - transaction.remaining_credits
++                        yield transaction.save() 
++                if d[5] != '':
++                    user.credits = int(d[5])
++            else:
++                user.credits = 0
++            yield user.save()
++        yield gen.sleep(0.005)
++    print(i)
++    self.finish()
++
+     self.redirect('/')
+ 
+ def add_default_sudopass(self): 

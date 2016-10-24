@@ -1,28 +1,39 @@
-  <div class="content bg-lightGray sidebar-layout" ng-controller="ReservedCtrl">
+  <div ng-if="isFrozen" class="content">
     <div class="wrapper">
-      
+      <p class="brand-color">Your account is frozen. Please contact the studio for more details.</p>
+    </div>
+  </div>
+
+  <div class="content bg-lightGray account-page sidebar-layout" ng-controller="ReservedCtrl">
+
+    <div ng-include="'/site/account-nav'"></div>
+
+    <div class="wrapper">
+
       <div class="main">
         <h2 class="h large">Reservation</h2>
-        
+
         <div class="stats">
-          <h3 class="h small">{{ user.credits || 0 }} classes</h3>
+          <h3 class="h small">{{ reservations.length || 0 }} Ride{{ reservations.length > 1 ? 's' : '' }}</h3>
         </div>
-        
+
         <section class="col-2">
           <div class="block" ng-repeat="res in reservations">
-            <h4 class="h small primary space--off pad--half-bottom">{{ res.date | formatDate }}</h4>
+            <h3 class="h primary space--off pad--half-bottom"><small>{{ res.date | formatDate }}</small></h3>
+            <span class="color--orange font--bold">{{ res.schedule.branch.name }}</span><br>
             <span>{{ res.schedule.start | formatTime }}</span><br>
-            <!-- <span>Class: Type 2</span><br> -->
-            <span>Instructor: {{ res.schedule.instructor.admin.first_name }}</span><br>
-            <span>Seat: {{ res.seat_number }}</span><br>
+            <span>Class: {{ res.schedule.type }}</span><br>
+            <span>Instructor: {{ res.schedule.instructor.admin.first_name | capitalize }}</span><br>
+            <span ng-if="res.status !== 'waitlisted'">Bike #: {{ res.seat_number }}</span>
+            <span ng-if="res.status === 'waitlisted'" class='h small primary'>{{ res.status }}</span>
+            <br>
             <div class="pad--ends">
-              <a class="btn btn--small btn--secondary" ng-click="reSched(res)">Reschedule</a>
+              <!-- <a class="btn btn--small btn--secondary" ng-click="reSched(res)">Reschedule</a> -->
               <a class="btn btn--small btn--tertiary" ng-click="cancelSched(res)">Cancel</a>
             </div>
           </div>
         </section>
       </div>
-      
-      <div ng-include="'/site/account-nav'"></div>
+
     </div>
   </div>

@@ -1,0 +1,80 @@
+
+<div class="giftcard-banner-image"></div>
+
+<div class="giftcard page content sidebar-layout" ng-controller="RatesCtrl">
+
+  <div class="wrapper text-color-light">
+    <div class="main">
+      <form id="payForm" action="https://www.paypal.com/ph/cgi-bin/webscr" method="post">
+
+      <section class="main-section">
+        <h1 class="h large title">Gift Card</h1>
+
+        <div class="giftcard-select">
+          <div class="item">
+            <a class="arrow left" ng-click="prevGCPackage()"><i class="fa fa-angle-left"></i></a>
+            <a class="arrow right" ng-click="nextGCPackage()"><i class="fa fa-angle-right"></i></a>
+            <a class="arrow top" ng-click="prevGCPackage()"><i class="fa fa-angle-up"></i></a>
+            <a class="arrow bottom" ng-click="nextGCPackage()"><i class="fa fa-angle-down"></i></a>
+            <div class="rides"><span class="credits">{{ selectedGCPackage.credits }}</span> {{ selectedGCPackage.credits > 1 ? 'Rides' : 'Ride' }}</div>
+            <p class="description">{{ selectedGCPackage.description }}</p>
+            <p class="price">PHP {{ selectedGCPackage.fee | currency:'':0 }}</p>
+            <div class="giftcard-validity pad--half-ends">{{ gcValidity }} DAYS from the time the Gift Card is loaded into the account</div>
+          </div>
+        </div>
+
+        <input ng-model="gcReceiver" class="input" placeholder="TO"/>
+        <input ng-model="gcSender" class="input" placeholder="FROM"/>
+
+        <div class="validity pad--ends">
+          <h3 class="h medium">Validity</h3>
+          <div class="giftcard-validity space--top">{{ gcValidity }} DAYS from the time the Gift Card is loaded into the account</div>
+          <div class="space--top" ng-if="gcPackageFirstTimer"><b>Valid only for new riders.</b> First Timer Package may only be availed once per rider</div>
+          <div class="space--top">Physical gift cards are available in the studio.</div>
+        </div>
+      </section>
+
+      <section class="sub-section">
+        <!-- HIDDEN FIELDS -->
+        <input type="hidden" id="cmd" name="cmd" value="_xclick">
+        <input type="hidden" id="no_note" name="no_note" value = "0">
+        <input type="hidden" id="bn" name="bn" value="PP-BuyNowBF">
+        <input type="hidden" id="rm" name="rm" value="2">
+        <input type="hidden" id="custom" name="custom" value="">
+        <input type="hidden" id="business" name="business" value="electric@electricstudio.ph">
+        <!-- electric@electricstudio.ph -->
+        <input type="hidden" id="item_name" name="item_name" value="">
+        <input type="hidden" id="item_number" name="item_number" value="">
+        <input type="hidden" id="amount" name="amount" value="">
+        <input type="hidden" id="currency_code" name="currency_code" value="PHP">
+        <input type="hidden" id="ipn_notification_url" name="ipn_notification_url" value="">
+        <input type="hidden" id="return" name="return" value="">
+        <input type="hidden" id="cancel_return" name="cancel_return" value="">
+        <input type="hidden" id="cbt" name="cbt" value="Return to Electric Studio">
+
+
+        <input type="email" ng-model="senderEmail" name="semail" class="input" placeholder="SENDER'S EMAIL" />
+        <input type="email" ng-model="receiverEmail" name="remail" class="input" placeholder="RECIPIENT'S EMAIL">
+        <textarea rows="4" class="input" ng-model="gcMessage" placeholder="MESSAGE"> </textarea>
+
+        <div class="space--top">
+          <label class="weight--semibold"><input type="radio" ng-model="emailTo" value="sender"> email to sender</label>
+          <label class="weight--semibold"><input type="radio" ng-model="emailTo" value="receiver"> email to recipient</label>
+        </div>
+      </section>
+
+      </form>
+    </div>
+  </div>
+
+  <div class="sidebar dark">
+    <h3 class="h">Total</h3>
+    <div class="total">PHP {{ gcAmount | currency:'' }}</div>
+
+    <input ng-click="buyGC()" class="button" type="button" value="Buy Gift Card" />
+
+    <p class="pad--ends space--top">Already have a gift card?</p>
+    <a class="button" href="#/redeem-gc">Redeem Gift Card</a>
+  </div>
+
+</div>

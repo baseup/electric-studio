@@ -1,45 +1,61 @@
-  
-  <div class="slider-container rates">
-    <ul class="slider">
-      <li class="slide slide-1 font-medium"><span>Be Part of Our Pack</span></li>
-      <li class="slide slide-2"><span>Let's Go <br>For A Ride</span></li>
-      <li class="slide slide-3"><span>Plug In</span></li>
-    </ul>
-  </div>
-
-  <div class="content">
+  <div ng-if="isFrozen" class="content">
     <div class="wrapper">
-      <h2 class="h large primary">Rates &amp; Packages</h2>
-      <a href="#/first-ride" class="link">What to expect on your first ride</a>
+      <p class="brand-color">Your account is frozen. Please contact the studio for more details.</p>
     </div>
   </div>
-  
-  <div class="content bg-gray parts-4 rates-info" ng-controller="RatesCtrl">
-    <div class="wrapper">
-      <section ng-repeat="package in packages">
-        <h2>{{ package.credits }} <span>Class</span></h2>
-        <p class="price">PHP <span>{{ package.fee }}</span></p>
+
+  <div id="rates-section" class="content rates page" ng-controller="RatesCtrl">
+    <div class="wrapper text--center">
+      <span class="h small primary center" ng-show="loadingPackages">
+        <i class="fa fa-spinner"></i> Loading packages ...
+      </span>
+      <section ng-repeat="package in packages" class="package pad--ends">
+        <h2 class="rides">
+          <span class="credits">{{ package.credits }}</span>
+          <span>Ride{{ package.credits > 1 ? 's' : '' }}</span>
+        </h2>
+        <p class="description">{{ package.description }}</p>
+        <p class="price"><i>PHP</i> {{ package.fee | currency:'' }}</p>
         <p>Expires in {{ package.expiration }} days</p>
-        <!-- <a class="button small" ng-click="buy(package.id)">Buy</a> -->
-        <form action="https://www.sandbox.paypal.com/ph/cgi-bin/webscr" method="post">
+        <form id="payForm-{{ package._id }}" action="https://www.paypal.com/ph/cgi-bin/webscr" method="post">
           <input type="hidden" name="cmd" value="_xclick">
           <input type="hidden" name="no_note" value = "0">
           <input type="hidden" name="bn" value="PP-BuyNowBF">
           <input type="hidden" name="rm" value="2">
-          <input type="hidden" name="business" value="ogsmelvin05-facilitator@gmail.com">
-          <input type="hidden" name="item_name" value="{{ package.name }}">
+          <input type="hidden" name="custom" value="{{ loginUser._id }}">
+          <input type="hidden" name="business" value="electric@electricstudio.ph">
+          <input type="hidden" name="item_name" value="{{ package.name || package.credits + ' Ride' + (package.credits > 1 ? 's' : '') }}">
+          <input type="hidden" name="item_number" value="{{ package._id }}">
           <input type="hidden" name="amount" value="{{ package.fee }}">
           <input type="hidden" name="currency_code" value="PHP">
-          <input type="hidden" name="return" value="{{ redirectUrl }}?pid={{ package.id }}&success=True">
-          <input type="hidden" name="cancel_return" value="{{ redirectUrl }}?success=False">
+          <input type="hidden" name="ipn_notification_url" value="{{ redirectUrl }}/admin/ipn?pid={{ package._id }}&success=True">
+          <input type="hidden" name="return" value="{{ redirectUrl }}/buy?pid={{ package._id }}&success=True">
+          <input type="hidden" name="cancel_return" value="{{ redirectUrl }}/buy?success=False">
           <input type="hidden" name="cbt" value="Return to Electric Studio">
-          <input class="button small" ng-click="buyPackage($event)" value = "Buy" class = "button" type = "submit">
+
+          <input ng-if="!package.special_package" class="button primary small" ng-click="buyPackage(package)" value = "Buy" class = "button" type = "button">
+          <i ng-if="package.special_package">Call studio directly</i>
         </form>
       </section>
       <div class="faq">
-        <p>If it's your first time, call our studio to check for special promos and packages.</p>
-        <p>You must purchase Electric Studio classes before you can reserve a spot in the class. Classes are transferrable between studios, but may cost different amounts. To purchases classes for another studio, click on the change studio dropdown menu and select your desired location. A mandatory waiver must be signed by parent/guardian, for riders under the age of 18 to take class at Electric Studio.</p>
-        <a class="link" href="#/faq">Faqs</a>
-      </div>  
-    </div>  
+        <p class="text-uppercase font--bold">Purchase an Electric Studio Package so you can reserve a spot in class.</p>
+        <p>Package expiration begins upon purchase. A mandatory waiver must be signed by a parent/guardian for riders under the age of 18. First Timer Packages may only be purchased once per rider. All sales are final.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="giftcard-section">
+    <div class="side-image"></div>
+    <div class="content">
+      <div class="content-1">
+        <h2 class="h large">Gift Card</h2>
+        <p class="font--bold pad--bottom">Share the electric feel and email a gift card.</p>
+        <a class="button light small space--bottom" href="#/gift-cards">Buy</a>
+        <p>Physical gift cards are also available at the studio.</p>
+      </div>
+      <div class="content-2 pad--top">
+        <p class="space--ends pad--top font--bold">Already have a gift card?</p>
+        <a class="button light small" href="#/redeem-gc">Redeem</a>
+      </div>
+    </div>
   </div>

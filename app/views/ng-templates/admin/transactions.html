@@ -10,11 +10,11 @@
 
       <div class="class-search pad cf">
         <span class="label">Search</span>
-        <div class="bp-md-one-fourth float--left space--bottom space--right">
-          <input class="text-input" ng-model="search.user_id.first_name" placeholder="Name">
+        <div class="bp-md-one-third float--left space--bottom space--right">
+          <input class="text-input" ng-model="searchTrans" placeholder="Enter Name, Email or Transaction">
         </div>
         <div class="float--left">
-          <select class="select" id="search-trans-package" ng-model="search.package_id._id">
+          <select class="select" id="search-trans-package" ng-model="searchPac">
             <option value="">Select Package</option>
           </select>
         </div>
@@ -24,20 +24,33 @@
         <table class="data-table">
           <thead>
             <tr>
+              <th>Transaction</th>
               <th>Name</th>
+              <th>Email</th>
               <th>Package Name</th>
-              <th>Credits</th>
+              <th>Total</th>
+              <th>Left</th>
               <th>Price</th>
               <th>Date</th>
               <!-- <th>&nbsp;</th> -->
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="transaction in transactions | filter:search">
+            <tr ng-repeat="transaction in transactions | search:'trans_info.transaction,user_id.first_name+ +user_id.last_name,user_id.email':searchTrans | search:'package_id._id':searchPac">
+              <td>{{ getTransId(transaction) }}</td>
               <td>{{ transaction.user_id.first_name }} {{ transaction.user_id.last_name }}</td>
-              <td>{{ transaction.package_id.name }}</td>
-              <td>{{ transaction.package_id.credits }} Classes</td>
-              <td><small>PHP</small> {{ transaction.package_id.fee }}</td>
+              <td>{{ transaction.user_id.email }} </td>
+              <td>
+                <span ng-if="transaction.package_name && transaction.is_free">Free - </span>
+                {{ transaction.package_name || 'Free' }}
+              </td>
+              <td>{{ transaction.credit_count }} Ride<span ng-if="transaction.credit_count > 1">s<span></td>
+              <td>{{ transaction.remaining_credits }} Ride<span ng-if="transaction.remaining_credits > 1">s</span></td>
+              <td>
+                <small>PHP</small>
+                <span ng-if="transaction.is_free">0.00</span> 
+                <span ng-if="!transaction.is_free">{{ transaction.package_fee }}</span>
+              </td>
               <td>{{ transaction.create_at }}</td>
               <!-- <td>
                 <button class="btn btn--small btn--secondary" ng-click="removePackage(package)">
@@ -50,7 +63,12 @@
             </tr>
           </tbody>
         </table>
+
       </div>
+      <ul class="pagination-nav nav nav--block text--center">
+        <li><a ng-click="prevPage($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
+        <li><a ng-click="nextPage($event)">Next <i class="fa fa-angle-right"></i></a></li>
+      </ul>
     </div>
     </div>
   </div>

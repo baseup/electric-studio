@@ -1,0 +1,99 @@
+<div ng-controller="LandingPageCtrl">
+    <div class="content-result pad">
+      <div class="cf space--bottom">
+        <span class="label inline">Landing Page Sections</span>
+        <button ng-if="getAccess('sliders', 'create')" ng-click="showAddLandingPage()" class="btn btn--small btn--secondary float--right" data-modal-toggle="add-landing-page">Add Section</button>
+      </div>
+
+    <div ng-show="isUpdateLandingPage">
+      <div class="modal__box pad">
+        <h3 class="h--medium brand-color space--bottom">Landing Page Section</h3>
+        <div class="cf">
+          <div class="space--bottom one-whole space--right">
+            <span class="label">Text</span>
+            <input class="text-input" ng-model="updateLandingPage.text">
+          </div>
+          <div class="space--bottom left space--right">
+            <span class="label">Button Label</span>
+            <input class="text-input" ng-model="updateLandingPage.button_label">
+          </div>
+          <div class="space--bottom left space--right">
+            <span class="label">Button Link</span>
+            <input class="text-input" ng-model="updateLandingPage.button_link">
+          </div>
+        </div>
+        <button class="btn btn--medium btn--primary space--top" ng-if="getAccess('sliders', 'update')" ng-click="setLandingPage()">Update</button>
+        <button class="btn btn--medium btn--primary space--top" ng-click="cancelUpdateLandingPage()">Cancel</button>
+      </div>
+    </div>
+
+    <div class="account-list grid" ng-show="!isUpdateLandingPage">
+
+      <div class="grid__item bp-md-one-half bp-lg-one-third"
+           ng-repeat="landing in landingPages">
+        <div class="account__item box--bordered box--white space--bottom cf">
+          <div ng-if="!chkChangePic(landing._id) || !getAccess('sliders', 'update')" align="center" class="image" ng-click="changeLandingPic(landing)">
+            <img ng-if="landing.image" height="200" ng-src="{{ landing.image }}">
+            <img ng-if="!landing.image"  height="200" src="assets/images/pic-placeholder.png">
+          </div>
+          <div class="pad" style="height: 203px;" ng-if="chkChangePic(landing._id) && getAccess('sliders', 'update')">
+            <input ng-show="!uploading" type="file" ng-file-select="uploadLandingPic($files)" ng-model="landingpic"/>
+            <span ng-show="uploading">Uploading: {{ progress }}</span>
+            <div class="account__options pad--sides pad--half-ends space--top cf">
+              <a class="float--left" ng-click="cancelChangePic()" >Cancel</a>
+            </div>
+          </div>
+          <hr/>
+          <div class="pad">
+            <b class="h--small">{{ landing.text }}</b>
+          </div>
+          <div class="pad--sides">
+            <div class="data-list">
+              <a class="btn btn--small btn--secondary" href="{{ landing.button_link }}">
+                {{ landing.button_label }}
+              </a>
+            </div>
+
+          </div>
+
+          <div class="account__options pad--sides pad--half-ends space--top cf">
+            <a href="" class="float--left" ng-if="getAccess('sliders', 'update')" ng-click="setToUpdate(landing)" >Update</a>
+            <a href="" class="float--right link--secondary" ng-if="getAccess('sliders', 'delete')" ng-click="removeLandingPage(landing)">Remove</a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- modal Add LandingPage -->
+  <div id="add-landing-page-modal" class="modal" data-modal="add-landing-page">
+    <div class="modal__box pad" style="max-width: 35%">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Add Section</h3>
+      <div class="cf">
+        <div class="space--bottom one-whole float--left space--right">
+          <span class="label">Text</span>
+          <input class="text-input" ng-model="newLandingPage.text">
+        </div>
+        <div class="space--bottom float--left space--right">
+          <span class="label">Button Label</span>
+          <input class="text-input" ng-model="newLandingPage.button_label">
+        </div>
+
+        <div class="space--bottom float--left space--right">
+          <span class="label">Button Link</span>
+          <input class="text-input" ng-model="newLandingPage.button_link">
+        </div>
+
+        <div class="space--bottom float--left"><br/><br/>
+          <input ng-show="!uploading" type="file" ng-file-select="uploadLandingPic($files)" ng-model="landingpic"/>
+          <span ng-show="uploading">Uploading: {{ progress }}</span>
+        </div>
+
+      </div>
+      <button class="btn btn--medium btn--primary space--top modal-close" ng-click="addLandingPage()">Add</button>
+    </div>
+  </div>
+</div>

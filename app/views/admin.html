@@ -4,25 +4,30 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="shortcut icon" href="{{ static_url('images/icons/favicon.png') }}" type="image/x-icon">
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="{{ static_url('images/icons/apple-touch-icon-120x120-precomposed.png') }}">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ static_url('images/icons/apple-touch-icon-114x114-precomposed.png') }}">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ static_url('images/icons/apple-touch-icon-72x72-precomposed.png') }}">
+    <link rel="apple-touch-icon-precomposed" href="{{ static_url('images/icons/apple-touch-icon-precomposed.png') }}">
     <title>Admin | Electric Studio</title>
 
     <link rel="stylesheet" href="{{ static_url('css/admin.css') }}">
 
     <script src="{{ static_url('vendor/jquery/dist/jquery.min.js') }}"></script>
-   
-    <script src="{{ static_url('vendor/angular/angular.min.js') }}"></script> 
+
+    <script src="{{ static_url('vendor/angular/angular.min.js') }}"></script>
     <script src="{{ static_url('vendor/angular-route/angular-route.min.js') }}"></script>
     <script src="{{ static_url('vendor/angular-resource/angular-resource.min.js') }}"></script>
     <script src="{{ static_url('vendor/angular-sanitize/angular-sanitize.min.js') }}"></script>
-    <script src="{{ static_url('vendor/ng-file-upload/angular-file-upload-shim.min.js') }}"></script> 
-    <script src="{{ static_url('vendor/ng-file-upload/angular-file-upload.min.js') }}"></script> 
+    <script src="{{ static_url('vendor/ng-file-upload/angular-file-upload-shim.min.js') }}"></script>
+    <script src="{{ static_url('vendor/ng-file-upload/angular-file-upload.min.js') }}"></script>
+    <script src="{{ static_url('vendor/angular-websocket/dist/angular-websocket.js') }}"></script>
 
-    <script src="{{ static_url('js/admin/templates.js') }}"></script>
-    <script src="{{ static_url('js/admin/services.js') }}"></script>
-    <script src="{{ static_url('js/admin/base-controllers.js') }}"></script>
-    <script src="{{ static_url('js/admin/controllers.js') }}"></script>
-    <script src="{{ static_url('js/admin/admin.js') }}"></script>
+    <script src="{{ static_url('js/dist/admin/templates.js') }}"></script>
+    <script src="{{ static_url('js/dist/admin/services.js') }}"></script>
+    <script src="{{ static_url('js/dist/admin/base-controllers.js') }}"></script>
+    <script src="{{ static_url('js/dist/admin/controllers.js') }}"></script>
+    <script src="{{ static_url('js/dist/admin/admin.js') }}"></script>
 
   </head>
 
@@ -42,17 +47,23 @@
             </a>
 
             <ul class="nav nav--stacked sub-nav" data-dropdown="dashboard-sub-menu">
-              <li><a href="#/analytics">Analytics</a></li>
+              <li><a ng-if="getAccess('analytics', 'read')" href="#/analytics">Analytics</a></li>
               <li><a href="#/packages">Packages</a></li>
               <li><a href="#/instructors">Instructors</a></li>
               <li><a href="#/sliders">Sliders</a></li>
+              <li><a href="#/landing">Landing Page</a></li>
+              <li><a ng-if="getAccess('users', 'read')" href="#/users">Users</a></li>
             </ul>
           </li>
           <li>
-            <a href="#/classes">
+            <a class="classes-menu" href="#/classes" data-dropdown-toggle="classes-sub-menu">
               <i class="fa fa-th-list"></i>
               <span class="nav-label">Classes</span>
             </a>
+
+            <ul class="nav nav--stacked sub-nav" data-dropdown="classes-sub-menu">
+              <li><a href="#/statistics">Statistics</a></li>
+            </ul>
           </li>
           <li>
             <a href="#/accounts">
@@ -61,15 +72,43 @@
             </a>
           </li>
           <li>
+            <a href="#/branches">
+              <i class="fa fa-calendar"></i>
+              <span class="nav-label">Branches</span>
+            </a>
+          </li>
+          <li>
+            <a href="#/classtypes">
+              <i class="fa fa-calendar"></i>
+              <span class="nav-label">Class Types</span>
+            </a>
+          </li>
+          <li>
             <a href="#/schedules">
               <i class="fa fa-calendar"></i>
               <span class="nav-label">Schedules</span>
             </a>
           </li>
-          <li>
+          <li ng-if="getAccess('transactions', 'read')">
             <a href="#/transactions">
               <i class="fa fa-credit-card"></i>
               <span class="nav-label">Transactions</span>
+            </a>
+          </li>
+          <li>
+            <a class="giftcard-menu" data-dropdown-toggle="giftcard-sub-menu">
+              <i class="fa fa-gift"></i>
+              <span class="nav-label">Gift Cards</span>
+            </a>
+            <ul class="nav nav--stacked sub-nav" data-dropdown="giftcard-sub-menu">
+              <li><a href="#/gc-generation">GC Generation</a></li>
+              <li><a href="#/gc-redemption">GC Redemption</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#/settings">
+              <i class="fa fa-cog"></i>
+              <span class="nav-label">Settings</span>
             </a>
           </li>
         </ul>
@@ -83,12 +122,12 @@
           <button class="sidebar-toggle btn btn--small btn--primary">
             <i class="fa fa-bars"></i>
           </button>
-          
+
           <div class="user">
             <div class="user__pic">
               <img src="{{ static_url('images/pic-placeholder.png') }}" alt="">
             </div>
-            
+
             <span class="user__name">{{ user }}</span>
             <a href="/admin/logout" class="user__logout"><i class="fa fa-sign-out"></i> Log Out</a>
           </div>
@@ -99,20 +138,45 @@
       </div>
     </div>
 
+    <div class="modal alert-modal" id="alert-modal">
+      <div class="modal__box pad">
+        <span id="alert-close-btn" class="close-btn modal-close">X</span>
+        <p id="alert-modal-message"></p>
+      </div>
+    </div>
+
+    <div class="modal" id="confirm-modal">
+      <div class="modal__box pad">
+        <p id="confirm-modal-message"></p><br/>
+        <a class="btn btn--small btn--tertiary modal-close" id="confirm-cancel-button">Cancel</a>
+        <a class="btn btn--small btn--secondary modal-close" id="confirm-ok-button">OK</a>
+      </div>
+    </div>
+
+    <div class="modal" id="prompt-modal">
+      <div class="modal__box pad">
+        <span class="label" id="prompt-modal-message"></span>
+        <input class="text-input" id="prompt-input"><br/><br/>
+        <a class="btn btn--small btn--tertiary modal-close" id="prompt-cancel-button">Cancel</a>
+        <a class="btn btn--small btn--secondary modal-close" id="prompt-ok-button">OK</a>
+      </div>
+    </div>
 
     <link rel="stylesheet" href="{{ static_url('vendor/selectize/dist/css/selectize.default.css') }}">
     <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.css') }}">
     <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.date.css') }}">
+    <link rel="stylesheet" href="{{ static_url('vendor/pickadate/lib/themes/classic.time.css') }}">
     <link rel="stylesheet" href="{{ static_url('vendor/fullcalendar/dist/fullcalendar.min.css') }}">
 
-    
+
     <script src="{{ static_url('vendor/selectize/dist/js/standalone/selectize.min.js') }}"></script>
     <script src="{{ static_url('vendor/pickadate/lib/picker.js') }}"></script>
     <script src="{{ static_url('vendor/pickadate/lib/picker.date.js') }}"></script>
+    <script src="{{ static_url('vendor/pickadate/lib/picker.time.js') }}"></script>
     <script src="{{ static_url('vendor/moment/moment.js') }}"></script>
     <script src="{{ static_url('vendor/fullcalendar/dist/fullcalendar.min.js') }}"></script>
     <script src="{{ static_url('vendor/Chart.js/Chart.min.js') }}"></script>
 
-    <script src="{{ static_url('js/script.js') }}"></script> 
+    <script src="{{ static_url('js/dist/script.js') }}"></script>
   </body>
 </html>

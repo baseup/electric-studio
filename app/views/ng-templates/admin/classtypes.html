@@ -1,0 +1,59 @@
+<div ng-controller="ClassTypeCtrl">
+  <div class="grid content pad">
+    <div class="grid__item">
+    <div class="packages box--white box--bordered">
+      <div class="box__header align--middle cf pad">
+        <span class="label label--inline">Class Types</span>
+        <button ng-click="showAddClassType()" class="btn btn--small btn--primary float--right"  data-modal-toggle="add-class-type" ng-if="getAccess('schedules', 'create')">Add Class Type</button>
+      </div>
+
+
+      <div class="pad">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="ct in classTypes">
+              <td><input class="text-input" ng-model="ct.name"></td>
+              <td><textarea class="text-input" ng-model="ct.description"></textarea></td>
+              <td>
+                <button ng-if="getAccess('schedules','delete')" class="btn btn--small btn--secondary" ng-click="removeClassType(ct)">
+                  <i class="fa fa-trash"></i> Remove
+                </button>
+                <button ng-if="getAccess('schedules','update')" ng-hide="updatingClassType[ct._id]" 
+                        class="btn btn--small btn--secondary" ng-click="setClassType(ct)">
+                  <i class="fa fa-pencil"></i> Edit
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- modal Add Slider -->
+  <div id="add-class-type-modal" class="modal" data-modal="add-class-type">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Add Class Type</h3>
+      <div class="cf">
+        <div class="space--bottom one-whole float--left space--right">
+          <span class="label">Name (Optional)</span>
+          <input class="text-input" ng-model="newClassType.name">
+        </div>
+        <div class="space--bottom float--left space--right">
+          <span class="label">Description (Optional)</span>
+          <textarea class="text-input" ng-model="newClassType.description"></textarea>
+        </div>
+      </div>
+      <button ng-if="getAccess('schedules', 'create')" class="btn btn--medium btn--primary space--top modal-close" ng-click="addClassType()">Add</button>
+    </div>
+  </div>
+</div>

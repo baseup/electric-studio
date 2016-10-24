@@ -2,64 +2,134 @@
    <div class="grid content pad">
     <div class="grid__item">
     <div class="sliders box--white box--bordered">
-      <div class="box__header align--middle cf pad">
-        <span class="label label--inline">Homepage Slider</span>
-        <button ng-click="addSlide()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-slide">Add Slide</button>
-      </div>
+      <br/>
       <div class="pad pad--off-top">
+
+
+    <ul class="nav-tabs" id="class-tabs">
+      <li>
+        <a class="active" data-tab-toggle="tab-sliders">Slider</a>
+      </li>
+      <li>
+        <a data-tab-toggle="tab-images">Static Images</a>
+      </li>
+    </ul>
+
+    <div class="tab-sliders tab-pane tab-pane--active" data-tab-pane="tab-sliders">
+        <div class="box__header align--middle cf pad">
+          <button ng-if="getAccess('sliders', 'create')" ng-click="addSlide()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-slide">Add Slide</button>
+        </div>
+
         <table class="slider-list data-table">
           <thead>
             <tr>
-              <th>Background Image</th>
-              <th>Text</th>
+              <th>Background Image (Desktop & Mobile)</th>
+              <th>Text & Link</th>
               <th class="options-cell">&nbsp;</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr ng-repeat="slider in sliders">
               <td>
-                <img class="slider-image" src="/assets/images/slider-image-1.jpg">
+                <div align="center" class="image" ng-click="changeSliderImg(slider)">
+                  <img width="200" height="200" ng-src="{{ slider.image }}">
+                  <img width="200" height="200" ng-if="slider.mobile_image" ng-src="/{{ slider.mobile_image }}">
+                </div>
               </td>
-              <td>Let's go for a ride</td>
               <td>
-                <button class="btn btn--small btn--secondary">
-                  <i class="fa fa-trash"></i> Edit
-                </button>
-                <button class="btn btn--small btn--secondary">
-                  <i class="fa fa-pencil"></i> Remove
-                </button>
+                <div class="pad" style="height: 203px;" ng-show="chkChangeImg(slider._id)">
+                  Text : <input class="text-input" ng-model="updateSliderImg.text"/><br/><br/>
+                  Link : <input class="text-input" ng-model="updateSliderImg.link"/><br/><br/>
+                  Desktop Image: <br>
+                  <input ng-show="!uploading" type="file" ng-file-select="uploadSlider($files)"/><br/><br/>
+                  Mobile Image: <br>
+                  <input ng-show="!uploading" type="file" ng-file-select="uploadSlider($files, 'mobile')"/>
+                  <span ng-show="uploading">Uploading: {{ progress }}</span>
+                  <div class="account__options pad--sides pad--half-ends space--top cf">
+                    <a class="float--left" ng-click="updateSlider()" >Update</a>
+                    <a class="float--right" ng-click="cancelChangeImg()" >Cancel</a>
+                  </div>
+                </div>
+                <span ng-if="!updateSliderImg">{{ slider.text }}</span><br/><br/>
+                <span ng-if="!updateSliderImg"><a href="{{ slider.link }}">{{ slider.link }}</a></span>
               </td>
-            </tr>
-            <tr>
               <td>
-                <img class="slider-image" src="/assets/images/slider-image-2.jpg">
-              </td>
-              <td>Plug In</td>
-              <td>
-                <button class="btn btn--small btn--secondary">
-                  <i class="fa fa-trash"></i> Edit
-                </button>
-                <button class="btn btn--small btn--secondary">
-                  <i class="fa fa-pencil"></i> Remove
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <img class="slider-image" src="/assets/images/slider-image-3.jpg">
-              </td>
-              <td>RIDE - CLIMB - PUSH - STRETCH - SPRINT - CRUNCH - LIFT - DANCE</td>
-              <td>
-                <button class="btn btn--small btn--secondary">
-                  <i class="fa fa-trash"></i> Edit
-                </button>
-                <button class="btn btn--small btn--secondary">
+                <button class="btn btn--small btn--secondary" ng-click="removeSlider(slider)">
                   <i class="fa fa-pencil"></i> Remove
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
+
+    </div><!-- /.sliders -->
+
+    <div class="tab-images tab-pane" data-tab-pane="tab-images">
+
+      <table class="slider-list data-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Page</th>
+              <th class="options-cell">Action</th>
+            </tr>
+          </thead>
+           <tbody>
+            <tr>
+              <td>
+                <div align="center" class="image">
+                  <img id='about-us' width="200" height="200" src="/assets/images/about-us.jpg">
+                </div>
+              </td>
+              <td>
+                About Us
+              </td>
+              <td>
+                  <input ng-if="getAccess('sliders', 'update')" type="file" ng-file-select="uploadImage($files,'about-us')"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div align="center" class="image">
+                  <img id='workouts' width="200" height="200" src="/assets/images/workouts.jpg">
+                </div>
+              </td>
+              <td>
+                Workouts
+              </td>
+              <td>
+                  <input ng-if="getAccess('sliders', 'update')" type="file" ng-file-select="uploadImage($files,'workouts')"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div align="center" class="image">
+                  <img id='first-ride' width="200" height="200" src="/assets/images/first-ride.png">
+                </div>
+              </td>
+              <td>
+                First Ride
+              </td>
+              <td>
+                  <input ng-if="getAccess('sliders', 'update')" type="file" ng-file-select="uploadImage($files,'first-ride')"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div align="center" class="image">
+                  <img id='rates' width="200" height="200" src="/assets/images/rates.png">
+                </div>
+              </td>
+              <td>
+                Rates & Packages
+              </td>
+              <td>
+                  <input ng-if="getAccess('sliders', 'update')" type="file" ng-file-select="uploadImage($files,'rates')"/>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
       </div>
     </div>
     </div>
@@ -71,14 +141,22 @@
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Add Slide</h3>
       <div class="space--bottom">
-        <span class="label">Background Image</span>
-        <input type="file">
+        <span class="label">Desktop Background Image</span>
+        <input type="file" ng-file-select="uploadSlider($files)" >
+      </div>
+      <div class="space--bottom cf">
+        <span class="label">Mobile Background Image</span>
+        <input type="file" ng-file-select="uploadSlider($files, 'mobile')" >
       </div>
       <div class="space--bottom">
         <span class="label">Text</span>
-        <input placeholder="Add Text" class="text-input">
+        <input placeholder="Add Text" class="text-input" ng-model="newSlider.text">
       </div>
-      <button class="btn btn--medium btn--primary space--top modal-close">Add</button>
+      <div class="space--bottom cf">
+        <span class="label">Hyperlink Address</span>
+        <input placeholder="Add URL" class="text-input" ng-model="newSlider.link">
+      </div>
+      <button ng-if="getAccess('sliders', 'create')" class="btn btn--medium btn--primary space--top modal-close" ng-click="saveSlider()">Add</button>
     </div>
   </div>
 </div>

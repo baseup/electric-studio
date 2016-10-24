@@ -12,18 +12,20 @@
   background: rgba(0,0,0,0.6);
   z-index: 13;
   text-align: center;
-  
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
   &.show {
     display: block;
   }
-  
+
   &:before {
     content: '';
     display: inline-block;
     height: 100%;
     vertical-align: middle;
   }
-  
+
   .modal__box {
     display: inline-block;
     position: relative;
@@ -36,22 +38,22 @@
     @include vendor(transition, all 0.4s ease);
     margin-top: -100px;
     opacity: 0;
-    
+
     &.show {
       margin-top: 0;
       opacity: 1;
     }
   }
-  
+
   .close-btn {
     position: absolute;
-    right: $base-spacing-unit;
-    top: $base-spacing-unit;
+    right: 0px;
+    top: 0px;
     display: block;
     padding: $base-spacing-unit / 2;
     color: $brand-color-primary;
     cursor: pointer;
-    
+
     &:hover {
       color: darken($brand-color-primary, 10%);
     }

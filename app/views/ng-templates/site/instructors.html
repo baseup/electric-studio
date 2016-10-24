@@ -1,43 +1,72 @@
 <div ng-controller="InstructorCtrl">
-  <div class="content pad--off-bottom">
-    <div class="wrapper">
-      <h2 class="h large primary">Meet Our Pack</h2>
-      <p class="intro">Our instructors have been selected for their high energy and ability to inspire a class.</p>
-      <div class="group-pic">
-        <img class="group-pic-img" src="/assets/images/teampic.jpg">
-        <div class="imgmap">
-          <a href="" data-target="kris" data-title="Kris"></a>
-          <a href="" data-target="raisa" data-title="Raisa"></a>
-          <a href="" data-target="migs" data-title="Migs"></a>
-          <a href="" data-target="trish" data-title="Trish"></a>
-          <a href="" data-target="yessa" data-title="Yessa"></a>
-          <a href="" data-target="mel" data-title="Mel"></a>
-          <a href="" data-target="rache" data-title="Rache"></a>
-          <a href="" data-target="abel" data-title="Abel"></a>
-          <a href="" data-target="mitch" data-title="Mitch"></a>
-          <a href="" data-target="armand" data-title="Armand"></a>
+  <div class="content bg-lightGray parts-5 instructors-info pad--off">
+    <div class="cf">
+      <section ng-repeat-start="instructor in randomList | orderBy:'rank'" id="{{ instructor.admin.first_name }}" class="pad--off" ng-click="viewInstructor(instructor)">
+        <div class="image">
+          <img ng-src="{{ instructor.image }}" ng-if="instructor.image">
+          <h2 class="name h--large"><span>{{ instructor.admin.first_name }}</span></h2>
         </div>
-      </div>
+      </section>
+      <div ng-repeat-end="" class="clearfix" ng-if="($index + 1) % 5 == 0 "></div>
+    </div>
+    <!-- <div class="book-cta">
+      <a class="button large center primary"  href="#/schedule">Book A Ride</a>
+    </div> -->
+  </div>
+
+  <div class="modal instructor-modal" id="view-instructor-info">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">x</span>
+      <section class="cf">
+        <div class="image space--bottom">
+          <img ng-src="{{ selectedInstructor.image }}" ng-if="selectedInstructor.image">
+        </div>
+        <div class="details space--bottom">
+          <h2 class="name h--large space--bottom"><span>{{ selectedInstructor.admin.first_name }}</span></h2>
+          <p class="text-color-light">{{ selectedInstructor.motto }}</p>
+        </div>
+      </section>
+      <section class="albums cf space--top" ng-show="selectedInstructor.albums.length">
+        <h3 class="h medium">What I'm listening to</h3>
+        <a ng-repeat="album in selectedInstructor.albumList" ng-href="{{ album.collectionViewUrl }}" target="_blank" class="album">
+          <img ng-src="{{ album.artworkUrl100 }}" title="{{ album.collectionName }}">
+        </a>
+      </section>
+      <section class="cf space--top">
+        <h3 class="h medium">Ride with {{ selectedInstructor.admin.first_name }}</h3>
+        <b class="text-color-light" ng-if="!schedules.length">No classes</b>
+
+        <div class="schedule">
+          <div class="arrow left"><i class="fa fa-angle-left"></i></div>
+          <div class="arrow right"><i class="fa fa-angle-right"></i></div>
+          <div class="schedule-slider-wrapper">
+            <div class="schedule-slider">
+
+              <div class="row sched-item" ng-class="{ row: sched, unavailable: chkSched(sched), full: isFull(sched) }"
+                  ng-repeat="sched in schedules | orderBy:'date'">
+                <span class="instructor">
+                  {{ sched.date | formatDate }}
+                </span>
+                <span class="time">{{ sched.start | formatTime }}</span>
+                <span class="instructor">
+                  <small>
+                    {{ sched.instructor._id != selectedInstructor._id ? sched.instructor.admin.first_name : '' }}
+                    {{ sched.sub_instructor ? 'with ' + sched.sub_instructor.admin.first_name : '' }}
+                  </small>
+                </span>
+                <span class="schedtype">{{ sched.type }}</span>
+                <span class="branch">{{ sched.branch.name }}</span>
+                <button class="btn btn--small btn--primary" ng-click="setSchedule(sched, sched.date, sched.branch.name)">
+                  {{ isFull(sched) ? 'waitlist' : 'reserve' }}
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </section>
     </div>
   </div>
-  
-  <div class="content bg-lightGray parts-4 instructors-info">
-    <div class="wrapper">
-      <div class="cf">
-        <section ng-repeat="instructor in instructors" id="{{ instructor.admin.first_name }}">
-          <div class="image">
-            <img ng-src="{{ instructor.image }}">
-          </div>  
-          <h2 class="h--medium space--ends h--primary">{{ instructor.admin.first_name }}</h2>
-          <p>{{ instructor.motto }}</p>
-        </section>
-      </div>
 
-
-      
-      <div class="book-cta">
-        <a class="button large center primary"  href="#/rates-and-packages">Book A Ride</a>
-      </div>
-    </div>  
-  </div>
 </div>

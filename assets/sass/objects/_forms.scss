@@ -26,8 +26,8 @@ fieldset {
 
 
 /**
- * Set `.label` class and `label` element styles. 
- * Apply a label-like styling to meta-labels for groups of options 
+ * Set `.label` class and `label` element styles.
+ * Apply a label-like styling to meta-labels for groups of options
  * where a `label` element is not suitable
  */
 
@@ -77,6 +77,49 @@ label,
 .extra-help {
   display: inline-block;
   visibility: hidden;
+}
+
+
+.text-input {
+  line-height: 34px;
+  padding: 0 $base-spacing-unit / 2;
+  border-width: 0;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0px 0px 1px #999 inset;
+  resize: none;
+
+  &:focus {
+    box-shadow: 0 0 0 1px rgba($brand-color-primary, .6);
+  }
+
+  &:focus::-webkit-input-placeholder { color:transparent; }
+  &:focus:-moz-placeholder { color:transparent; }
+  &:focus::-moz-placeholder { color:transparent; }
+  &:focus:-ms-input-placeholder { color:transparent; }
+
+}
+
+.text-input.selectize-control.multi {
+  padding: 0!important;
+  height: auto!important;
+  overflow: visible!important;
+
+  &.text-input--full {
+    max-width: none!important;
+  }
+
+  .selectize-input {
+    height: auto!important;
+  }
+}
+
+.text-input--full {
+  max-width: none;
+}
+
+.text-input--large {
+  line-height: 40px;
 }
 
 .text-input:active + .extra-help,

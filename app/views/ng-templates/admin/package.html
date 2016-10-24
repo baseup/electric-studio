@@ -4,7 +4,7 @@
     <div class="packages box--white box--bordered">
       <div class="box__header align--middle cf pad">
         <span class="label label--inline">Packages</span>
-        <button ng-click="showAddPackage()" class="btn btn--small btn--primary float--right" data-modal-toggle="add-package">Add Package</button>
+        <button ng-click="showAddPackage()" class="btn btn--small btn--primary float--right"  data-modal-toggle="add-package" ng-if="getAccess('packages', 'create')">Add Package</button>
       </div>
 
         <div class="modal__box pad" ng-show="isUpdatePackage">
@@ -19,7 +19,15 @@
               <input class="text-input" ng-model="updatePackage.description">
             </div>
             <div class="space--bottom float--left space--right">
-              <span class="label">Number of Classes</span>
+              <span class="label">First Timer Package</span>
+              <input class="text-input" type="checkbox" ng-model="updatePackage.first_timer">
+            </div>
+            <div class="space--bottom float--left space--right">
+              <span class="label">Exclusive on Studio</span>
+              <input class="text-input" type="checkbox" ng-model="updatePackage.special_package">
+            </div>
+            <div class="space--bottom float--left space--right">
+              <span class="label">Number of Rides</span>
               <input class="text-input" ng-model="updatePackage.credits">
             </div>
             <div class="space--bottom float--left">
@@ -40,7 +48,7 @@
           <thead>
             <tr>
               <th>Name</th>
-              <th>Number of Classes</th>
+              <th>Number of Rides</th>
               <th>Price</th>
               <th>Expiration</th>
               <th>&nbsp;</th>
@@ -49,14 +57,14 @@
           <tbody>
             <tr ng-repeat="package in packages">
               <td>{{ package.name }}</td>
-              <td>{{ package.credits }} Classes</td>
+              <td>{{ package.credits }} Ride<span ng-if="package.credits > 1">s</span></td>
               <td><small>PHP</small> {{ package.fee }}</td>
               <td>{{ package.expiration }} days</td>
               <td>
-                <button class="btn btn--small btn--secondary" ng-click="removePackage(package)">
+                <button ng-if="getAccess('packages', 'delete')" class="btn btn--small btn--secondary" ng-click="removePackage(package)">
                   <i class="fa fa-trash"></i> Remove
                 </button>
-                <button class="btn btn--small btn--secondary" ng-click="setToUpdate(package)" data-modal-toggle="update-package">
+                <button ng-if="getAccess('packages', 'update')" class="btn btn--small btn--secondary" ng-click="setToUpdate(package)" data-modal-toggle="update-package">
                   <i class="fa fa-pencil"></i> Edit
                 </button>
               </td>
@@ -74,16 +82,16 @@
       <span class="close-btn modal-close">X</span>
       <h3 class="h--medium brand-color space--bottom">Add Package</h3>
       <div class="cf">
-        <div class="space--bottom float--left space--right">
-          <span class="label">Name</span>
+        <div class="space--bottom one-whole float--left space--right">
+          <span class="label">Name (Optional)</span>
           <input class="text-input" ng-model="newPackage.name">
         </div>
         <div class="space--bottom float--left space--right">
-          <span class="label">Desc</span>
+          <span class="label">Description (Optional)</span>
           <input class="text-input" ng-model="newPackage.description">
         </div>
         <div class="space--bottom float--left space--right">
-          <span class="label">Number of Classes</span>
+          <span class="label">Number of Rides</span>
           <input class="text-input" ng-model="newPackage.credits">
         </div>
         <div class="space--bottom float--left">
@@ -94,8 +102,15 @@
           <span class="label">Expiration</span>
           <input class="text-input" value="30" ng-model="newPackage.expiration"> Days
         </div>
+
+        <div class="space--bottom one-whole float--left">
+          <input type="checkbox" ng-model="newPackage.first_timer"> First Timer Package
+        </div>
+        <div class="space--bottom one-whole float--left">
+          <input type="checkbox" ng-model="newPackage.special_package"> Exclusive on Studio
+        </div>
       </div>
-      <button class="btn btn--medium btn--primary space--top modal-close" ng-click="addPackage()">Add</button>
+      <button ng-if="getAccess('packages', 'create')" class="btn btn--medium btn--primary space--top modal-close" ng-click="addPackage()">Add</button>
     </div>
   </div>
 </div>

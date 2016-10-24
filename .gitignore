@@ -4,9 +4,11 @@ bower_components
 assets/vendor
 assets/uploads
 assets/css
+assets/js/dist
+assets/js/src/app/controllers.js
 assets/sass/.sass-cache
-assets/js/app/templates.js
-assets/js/admin/templates.js
+tests/coverage
+tests/e2e/reports
 *.pyc
 .tmp
 *.seed
@@ -22,3 +24,7 @@ nbproject
 .node_history
 __pycache__
 hurricane
+*.yaml
+!*.sample.yaml
+esenv
+*.log.*

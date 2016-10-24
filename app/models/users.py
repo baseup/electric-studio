@@ -15,11 +15,16 @@ class User(Model):
     contact_person = StringField(required=False)
     emergency_contact = StringField(required=False)
     address = StringField(required=False)
+    address2 = StringField(required=False)
+    billing = JsonField(required=False)
     status = StringField(default='Active')
+    remarks = StringField(required=False)
     profile_pic = StringField(required=False)
+    agreed_terms = BooleanField(default=False)
     credits = IntField(default=0)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
+    notes = StringField(required=False)
 
     def to_dict(self):
        return mongo_to_dict(self)

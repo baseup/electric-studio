@@ -1,0 +1,200 @@
+<div ng-controller="GiftCardCtrl">
+
+  <div class="grid content pad">
+    <div class="grid__item">
+    <div class="packages box--white box--bordered">
+      <div class="box__header align--middle cf pad">
+        <span class="label label--inline">GC Generation</span>
+        <div class="float--right  space--top">
+          <button  ng-click="showRedeemGCForm()" class="btn btn--small btn--primary space--right space--bottom" data-modal-toggle="redeem-gc">Redeem GC</button>
+          <button  ng-click="showBuyGCForm()" class="btn btn--small btn--primary space--right space--bottom" data-modal-toggle="buy-gc">Buy GC</button>
+          <button  ng-click="generateGCForm()" class="btn btn--small btn--primary space--right space--bottom" data-modal-toggle="generate-gc">Generate GC</button>
+        </div>
+        <div class="float--right">
+          <div class="float--left space--right">
+            <span class="label">From</span>
+            <input class="text-input" id="input_from" ng-model='gcDateFilter.fromDate' placeholder="Today" />
+          </div>
+          <div class="float--left space--right">
+            <span class="label">To</span>
+            <input class="text-input" id="input_to" ng-model='gcDateFilter.toDate' placeholder="To" />
+          </div>
+          <div class="float--left space--left space--bottom">
+            <span class="label">&nbsp;</span>
+            <button class="btn btn--small btn--tertiary float--right" ng-click="exportGCListByDate()">Export</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="class-search pad cf">
+        <span class="label">Search</span>
+        <div class="bp-md-one-third float--left space--bottom space--right">
+          <input class="text-input" ng-model="searchGiftCards" placeholder="Search Code, Email, Transaction ID">
+        </div>
+
+      </div>
+
+      <div class="space overflow--x">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date Generated</th>
+              <th>Transaction</th>
+              <th>Sender</th>
+              <th>Sender's Email</th>
+              <th>Receiver</th>
+              <th>Receiver's Email</th>
+              <th>Code</th>
+              <th>Pin</th>
+              <th>Package</th>
+              <th>Date Redeemed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="transaction in transactions | search:'trans_info.transaction,code,receiver_email':searchGiftCards">
+              <td>{{ transaction.create_at}}</td>
+              <td>{{ getTransId(transaction) }}</td>
+              <td>{{ transaction.sender_name }} </td>
+              <td>{{ transaction.sender_email }}</td>
+              <td>{{ transaction.receiver_name }}</td>
+              <td>{{ transaction.receiver_email }} </td>
+              <td>{{ transaction.code }}</td>
+              <td>{{ transaction.pin }}</td>
+              <td>{{ transaction.package_id.name }}</td>
+              <td>{{ transaction.redeem_date }}</td>
+              <td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+       <ul class="pagination-nav nav nav--block text--center">
+        <li><a ng-click="prevPage($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
+        <li><a ng-click="nextPage($event)">Next <i class="fa fa-angle-right"></i></a></li>
+      </ul>
+
+    </div>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="redeem-gc" id="redeem-gc-modal">
+    <div class="modal__box pad">
+      <span id="close-add-account" class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Redeem GC</h3>
+
+      <div class="data-list cf pad--ends">
+        <dl class="space-bottom">
+          <dt class="label">Code</dt>
+          <dd class="bp-md-one-half">
+          <input ng-model="gcCode" class="text-input"></dd>
+        </dl>
+        <dl class="space-bottom">
+          <dt class="label">Pin</dt>
+          <dd class="bp-md-one-half">
+          <input ng-model="gcPin" type="number" ng-maxlength="4" class="text-input">
+        </dl>
+        <dl class="space-bottom">
+          <dt class="label">Account</dt>
+          <dd class="bp-md-one-half">
+          <select id="gc-account-selector" ng-model="gcAccount" class="select">
+            <option selected value="">Account</option>
+            <option ng-repeat="account in accounts" value="{{ account._id }}">
+              {{ account.first_name }} {{ account.last_name }} - {{ account.email }}
+            </option>
+          </select>
+        </dl>
+      </div>
+
+      <button ng-disabled="redeemingGC" class="btn btn--medium btn--primary space--top modal-close ng-scope" ng-click="redeemGC()">Redeem</button>
+
+
+    </div>
+  </div>
+
+
+  <div class="modal" data-modal="buy-gc" id="buy-gc-modal">
+    <div class="modal__box pad">
+      <span id="close-add-account" class="close-btn modal-close">X</span>
+      <form id="payForm" action="https://www.paypal.com/ph/cgi-bin/webscr" method="post">
+      <h3 class="h--medium brand-color space--bottom">BUY GC</h3>
+
+      <div class="float--left space--bottom">
+        <span class="label">To</span>
+        <input ng-model="gcTo" class="text-input">
+      </div>
+      <div class="float--left space--bottom">
+        <span class="label">From</span>
+        <input ng-model="gcFrom" class="text-input">
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Message</span>
+        <textarea class="text-input" ng-model="gcMessage"></textarea>
+      </div>
+      <div class="one-whole float--left space--bottom">
+        <span class="label">Package</span>
+        <select ng-change="selectGCPackage()" id="" ng-model="gcPackage" class="select gc-package-selector">
+              <option selected value="">Package</option>
+        </select>
+      </div>
+
+        <input type="hidden" id="cmd" name="cmd" value="_xclick">
+        <input type="hidden" id="no_note" name="no_note" value = "0">
+        <input type="hidden" id="bn" name="bn" value="PP-BuyNowBF">
+        <input type="hidden" id="rm" name="rm" value="2">
+        <input type="hidden" id="custom" name="custom" value="">
+        <input type="hidden" id="business" name="business" value="electric@electricstudio.ph">
+        <!-- electric@electricstudio.ph -->
+        <input type="hidden" id="item_name" name="item_name" value="">
+        <input type="hidden" id="item_number" name="item_number" value="">
+        <input type="hidden" id="amount" name="amount" value="">
+        <input type="hidden" id="currency_code" name="currency_code" value="PHP">
+        <input type="hidden" id="ipn_notification_url" name="ipn_notification_url" value="">
+        <input type="hidden" id="return" name="return" value="">
+        <input type="hidden" id="cancel_return" name="cancel_return" value="">
+        <input type="hidden" id="cbt" name="cbt" value="Return to Electric Studio">
+
+      <button type="button" ng-click="buyGC('receiver')" class="btn btn--primary btn--medium space--top">EMAIL TO RECEIVER</button>
+
+      <button type="button" ng-click="buyGC('sender')" class="btn btn--primary btn--medium  space--top">EMAIL TO SENDER</button>
+
+      </form>
+    </div>
+  </div>
+
+      <div class="modal" data-modal="enter-email" id="enter-email-modal">
+        <div class="modal__box pad">
+          <span class="close-btn modal-close">X</span>
+
+          <h3 class="h--medium brand-color space--bottom">Please enter receiver's email address:</h3>
+          <span class="label">Email:</span>
+          <input ng-model="receiverEmail" type="email" class="text-input">
+          <a class="btn btn--primary btn--medium space--top modal-close" ng-click="buyGC('confirm_buy')"> SEND GC </a>
+        </div>
+      </div>
+
+      <div class="modal" data-modal="generate-gc" id="generate-gc-modal">
+        <div class="modal__box pad">
+          <span class="close-btn modal-close">X</span>
+
+          <h3 class="h--medium brand-color space--bottom">Generate GCs:</h3>
+
+            <div class="data-list cf pad--ends">
+              <dl class="space-bottom">
+                <dt class="label">Count</dt>
+                <dd class="bp-md-one-half">
+                <input ng-model="gcCount" class="text-input">
+              </dl>
+              <dl class="space-bottom">
+                <dt class="label">Package</dt>
+                <dd class="bp-md-one-half">
+                <select ng-change="selectGCPackage()" id="" ng-model="gcPackage" class="select gc-package-selector2">
+                <option selected value="">Package</option>
+            </select>
+              </dl>
+            </div>
+
+          <a class="btn btn--primary btn--medium space--top modal-close" ng-click="generateGC()"> GENERATE GCs </a>
+        </div>
+      </div>
+</div>

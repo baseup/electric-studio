@@ -1,8 +1,51 @@
 from motorengine import *
-from app.settings import MANDRILL_API_KEY, EMAIL_SENDER, EMAIL_SENDER_NAME
+from datetime import datetime, timedelta, tzinfo
+from app.settings import MANDRILL_API_KEY, EMAIL_SENDER, EMAIL_SENDER_NAME, REDIS_HOST, REDIS_PORT
 
+import redis
 import mandrill
 import sys
+import pytz
+import string
+import random
+
+class Lock(object):
+    redis_db = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+
+    @staticmethod
+    def is_locked(key):
+        return Lock.redis_db.exists(key)
+
+    @staticmethod
+    def lock(key):
+        Lock.redis_db.set(key, True)
+
+    @staticmethod
+    def unlock(key):
+        Lock.redis_db.delete(key)
+
+class GMT8(tzinfo):
+    def utcoffset(self, dt):
+        return timedelta(hours=7, minutes=57)
+    def dst(self, dt):
+        return timedelta(0)
+    def tzname(self,dt):
+        return "GMT +8"
+
+def create_at_gmt8(records):
+    if records:
+        gmt8 = GMT8()
+        for i, record in enumerate(records):
+            if records[i].create_at:
+                records[i].create_at = records[i].create_at.replace(tzinfo=pytz.utc)
+                records[i].create_at = records[i].create_at.astimezone(tz=gmt8)
+            if hasattr(records[i], 'redeem_date') and records[i].redeem_date:
+                records[i].redeem_date = records[i].redeem_date.replace(tzinfo=pytz.utc)
+                records[i].redeem_date = records[i].redeem_date.astimezone(tz=gmt8)
+    return records;
+
+def code_generator(size=8, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 def mongo_to_dict(obj):
     return_data = []
@@ -37,7 +80,7 @@ def mongo_to_dict(obj):
 
     return dict(return_data)
 
-def send_email_verification(user, url):
+def send_email_verification(user, content):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
@@ -46,33 +89,9 @@ def send_email_verification(user, url):
             'headers': {
                 'Reply-To': EMAIL_SENDER
             },
-            'html': '<p>Example HTML content<br><a href="' + url + '">Click here</a></p>',
+            'html': content,
             'important': True,
-            'subject': 'Email Verification',
-            'to': [
-                {
-                    'email': user['email'],
-                    'name': user['first_name'] + ' ' + user['last_name'],
-                    'type': 'to'
-                }
-            ]
-        }
-        mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
-    except mandrill.Error:    
-        raise
-
-def send_email_booking(user, date, time, seat_number):
-    try:
-        mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
-        message = {
-            'from_email': EMAIL_SENDER,
-            'from_name': EMAIL_SENDER_NAME,
-            'headers': {
-                'Reply-To': EMAIL_SENDER
-            },
-            'html': '<p>Booked: ' + date + ' ' + time + ' on seat no. ' + seat_number + '</p>',
-            'important': True,
-            'subject': 'Booked',
+            'subject': 'Electric Studio - Email Verification',
             'to': [
                 {
                     'email': user['email'],
@@ -85,7 +104,7 @@ def send_email_booking(user, date, time, seat_number):
     except mandrill.Error:
         raise
 
-def send_email_cancel(user, date, time):
+def send_email_cancel(user, content, branch=None):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
@@ -94,9 +113,9 @@ def send_email_cancel(user, date, time):
             'headers': {
                 'Reply-To': EMAIL_SENDER
             },
-            'html': '<p>Booking scheduled on ' + date + ' ' + time + ' was cancelled</p>',
+            'html': content,
             'important': True,
-            'subject': 'Cancelled Booking',
+            'subject': 'Electric Studio - Cancelled' + (' - {}'.format(branch) if branch else ''),
             'to': [
                 {
                     'email': user['email'],
@@ -109,7 +128,7 @@ def send_email_cancel(user, date, time):
     except mandrill.Error:
         raise
 
-def send_email_move(user, old_date, new_date, old_time, new_time):
+def send_email_move(user, content, branch=None):
     try:
         mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
         message = {
@@ -118,9 +137,9 @@ def send_email_move(user, old_date, new_date, old_time, new_time):
             'headers': {
                 'Reply-To': EMAIL_SENDER
             },
-            'html': '<p>Booking scheduled on ' + old_date + ' ' + old_time + ' was moved to ' + new_date + ' ' + new_time + '</p>',
+            'html': content,
             'important': True,
-            'subject': 'Moved Booking',
+            'subject': 'Electric Studio - Bike Moved' + (' - {}'.format(branch) if branch else ''),
             'to': [
                 {
                     'email': user['email'],
@@ -132,3 +151,67 @@ def send_email_move(user, old_date, new_date, old_time, new_time):
         mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
     except mandrill.Error:
         raise
+
+def send_email(user, content, subject, branch=None):
+    try:
+        mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
+        message = {
+            'from_email': EMAIL_SENDER,
+            'from_name': EMAIL_SENDER_NAME,
+            'headers': {
+                'Reply-To': EMAIL_SENDER
+            },
+            'html': content,
+            'important': True,
+            'subject': 'Electric Studio - ' + subject + (' - {}'.format(branch) if branch else ''),
+            'to': [
+                {
+                    'email': user['email'],
+                    'name': user['first_name'] + ' ' + user['last_name'],
+                    'type': 'to'
+                }
+            ]
+        }
+        mandrill_client.messages.send(message=message, async=False, ip_pool='Main Pool')
+    except mandrill.Error:
+        raise
+
+def send_email_template(template, user, context, subject, branch=None):
+    try:
+        mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
+        message = {
+            'from_email': EMAIL_SENDER,
+            'from_name': EMAIL_SENDER_NAME,
+            'headers': {
+                'Reply-To': EMAIL_SENDER
+            },
+            'important': True,
+            'subject': 'Electric Studio - ' + subject + (' - {}'.format(branch) if branch else ''),
+            'to': [
+                {
+                    'email': user['email'],
+                    'name': user['first_name'] + ' ' + user['last_name'],
+                    'type': 'to'
+                }
+            ],
+            'global_merge_vars': []
+        }
+        for k, v in context.items():
+            message['global_merge_vars'].append(
+                {'name': k, 'content': v}
+            )
+        mandrill_client.messages.send_template(template, [], message)
+    except mandrill.Error:
+        raise
+
+def check_address(branch):
+    address = {
+        'BGC': "2/F 8 Forbes Town Road, Fort BGC, Taguig 1201, Philippines",
+        'Salcedo': "G/F Two Central 107 Valero St. Salcedo Village, Makati"
+    }
+
+    if branch.address is None or branch.address == '':
+        if branch.name in address:
+            return address[branch.name]
+
+    return branch.address

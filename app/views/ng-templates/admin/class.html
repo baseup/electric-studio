@@ -1,17 +1,13 @@
 <div ng-controller="ClassCtrl">
- 
+
   <div class="class-search pad cf">
     <span class="label">Select Class Schedule</span>
     <div class="bp-md-one-fourth float--left space--bottom space--right">
-      <input ng-change="reload()" class="datepicker text-input" ng-model="newBook.date" placeholder="Date">
+      <input ng-change="reloadDate()" class="datepicker text-input" ng-model="newBook.date" placeholder="Date">
     </div>
     <div class="float--left">
-      <select ng-change="reload()" class="select" ng-model="newBook.time">
-        <option selected value="7:00 AM">7:00 AM</option>
-        <option value="9:30 AM">9:30 AM</option>
-        <option value="1:00 PM">1:00 PM</option>
-        <option value="3:30 PM">3:30 PM</option>
-        <option value="5:00 PM">5:00 PM</option>
+      <select ng-change="reload()" class="select" id="select-class-time" ng-model="newBook.sched_id">
+        <option selected value="">Select time &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
       </select>
     </div>
   </div>
@@ -20,14 +16,17 @@
     <dl class="float--left space--right">
       <dt>Instructor</dt>
       <dd class="caps">{{ schedDetails.instructor.admin.first_name }} {{ schedDetails.instructor.admin.last_name }}</dd>
+      <dd class="caps" ng-if="schedDetails.sub_instructor">
+        {{ schedDetails.sub_instructor.admin.first_name }} {{ schedDetails.sub_instructor.admin.last_name }}
+      </dd>
     </dl>
-    <!-- <dl class="float--left space--right">
+    <dl class="float--left space--right">
       <dt>Class Type</dt>
-      <dd class="caps">Pure Electric</dd>
-    </dl> -->
+      <dd class="caps">{{ schedDetails.type }}</dd>
+    </dl>
     <dl class="float--left space--right">
       <dt>Status</dt>
-      <dd class="caps">{{ 37 - books.length }} Bikes Available</dd>
+      <dd class="caps">{{ getBlockedSeats() - books.length }} Bikes Available</dd>
     </dl>
   </div>
 
@@ -36,10 +35,10 @@
 
     <ul class="nav-tabs" id="class-tabs">
       <li>
-        <a class="active" data-tab-toggle="booking">Booking</a>
+        <a class="active" data-tab-toggle="booking">Booking{{ books.length ? ' (' + books.length + ')' : '' }}</a>
       </li>
       <li>
-        <a data-tab-toggle="waitlist">Waitlist</a>
+        <a data-tab-toggle="waitlist">Waitlist{{ waitList.length ? ' (' + waitList.length + ')' : '' }}</a>
       </li>
     </ul>
 
@@ -54,6 +53,7 @@
           <button class="btn btn--small btn--primary" data-modal-toggle="book-ride" ng-click="bookRide()">
             Book A Ride
           </button>
+          <button class="btn btn--small btn--secondary" ng-click="viewBikeMap()">Bike Map</button>
           <button class="btn btn--small btn--tertiary" ng-click="downloadBookingList()">Export Booking List</button>
         </div>
       </div>
@@ -64,19 +64,27 @@
           <div class="booking__item box--bordered box--white space--bottom cf">
 
             <div class=" box__header">
-              <ul class="booking__actions nav">
+              <ul class=" booking__actions nav">
                 <li>
-                  <a class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBike()">
+                  <a title="Switch Bike" class="btn--round bike-number-switch" data-modal-toggle="switch" ng-click="switchBikeModal(book)">
                     <i class="fa fa-exchange"></i>
                     <span class="bike-number">{{ book.seat_number }}</span>
                   </a>
                 </li>
                 <li>
-                  <a ng-click="cancelBooking(book, $index)" class="cancel-booking"><i class="fa fa-times"></i></a>
+                  <a title="Mark as Missed" ng-click="missedModal(book, $index)" class="option-booking">
+                    <i class="fa fa-clock-o"></i>
+                  </a>
+                </li>
+                <li>
+                  <a title="Cancel Book" ng-click="cancelBooking(book, $index)" class="option-booking">
+                    <i class="fa fa-times"></i>
+                  </a>
                 </li>
               </ul>
 
-              <h3 class="user--name">{{ book.user_id.first_name }} {{ bookt.user.last_name }}</h3>
+              <h5 class="space--left" style='margin-top: 10px !important'>{{ book.user_id.first_name }} {{ book.user_id.last_name }} <a title="First Time Booking" ng-show="firstTimers[book.user_id._id]">1st</a> <br> </h5>
+              <i class="space--left" style="letter-spacing: 0px"> - {{ book.user_id.email }}</i>
             </div>
 
           </div>
@@ -89,15 +97,49 @@
 
       <div class="waitlist-header space--bottom cf">
         <div class="stats">
-          <span class="caps">{{ waitList.length }} Riders</span>
+          <span class="caps">{{ waitList.length || 0 }} Riders</span>
         </div>
 
         <div class="options">
-          <button class="btn btn--small btn--tertiary">Print Waitlist</button>
+          <button class="btn btn--small btn--primary" ng-click="addWaitlistModal()">Add New</button>
+          <button class="btn btn--small btn--primary" ng-click="releaseWaitlist()">Release all Waitlist</button>
+          <button class="btn btn--small btn--tertiary" ng-click="printWaitlist()">Print Waitlist</button>
         </div>
       </div>
 
       <div class="account-list grid">
+
+        <div class="grid__item bp-sm-one-half bp-lg-one-third" ng-repeat="wait in waitList">
+          <div class="account__item box--bordered box--white space--bottom cf">
+
+            <div class="pad">
+              <b class="h--small">{{ wait.user_id.first_name }} {{ wait.user_id.last_name }}</b>
+            </div>
+
+            <div class="pad--sides">
+              <div class="data-list">
+
+                <dl class="data--inline">
+                  <dt><i class="fa fa-phone"></i></dt>
+                  <dd>{{ wait.user_id.phone_number }}</dd>
+                </dl>
+
+                <dl class="data--inline space--bottom">
+                  <dt><i class="fa fa-envelope"></i></dt>
+                  <dd class="inline space--bottom">{{ wait.user_id.email }}</dd>
+                </dl>
+              </div>
+
+            </div>
+
+            <div class="account__options pad--sides pad--half-ends space--top cf">
+              <a class="user-move-class" ng-click="moveToClass(wait)">Move to Class</a>
+              <a class="user-remove-waitlist space--left link--secondary float--right" ng-click="removeFromWaitlist(wait, $index)">Cancel</a>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </div><!-- /.waitlist -->
   </div>
@@ -121,13 +163,71 @@
           </select>
         </div>
       </div>
-      <div class="user-class-details" ng-show="selectedRider">
-        <span class="caps">{{ selectedRider.credits }} Classes Left</span>
+      <div class="user-class-details" ng-show="selectedRider.credits">
+        <span class="caps">{{ selectedRider.credits }} Ride<span ng-if="selectedRider.credits > 1">s</span> Left</span>
       </div>
-      <button type="button" ng-click="sendNewBook()" class="btn btn--medium btn--primary space--top modal-close">Book</button>
+      <button ng-disabled="booking" type="button" ng-click="sendNewBook()" class="btn btn--medium btn--primary space--top modal-close">Book</button>
 
     </div>
   </div>
+
+  <!-- modal add waitlist-->
+  <div id="add-waitlist-modal" class="modal" data-modal="add-waitlist">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Waitlist A Rider</h3>
+      <div class="user-select cf">
+        <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
+          <span class="label">Rider</span>
+          <select class="select" id="select-waitlist-user" ng-change="selectWaitlistRider()" ng-model="newWaitlist.user_id">
+            <option selected value="">Select Rider</option>
+          </select>
+        </div>
+      </div>
+      <div class="space--bottom one-whole float--left">
+        <span class="label">Notes</span>
+        <textarea class="text-input" cols="2" ng-model="newWaitlist.notes" placeholder="notes for waitlisting this rider"></textarea>
+      </div>
+      <div class="user-class-details" ng-show="selectedRider.credits">
+        <span class="caps">{{ selectedRider.credits }} Ride<span ng-if="selectedRider.credits > 1">s</span> Left</span>
+      </div>
+      <button ng-disabled="waitlisting" type="button" ng-click="addNewWaitlist()" class="btn btn--medium btn--primary space--top modal-close">Add</button>
+    </div>
+  </div>
+
+<!-- missed class -->
+<!-- missed class -->
+  <div class="modal" data-modal="missed-booking" id="missed-booking-modal">
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom"></h3>
+      <h3 class="h--medium brand-color space--bottom">Missed Ride: {{ selectedBook.user_id.first_name }} {{ selectedBook.user_id.last_name }}</h3>
+      <span class="label">Notes:</span>
+      <input ng-model="missedNotes" class="text-input">
+      <button type="button" class="btn btn--primary btn--medium space--top modal-close" ng-click="missedBooking()">MARK AS MISSED</button>
+    </div>
+  </div>
+  <!-- move to class -->
+  <div id="move-to-class-modal" class="modal" data-modal="move-to-class" >
+    <div class="modal__box pad">
+      <span class="close-btn modal-close">X</span>
+      <h3 class="h--medium brand-color space--bottom">Move to class</h3>
+
+      <div class="user-select space--bottom">
+        <span class="label">Rider</span>
+        <h4 class="h-small">{{ selectedWaitList.user_id.first_name }} {{ selectedWaitList.user_id.last_name }}</h4>
+      </div>
+
+       <div class="cf">
+        <select class="select space--bottom bp-md-one-third float--left" id="select-seat" ng-model="selectedWaitList.seat_number">
+          <option value="">Select Seat</option>
+        </select>
+      </div>
+
+      <button class="btn btn--primary btn--medium space--top modal-close" ng-click="bookWaitList()">Move to Class</button>
+    </div>
+  </div>
+
 
   <!-- modal Switch Bike -->
   <div id="switch-bike-modal" class="modal" data-modal="switch" >
@@ -137,30 +237,190 @@
 
       <div class="user-select space--bottom">
         <span class="label">Rider</span>
-        <h4 class="h-small">Jeph Fernandez</h4>
+        <h4 class="h-small">{{ selectedBook.user_id.first_name }} {{ selectedBook.user_id.last_name }}</h4>
       </div>
 
-       <div class="cf">   
+       <div class="cf">
         <div class="space--bottom one-whole bp-md-one-half float--left space--right pad--right">
           <span class="label">Current Bike</span>
-          <h4 class="h-small">14</h4>
+          <h4 class="h-small">{{ selectedBook.seat_number  }}</h4>
         </div>
         <div class="space--bottom bp-md-one-third float--left">
           <span class="label">Switch to</span>
-          <select class="select">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7" selected>7</option>
-            <option value="8">8</option>
+          <select class="select" id="switch-seat" ng-model="selectedBike">
+            <option value="">Select Seat</option>
           </select>
-        </div>    
+        </div>
       </div>
 
-      <button class="btn btn--primary btn--medium space--top modal-close">Switch</button>
+      <button class="btn btn--primary btn--medium space--top modal-close" ng-click="switchBike()">Switch</button>
+    </div>
+  </div>
+
+  <div class="modal" data-modal="bike-map" id="bike-map-bgc">
+    <div class=" bike-map-modal modal__box pad" >
+      <span class="close-btn modal-close">X</span>
+
+      <div class="space--bottom pad--bottom">
+        <span class="label">BGC</span>
+        <h4 class="h-small">{{ schedDetails.date | formatDate }} {{ schedDetails.start | formatTime }}</h4>
+      </div>
+
+      <div class="class">
+        <div class="formation">
+          <div class="front seats">
+            <span  ng-class="{ unavailable: checkSeat(24), hidden: 24 > sched.seats, blocked: isBlocked(24) }">24</span>
+            <span  ng-class="{ unavailable: checkSeat(21), hidden: 21 > sched.seats, blocked: isBlocked(21) }">21</span>
+            <span  ng-class="{ unavailable: checkSeat(23), hidden: 23 > sched.seats, blocked: isBlocked(23) }">23</span>
+            <span  ng-class="{ unavailable: checkSeat(20), hidden: 20 > sched.seats, blocked: isBlocked(20) }">20</span>
+            <span  ng-class="{ unavailable: checkSeat(22), hidden: 22 > sched.seats, blocked: isBlocked(22) }">22</span>
+            <span  ng-class="{ unavailable: checkSeat(19), hidden: 19 > sched.seats, blocked: isBlocked(19) }">19</span>
+          </div>
+          <div class="front seats instructor" ng-class="{ 'has-sub-instructor': schedDetails.sub_instructor }">
+            <div class="image main">
+              <img ng-src="{{ '/assets/' + schedDetails.instructor.image }}">
+            </div>
+            <div class="image sub" ng-if="schedDetails.sub_instructor">
+              <img ng-src="{{ '/assets/' + schedDetails.sub_instructor.image }}">
+            </div>
+            <h3 class="h small primary">{{ schedDetails.instructor.admin.first_name }}{{ schedDetails.sub_instructor ? ' &amp; ' + schedDetails.sub_instructor.admin.first_name : '' }}</h3>
+          </div>
+          <div class="front seats">
+            <span ng-class="{ unavailable: checkSeat(16), hidden: 16 > sched.seats, blocked: isBlocked(16) }">16</span>
+            <span ng-class="{ unavailable: checkSeat(18), hidden: 18 > sched.seats, blocked: isBlocked(18) }">18</span>
+            <span ng-class="{ unavailable: checkSeat(15), hidden: 15 > sched.seats, blocked: isBlocked(15) }">15</span>
+            <span ng-class="{ unavailable: checkSeat(17), hidden: 17 > sched.seats, blocked: isBlocked(17) }">17</span>
+          </div>
+        </div>
+
+        <div class="formation">
+          <div class="back seats">
+            <span ng-class="{ unavailable: checkSeat(14), hidden: 14 > sched.seats, blocked: isBlocked(14) }">14</span>
+            <span ng-class="{ unavailable: checkSeat(13), hidden: 13 > sched.seats, blocked: isBlocked(13) }">13</span>
+            <span ng-class="{ unavailable: checkSeat(12), hidden: 12 > sched.seats, blocked: isBlocked(12) }">12</span>
+            <span ng-class="{ unavailable: checkSeat(11), hidden: 11 > sched.seats, blocked: isBlocked(11) }">11</span>
+            <span ng-class="{ unavailable: checkSeat(10), hidden: 10 > sched.seats, blocked: isBlocked(10) }">10</span>
+            <span ng-class="{ unavailable: checkSeat(9), hidden: 9 > sched.seats, blocked: isBlocked(9) }">9</span>
+            <span ng-class="{ unavailable: checkSeat(8), hidden: 8 > sched.seats, blocked: isBlocked(8) }">8</span>
+            <span ng-class="{ unavailable: checkSeat(7), hidden: 7 > sched.seats, blocked: isBlocked(7) }">7</span>
+            <span ng-class="{ unavailable: checkSeat(6), hidden: 6 > sched.seats, blocked: isBlocked(6) }">6</span>
+            <span ng-class="{ unavailable: checkSeat(5), hidden: 5 > sched.seats, blocked: isBlocked(5) }">5</span>
+            <span ng-class="{ unavailable: checkSeat(4), hidden: 4 > sched.seats, blocked: isBlocked(4) }">4</span>
+            <span ng-class="{ unavailable: checkSeat(3), hidden: 3 > sched.seats, blocked: isBlocked(3) }">3</span>
+            <span ng-class="{ unavailable: checkSeat(2), hidden: 2 > sched.seats, blocked: isBlocked(2) }">2</span>
+            <span ng-class="{ unavailable: checkSeat(1), hidden: 1 > sched.seats, blocked: isBlocked(1) }">1</span>
+          </div>
+
+           <div class="back seats">
+            <span ng-class="{ unavailable: checkSeat(34), hidden: 34 > sched.seats, blocked: isBlocked(34) }">34</span>
+            <span ng-class="{ unavailable: checkSeat(33), hidden: 33 > sched.seats, blocked: isBlocked(33) }">33</span>
+            <span ng-class="{ unavailable: checkSeat(32), hidden: 32 > sched.seats, blocked: isBlocked(32) }">32</span>
+            <span ng-class="{ unavailable: checkSeat(31), hidden: 31 > sched.seats, blocked: isBlocked(31) }">31</span>
+            <span ng-class="{ unavailable: checkSeat(30), hidden: 30 > sched.seats, blocked: isBlocked(30) }">30</span>
+            <span ng-class="{ unavailable: checkSeat(29), hidden: 29 > sched.seats, blocked: isBlocked(29) }">29</span>
+            <span ng-class="{ unavailable: checkSeat(28), hidden: 28 > sched.seats, blocked: isBlocked(28) }">28</span>
+            <span ng-class="{ unavailable: checkSeat(27), hidden: 27 > sched.seats, blocked: isBlocked(27) }">27</span>
+            <span ng-class="{ unavailable: checkSeat(26), hidden: 26 > sched.seats, blocked: isBlocked(26) }">26</span>
+            <span ng-class="{ unavailable: checkSeat(25), hidden: 25 > sched.seats, blocked: isBlocked(25) }">25</span>
+          </div>
+
+          <div class="back seats">
+            <span ng-class="{ unavailable: checkSeat(37), hidden: 37 > sched.seats, blocked: isBlocked(37) }">37</span>
+            <span ng-class="{ unavailable: checkSeat(36), hidden: 36 > sched.seats, blocked: isBlocked(36) }">36</span>
+            <span ng-class="{ unavailable: checkSeat(35), hidden: 35 > sched.seats, blocked: isBlocked(35) }">35</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal" data-modal="bike-map" id="bike-map-salcedo">
+    <div class=" bike-map-modal modal__box pad" >
+      <span class="close-btn modal-close">X</span>
+
+      <div class="space--bottom pad--bottom">
+        <span class="label">Salcedo</span>
+        <h4 class="h-small">{{ schedDetails.date | formatDate }} {{ schedDetails.start | formatTime }}</h4>
+      </div>
+
+      <div class="class">
+        <div class="formation">
+          <div class="front seats">
+            <span  ng-class="{ unavailable: checkSeat(30), hidden: 30 > sched.seats, blocked: isBlocked(30) }">30</span>
+            <span  ng-class="{ unavailable: checkSeat(27), hidden: 27 > sched.seats, blocked: isBlocked(27) }">27</span>
+            <span  ng-class="{ unavailable: checkSeat(24), hidden: 24 > sched.seats, blocked: isBlocked(24) }">24</span>
+            <span  ng-class="{ unavailable: checkSeat(29), hidden: 29 > sched.seats, blocked: isBlocked(29) }">29</span>
+            <span  ng-class="{ unavailable: checkSeat(26), hidden: 26 > sched.seats, blocked: isBlocked(26) }">26</span>
+            <span  ng-class="{ unavailable: checkSeat(23), hidden: 23 > sched.seats, blocked: isBlocked(23) }">23</span>
+            <span  ng-class="{ unavailable: checkSeat(28), hidden: 28 > sched.seats, blocked: isBlocked(28) }">28</span>
+            <span  ng-class="{ unavailable: checkSeat(25), hidden: 25 > sched.seats, blocked: isBlocked(25) }">25</span>
+            <span  ng-class="{ unavailable: checkSeat(22), hidden: 22 > sched.seats, blocked: isBlocked(22) }">22</span>
+          </div>
+          <div class="front seats instructor" ng-class="{ 'has-sub-instructor': schedDetails.sub_instructor }">
+            <div class="image main">
+              <img ng-src="{{ '/assets/' + schedDetails.instructor.image }}">
+            </div>
+            <div class="image sub" ng-if="schedDetails.sub_instructor">
+              <img ng-src="{{ '/assets/' + schedDetails.sub_instructor.image }}">
+            </div>
+            <h3 class="h small primary">{{ schedDetails.instructor.admin.first_name }}{{ schedDetails.sub_instructor ? ' &amp; ' + schedDetails.sub_instructor.admin.first_name : '' }}</h3>
+          </div>
+          <div class="front seats">
+            <span ng-class="{ unavailable: checkSeat(16), hidden: 16 > sched.seats, blocked: isBlocked(16) }">16</span>
+            <span ng-class="{ unavailable: checkSeat(19), hidden: 19 > sched.seats, blocked: isBlocked(19) }">19</span>
+            <span class="hidden"></span>
+            <span ng-class="{ unavailable: checkSeat(15), hidden: 15 > sched.seats, blocked: isBlocked(15) }">15</span>
+            <span ng-class="{ unavailable: checkSeat(18), hidden: 18 > sched.seats, blocked: isBlocked(18) }">18</span>
+            <span ng-class="{ unavailable: checkSeat(21), hidden: 21 > sched.seats, blocked: isBlocked(21) }">21</span>
+            <span ng-class="{ unavailable: checkSeat(14), hidden: 14 > sched.seats, blocked: isBlocked(14) }">14</span>
+            <span ng-class="{ unavailable: checkSeat(17), hidden: 17 > sched.seats, blocked: isBlocked(17) }">17</span>
+            <span ng-class="{ unavailable: checkSeat(20), hidden: 20 > sched.seats, blocked: isBlocked(20) }">20</span>
+          </div>
+        </div>
+
+        <div class="formation">
+          <div class="back seats">
+            <span ng-class="{ unavailable: checkSeat(13), hidden: 13 > sched.seats, blocked: isBlocked(13) }">13</span>
+            <span ng-class="{ unavailable: checkSeat(12), hidden: 12 > sched.seats, blocked: isBlocked(12) }">12</span>
+            <span ng-class="{ unavailable: checkSeat(11), hidden: 11 > sched.seats, blocked: isBlocked(11) }">11</span>
+            <span ng-class="{ unavailable: checkSeat(10), hidden: 10 > sched.seats, blocked: isBlocked(10) }">10</span>
+            <span ng-class="{ unavailable: checkSeat(9), hidden: 9 > sched.seats, blocked: isBlocked(9) }">9</span>
+            <span ng-class="{ unavailable: checkSeat(8), hidden: 8 > sched.seats, blocked: isBlocked(8) }">8</span>
+            <span ng-class="{ unavailable: checkSeat(7), hidden: 7 > sched.seats, blocked: isBlocked(7) }">7</span>
+            <span ng-class="{ unavailable: checkSeat(6), hidden: 6 > sched.seats, blocked: isBlocked(6) }">6</span>
+            <span ng-class="{ unavailable: checkSeat(5), hidden: 5 > sched.seats, blocked: isBlocked(5) }">5</span>
+            <span ng-class="{ unavailable: checkSeat(4), hidden: 4 > sched.seats, blocked: isBlocked(4) }">4</span>
+            <span ng-class="{ unavailable: checkSeat(3), hidden: 3 > sched.seats, blocked: isBlocked(3) }">3</span>
+            <span ng-class="{ unavailable: checkSeat(2), hidden: 2 > sched.seats, blocked: isBlocked(2) }">2</span>
+            <span ng-class="{ unavailable: checkSeat(1), hidden: 1 > sched.seats, blocked: isBlocked(1) }">1</span>
+          </div>
+
+           <div class="back seats">
+             <span ng-class="{ unavailable: checkSeat(43), hidden: 43 > sched.seats, blocked: isBlocked(43) }">43</span>
+             <span ng-class="{ unavailable: checkSeat(42), hidden: 42 > sched.seats, blocked: isBlocked(42) }">42</span>
+             <span ng-class="{ unavailable: checkSeat(41), hidden: 41 > sched.seats, blocked: isBlocked(41) }">41</span>
+             <span ng-class="{ unavailable: checkSeat(40), hidden: 40 > sched.seats, blocked: isBlocked(40) }">40</span>
+             <span ng-class="{ unavailable: checkSeat(39), hidden: 39 > sched.seats, blocked: isBlocked(39) }">39</span>
+             <span ng-class="{ unavailable: checkSeat(38), hidden: 38 > sched.seats, blocked: isBlocked(38) }">38</span>
+             <span ng-class="{ unavailable: checkSeat(37), hidden: 37 > sched.seats, blocked: isBlocked(37) }">37</span>
+             <span ng-class="{ unavailable: checkSeat(36), hidden: 36 > sched.seats, blocked: isBlocked(36) }">36</span>
+             <span ng-class="{ unavailable: checkSeat(35), hidden: 35 > sched.seats, blocked: isBlocked(35) }">35</span>
+             <span ng-class="{ unavailable: checkSeat(34), hidden: 34 > sched.seats, blocked: isBlocked(34) }">34</span>
+             <span ng-class="{ unavailable: checkSeat(33), hidden: 33 > sched.seats, blocked: isBlocked(33) }">33</span>
+             <span ng-class="{ unavailable: checkSeat(32), hidden: 32 > sched.seats, blocked: isBlocked(32) }">32</span>
+             <span ng-class="{ unavailable: checkSeat(31), hidden: 31 > sched.seats, blocked: isBlocked(31) }">31</span>
+          </div>
+
+          <div class="back seats center">
+            <span ng-class="{ unavailable: checkSeat(48), hidden: 48 > sched.seats, blocked: isBlocked(48) }">48</span>
+            <span ng-class="{ unavailable: checkSeat(47), hidden: 47 > sched.seats, blocked: isBlocked(47) }">47</span>
+            <span ng-class="{ unavailable: checkSeat(46), hidden: 46 > sched.seats, blocked: isBlocked(46) }">46</span>
+            <span ng-class="{ unavailable: checkSeat(45), hidden: 45 > sched.seats, blocked: isBlocked(45) }">45</span>
+            <span ng-class="{ unavailable: checkSeat(44), hidden: 44 > sched.seats, blocked: isBlocked(44) }">44</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -1,0 +1,41 @@
+
+<div class="giftcard-banner-image"></div>
+
+<div class="giftcard redeem page content sidebar-layout" ng-controller="RatesCtrl">
+
+  <div class="wrapper text-color-light">
+    <div class="main">
+      <section class="main-section">
+        <h1 class="h large title">Redeem Gift Card</h1>
+
+        <input class="input" ng-model="gcCode" placeholder="CARD CODE" />
+        <input class="input" ng-model="gcPin" placeholder="PIN" />
+
+        <div class="center space--ends pad--top">
+          <button class="button" ng-click="redeemGC()" type="button">Redeem gift card</button>
+        </div>
+      </section>
+
+      <section class="sub-section">
+        <p>To redeem your gift card, enter the Card Code number and pin and hit Redeem button.</p>
+      </section>
+    </div>
+  </div>
+
+  <div class="sidebar dark">
+    <h3 class="h">Balance</h3>
+    <div class="total">
+      <span ng-if="checkGCData.credits">{{ checkGCData.credits }} {{ checkGCData.credits > 1 ? 'Rides' : 'Ride' }} <br> <small>{{ checkGCData.package_id.description }}</small></span>
+    </div>
+
+    <button class="button" ng-click="checkGCValue()" type="button">Check Balance</button>
+
+    <div ng-if="checkGCData.validity">
+      <h4 class="h space--top space--off-bottom"><small>VALIDITY</small></h4>
+      <p>{{ checkGCData.validity }} DAYS</p>
+      <small ng-if="checkGCData.package_id.first_timer"><b>Valid only for new riders.</b> First Timer Package may only be availed once per rider</small>
+      <small class="small-space--top">Physical gift cards are available in the studio.</small>
+    </div>
+  </div>
+
+</div>

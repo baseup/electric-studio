@@ -90,6 +90,13 @@
   border-color: transparent !important;
 }
 
+.picker__select--year {
+  min-height: 38px !important;
+}
+.picker__select--month {
+  min-height: 38px !important;
+}
+
 .picker__day--highlighted,
 .picker__day--highlighted:hover, 
 .picker__day--infocus:hover, 
@@ -149,7 +156,8 @@
   
   .fc-event {
     background: $brand-color-secondary;
-    border: 0;
+    border: 5;
+    border-color: #55e;
     border-radius: 0;
     padding: $base-spacing-unit / 4;
     

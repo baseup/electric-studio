@@ -96,7 +96,19 @@ COOKIE_SECRET = 'elstudio!@#$%123'
 ENABLE_LOGS = True
 # LOG_PATH = 'logs'
 
-# MotorEngine Configuration
+# Redis
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
+REDIS_DB = 0
+REDIS_PASSWORD = None
+
+# Websocket
+WEBSOCKET_URL = '/ws'
+
+DEFAULT_BRANCH_ID = '558272c288b5c73163343c45'
+
+# MotorEngine
+DATABASE_LIMIT = 1000
 DATABASE = {
     'default': {
         'db': 'elstudio_db',
@@ -107,6 +119,14 @@ DATABASE = {
     }
 }
 
-MANDRILL_API_KEY = 'LJCBoJpHFF7ZRrFqgu9Q2g'
-EMAIL_SENDER = 'ride@electricstudio.ph'
+MANDRILL_API_KEY = 'r8ovQf1MdI8L7Xlig-hNNA'
+EMAIL_SENDER = 'electric@electricstudio.ph'
 EMAIL_SENDER_NAME = 'Electric Studio'
+
+#Paypal
+PAYPAL_ACCOUNT = 'electric@electricstudio.ph'
+PDT_TOKEN = 'Wm9hXC14j7em4ABlNedDxq2AiwTTmcHXMTSyYrUxejrwWCdnRcZzvUrudQS'
+#PDT_TOKEN = 'GCxbIb0meX6eoIv9fYtJFvQ26u-L2buNGwP47EJZMLiomyKFbXeofypRZHq'
+
+#ENV
+MAINTENANCE = False
