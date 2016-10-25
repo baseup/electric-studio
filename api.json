@@ -1,0 +1,772 @@
+{
+  "swagger": "2.0",
+  "host": "staging.electricstudio.ph",
+  "basePath": "",
+  "schemes": ["http", "https"],
+  "info": {
+    "title": "Electric Studio v1",
+    "description": "Electric Studio API",
+    "contact": {
+      "name": "API Support",
+      "url": "https://www.electricstudio.ph",
+      "email": "letsride@electricstudio.ph"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+
+
+  "definitions": {
+
+    "User": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "address2": {
+          "type": "string"
+        },
+        "agreed_terms": {
+          "type": "boolean"
+        },
+        "birthdate": {
+          "type": "string",
+"format": "date-time"
+        },
+        "contact_person": {
+          "type": "string"
+        },
+        "create_at": {
+          "type": "string",
+"format": "date-time"
+        },
+        "credits": {
+          "type": "integer"
+        },
+        "email": {
+          "type": "string"
+        },
+        "emergency_contact": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "phone_number": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "update_at": {
+          "type": "string",
+"format": "date-time"
+        }
+      }
+    },
+
+    "Package": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "create_at": {
+          "type": "string",
+"format": "date-time"
+        },
+        "credits": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "expiration": {
+          "type": "integer"
+        },
+        "fee": {
+          "type": "string"
+        },
+        "first_timer": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "special_package": {
+          "type": "boolean"
+        },
+        "update_at": {
+          "type": "string",
+"format": "date-time"
+        }
+      }
+    },
+
+    "Branch": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "create_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expire_at": {
+          "type": "string",
+"format": "date-time"
+        },
+        "name": {
+          "type": "string"
+        },
+        "num_bikes": {
+          "type": "integer"
+        },
+        "update_at": {
+          "type": "string",
+"format": "date-time"
+        }
+      }
+    },
+
+    "Admin": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "access_type": {
+          "type": "string"
+        },
+        "create_at": {
+          "type": "string",
+"format": "date-time"
+        },
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "update_at": {
+          "type": "string",
+"format": "date-time"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+
+    "Instructor": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "admin": {
+          "type": "object",
+          "$ref": "#/definitions/Admin"
+        },
+        "create_at": {
+          "type": "string",
+"format": "date-time"
+        },
+        "deactivated": {
+          "type": "boolean"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "motto": {
+          "type": "string"
+        },
+        "update_at": {
+          "type": "string",
+"format": "date-time"
+        }
+      }
+    },
+
+    "Schedule": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "object",
+          "$ref": "#/definitions/Branch"
+        },
+        "create_at": {
+          "type": "string",
+"format": "date-time"
+        },
+        "date": {
+          "type": "string",
+"format": "date-time"
+        },
+        "end": {
+          "type": "string",
+"format": "date-time"
+        },
+        "instructor": {
+          "type": "object",
+          "$ref": "#/definitions/Instructor"
+        },
+        "seats": {
+          "type": "integer"
+        },
+        "start": {
+          "type": "string",
+"format": "date-time"
+        },
+        "type": {
+          "type": "string"
+        },
+        "update_at": {
+          "type": "string",
+"format": "date-time"
+        }
+      }
+    },
+
+    "Booking": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "create_at": {
+          "type": "string",
+"format": "date-time"
+        },
+        "date": {
+          "type": "string",
+"format": "date-time"
+        },
+        "schedule": {
+          "type": "object",
+          "$ref": "#/definitions/Schedule"
+        },
+        "seat_number": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "update_at": {
+          "type": "string",
+"format": "date-time"
+        },
+        "user": {
+          "type": "object",
+          "$ref": "#/definitions/User"
+        }
+      }
+    }
+
+  },
+
+
+  "paths": {
+
+    "/api/user": {
+      "post": {
+        "description": "Create/Register new user",
+        "summary": "Create User",
+        "operationId": "creatUser",
+        "parameters": [
+          {
+            "description": "Created user Object",
+            "in": "body",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "403": {
+            "description": "Field must be valid"
+          },
+          "400": {
+            "description": "Email address is already in use"
+          }
+        },
+        "tags": [ "user" ]
+      }
+    },
+
+    "/api/user/{userId}": {
+      "get": {
+        "description": "Returns user data",
+        "summary": "Find user by id",
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "userId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "500": {
+            "description": "Server Error: not a valid ObjectId"
+          }
+        },
+        "tags": [ "user" ]
+      },
+      "put": {
+        "description": "Update existing user",
+        "summary": "Update User",
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "userId",
+            "required": true
+          },
+          {
+            "description": "Changes to user Object",
+            "in": "body",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "403": {
+            "description": "Required fields not found"
+          },
+          "500": {
+            "description": "Server Error: not a valid ObjectId"
+          }
+        },
+        "tags": [ "user" ]
+      },
+      "delete": {
+        "description": "Delete user account",
+        "summary": "Delete User",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "userId",
+            "required": true
+          },
+          {
+            "description": "user password for validation",
+            "in": "query",
+            "name": "pass",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "405": {
+            "description": "Validation required"
+          },
+          "500": {
+            "description": "Server Error: not a valid ObjectId"
+          }
+        },
+        "tags": [ "user" ]
+      }
+    },
+
+    "/user/login": {
+      "post": {
+        "description": "Login user",
+        "summary": "Login User",
+        "operationId": "loginUser",
+        "parameters": [
+          {
+            "description": "User email address",
+            "in": "query",
+            "name": "email",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "User password",
+            "in": "query",
+            "name": "password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "403": {
+            "description": "Invalid account/password or Email is not verified"
+          }
+        },
+        "tags": [ "user" ]
+      }
+    },
+
+    "/api/package": {
+      "get": {
+        "description": "Returns list of ride packages",
+        "summary": "Get packages",
+        "operationId": "getPackages",
+        "produces": [ "application/json" ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/Package"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "tags": [ "package" ]
+      }
+    },
+
+    "/api/schedule": {
+      "get": {
+        "description": "Get the week schedules of a studio branch",
+        "summary": "Get schedules",
+        "operationId": "getSchedules",
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "description": "Branch Id",
+            "in": "query",
+            "name": "branch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Date - monday of the week",
+            "in": "query",
+            "name": "date",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "type": "array",
+              "$ref": "#/definitions/Schedule"
+            }
+          }
+        },
+        "tags": [ "schedule" ]
+      }
+    },
+
+    "/api/schedule/{scheduleId}": {
+      "get": {
+        "description": "Get the schedule data",
+        "summary": "Find schedule by ID",
+        "operationId": "getSchedule",
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "description": "Schedule ID",
+            "in": "path",
+            "name": "scheduleId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/Schedule"
+            }
+          },
+          "500": {
+            "description": "Server Error: ID not a valid ObjectId"
+          }
+        },
+        "tags": [ "schedule" ]
+      }
+    },
+
+    "/api/book": {
+      "get": {
+        "description": "Get list of booking/reservation of user",
+        "summary": "Get bookings",
+        "operationId": "getBookings",
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "header",
+            "name": "ES-USER-ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "type": "array",
+              "$ref": "#/definitions/Booking"
+            }
+          },
+          "500": {
+            "description": "Server Error: ID is not a valid ObjectId"
+          }
+        },
+        "tags": [ "booking", "reservation" ]
+      },
+      "post": {
+        "description": "Book a bike",
+        "summary": "Book a bike",
+        "operationId": "bookBike",
+        "parameters": [
+          {
+            "description": "Schedule date",
+            "in": "body",
+            "name": "date",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Schedule ID",
+            "in": "body",
+            "name": "sched_id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "List of bike number to book",
+            "in": "body",
+            "name": "seats",
+            "required": true,
+            "type": "array"
+          },
+          {
+            "description": "User ID",
+            "in": "header",
+            "name": "ES-USER-ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "403": {
+            "description": "Unable to book a ride: Bike [#] unavailable"
+          }
+        },
+        "tags": [ "booking" ]
+      }
+    },
+
+    "/api/book/{sched_id}": {
+      "get": {
+        "description": "Get list of booking for a specific scheulde",
+        "summary": "Get bookings of a class",
+        "operationId": "getScheduleBookings",
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "description": "Schedule Id",
+            "in": "query",
+            "name": "sched_id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Date of the schedule",
+            "in": "query",
+            "name": "date",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "type": "array",
+              "$ref": "#/definitions/Booking"
+            }
+          },
+          "500": {
+            "description": "Server Error: ID is not a valid ObjectId"
+          }
+        },
+        "tags": [ "booking" ]
+      },
+      "put": {
+        "description": "Cancel a reservation",
+        "summary": "Cancel a reservation",
+        "operationId": "cancelBooking",
+        "parameters": [
+          {
+            "description": "Schedule Id",
+            "in": "query",
+            "name": "sched_id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Booking status",
+            "in": "body",
+            "name": "status",
+            "required": true,
+            "type": "string",
+            "default": "cancelled"
+          },
+          {
+            "description": "User ID",
+            "in": "header",
+            "name": "ES-USER-ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "500": {
+            "description": "Server Error: ID is not a valid ObjectId"
+          }
+        },
+        "tags": [ "booking", "reservation" ]
+      }
+    },
+
+    "/admin/branch": {
+      "get": {
+        "description": "Get list of studio branch",
+        "summary": "Get list of studio branches",
+        "operationId": "getBranches",
+        "produces": [ "application/json" ],
+        "responses": {
+          "default": {
+            "description": "success",
+            "schema": {
+              "type": "array",
+              "$ref": "#/definitions/Branch"
+            }
+          }
+        },
+        "tags": [ "branch" ]
+      }
+    },
+
+    "/api/history": {
+      "get": {
+        "description": "Get user booking history and transactions/purchases",
+        "summary": "Get user booking history",
+        "operationId": "getHistory",
+        "produces": [ "application/json", "text/plain"],
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "header",
+            "name": "ES-USER-ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "type": "array",
+              "$ref": "#/definitions/Schedule"
+            }
+          }
+        },
+        "tags": [ "history" ]
+      }
+    }
+
+  },
+
+  "tags": [
+    {
+      "name": "user",
+      "description": "User operations"
+    },
+    {
+      "name": "schedule",
+      "description": "Schedule operations"
+    },
+    {
+      "name": "booking",
+      "description": "Booking operations"
+    },
+    {
+      "name": "branch",
+      "description": "Branch operations"
+    },
+    {
+      "name": "history",
+      "description": "History operations"
+    },
+    {
+      "name": "reservation",
+      "description": "Reservation operations"
+    },
+    {
+      "name": "package",
+      "description": "Package operations"
+    }
+  ]
+}
