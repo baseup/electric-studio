@@ -645,6 +645,13 @@ paths:
           description: 'Server Error: ID is not a valid ObjectId'
       tags:
         - gift certificate
+  /admin/transaction: 
+    get:
+      summary: List all transactiosn
+      description: 
+      responses:
+        200:
+          description: OK
   'transaction/{transactionId}': 
     get:
       description: Returns list of user packages
@@ -664,7 +671,20 @@ paths:
         '500':
           description: 'Server Error: not a valid ObjectId'
       tags:
-        - transaction
+        - user packages
+  /admin/slider:
+    get:
+      summary: List all data for slider
+      description: Get All Slider
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: 'Server Error'
+      tags:
+        - slider
 tags:
   - name: user
     description: User operations
@@ -684,5 +704,7 @@ tags:
     description: Instructor operations
   - name: gift certificate
     description: Gift Certificate operations
-  - name: transaction
+  - name: user packages
     description: User Packages operations
+  - name: slider
+    description: Slider operations
