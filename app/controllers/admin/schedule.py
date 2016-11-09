@@ -4,7 +4,7 @@ from app.models.admins import Setting, Branch
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 from motorengine import DESCENDING, ASCENDING
-from app.helper import send_email, send_email_cancel, send_email_booking, send_email_move, check_address
+from app.helper import send_email, send_email_cancel, send_email_template, send_email_move, check_address
 from app.helper import Lock
 from app.helper import GMT8
 from app.settings import DEFAULT_BRANCH_ID
@@ -206,23 +206,24 @@ def create(self):
         branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
 
     if sched_status == 'booked':
-        content = str(self.render_string('emails/booking',
-                                         date=ins_sched.date.strftime('%A, %B %d, %Y'),
-                                         type=ins_sched.type,
-                                         user=user,
-                                         instructor=ins_sched.instructor,
-                                         time=ins_sched.start.strftime('%I:%M %p'),
-                                         seat_number=str(sched.seat_number),
-                                         branch=check_address(branch)), 'UTF-8')
-        yield self.io.async_task(send_email_booking, user=user, content=content, branch=branch.name)
+        context = { 'date': ins_sched.date.strftime('%A, %B %d, %Y'),
+                    'type': ins_sched.type,
+                    'fname': user['first_name'],
+                    'lname': user['last_name'],
+                    'instructor': ins_sched.instructor.admin.first_name,
+                    'time': ins_sched.start.strftime('%I:%M %p'),
+                    'seat_number': str(sched.seat_number),
+                    'branch': check_address(branch)}
+        yield self.io.async_task(send_email_template, template='booking', user=user, context=context, subject='Booked', branch=branch.name)
     elif sched_status == 'waitlisted':
-        content = str(self.render_string('emails/waitlist',
-                                         date=ins_sched.date.strftime('%A, %B %d, %Y'),
-                                         type=ins_sched.type, user=user,
-                                         instructor=ins_sched.instructor,
-                                         time=ins_sched.start.strftime('%I:%M %p'),
-                                         branch=check_address(branch)), 'UTF-8')
-        yield self.io.async_task(send_email, user=user, content=content, subject='Waitlisted', branch=branch.name)
+        context = { 'date': ins_sched.date.strftime('%A, %B %d, %Y'),
+                    'type': ins_sched.type,
+                    'fname': user['first_name'],
+                    'lname': user['last_name'],
+                    'instructor': ins_sched.instructor.admin.first_name,
+                    'time': ins_sched.start.strftime('%I:%M %p'),
+                    'branch': check_address(branch)}
+        yield self.io.async_task(send_email_template, template='waitlist', user=user, context=context, subject='Waitlisted', branch=branch.name)
 
     self.render_json(sched)
 
@@ -280,28 +281,25 @@ def update(self, id):
             branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
 
         if 'waitlist' in data:
-            content = str(self.render_string('emails/booking',
-                          date=booked_schedule.date.strftime('%A, %B %d, %Y'),
-                          user=user,
-                          type=sched.type,
-                          seat_number=str(booked_schedule.seat_number),
-                          instructor=sched.instructor,
-                          time=sched.start.strftime('%I:%M %p'),
-                          branch=check_address(branch)), 'UTF-8')
-            yield self.io.async_task(send_email, user=user, content=content, subject='Waitlist moved to class', branch=branch.name)
+            context = { 'date': sched.date.strftime('%A, %B %d, %Y'),
+                        'type': sched.type,
+                        'fname': user['first_name'],
+                        'lname': user['last_name'],
+                        'instructor': sched.instructor.admin.first_name,
+                        'time': sched.start.strftime('%I:%M %p'),
+                        'seat_number': str(booked_schedule.seat_number),
+                        'branch': check_address(branch)}
+            yield self.io.async_task(send_email_template, template='booking', user=user, context=context, subject='Waitlist moved to class', branch=branch.name)
         else:
-            yield self.io.async_task(send_email_move,
-                content=str(self.render_string('emails/moved',
-                            user=user,
-                            type=sched.type,
-                            instructor=sched.instructor,
-                            date=booked_schedule.date.strftime('%A, %B %d, %Y'),
-                            seat_number=booked_schedule.seat_number,
-                            time=sched.start.strftime('%I:%M %p'),
-                            branch=check_address(branch)), 'UTF-8'),
-                user=user,
-                branch=branch.name
-            )
+            context = { 'date': booked_schedule.date.strftime('%A, %B %d, %Y'),
+                        'type': sched.type,
+                        'fname': user['first_name'],
+                        'lname': user['last_name'],
+                        'instructor': sched.instructor.admin.first_name,
+                        'time': sched.start.strftime('%I:%M %p'),
+                        'seat_number': str(booked_schedule.seat_number),
+                        'branch': check_address(branch)}
+            yield self.io.async_task(send_email_template, template='moved', user=user, context=context, subject='Bike Moved', branch=branch.name)
 
         if lock_key and Lock.is_locked(lock_key):
             Lock.unlock(lock_key)
@@ -377,29 +375,25 @@ def destroy(self, id):
 
         if not missed:
             if ref_status == 'waitlisted':
-                content = str(self.render_string('emails/waitlist_removed',
-                                                  date=booked_schedule.date.strftime('%A, %B %d, %Y'),
-                                                  user=user.to_dict(),
-                                                  type=booked_schedule.schedule.type,
-                                                  seat_number=booked_schedule.seat_number,
-                                                  instructor=booked_schedule.schedule.instructor,
-                                                  time=booked_schedule.schedule.start.strftime('%I:%M %p'),
-                                                  branch=check_address(branch)), 'UTF-8')
-                yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Removed from Waitlist', branch=branch.name)
+                context = { 'date': booked_schedule.date.strftime('%A, %B %d, %Y'),
+                            'type': booked_schedule.schedule.type,
+                            'fname': user.to_dict()['first_name'],
+                            'lname': user.to_dict()['last_name'],
+                            'instructor': booked_schedule.schedule.instructor.admin.first_name,
+                            'time': booked_schedule.schedule.start.strftime('%I:%M %p'),
+                            'seat_number': booked_schedule.seat_number,
+                            'branch': check_address(branch) }
+                yield self.io.async_task(send_email_template, template='waitlist-removed', user=user.to_dict(), context=context, subject='Removed from Waitlist', branch=branch.name)
             else:
-                yield self.io.async_task(
-                    send_email_cancel,
-                    user=user.to_dict(),
-                    content=str(self.render_string(
-                                    'emails/cancel',
-                                    instructor=booked_schedule.schedule.instructor,
-                                    user=user.to_dict(),
-                                    type=booked_schedule.schedule.type,
-                                    date=booked_schedule.date.strftime('%A, %B %d, %Y'),
-                                    seat_number=booked_schedule.seat_number,
-                                    time=booked_schedule.schedule.start.strftime('%I:%M %p'),
-                                    branch=check_address(branch)
-                                ), 'UTF-8'), branch=branch.name)
+                context = { 'instructor': booked_schedule.schedule.instructor.admin.first_name,
+                            'fname': user.to_dict()['first_name'],
+                            'lname': user.to_dict()['last_name'],
+                            'type': booked_schedule.schedule.type,
+                            'date': booked_schedule.date.strftime('%A, %B %d, %Y'),
+                            'seat_number': booked_schedule.seat_number,
+                            'time': booked_schedule.schedule.start.strftime('%I:%M %p'),
+                            'branch': check_address(branch) }
+                yield self.io.async_task(send_email_template, template='cancel', user=user.to_dict(), context=context, subject='Cancelled', branch=branch.name)
 
         self.render_json(booked_schedule)
     else:
@@ -440,13 +434,13 @@ def destroy(self, id):
                 if wait.schedule.branch is None:
                     branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
 
-                content = str(self.render_string('emails/waitlist_removed',
-                                              date=wait.date.strftime('%A, %B %d, %Y'),
-                                              user=user.to_dict(),
-                                              type=wait.schedule.type,
-                                              seat_number=wait.seat_number,
-                                              instructor=wait.schedule.instructor,
-                                              time=wait.schedule.start.strftime('%I:%M %p'),
-                                              branch=check_address(branch)), 'UTF-8')
-                yield self.io.async_task(send_email, user=user.to_dict(), content=content, subject='Removed from Waitlist', branch=branch.name)
+                context = { 'date': wait.date.strftime('%A, %B %d, %Y'),
+                            'type': wait.schedule.type,
+                            'fname': user.to_dict()['first_name'],
+                            'lname': user.to_dict()['last_name'],
+                            'instructor': wait.schedule.instructor.admin.first_name,
+                            'time': wait.schedule.start.strftime('%I:%M %p'),
+                            'seat_number': wait.seat_number,
+                            'branch': check_address(branch) }
+                yield self.io.async_task(send_email_template, template='waitlist-removed', user=user.to_dict(), context=context, subject='Removed from Waitlist', branch=branch.name)
         self.finish()
