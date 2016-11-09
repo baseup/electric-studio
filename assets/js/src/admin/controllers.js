@@ -2434,11 +2434,7 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
   $scope.currentPage = 0;
   $scope.hasNext = true;
   var isRedeemed = ($location.url() == '/gc-redemption');
-  $scope.transactions = GiftCardService.query({ isRedeemed:isRedeemed });
 
-  $scope.transactions.$promise.then(function (data) {
-    $scope.transactions = data;
-  });
 
   var from_input = angular.element('#input_from').pickadate({
       format: 'yyyy-mm-dd',
@@ -2488,6 +2484,25 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
     }
   });
 
+  $scope.$watchCollection('[gcDateFilter.fromDate, gcDateFilter.toDate]', function (newValues, oldValues) {
+      if (newValues[0] && newValues[1]) {
+          $scope.transactions = GiftCardService.query({ fromDate:newValues[0], toDate:newValues[1], isRedeemed:isRedeemed });
+          $scope.transactions.$promise.then(function (data) {
+            $scope.transactions = data;
+          });
+      } else {
+        $scope.transactions = GiftCardService.query({ isRedeemed:isRedeemed });
+
+        $scope.transactions.$promise.then(function (data) {
+      
+          $scope.transactions = data;
+        });
+      }
+  });
+
+
+
+
   $scope.exportGCListByDate = function () {
     if ($scope.gcDateFilter) {
       var fromDate = $scope.gcDateFilter.fromDate;
@@ -2496,14 +2511,20 @@ ctrls.controller('GiftCardCtrl', function ($scope, $route, $location, Transactio
       $scope.transactions = GiftCardService.query({ fromDate:fromDate, toDate:toDate, isRedeemed:isRedeemed });
       $scope.transactions.$promise.then(function (data) {
         $scope.transactions = data;
+        if ($scope.transactions.length) { 
+          window.location = '/admin/export/download-gift-cards-report?fromDate=' + fromDate + '&toDate=' + toDate + '&isRedeemed=' + isRedeemed;
+        } else {
+          $.Alert('No Data Found.');
+        }
       });
 
-      window.location = '/admin/export/download-gift-cards-report?fromDate=' + fromDate + '&toDate=' + toDate + '&isRedeemed='+isRedeemed;
-
+    
     } else {
       $.Alert('Please select a valid date values');
     }
   }
+
+
 
   $scope.searchGC = function(queryString){
       var fromDate = $scope.gcDateFilter.fromDate;
