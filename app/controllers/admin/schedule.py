@@ -299,7 +299,7 @@ def update(self, id):
                         'time': sched.start.strftime('%I:%M %p'),
                         'seat_number': str(booked_schedule.seat_number),
                         'branch': check_address(branch)}
-            yield self.io.async_task(send_email_template, template='moved', user=user, context=context, subject='Waitlist moved to class', branch=branch.name)
+            yield self.io.async_task(send_email_template, template='moved', user=user, context=context, subject='Bike Moved', branch=branch.name)
 
         if lock_key and Lock.is_locked(lock_key):
             Lock.unlock(lock_key)
