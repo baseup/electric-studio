@@ -23,10 +23,12 @@ def find(self):
     endDate = self.get_query_argument('toDate')
     isRedeemed = (self.get_query_argument('isRedeemed') == 'true')
     
-    fromDate = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
+    # fromDate = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
+    fromDate = None
     if startDate:
         fromDate = datetime.strptime(startDate, '%Y-%m-%d')
-    toDate = datetime.now() + timedelta(days=7)
+    # toDate = datetime.now() + timedelta(days=7)
+    toDate = None
     if endDate: 
         toDate = datetime.strptime(endDate, '%Y-%m-%d')
 
@@ -34,6 +36,8 @@ def find(self):
     gc_query = GiftCertificate.objects
     if isRedeemed:
         gc_query.filter(is_redeemed=isRedeemed)
+    if fromDate and toDate:
+        gc_query.filter(create_at__gte=fromDate, create_at__lte=toDate)
 
     total = 0
     if isRedeemed: total = (yield GiftCertificate.objects.filter(is_redeemed=isRedeemed).count());
