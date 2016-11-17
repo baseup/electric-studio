@@ -88,7 +88,7 @@ def create(self):
                     return self.finish()
 
                 deduct_credits = 1
-                if sched.type == 'Electric Endurance':
+                if sched.type.lower().strip() == 'electric endurance':
                     deduct_credits = 2
 
                 if user.credits > (deduct_credits - 1):
@@ -291,7 +291,7 @@ def update(self, id):
 
             if book and ('status' in data) and data['status'] == 'cancelled':
                 restore_credits = 1
-                if book.schedule.type == 'ELECTRIC ENDURANCE':
+                if book.schedule.type.lower().strip() == 'electric endurance':
                     restore_credits = 2
 
                 user = yield User.objects.get(user_id)
