@@ -68,17 +68,20 @@
             </tr>
           </tbody>
         </table>
-
-
-            <div ng-if="!transactions.length">
-                  <h4>"No results found"</h4>
-            </div>
+        <br/>
+        <div class="text--center"ng-if="!transactions.length">
+              <h4>"No results found"</h4>
+        </div>
       </div>
 
-       <ul class="pagination-nav nav nav--block text--center">
+       <ul class="pagination-nav nav nav--block text--center" ng-if="transactions.length >= 10">
         <li><a ng-click="prevPage($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
-        <li><a ng-click="nextPage($event)">Next <i class="fa fa-angle-right"></i></a></li>
+        <li><a ng-click="nextPage($event)" ng-if="transactions.length == 10">Next <i class="fa fa-angle-right"></i></a></li>
       </ul>
+
+
+
+     
 
     </div>
     </div>
