@@ -291,7 +291,7 @@ def update(self, id):
 
             if book and ('status' in data) and data['status'] == 'cancelled':
                 restore_credits = 1
-                if book.schedule.type.lower().trim() == 'electric endurance':
+                if book.schedule.type.lower().strip() == 'electric endurance':
                     restore_credits = 2
 
                 user = yield User.objects.get(user_id)
