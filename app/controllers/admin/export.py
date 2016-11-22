@@ -88,14 +88,21 @@ def download_gift_cards_report(self):
     endDate = self.get_query_argument('toDate')
     isRedeemed = (self.get_query_argument('isRedeemed') == 'true')
 
-    fromDate = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
+    # fromDate = datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d')
+    # if startDate:
+    #     fromDate = datetime.strptime(startDate, '%Y-%m-%d')
+    # toDate = datetime.now() + timedelta(days=7)
+    # if endDate:
+    #     toDate = datetime.strptime(endDate, '%Y-%m-%d')
+    fromDate = None
     if startDate:
         fromDate = datetime.strptime(startDate, '%Y-%m-%d')
-    toDate = datetime.now() + timedelta(days=7)
-    if endDate:
+    # toDate = datetime.now() + timedelta(days=7)
+    toDate = None
+    if endDate: 
         toDate = datetime.strptime(endDate, '%Y-%m-%d')
 
-    gift_certificates = yield GiftCertificate.objects.filter(create_at__gte=fromDate, create_at__lte=toDate, is_redeemed=isRedeemed) \
+    gift_certificates = yield GiftCertificate.objects.filter(create_at__gte=fromDate, create_at__lte=toDate) \
                                              .order_by('create_at', direction=DESCENDING).find_all()
     # gift_certificates = create_at_gmt8(gift_certificates)
     filename = 'gift-cards-' + datetime.now().strftime('%Y-%m-%d %H:%I') + '.csv'

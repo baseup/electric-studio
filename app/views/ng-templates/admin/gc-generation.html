@@ -33,9 +33,9 @@
         <div class="bp-md-one-third float--left space--bottom space--right">
           <input class="text-input" ng-model="searchGiftCards" placeholder="Search Code, Email, Transaction ID">
         </div>
-
+        
+    <!--     <span>Total GC {{ gcDateFilter.fromDate | date: 'MMM dd yyyy'}} to {{ gcDateFilter.toDate | date: 'MMM dd yyyy' }} :  <b>{{ transactions.length }}</b> </span> -->
       </div>
-
       <div class="space overflow--x">
         <table class="data-table">
           <thead>
@@ -66,19 +66,22 @@
               <td>{{ transaction.redeem_date }}</td>
               <td>
             </tr>
-            <tr ng-if="!transactions.length">
-              <td colspan="10">
-                  <h4>"No results found"</h4>
-              </td>
-            </tr>
           </tbody>
         </table>
+        <br/>
+        <div class="text--center"ng-if="!transactions.length">
+              <h4>"No results found"</h4>
+        </div>
       </div>
 
-       <ul class="pagination-nav nav nav--block text--center" ng-show="transactions.length">
+       <ul class="pagination-nav nav nav--block text--center" ng-if="transactions.length >= 10">
         <li><a ng-click="prevPage($event)"><i class="fa fa-angle-left"></i> Prev</a></li>
-        <li><a ng-click="nextPage($event)">Next <i class="fa fa-angle-right"></i></a></li>
+        <li><a ng-click="nextPage($event)" ng-if="transactions.length == 10">Next <i class="fa fa-angle-right"></i></a></li>
       </ul>
+
+
+
+     
 
     </div>
     </div>
