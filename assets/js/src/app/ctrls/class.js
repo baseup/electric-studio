@@ -2,16 +2,23 @@ var ctrls = angular.module('elstudio.controllers.site');
 
 ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, UserService, ScheduleService, SharedService, BookService, SettingService, $routeParams) {
 
-  var sched = SharedService.get('selectedSched');
+  var sched, scheduleId;
+  var resched = SharedService.get('resched');
+
+  if(resched) {
+    sched = SharedService.get('selectedSched');
+    scheduleId = sched.schedule._id;
+    $scope.resched = resched;
+  } else {
+    sched = 'scheduleId' in $routeParams ? $routeParams.scheduleId : null;
+    scheduleId = sched;
+  }
 
   if (!sched) $location.path('/schedule');
 
   $timeout(function() {
     angular.element('html, body').scrollTop(0);
   });
-
-  $scope.backButtonPath = SharedService.get('backToInstructors') ? '#/instructors' : '#/schedule/' + sched.schedule.branch._id;
-  SharedService.clear('backToInstructors');
 
 
   if (sched) {
@@ -20,51 +27,48 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
-    $scope.resched = SharedService.get('resched');
-
     $scope.cancelResched = function () {
       SharedService.clear('resched');
       $location.path('/reserved');
     }
 
-    ScheduleService.get({ scheduleId: sched.schedule._id }, function (schedule) {
-      sched.schedule = schedule;
-      $scope.timeSched = sched.schedule.start;
-      $scope.instructor = sched.schedule.instructor;
-      if (sched.schedule.sub_instructor) {
-        $scope.subInstructor = sched.schedule.sub_instructor;
+    ScheduleService.get({ scheduleId: scheduleId }, function (schedule) {
+      $scope.backButtonPath = SharedService.get('backToInstructors') ? '#/instructors' : '#/schedule/' + schedule.branch._id;
+      SharedService.clear('backToInstructors');
+
+      var parts = schedule.date.split(/[^0-9]/);
+      var date =  new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+
+      $scope.dateSched = months[date.getMonth()] + ' ' + date.getDate() ;
+      $scope.daySched = days[date.getDay()];
+      $scope.timeSched = schedule.start;
+      $scope.sched = schedule;
+      $scope.instructor = schedule.instructor;
+      if (schedule.sub_instructor) {
+        $scope.subInstructor = schedule.sub_instructor;
       }
-    });
 
-    $scope.dateSched = months[sched.date.getMonth()] + ' ' + sched.date.getDate() ;
-    $scope.daySched = days[sched.date.getDay()];
-    $scope.timeSched = sched.schedule.start;
-    $scope.sched = sched.schedule;
-    $scope.instructor = sched.schedule.instructor;
-    if (sched.schedule.sub_instructor) {
-      $scope.subInstructor = sched.schedule.sub_instructor;
-    }
+      var book_filter = {};
+      book_filter.date = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
+      book_filter.sched_id = schedule._id;
 
-    var book_filter = {};
-    book_filter.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
-    book_filter.sched_id = sched.schedule._id;
+      $scope.forWaitlist = false;
+      $scope.reserved = BookService.query(book_filter);
+      $scope.reserved.$promise.then(function (data) {
+        $scope.reserved = data;
+        if ($scope.reserved.length >= schedule.seats) {
+          $scope.forWaitlist = true;
+        }
+      });
 
-    $scope.forWaitlist = false;
-    $scope.reserved = BookService.query(book_filter);
-    $scope.reserved.$promise.then(function (data) {
-      $scope.reserved = data;
-      if ($scope.reserved.length >= sched.schedule.seats) {
-        $scope.forWaitlist = true;
-      }
-    });
-
-    book_filter.waitlist = true
-    $scope.waitlist = BookService.query(book_filter);
-    $scope.waitlist.$promise.then(function (waitlistData) {
-      $scope.waitlist = waitlistData;
-      if ($scope.waitlist.length > 0) {
-        $scope.forWaitlist = true;
-      }
+      book_filter.waitlist = true
+      $scope.waitlist = BookService.query(book_filter);
+      $scope.waitlist.$promise.then(function (waitlistData) {
+        $scope.waitlist = waitlistData;
+        if ($scope.waitlist.length > 0) {
+          $scope.forWaitlist = true;
+        }
+      });
     });
 
     $scope.blockedBikes = {};
@@ -102,7 +106,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
       if (seat_index == -1) {
 
         var deductCredits = 1;
-        if (sched.schedule.type == 'Electric Endurance') {
+        if ($scope.sched.type == 'Electric Endurance') {
           deductCredits = 2;
         }
 
@@ -154,7 +158,7 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
       }
 
       var deductCredits = 1;
-      if (sched.schedule.type == 'Electric Endurance') {
+      if ($scope.sched.type == 'Electric Endurance') {
         deductCredits = 2;
       }
 
@@ -164,15 +168,16 @@ ctrls.controller('ClassCtrl', function ($scope, $location, $route, $timeout, Use
       }
 
       var today = new Date();
-
-      var cutOffchkDate = new Date(sched.date);
-      cutOffchkDate.setDate(sched.date.getDate() - 1);
+      var parts = $scope.sched.date.split(/[^0-9]/);
+      var cutOffchkDate = new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+      cutOffchkDate.setDate(cutOffchkDate.getDate() - 1);
       cutOffchkDate.setHours(17, 0, 0);
 
       var book = {};
-      book.date = sched.date.getFullYear() + '-' + (sched.date.getMonth()+1) + '-' + sched.date.getDate();
+      var date = new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
+      book.date = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
       book.seats = seats;
-      book.sched_id = sched.schedule._id;
+      book.sched_id = $scope.sched._id;
       var str_seats = seats.sort(function(a, b){return a-b}) + '';
       str_seats = str_seats.replace(/,/g, ', ');
       var confirm_message = 'You are about to book bike'+ (seats.length > 1 ? 's' : '') + ' # ' + str_seats +
