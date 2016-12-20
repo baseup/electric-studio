@@ -149,7 +149,7 @@ def create(self):
                 return
 
     deduct_credits = 1
-    if ins_sched.type == 'Electric Endurance':
+    if ins_sched.type.lower().strip() == 'electric endurance':
         deduct_credits = 2
 
     user_packages = yield UserPackage.objects \
@@ -346,7 +346,7 @@ def destroy(self, id):
 
         if not missed:
             restore_credits = 1
-            if booked_schedule.schedule.type == 'Electric Endurance':
+            if booked_schedule.schedule.type.lower().strip() == 'electric endurance':
                 restore_credits = 2
 
             if booked_schedule.user_package:
@@ -408,7 +408,7 @@ def destroy(self, id):
             for i, wait in enumerate(scheds):
                 wait.status = 'cancelled'
                 restore_credits = 1
-                if wait.schedule.type == 'Electric Endurance':
+                if wait.schedule.type.lower().strip() == 'electric endurance':
                     restore_credits = 2
 
                 if wait.user_package:
