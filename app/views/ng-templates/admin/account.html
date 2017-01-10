@@ -364,7 +364,7 @@
             <td>{{ pack.credit_count }}</td>
             <td>
               {{ pack.status == 'Expired' ?  0 : pack.remaining_credits }}
-              <a ng-if="getAccess('accounts', 'update_expiration')" ng-click="changeCredits(pack)"><i class="fa fa-edit"></i></a>
+              <a ng-hide="pack.status == 'Expired'" ng-if="getAccess('accounts', 'update_expiration')" ng-click="changeCredits(pack)"><i class="fa fa-edit"></i></a>
             </td>
             <td>
               <span class="badge" ng-class="{'bg-danger': pack.status == 'Expired', 'bg-success': pack.status == 'Active'}">
