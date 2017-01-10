@@ -358,7 +358,7 @@
             <th>Notes</th>
             <th>Purchase Date</th>
           </tr>
-          <tr ng-repeat="pack in selectedAccount.packages | search:'trans_info.transaction,package_name':searchTrans">
+          <tr ng-repeat="pack in selectedAccount.packages | search:'trans_info.transaction,package_name':searchTrans | orderBy: 'create_at' ">
             <td>{{ getTransId(pack) }}</td>
             <td>{{ pack.package_name || (pack.is_free ? 'Free' : pack.credit_count + ' Ride' + (pack.credit_count > 1 ? 's' : '')) }} </td>
             <td>{{ pack.credit_count }}</td>
