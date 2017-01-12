@@ -370,7 +370,7 @@
               <span class="badge" ng-class="{'bg-danger': pack.status == 'Expired', 'bg-success': pack.status == 'Active'}">
               {{ pack.create_at | addDay:pack.expiration | formatDate }}
               </span>
-              <a ng-if="getAccess('accounts', 'update_expiration')" ng-click="extendPackageExpiry(pack)">
+              <a ng-hide="pack.status == 'Expired'" ng-if="getAccess('accounts', 'update_expiration')" ng-click="extendPackageExpiry(pack)">
                 <i class="fa fa-plus-square"></i>
               </a>
             </td>
