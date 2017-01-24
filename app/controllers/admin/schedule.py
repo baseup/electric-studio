@@ -372,9 +372,10 @@ def destroy(self, id):
                     yield upack1.save()
                     yield upack2.save()
 
-            user = yield User.objects.get(booked_schedule.user_id._id)
-            user.credits += restore_credits
-            yield user.save()
+            if not hasExpired:
+                user = yield User.objects.get(booked_schedule.user_id._id)
+                user.credits += restore_credits
+                yield user.save()
 
         yield booked_schedule.save()
 
