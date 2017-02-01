@@ -350,20 +350,33 @@ def destroy(self, id):
                 restore_credits = 2
 
             if booked_schedule.user_package:
+                hasExpired = False
                 if len(booked_schedule.user_package) == 1:
                     upack = yield UserPackage.objects.get(ObjectId(booked_schedule.user_package[0]))
-                    upack.remaining_credits += restore_credits
+                    if upack.status != "Expired":
+                        upack.remaining_credits += restore_credits
+                    else:
+                        hasExpired = True
                     yield upack.save()
                 else:
                     upack1 = yield UserPackage.objects.get(ObjectId(booked_schedule.user_package[0]))
                     upack2 = yield UserPackage.objects.get(ObjectId(booked_schedule.user_package[1]))
-                    upack1.remaining_credits += 1
-                    upack2.remaining_credits += 1
+                    if upack1.status != "Expired":
+                        upack1.remaining_credits += 1
+                    else:
+                        hasExpired = True
+                    if upack2.status != "Expired":
+                        upack2.remaining_credits += 1
+                    else:
+                        hasExpired = True
                     yield upack1.save()
                     yield upack2.save()
 
             user = yield User.objects.get(booked_schedule.user_id._id)
-            user.credits += restore_credits
+
+            if not hasExpired:
+                user.credits += restore_credits
+
             yield user.save()
 
         yield booked_schedule.save()

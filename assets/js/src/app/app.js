@@ -33,11 +33,11 @@ app.config(function ($routeProvider, $httpProvider, webSocketProvider) {
       templateUrl: '/site/career',
       controller: 'SiteCtrl'
     },
-    '/class/bgc': {
+    '/class/bgc/:scheduleId?': {
       templateUrl: '/site/class-bgc',
       controller: 'SiteCtrl'
     },
-    '/class/salcedo': {
+    '/class/salcedo/:scheduleId?': {
       templateUrl: '/site/class-salcedo',
       controller: 'SiteCtrl'
     },

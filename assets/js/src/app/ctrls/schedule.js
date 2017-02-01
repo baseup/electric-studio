@@ -207,7 +207,7 @@ ctrls.controller('ScheduleCtrl', function ($scope, $location, $route, $filter, $
             } else {
               SharedService.set('selectedSched', sched);
               SharedService.set('isNMon', !!nmon);
-              $location.path('/class/' + sched.schedule.branch.name.toLowerCase());
+              $location.path('/class/' + sched.schedule.branch.name.toLowerCase() + '/' + sched.schedule._id);
             }
           });
         }
