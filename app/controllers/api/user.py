@@ -98,6 +98,8 @@ def update(self, id):
                 user.contact_person = data['contact_person']
             if 'emergency_contact' in data:
                 user.emergency_contact = data['emergency_contact']
+            if 'device_token' in data:
+                user.device_token = data['device_token']
 
             user = yield user.save()
         else:
@@ -120,6 +122,8 @@ def update(self, id):
                 user.contact_person = data['contact_person']
             if data['emergency_contact'] != None:
                 user.emergency_contact = data['emergency_contact']
+            if 'device_token' in data:
+                user.device_token = data['device_token']    
 
             user = yield user.save()
     except:
