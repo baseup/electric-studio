@@ -1,6 +1,7 @@
 from motorengine import *
 from datetime import datetime, timedelta, tzinfo
-from app.settings import MANDRILL_API_KEY, EMAIL_SENDER, EMAIL_SENDER_NAME, REDIS_HOST, REDIS_PORT
+from app.settings import MANDRILL_API_KEY, EMAIL_SENDER, EMAIL_SENDER_NAME, REDIS_HOST, REDIS_PORT, IONIC_TOKEN, IONIC_PROFILE_TAG
+from tornado.httpclient import HTTPRequest, AsyncHTTPClient
 
 import redis
 import mandrill
@@ -8,6 +9,7 @@ import sys
 import pytz
 import string
 import random
+import tornado.escape
 
 class Lock(object):
     redis_db = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
@@ -215,3 +217,21 @@ def check_address(branch):
             return address[branch.name]
 
     return branch.address
+
+def send_push_notification(tokens, title, message):
+    url = 'https://api.ionic.io/push/notifications'
+    headers = {
+        'Authorization': 'Bearer ' + IONIC_TOKEN,
+        'Content-Type': 'application/json'
+    }
+    body = tornado.escape.json_encode({
+        'tokens': tokens,
+        'profile': IONIC_PROFILE_TAG,
+        'notification': {
+            'title': title,
+            'message': message
+        }
+    })
+
+    push_request = HTTPRequest(url=url, method='POST', headers=headers, body=body, validate_cert=False)
+    AsyncHTTPClient().fetch(push_request)
