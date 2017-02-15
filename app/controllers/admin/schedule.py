@@ -7,6 +7,7 @@ from motorengine import DESCENDING, ASCENDING
 from app.helper import send_email, send_email_cancel, send_email_template, send_email_move, check_address
 from app.helper import Lock
 from app.helper import GMT8
+from app.helper import send_push_notification
 from app.settings import DEFAULT_BRANCH_ID
 import tornado.escape
 
@@ -279,6 +280,14 @@ def update(self, id):
 
         if sched.branch is None:
             branch = yield Branch.objects.get(ObjectId(DEFAULT_BRANCH_ID))
+
+        user_devices = tornado.escape.json_decode(user['device_token']) if user['device_token'] else False
+
+        # Send push notification to user's devices
+        if 'waitlist' in data and user_devices:
+            push_title = 'Waitlist moved to class - ' + branch.name
+            push_message = 'Bike #' + str(booked_schedule.seat_number) + ' has been reserved for you!'
+            send_push_notification(tokens=user_devices, title=push_title, message=push_message)
 
         if 'waitlist' in data:
             context = { 'date': sched.date.strftime('%A, %B %d, %Y'),
