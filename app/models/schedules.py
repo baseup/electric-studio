@@ -37,6 +37,7 @@ class BookedSchedule(Model):
     notes = StringField(required=False)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
+    push_notification_sent = BooleanField(default=False)
 
     def to_dict(self):
        return mongo_to_dict(self)
@@ -48,5 +49,3 @@ class ClassType(Model):
     description = StringField()
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
-
-
