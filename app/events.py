@@ -86,7 +86,11 @@ def push_notification_watcher():
             if sched_before < time_now and sched_start > time_now and user_devices:
                 push_title = 'Upcoming class - ' + sched.schedule.branch.name
                 push_message = 'Your class starts at ' + datetime.strftime(sched_start, '%I:%M %p')
-                send_push_notification(tokens=user_devices, title=push_title, message=push_message)
+                push_payload = {
+                    'type': 'UPCOMING_CLASS',
+                    'scheduleId': sched._id
+                }
+                send_push_notification(tokens=user_devices, title=push_title, message=push_message, payload=push_payload)
 
                 sched.push_notification_sent = True
                 yield sched.save();

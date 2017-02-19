@@ -287,7 +287,11 @@ def update(self, id):
         if 'waitlist' in data and user_devices:
             push_title = 'Waitlist moved to class - ' + branch.name
             push_message = 'Bike #' + str(booked_schedule.seat_number) + ' has been reserved for you!'
-            send_push_notification(tokens=user_devices, title=push_title, message=push_message)
+            push_payload = {
+                'type': 'MOVE_TO_CLASS',
+                'bookId': booked_schedule._id
+            }
+            send_push_notification(tokens=user_devices, title=push_title, message=push_message, payload=push_payload)
 
         if 'waitlist' in data:
             context = { 'date': sched.date.strftime('%A, %B %d, %Y'),

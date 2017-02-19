@@ -218,7 +218,7 @@ def check_address(branch):
 
     return branch.address
 
-def send_push_notification(tokens, title, message):
+def send_push_notification(tokens, title, message, payload):
     url = 'https://api.ionic.io/push/notifications'
     headers = {
         'Authorization': 'Bearer ' + IONIC_TOKEN,
@@ -229,7 +229,8 @@ def send_push_notification(tokens, title, message):
         'profile': IONIC_PROFILE_TAG,
         'notification': {
             'title': title,
-            'message': message
+            'message': message,
+            'payload': payload
         }
     })
 
