@@ -7,7 +7,10 @@ from app.models.users import User
 from app.models.schedules import BookedSchedule
 from app.models.packages import UserPackage
 from app.helper import GMT8
+from app.helper import send_push_notification
 from bson.objectid import ObjectId
+
+import tornado.escape
 
 @gen.coroutine
 def schedule_watcher():
@@ -63,11 +66,42 @@ def schedule_watcher():
                         yield user.save()
                         yield sched.save()
 
+
+@gen.coroutine
+def push_notification_watcher():
+    gmt8 = GMT8()
+    now = datetime.now(tz=gmt8).replace(hour=0, minute=0, second=0, microsecond=0)
+    schedules = yield BookedSchedule.objects.filter(date__gte=now, status='booked') \
+                                            .filter(push_notification_sent=False).find_all()
+
+    if schedules:
+        for i, sched in enumerate(schedules):
+            sched_start = datetime.combine(sched.date, sched.schedule.start.time())
+            sched_before = datetime.combine(sched.date, sched.schedule.start.time()) - timedelta(hours=1)
+            sched_before = sched_before.replace(tzinfo=gmt8)
+            time_now = datetime.now(tz=gmt8)
+
+            user_devices = tornado.escape.json_decode(sched.user_id.device_token) if sched.user_id.device_token else False
+
+            if sched_before < time_now and sched_start > time_now and user_devices:
+                push_title = 'Upcoming class - ' + sched.schedule.branch.name
+                push_message = 'Your class starts at ' + datetime.strftime(sched_start, '%I:%M %p')
+                push_payload = {
+                    'type': 'UPCOMING_CLASS',
+                    'scheduleId': sched._id
+                }
+                send_push_notification(tokens=user_devices, title=push_title, message=push_message, payload=push_payload)
+
+                sched.push_notification_sent = True
+                yield sched.save();
+
+
 # A function that runs before your Tornado app run.
 # This gives you an opportunity to set up your data model, run jobs, or perform some special logic.
 def bootstrap(app):
     p = PeriodicCallback(schedule_watcher, 60000)
     p.start()
+    PeriodicCallback(push_notification_watcher, 600000).start()
     pass
 
 
