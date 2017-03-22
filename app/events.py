@@ -88,7 +88,7 @@ def push_notification_watcher():
                 push_message = 'Your class starts at ' + datetime.strftime(sched_start, '%I:%M %p')
                 push_payload = {
                     'type': 'UPCOMING_CLASS',
-                    'scheduleId': sched._id
+                    'scheduleId': str(sched._id)
                 }
                 send_push_notification(tokens=user_devices, title=push_title, message=push_message, payload=push_payload)
 

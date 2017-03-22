@@ -289,7 +289,7 @@ def update(self, id):
             push_message = 'Bike #' + str(booked_schedule.seat_number) + ' has been reserved for you!'
             push_payload = {
                 'type': 'MOVE_TO_CLASS',
-                'bookId': booked_schedule._id
+                'bookId': str(booked_schedule._id)
             }
             send_push_notification(tokens=user_devices, title=push_title, message=push_message, payload=push_payload)
 
