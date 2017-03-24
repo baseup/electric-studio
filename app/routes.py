@@ -90,6 +90,7 @@ routes.prefix('/admin', [
     ('post', '/ipn', 'admin.ipn'),
     ('post', '/ipn_gc', 'admin.ipn_gc'),
     ('post', '/generate_gc', 'admin.generate_gc'),
+    ('post', '/webhook/payment', 'admin.payment_webhook'),
 
     ('resource', '/security', 'admin.security'),
     ('resource', '/setting', 'admin.setting'),

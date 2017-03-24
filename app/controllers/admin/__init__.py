@@ -2,9 +2,9 @@ from app.models.admins import Admin
 from passlib.hash import bcrypt
 from app.models.packages import Package, UserPackage, GiftCertificate
 from app.models.users import User
-from app.helper import send_email_verification, send_email, code_generator, send_email_template
+from app.helper import send_email_verification, send_email, code_generator, send_email_template, verify_webhook_event
 from bson.objectid import ObjectId
-from datetime import timedelta
+from datetime import timedelta, datetime
 from app.models.access import AccessType
 from hurricane.helpers import to_json, to_json_serializable
 from app.settings import PDT_TOKEN
@@ -598,5 +598,82 @@ def ipn(self):
 
     if error:
         print('IPN Error: ' + error)
+
+    self.finish()
+
+
+def payment_webhook(self):
+    # Use `verify_webhook_event` only on PayPalEnvironmentProduction
+    # verified = verify_webhook_event(self.request.headers, self.request.body)
+    verified = True
+    if verified:
+        try:
+            data = tornado.escape.json_decode(self.request.body)
+            if data['event_type'] != 'PAYMENT.SALE.COMPLETED':
+                raise Exception('Cannot process webhook event: ' + data['event_type'])
+
+            resource = data['resource']
+            custom = tornado.escape.json_decode(resource['custom'])
+            user = yield User.objects.get(ObjectId(custom['user_id']))
+            package = yield Package.objects.get(custom['package_id'])
+            if not user or not package:
+                raise Exception('User and/or Package not found.')
+
+            trans_id = resource['id']
+            trans_filter = { '$regex' : '.*' + trans_id + '.*', '$options' : 'i' }
+            trans_exists = yield UserPackage.objects.filter(user_id=user._id, trans_info=trans_filter).count()
+            has_ft = yield UserPackage.objects.filter(user_id=user._id, package_ft=True).count()
+            if trans_exists > 0:
+                raise Exception('Transaction ' + trans_id + ' already exist.')
+            if has_ft > 0 and package.first_timer:
+                raise Exception('User already acquired a First Timer Package.')
+            if user.status == 'Frozen' or user.status == 'Unverified':
+                raise Exception('User account may be Inactive or Unverified.')
+
+            # Save transaction and update user credits
+            data = {
+                'transaction' : trans_id,
+                'status' : resource['state'],
+                'amount' : resource['amount']['total'],
+                'curency' : resource['amount']['currency'],
+                'parent_payment' : resource['parent_payment'],
+                'item_number' : custom['package_id'],
+                'paypal_data' : resource
+            }
+            transaction = UserPackage()
+            transaction.user_id = user._id
+            transaction.package_id = package._id
+            transaction.package_name = package.name
+            transaction.package_fee = package.fee
+            transaction.package_ft = package.first_timer
+            transaction.credit_count = package.credits
+            transaction.remaining_credits = package.credits
+            transaction.expiration = package.expiration
+            transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
+            transaction.trans_info = str(data)
+            transaction.trans_id = trans_id
+            transaction = yield transaction.save()
+
+            user.credits += package.credits
+            user = yield user.save()
+
+            # Send purchase success email to user
+            pack_name = package.name or str(package.credits) + ' Ride' + ('s' if package.credits > 1 else '')
+            user = (yield User.objects.get(user._id)).serialize()
+            site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+            exp_date = transaction.create_at + timedelta(days=transaction.expiration)
+            context = { 'package': pack_name, 'expire_date': exp_date.strftime('%B %d, %Y'), 'book_url': site_url, 'fname': user['first_name'], 'lname': user['last_name'] }
+            yield self.io.async_task(send_email_template, template='buy', user=user, context=context, subject='Package Purchased')
+
+        except Exception as e:
+            print(e)
+            self.write(str(e))
+            self.set_status(400)
+            self.finish()
+
+    else:
+        self.set_status(401)
+        self.write('Unable to verify the webhook payload.')
+        self.finish()
 
     self.finish()
