@@ -2,6 +2,7 @@ from motorengine import *
 from datetime import datetime, timedelta, tzinfo
 from app.settings import MANDRILL_API_KEY, EMAIL_SENDER, EMAIL_SENDER_NAME, REDIS_HOST, REDIS_PORT, IONIC_TOKEN, IONIC_PROFILE_TAG
 from tornado.httpclient import HTTPRequest, AsyncHTTPClient
+from paypalrestsdk.notifications import WebhookEvent
 
 import redis
 import mandrill
@@ -224,15 +225,29 @@ def send_push_notification(tokens, title, message, payload):
         'Authorization': 'Bearer ' + IONIC_TOKEN,
         'Content-Type': 'application/json'
     }
-    body = tornado.escape.json_encode({
-        'tokens': tokens,
+    data = {
         'profile': IONIC_PROFILE_TAG,
         'notification': {
             'title': title,
             'message': message,
             'payload': payload
         }
-    })
+    }
+    body = tornado.escape.json_encode(data)
 
     push_request = HTTPRequest(url=url, method='POST', headers=headers, body=body, validate_cert=False)
     AsyncHTTPClient().fetch(push_request)
+
+
+def verify_webhook_event(header, body):
+    try:
+        transmission_id = header['Paypal-Transmission-Id']
+        timestamp = header['Paypal-Transmission-Time']
+        webhook_id = header['Correlation-Id']
+        actual_signature = header['Paypal-Transmission-Sig']
+        cert_url = header['Paypal-Cert-Url']
+        auth_algo = header['Paypal-Auth-Algo']
+        response = WebhookEvent.verify(transmission_id, timestamp, webhook_id, event_body, cert_url, actual_signature, auth_algo)
+        return response
+    except:
+        return False
