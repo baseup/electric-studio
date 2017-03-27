@@ -77,13 +77,14 @@ def push_notification_watcher():
     if schedules:
         for i, sched in enumerate(schedules):
             sched_start = datetime.combine(sched.date, sched.schedule.start.time())
+            sched_start = sched_start.replace(tzinfo=gmt8)
             sched_before = datetime.combine(sched.date, sched.schedule.start.time()) - timedelta(hours=1)
             sched_before = sched_before.replace(tzinfo=gmt8)
             time_now = datetime.now(tz=gmt8)
 
             user_devices = tornado.escape.json_decode(sched.user_id.device_token) if sched.user_id.device_token else False
 
-            if sched_before < time_now and sched_start > time_now and user_devices:
+            if time_now > sched_before and time_now < sched_start and user_devices:
                 push_title = 'Upcoming class - ' + sched.schedule.branch.name
                 push_message = 'Your class starts at ' + datetime.strftime(sched_start, '%I:%M %p')
                 push_payload = {
@@ -101,7 +102,7 @@ def push_notification_watcher():
 def bootstrap(app):
     p = PeriodicCallback(schedule_watcher, 60000)
     p.start()
-    PeriodicCallback(push_notification_watcher, 600000).start()
+    PeriodicCallback(push_notification_watcher, 60000).start()
     pass
 
 
