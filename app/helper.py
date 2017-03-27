@@ -226,6 +226,7 @@ def send_push_notification(tokens, title, message, payload):
         'Content-Type': 'application/json'
     }
     data = {
+        'tokens': tokens,
         'profile': IONIC_PROFILE_TAG,
         'notification': {
             'title': title,
