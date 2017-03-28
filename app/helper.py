@@ -226,7 +226,6 @@ def send_push_notification(tokens, title, message, payload):
         'Content-Type': 'application/json'
     }
     data = {
-        'tokens': tokens,
         'profile': IONIC_PROFILE_TAG,
         'notification': {
             'title': title,
@@ -234,6 +233,13 @@ def send_push_notification(tokens, title, message, payload):
             'payload': payload
         }
     }
+
+    if tokens == 'send_to_all':
+        data['send_to_all'] = True
+        data['tokens'] = []
+    else:
+        data['tokens'] = tokens
+
     body = tornado.escape.json_encode(data)
 
     push_request = HTTPRequest(url=url, method='POST', headers=headers, body=body, validate_cert=False)
