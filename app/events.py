@@ -5,6 +5,7 @@ from tornado import gen
 
 from app.models.users import User
 from app.models.schedules import BookedSchedule
+from app.models.admins import PushNotification
 from app.models.packages import UserPackage
 from app.helper import GMT8
 from app.helper import send_push_notification
@@ -95,6 +96,29 @@ def push_notification_watcher():
 
                 sched.push_notification_sent = True
                 yield sched.save();
+
+    if datetime.now(tz=gmt8).isoweekday() == 1 and datetime.now(tz=gmt8).hour == 11:
+        push = yield PushNotification.objects.get(key='weekly_push')
+        push_title = 'Booking open for the week!'
+        push_message = 'Booking for the week starts at 12 noon'
+        push_payload = {
+            'type': 'WEEK_RELEASE'
+        }
+
+        if not push:
+            push = PushNotification()
+            push.key = 'weekly_push'
+            push.date = datetime.now(tz=gmt8)
+            push.title = 'Booking open for the week'
+            send_push_notification(tokens='send_to_all', title=push_title, message=push_message, payload=push_payload)
+            yield push.save()
+
+        week_now = datetime.now(tz=gmt8).strftime('%W')
+        if push and push.date.strftime('%W') != week_now:
+            push.date = datetime.now(tz=gmt8)
+            push.title = 'Booking open for the week'
+            send_push_notification(tokens='send_to_all', title=push_title, message=push_message, payload=push_payload)
+            yield push.save()
 
 
 # A function that runs before your Tornado app run.

@@ -666,7 +666,6 @@ def payment_webhook(self):
             yield self.io.async_task(send_email_template, template='buy', user=user, context=context, subject='Package Purchased')
 
         except Exception as e:
-            print(e)
             self.write(str(e))
             self.set_status(400)
             self.finish()
