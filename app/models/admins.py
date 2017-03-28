@@ -71,3 +71,11 @@ class Branch(Model):
     expire_at = DateTimeField(required=True)
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
+
+class PushNotification(Model):
+    __collection__ = 'push_notifications'
+    key = StringField(required=True)
+    date = DateTimeField(required=True)
+    title = StringField()
+    state = StringField(default='enqueued')
+    update_at = DateTimeField(auto_now_on_update=True)
