@@ -1,6 +1,6 @@
 from app.models.admins import Admin
 from passlib.hash import bcrypt
-from app.models.packages import Package, UserPackage, GiftCertificate
+from app.models.packages import Package, UserPackage, GiftCertificate, PaymentReference
 from app.models.users import User
 from app.helper import send_email_verification, send_email, code_generator, send_email_template, verify_webhook_event
 from bson.objectid import ObjectId
@@ -673,6 +673,89 @@ def payment_webhook(self):
     else:
         self.set_status(401)
         self.write('Unable to verify the webhook payload.')
+        self.finish()
+
+    self.finish()
+
+
+def paymaya_webhook(self):
+    try:
+        data = tornado.escape.json_decode(self.request.body)
+        # Verify payment
+        paymentRef = yield PaymentReference.objects.get(data['requestReferenceNumber'])
+        if not paymentRef:
+            raise Exception('Payment not found.')
+        # Update payment details
+        paymentRef.status = data['status']
+        paymentRef.isPaid = data['isPaid']
+        paymentRef = yield paymentRef.save()
+        # Get user and package
+        user = paymentRef.user_id
+        package = paymentRef.package_id
+        # Check if payment has been credited
+        trans_id = data['id']
+        trans_filter = { '$regex' : '.*' + trans_id + '.*', '$options' : 'i' }
+        trans_exists = yield UserPackage.objects.filter(user_id=user._id, trans_info=trans_filter).count()
+        has_ft = yield UserPackage.objects.filter(user_id=user._id, package_ft=True).count()
+        if trans_exists > 0:
+            raise Exception('Transaction ' + trans_id + ' already exist.')
+        if has_ft > 0 and package.first_timer:
+            raise Exception('User already acquired a First Timer Package.')
+        if user.status == 'Frozen' or user.status == 'Unverified':
+            raise Exception('User account may be Inactive or Unverified.')
+
+        # Process the payment and add the credits to the user's account
+        if data['status'] == 'PAYMENT_SUCCESS':
+            details = {
+                'transaction' : data['id'],
+                'status' : data['status'],
+                'amount' : data['amount'],
+                'curency' : data['currency'],
+                'item_number' : data['requestReferenceNumber'],
+                'paymaya_data' : data
+            }
+            transaction = UserPackage()
+            transaction.user_id = user._id
+            transaction.package_id = package._id
+            transaction.package_name = package.name
+            transaction.package_fee = package.fee
+            transaction.package_ft = package.first_timer
+            transaction.credit_count = package.credits
+            transaction.remaining_credits = package.credits
+            transaction.expiration = package.expiration
+            transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
+            transaction.trans_info = str(details)
+            transaction.trans_id = str(paymentRef.trans_id)
+            transaction = yield transaction.save()
+
+            user.credits += package.credits
+            user = yield user.save()
+
+            # Send purchase success email to user
+            pack_name = package.name or str(package.credits) + ' Ride' + ('s' if package.credits > 1 else '')
+            user = (yield User.objects.get(user._id)).serialize()
+            site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+            exp_date = transaction.create_at + timedelta(days=transaction.expiration)
+            context = { 'package': pack_name, 'expire_date': exp_date.strftime('%B %d, %Y'), 'book_url': site_url, 'fname': user['first_name'], 'lname': user['last_name'] }
+            yield self.io.async_task(send_email_template, template='buy', user=user, context=context, subject='Package Purchased')
+
+            self.set_header("Content-Type", "application/json")
+            self.set_status(200)
+            self.finish()
+
+        elif data['status'] == 'PAYMENT_FAILED':
+            self.set_header("Content-Type", "application/json")
+            self.set_status(200)
+            self.finish()
+
+        else:
+            self.set_header("Content-Type", "application/json")
+            self.set_status(400)
+            self.finish()
+
+    except Exception as e:
+        self.write(str(e))
+        self.set_status(400)
         self.finish()
 
     self.finish()
