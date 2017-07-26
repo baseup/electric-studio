@@ -1,14 +1,14 @@
 from passlib.hash import bcrypt
 from app.models.users import User
-from app.models.packages import Package, UserPackage, GiftCertificate
+from app.models.packages import Package, UserPackage, GiftCertificate, PaymentReference
 from app.helper import send_email_verification, send_email, send_email_template
 from app.models.schedules import InstructorSchedule, BookedSchedule
 from app.models.admins import Instructor, Admin, Setting, Branch, LandingPage
 from app.models.access import AccessType, Privilege
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
-from app.settings import PDT_TOKEN
-from tornado.httpclient import HTTPRequest, AsyncHTTPClient
+from app.settings import PDT_TOKEN, PAYMAYA_PAYMENTS_URL, PAYMAYA_AUTH_KEY
+from tornado.httpclient import HTTPRequest, AsyncHTTPClient, HTTPClient
 from app.helper import GMT8
 
 import hashlib
@@ -17,6 +17,8 @@ import tornado
 import json
 import base64
 import urllib.parse
+import urllib
+import time
 
 def index(self):
 
@@ -759,3 +761,140 @@ def add_access_types(self):
     yield adminAccessType.save()
 
     self.redirect('/add_regular_schedules')
+
+
+def paymaya_payment(self):
+    user_id = None
+    user = None
+    try:
+        if 'ES-USER-ID' in self.request.headers:
+            user_id = self.request.headers['ES-USER-ID']
+            user = yield User.objects.get(user_id)
+            if not user:
+                raise Exception('Account doesn\'t exist.')
+        else:
+            raise Exception('Please sign up or log in to your Electric account.')
+    except Exception as e:
+        self.write(str(e))
+        self.set_status(403)
+        self.finish()
+
+    try:
+        if not self.request.body:
+            raise Exception('Missing/invalid parameters.')
+
+        data = tornado.escape.json_decode(self.request.body)
+        if not 'paymentTokenId' in data or not 'packageId' in data:
+            raise Exception('Missing/invalid parameters.')
+
+        package = yield Package.objects.get(data['packageId'])
+        # Save payment reference needed for webhook processing
+        paymentRef = PaymentReference()
+        paymentRef.package_id = package._id
+        paymentRef.user_id = user._id
+        paymentRef.amount = package.fee
+        paymentRef = yield paymentRef.save()
+
+        redirectUrl = self.request.protocol + '://' + self.request.host + '/payment-redirect'
+        values = {
+            "paymentTokenId": data['paymentTokenId'],
+            "totalAmount": {
+                "amount": float(package.fee),
+                "currency": "PHP"
+            },
+            "buyer": {
+                "firstName": user.first_name,
+                "middleName": user.middle_name,
+                "lastName": user.last_name,
+                "contact": {
+                    "phone": str(user.phone_number),
+                    "email": user.email
+                },
+                "billingAddress": {
+                    "line1": user.address,
+                    "line2": user.address2,
+                    "city": "Makati",
+                    "state": "Metro Manila",
+                    "zipCode": "12345",
+                    "countryCode": "PH"
+                }
+            },
+            "requestReferenceNumber": str(paymentRef._id),
+            "redirectUrl": {
+                "success": redirectUrl + "?status=success",
+                "failure": redirectUrl + "?status=failure",
+                "cancel": redirectUrl + "?status=cancel"
+            }
+        }
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + PAYMAYA_AUTH_KEY
+        }
+        body = tornado.escape.json_encode(values)
+        request = HTTPRequest(url=PAYMAYA_PAYMENTS_URL, method='POST', headers=headers, body=body, validate_cert=False)
+        response = yield AsyncHTTPClient().fetch(request)
+        paymentData = tornado.escape.json_decode( response.body.decode('UTF-8') )
+
+        paymentRef.status = paymentData['status']
+        paymentRef.trans_id = paymentData['id']
+        paymentRef.isPaid = paymentData['isPaid']
+        paymentRef = yield paymentRef.save()
+
+        if paymentData['status'] == 'PAYMENT_SUCCESS':
+            # Save transaction and update user credits
+            data = {
+                'transaction' : paymentData['id'],
+                'status' : paymentData['status'],
+                'amount' : paymentData['amount'],
+                'curency' : paymentData['currency'],
+                'item_number' : paymentData['requestReferenceNumber'],
+                'paymaya_data' : paymentData
+            }
+            transaction = UserPackage()
+            transaction.user_id = user._id
+            transaction.package_id = package._id
+            transaction.package_name = package.name
+            transaction.package_fee = package.fee
+            transaction.package_ft = package.first_timer
+            transaction.credit_count = package.credits
+            transaction.remaining_credits = package.credits
+            transaction.expiration = package.expiration
+            transaction.expire_date = datetime.now() + timedelta(days=package.expiration)
+            transaction.trans_info = str(data)
+            transaction.trans_id = paymentData['id']
+            transaction = yield transaction.save()
+
+            user.credits += package.credits
+            user = yield user.save()
+
+            # Send purchase success email to user
+            pack_name = package.name or str(package.credits) + ' Ride' + ('s' if package.credits > 1 else '')
+            user = (yield User.objects.get(user._id)).serialize()
+            site_url = url = self.request.protocol + '://' + self.request.host + '/#/schedule'
+            exp_date = transaction.create_at + timedelta(days=transaction.expiration)
+            context = { 'package': pack_name, 'expire_date': exp_date.strftime('%B %d, %Y'), 'book_url': site_url, 'fname': user['first_name'], 'lname': user['last_name'] }
+            yield self.io.async_task(send_email_template, template='buy', user=user, context=context, subject='Package Purchased')
+
+            self.set_header("Content-Type", "application/json")
+            self.write(tornado.escape.json_encode(paymentData))
+            self.set_status(200)
+            self.finish()
+
+        else:
+            self.set_header("Content-Type", "application/json")
+            self.write(tornado.escape.json_encode(paymentData))
+            self.set_status(409)
+            self.finish()
+
+    except Exception as e:
+        print(e)
+        self.write(str(e))
+        self.set_status(400)
+        self.finish()
+
+    self.finish()
+
+def payment_redirect(self):
+    status = self.get_argument('status')
+    success = True if status == 'success' else False
+    self.render('payment', success=success)

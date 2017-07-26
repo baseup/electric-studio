@@ -63,6 +63,8 @@ routes.get('/user/logout', 'home.logout')
 routes.post('/upload/instructor', 'upload.instructor')
 routes.post('/upload/images', 'upload.images')
 routes.post('/upload/landing', 'upload.landing')
+routes.post('/payment/paymaya', 'home.paymaya_payment')
+routes.get('/payment-redirect', 'home.payment_redirect')
 
 
 routes.get('/sync_user_packages', 'home.sync_package')
@@ -91,6 +93,7 @@ routes.prefix('/admin', [
     ('post', '/ipn_gc', 'admin.ipn_gc'),
     ('post', '/generate_gc', 'admin.generate_gc'),
     ('post', '/webhook/payment', 'admin.payment_webhook'),
+    ('post', '/webhook/paymaya', 'admin.paymaya_webhook'),
 
     ('resource', '/security', 'admin.security'),
     ('resource', '/setting', 'admin.setting'),
