@@ -128,6 +128,10 @@ PAYPAL_ACCOUNT = 'electric@electricstudio.ph'
 PDT_TOKEN = 'Wm9hXC14j7em4ABlNedDxq2AiwTTmcHXMTSyYrUxejrwWCdnRcZzvUrudQS'
 #PDT_TOKEN = 'GCxbIb0meX6eoIv9fYtJFvQ26u-L2buNGwP47EJZMLiomyKFbXeofypRZHq'
 
+#Paymaya
+PAYMAYA_PAYMENTS_URL = 'https://pg-sandbox.paymaya.com/payments/v1/payments'
+PAYMAYA_AUTH_KEY = 'c2stVW95eWIxdzZIc1dlTmNjQnE2bnVjdjJuOHdzM1h3c1BIVnN0cGZvZEZVTTo='
+
 #Ionic
 IONIC_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhMGRiZjIxMS0xNzUxLTRiMzUtYTFlMy0yNzc2YjliZWE1MmQifQ.aqWRTJV3GV7lZYhL6e-h6TDoCrME700cocj47S2EpQU'
 IONIC_PROFILE_TAG = 'esprod'
