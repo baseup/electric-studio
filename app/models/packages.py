@@ -52,7 +52,7 @@ class Product(Model):
     update_at = DateTimeField(auto_now_on_update=True)
 
     def to_dict(self):
-       return mongo_to_dict(self)   
+       return mongo_to_dict(self)
 
 class UserProduct(Model):
     __collection__ = 'user_products'
@@ -87,10 +87,26 @@ class GiftCertificate(Model):
 
     create_at = DateTimeField(auto_now_on_insert=True)
     update_at = DateTimeField(auto_now_on_update=True)
-      
+
     is_redeemed = BooleanField(default=False)
     redeemer_es_id = ReferenceField(reference_document_type=User)
     redeem_date = DateTimeField()
+
+    def to_dict(self):
+       return mongo_to_dict(self)
+
+class PaymentReference(Model):
+    __collection__ = 'payment_references'
+    __lazy__ = False
+    package_id = ReferenceField(reference_document_type=Package, required=False)
+    user_id = ReferenceField(reference_document_type=User)
+    amount = DecimalField()
+    trans_id = StringField(required=False)
+    status = StringField(required=False)
+    isPaid = BooleanField(default=False)
+
+    create_at = DateTimeField(auto_now_on_insert=True)
+    update_at = DateTimeField(auto_now_on_update=True)
 
     def to_dict(self):
        return mongo_to_dict(self)
